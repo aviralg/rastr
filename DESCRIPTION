@@ -1,0 +1,26 @@
+Type: Package
+Package: rastr
+Title: R AST Analyzer
+Version: 0.1
+Authors@R: 
+    person(given = "Aviral",
+           family = "Goel",
+           role = c("aut", "cre"),
+           email = "goel.aviral@gmail.com",
+           comment = c(ORCID = "0000-0002-0814-5015"))
+Description: rastr is a parser and AST analysis and transformation
+             framework for that helps you address common source level
+             static analysis and code rewriting problems.
+License: MIT + file LICENSE
+URL: https://prl-prg.github.io/rastr/
+BugReports: https://github.com/PRL-PRG/rastr/issues
+Encoding: UTF-8
+LazyData: true
+SystemRequirements: C++11
+Suggests:
+    covr,
+    knitr,
+    rmarkdown
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+VignetteBuilder: knitr
