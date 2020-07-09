@@ -7,12 +7,12 @@ namespace rastr {
 namespace ast {
 
 enum class Type {
-    DoubleLiteralRNode,
-    IntegerLiteralRNode,
-    ComplexLiteralRNode,
-    LogicalLiteralRNode,
-    RawLiteralRNode,
-    CharacterLiteralRNode,
+    DoubleLiteralExpressionRNode,
+    IntegerLiteralExpressionRNode,
+    ComplexLiteralExpressionRNode,
+    LogicalLiteralExpressionRNode,
+    RawLiteralExpressionRNode,
+    CharacterLiteralExpressionRNode,
     UndefinedNode
 };
 

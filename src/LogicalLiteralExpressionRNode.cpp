@@ -1,4 +1,4 @@
-#include "LogicalLiteralRNode.hpp"
+#include "LogicalLiteralExpressionRNode.hpp"
 
 namespace rastr {
 namespace ast {

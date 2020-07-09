@@ -15,7 +15,10 @@ namespace ast {
 
 class Node {
   public:
-    Node(): id_(Node::get_next_id_()), r_data_(get_undefined_object()) {
+    Node()
+        : id_(Node::get_next_id_())
+        , r_data_(get_undefined_object())
+        , type_(Type::UndefinedNode) {
     }
 
     virtual ~Node() {
@@ -65,36 +68,44 @@ class Node {
         return get_language() == Language::CPP;
     }
 
-    virtual bool is_literal_node() const {
-        return false;
-    }
-
     virtual bool is_expression_node() const {
         return false;
     }
 
+    virtual bool is_literal_expression_node() const {
+        return false;
+    }
+
+    virtual bool is_arithmetic_node() const {
+        return false;
+    }
+
+    virtual bool is_unary_operation_node() const {
+        return false;
+    }
+
     bool is_character_literal_node() const {
-        return get_type() == Type::CharacterLiteralRNode;
+        return get_type() == Type::CharacterLiteralExpressionRNode;
     }
 
     bool is_integer_literal_node() const {
-        return get_type() == Type::IntegerLiteralRNode;
+        return get_type() == Type::IntegerLiteralExpressionRNode;
     }
 
     bool is_double_literal_node() const {
-        return get_type() == Type::DoubleLiteralRNode;
+        return get_type() == Type::DoubleLiteralExpressionRNode;
     }
 
     bool is_complex_literal_node() const {
-        return get_type() == Type::ComplexLiteralRNode;
+        return get_type() == Type::ComplexLiteralExpressionRNode;
     }
 
     bool is_logical_literal_node() const {
-        return get_type() == Type::LogicalLiteralRNode;
+        return get_type() == Type::LogicalLiteralExpressionRNode;
     }
 
     bool is_raw_literal_node() const {
-        return get_type() == Type::RawLiteralRNode;
+        return get_type() == Type::RawLiteralExpressionRNode;
     }
 
   private:

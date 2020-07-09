@@ -1,9 +1,9 @@
-#include "CharacterLiteralRNode.hpp"
-#include "ComplexLiteralRNode.hpp"
-#include "DoubleLiteralRNode.hpp"
-#include "IntegerLiteralRNode.hpp"
-#include "LogicalLiteralRNode.hpp"
-#include "DoubleLiteralRNode.hpp"
+#include "CharacterLiteralExpressionRNode.hpp"
+#include "ComplexLiteralExpressionRNode.hpp"
+#include "DoubleLiteralExpressionRNode.hpp"
+#include "IntegerLiteralExpressionRNode.hpp"
+#include "LogicalLiteralExpressionRNode.hpp"
+#include "RawLiteralExpressionRNode.hpp"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
