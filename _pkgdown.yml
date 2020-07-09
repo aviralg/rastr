@@ -1,0 +1,27 @@
+url: https://prl-prg.github.io/rastr/
+
+template:
+  params:
+    bootswatch: cosmo
+    ganalytics: UA-46114889-4
+
+navbar:
+  title: "rastr"
+  left:
+    - test: "Design"
+      href: design/index.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Cookbook"
+      href: cookbook/index.html
+    - text: "Articles"
+      href: articles/index.html
+    - text: "Issues"
+      href: https://github.com/PRL-PRG/rastr/issues
+  right:
+   - icon: fa-github
+     href: https://github.com/PRL-PRG/rastr
+
+authors:
+  Aviral Goel:
+    href: http://aviral.io
