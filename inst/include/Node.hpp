@@ -18,6 +18,9 @@ class Node {
     Node(): id_(Node::get_next_id_()), r_data_(get_undefined_object()) {
     }
 
+    virtual ~Node() {
+    }
+
     int get_id() const {
         return id_;
     }
@@ -40,13 +43,64 @@ class Node {
         return is_defined_object(r_data_);
     }
 
+    void set_type(Type type) {
+        type_ = type;
+    }
+
+    Type get_type() const {
+        return type_;
+    }
+
     virtual rastr::ast::Language get_language() const = 0;
 
-    virtual rastr::ast::Type get_type() const = 0;
+    bool is_r_node() const {
+        return get_language() == Language::R;
+    }
+
+    bool is_c_node() const {
+        return get_language() == Language::C;
+    }
+
+    bool is_cpp_node() const {
+        return get_language() == Language::CPP;
+    }
+
+    virtual bool is_literal_node() const {
+        return false;
+    }
+
+    virtual bool is_expression_node() const {
+        return false;
+    }
+
+    bool is_character_literal_node() const {
+        return get_type() == Type::CharacterLiteralRNode;
+    }
+
+    bool is_integer_literal_node() const {
+        return get_type() == Type::IntegerLiteralRNode;
+    }
+
+    bool is_double_literal_node() const {
+        return get_type() == Type::DoubleLiteralRNode;
+    }
+
+    bool is_complex_literal_node() const {
+        return get_type() == Type::ComplexLiteralRNode;
+    }
+
+    bool is_logical_literal_node() const {
+        return get_type() == Type::LogicalLiteralRNode;
+    }
+
+    bool is_raw_literal_node() const {
+        return get_type() == Type::RawLiteralRNode;
+    }
 
   private:
     const int id_;
     SEXP r_data_;
+    Type type_;
 
     static int get_next_id_();
     static std::atomic<int> id_counter_;

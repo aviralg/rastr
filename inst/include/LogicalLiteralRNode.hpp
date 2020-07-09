@@ -10,6 +10,7 @@ class LogicalLiteralRNode: public LiteralRNode {
   public:
     explicit LogicalLiteralRNode(bool value = true)
         : LiteralRNode(), value_(value) {
+        set_type(Type::LogicalLiteralRNode);
     }
 
     bool get_value() const {
@@ -22,8 +23,6 @@ class LogicalLiteralRNode: public LiteralRNode {
 
   private:
     bool value_;
-
-    static const Type type_;
 };
 
 } // namespace ast

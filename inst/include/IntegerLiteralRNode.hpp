@@ -9,6 +9,7 @@ namespace ast {
 class IntegerLiteralRNode: public LiteralRNode {
   public:
     explicit IntegerLiteralRNode(int value = 0): LiteralRNode(), value_(value) {
+        set_type(Type::IntegerLiteralRNode);
     }
 
     int get_value() const {
@@ -21,8 +22,6 @@ class IntegerLiteralRNode: public LiteralRNode {
 
   private:
     int value_;
-
-    static const Type type_;
 };
 
 } // namespace ast

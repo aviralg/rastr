@@ -10,6 +10,7 @@ class CharacterLiteralRNode: public LiteralRNode {
   public:
     explicit CharacterLiteralRNode(const std::string& value = "")
         : LiteralRNode(), value_(value) {
+        set_type(Type::CharacterLiteralRNode);
     }
 
     const std::string& get_value() const {
@@ -22,8 +23,6 @@ class CharacterLiteralRNode: public LiteralRNode {
 
   private:
     std::string value_;
-
-    static const Type type_;
 };
 
 } // namespace ast

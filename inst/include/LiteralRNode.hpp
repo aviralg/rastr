@@ -10,6 +10,13 @@ class LiteralRNode: public virtual RNode {
   public:
     LiteralRNode(): RNode() {
     }
+
+    virtual ~LiteralRNode() {
+    }
+
+    bool is_literal_node() const override {
+        return true;
+    }
 };
 
 } // namespace ast

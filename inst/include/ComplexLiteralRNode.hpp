@@ -10,6 +10,7 @@ class ComplexLiteralRNode: public LiteralRNode {
   public:
     explicit ComplexLiteralRNode(const Rcomplex& value)
         : LiteralRNode(), value_(value) {
+        set_type(Type::ComplexLiteralRNode);
     }
 
     const Rcomplex& get_value() const {
@@ -22,8 +23,6 @@ class ComplexLiteralRNode: public LiteralRNode {
 
   private:
     Rcomplex value_;
-
-    static const Type type_;
 };
 
 } // namespace ast

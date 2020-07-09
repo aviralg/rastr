@@ -10,6 +10,7 @@ class RawLiteralRNode: public LiteralRNode {
   public:
     explicit RawLiteralRNode(const Rbyte value = 0)
         : LiteralRNode(), value_(value) {
+        set_type(Type::RawLiteralRNode);
     }
 
     const Rbyte get_value() const {
@@ -22,8 +23,6 @@ class RawLiteralRNode: public LiteralRNode {
 
   private:
     Rbyte value_;
-
-    static const Type type_;
 };
 
 } // namespace ast

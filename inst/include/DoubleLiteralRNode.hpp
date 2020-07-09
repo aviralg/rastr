@@ -10,6 +10,7 @@ class DoubleLiteralRNode: public LiteralRNode {
   public:
     explicit DoubleLiteralRNode(double value = 0.0)
         : LiteralRNode(), value_(value) {
+        set_type(Type::DoubleLiteralRNode);
     }
 
     double get_value() const {
@@ -22,8 +23,6 @@ class DoubleLiteralRNode: public LiteralRNode {
 
   private:
     double value_;
-
-    static const Type type_;
 };
 
 } // namespace ast
