@@ -8,8 +8,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "goel.aviral@gmail.com",
            comment = c(ORCID = "0000-0002-0814-5015"))
-Description: rastr is a parser and AST analysis and transformation
-             framework for that helps you address common source level
+Description: rastr is an R parser and AST analysis and transformation
+             framework that helps you address common source level
              static analysis and code rewriting problems.
 License: MIT + file LICENSE
 URL: https://prl-prg.github.io/rastr/
