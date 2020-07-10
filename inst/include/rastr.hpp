@@ -3,6 +3,8 @@
 
 #include <Rinternals.h>
 #include <memory>
+#include <vector>
+#include <string>
 
 namespace rastr {
 
@@ -11,6 +13,8 @@ SEXP get_undefined_object();
 bool is_undefined_object(SEXP object);
 
 bool is_defined_object(SEXP object);
+
+SEXP create_class(const std::vector<std::string>& class_names);
 
 } // namespace rastr
 

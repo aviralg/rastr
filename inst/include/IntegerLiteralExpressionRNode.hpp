@@ -8,7 +8,8 @@ namespace ast {
 
 class IntegerLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
-    explicit IntegerLiteralExpressionRNode(int value = 0): LiteralExpressionRNode(), value_(value) {
+    explicit IntegerLiteralExpressionRNode(int value = 0)
+        : LiteralExpressionRNode(), value_(value) {
         set_type(Type::IntegerLiteralExpressionRNode);
     }
 
@@ -20,9 +21,27 @@ class IntegerLiteralExpressionRNode: public LiteralExpressionRNode {
         value_ = value;
     }
 
+    static void initialize();
+
+    static void finalize();
+
+    static SEXP get_class();
+
+    static std::shared_ptr<IntegerLiteralExpressionRNode>
+    from_sexp(SEXP r_node);
+
+    static SEXP to_sexp(std::shared_ptr<IntegerLiteralExpressionRNode> node);
+
+    static void destroy_sexp(SEXP r_node);
+
   private:
     int value_;
+
+    static SEXP class_;
 };
+
+using IntegerLiteralExpressionRNodeSPtr =
+    std::shared_ptr<IntegerLiteralExpressionRNode>;
 
 } // namespace ast
 } // namespace rastr

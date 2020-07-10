@@ -21,9 +21,27 @@ class LogicalLiteralExpressionRNode: public LiteralExpressionRNode {
         value_ = value;
     }
 
+    static void initialize();
+
+    static void finalize();
+
+    static SEXP get_class();
+
+    static std::shared_ptr<LogicalLiteralExpressionRNode>
+    from_sexp(SEXP r_node);
+
+    static SEXP to_sexp(std::shared_ptr<LogicalLiteralExpressionRNode> node);
+
+    static void destroy_sexp(SEXP r_node);
+
   private:
     bool value_;
+
+    static SEXP class_;
 };
+
+using LogicalLiteralExpressionRNodeSPtr =
+    std::shared_ptr<LogicalLiteralExpressionRNode>;
 
 } // namespace ast
 } // namespace rastr
