@@ -7,7 +7,7 @@ SEXP DelimitedRNode::class_ = NULL;
 
 void DelimitedRNode::initialize() {
     class_ = rastr::create_class(
-        {"rastr_r_node_delimited", "rastr_r_node", "rastr_node"});
+        {"rastr_node_r_delimited", "rastr_node_r", "rastr_node"});
     R_PreserveObject(class_);
 }
 

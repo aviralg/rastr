@@ -7,7 +7,7 @@ SEXP KeywordRNode::class_ = NULL;
 
 void KeywordRNode::initialize() {
     class_ = rastr::create_class(
-        {"rastr_r_node_keyword", "rastr_r_node", "rastr_node"});
+        {"rastr_node_r_keyword", "rastr_node_r", "rastr_node"});
     R_PreserveObject(class_);
 }
 

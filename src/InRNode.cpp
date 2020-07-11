@@ -7,7 +7,7 @@ SEXP InRNode::class_ = NULL;
 
 void InRNode::initialize() {
     class_ =
-        rastr::create_class({"rastr_r_node_in", "rastr_r_node", "rastr_node"});
+        rastr::create_class({"rastr_node_r_in", "rastr_node_r", "rastr_node"});
     R_PreserveObject(class_);
 }
 

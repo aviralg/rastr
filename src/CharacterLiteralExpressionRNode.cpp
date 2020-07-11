@@ -6,10 +6,10 @@ namespace ast {
 SEXP CharacterLiteralExpressionRNode::class_ = NULL;
 
 void CharacterLiteralExpressionRNode::initialize() {
-    class_ = rastr::create_class({"rastr_r_node_expression_literal_character",
-                                  "rastr_r_node_expression_literal",
-                                  "rastr_r_node_expression",
-                                  "rastr_r_node",
+    class_ = rastr::create_class({"rastr_node_r_expression_literal_character",
+                                  "rastr_node_r_expression_literal",
+                                  "rastr_node_r_expression",
+                                  "rastr_node_r",
                                   "rastr_node"});
     R_PreserveObject(class_);
 }

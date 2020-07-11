@@ -6,9 +6,9 @@ namespace ast {
 SEXP SymbolExpressionRNode::class_ = NULL;
 
 void SymbolExpressionRNode::initialize() {
-    class_ = rastr::create_class({"rastr_r_node_symbol_expression",
-                                  "rastr_r_node_expression",
-                                  "rastr_r_node",
+    class_ = rastr::create_class({"rastr_node_r_expression_symbol",
+                                  "rastr_node_r_expression",
+                                  "rastr_node_r",
                                   "rastr_node"});
     R_PreserveObject(class_);
 }
