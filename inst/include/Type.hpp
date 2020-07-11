@@ -13,6 +13,13 @@ enum class Type {
     LogicalLiteralExpressionRNode,
     RawLiteralExpressionRNode,
     CharacterLiteralExpressionRNode,
+    DelimiterRNode,
+    DelimitedRNode,
+    SymbolExpressionRNode,
+    KeywordRNode,
+    ForLoopExpressionRNode,
+    WhileLoopExpressionRNode,
+    RepeatLoopExpressionRNode,
     UndefinedNode
 };
 

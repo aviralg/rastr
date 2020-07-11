@@ -19,6 +19,8 @@ class RNode: public virtual Node {
     }
 };
 
+using RNodeSPtr = std::shared_ptr<RNode>;
+
 } // namespace ast
 } // namespace rastr
 

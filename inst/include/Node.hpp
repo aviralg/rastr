@@ -76,6 +76,10 @@ class Node {
         return false;
     }
 
+    virtual bool is_loop_expression_node() const {
+        return false;
+    }
+
     virtual bool is_arithmetic_node() const {
         return false;
     }

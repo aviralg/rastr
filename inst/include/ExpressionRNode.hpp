@@ -19,6 +19,8 @@ class ExpressionRNode: public virtual RNode {
     }
 };
 
+using ExpressionRNodeSPtr = std::shared_ptr<ExpressionRNode>;
+
 } // namespace ast
 } // namespace rastr
 
