@@ -4,31 +4,33 @@
 using rastr::ast::IntegerLiteralExpressionRNode;
 using rastr::ast::IntegerLiteralExpressionRNodeSPtr;
 
-SEXP r_integer_literal_expression_r_node_create(SEXP r_value) {
-    int value = asInteger(r_value);
+SEXP r_integer_literal_expression_r_node_create(SEXP r_representation) {
+    int representation = asInteger(r_representation);
 
     IntegerLiteralExpressionRNodeSPtr node =
-        std::make_shared<IntegerLiteralExpressionRNode>(value);
+        std::make_shared<IntegerLiteralExpressionRNode>(representation);
 
     return IntegerLiteralExpressionRNode::to_sexp(node);
 }
 
-SEXP r_integer_literal_expression_r_node_get_value(SEXP r_node) {
+SEXP r_integer_literal_expression_r_node_get_representation(SEXP r_node) {
     IntegerLiteralExpressionRNodeSPtr node =
         IntegerLiteralExpressionRNode::from_sexp(r_node);
 
-    int value = node->get_value();
+    int representation = node->get_representation();
 
-    return ScalarInteger(value);
+    return ScalarInteger(representation);
 }
 
-SEXP r_integer_literal_expression_r_node_set_value(SEXP r_node, SEXP r_value) {
+SEXP r_integer_literal_expression_r_node_set_representation(
+    SEXP r_node,
+    SEXP r_representation) {
     IntegerLiteralExpressionRNodeSPtr node =
         IntegerLiteralExpressionRNode::from_sexp(r_node);
 
-    int value = asInteger(r_value);
+    int representation = asInteger(r_representation);
 
-    node->set_value(value);
+    node->set_representation(representation);
 
     return r_node;
 }

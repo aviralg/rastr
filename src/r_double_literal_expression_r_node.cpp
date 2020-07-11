@@ -4,31 +4,33 @@
 using rastr::ast::DoubleLiteralExpressionRNode;
 using rastr::ast::DoubleLiteralExpressionRNodeSPtr;
 
-SEXP r_double_literal_expression_r_node_create(SEXP r_value) {
-    double value = asReal(r_value);
+SEXP r_double_literal_expression_r_node_create(SEXP r_representation) {
+    double representation = asReal(r_representation);
 
     DoubleLiteralExpressionRNodeSPtr node =
-        std::make_shared<DoubleLiteralExpressionRNode>(value);
+        std::make_shared<DoubleLiteralExpressionRNode>(representation);
 
     return DoubleLiteralExpressionRNode::to_sexp(node);
 }
 
-SEXP r_double_literal_expression_r_node_get_value(SEXP r_node) {
+SEXP r_double_literal_expression_r_node_get_representation(SEXP r_node) {
     DoubleLiteralExpressionRNodeSPtr node =
         DoubleLiteralExpressionRNode::from_sexp(r_node);
 
-    double value = node->get_value();
+    double representation = node->get_representation();
 
-    return ScalarReal(value);
+    return ScalarReal(representation);
 }
 
-SEXP r_double_literal_expression_r_node_set_value(SEXP r_node, SEXP r_value) {
+SEXP r_double_literal_expression_r_node_set_representation(
+    SEXP r_node,
+    SEXP r_representation) {
     DoubleLiteralExpressionRNodeSPtr node =
         DoubleLiteralExpressionRNode::from_sexp(r_node);
 
-    double value = asReal(r_value);
+    double representation = asReal(r_representation);
 
-    node->set_value(value);
+    node->set_representation(representation);
 
     return r_node;
 }

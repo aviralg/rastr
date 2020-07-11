@@ -57,7 +57,7 @@ cppcheck:
 	             --inline-suppr                                           \
 	             --error-exitcode=1                                       \
 	             --quiet                                                  \
-	             --suppress=missingIncludeSystem                          \
+	             --suppress=missingInclude                                \
 	             --suppress=unusedFunction                                \
 	              -I inst/include/                                        \
 	             $(SOURCES)                                               \

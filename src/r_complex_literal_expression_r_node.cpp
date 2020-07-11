@@ -4,38 +4,40 @@
 using rastr::ast::ComplexLiteralExpressionRNode;
 using rastr::ast::ComplexLiteralExpressionRNodeSPtr;
 
-SEXP r_complex_literal_expression_r_node_create(SEXP r_value) {
-    Rcomplex value = COMPLEX(r_value)[0];
+SEXP r_complex_literal_expression_r_node_create(SEXP r_representation) {
+    Rcomplex representation = COMPLEX(r_representation)[0];
 
     ComplexLiteralExpressionRNodeSPtr node =
-        std::make_shared<ComplexLiteralExpressionRNode>(value);
+        std::make_shared<ComplexLiteralExpressionRNode>(representation);
 
     return ComplexLiteralExpressionRNode::to_sexp(node);
 }
 
-SEXP r_complex_literal_expression_r_node_get_value(SEXP r_node) {
+SEXP r_complex_literal_expression_r_node_get_representation(SEXP r_node) {
     ComplexLiteralExpressionRNodeSPtr node =
         ComplexLiteralExpressionRNode::from_sexp(r_node);
 
-    const Rcomplex& value = node->get_value();
+    const Rcomplex& representation = node->get_representation();
 
-    SEXP r_value = PROTECT(allocVector(CPLXSXP, 1));
+    SEXP r_representation = PROTECT(allocVector(CPLXSXP, 1));
 
-    COMPLEX(r_value)[0].r = value.r;
-    COMPLEX(r_value)[0].i = value.i;
+    COMPLEX(r_representation)[0].r = representation.r;
+    COMPLEX(r_representation)[0].i = representation.i;
 
     UNPROTECT(1);
 
-    return r_value;
+    return r_representation;
 }
 
-SEXP r_complex_literal_expression_r_node_set_value(SEXP r_node, SEXP r_value) {
+SEXP r_complex_literal_expression_r_node_set_representation(
+    SEXP r_node,
+    SEXP r_representation) {
     ComplexLiteralExpressionRNodeSPtr node =
         ComplexLiteralExpressionRNode::from_sexp(r_node);
 
-    Rcomplex value = COMPLEX(r_value)[0];
+    Rcomplex representation = COMPLEX(r_representation)[0];
 
-    node->set_value(value);
+    node->set_representation(representation);
 
     return r_node;
 }

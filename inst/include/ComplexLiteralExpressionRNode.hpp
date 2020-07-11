@@ -8,17 +8,17 @@ namespace ast {
 
 class ComplexLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
-    explicit ComplexLiteralExpressionRNode(const Rcomplex& value)
-        : LiteralExpressionRNode(), value_(value) {
+    explicit ComplexLiteralExpressionRNode(const Rcomplex& representation)
+        : LiteralExpressionRNode(), representation_(representation) {
         set_type(Type::ComplexLiteralExpressionRNode);
     }
 
-    const Rcomplex& get_value() const {
-        return value_;
+    const Rcomplex& get_representation() const {
+        return representation_;
     }
 
-    void set_value(const Rcomplex& value) {
-        value_ = value;
+    void set_representation(const Rcomplex& representation) {
+        representation_ = representation;
     }
 
     static void initialize();
@@ -35,7 +35,7 @@ class ComplexLiteralExpressionRNode: public LiteralExpressionRNode {
     static void destroy_sexp(SEXP r_node);
 
   private:
-    Rcomplex value_;
+    Rcomplex representation_;
 
     static SEXP class_;
 };

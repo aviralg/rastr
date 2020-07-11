@@ -1,7 +1,7 @@
 
 #' @export
-ComplexLiteralExpressionRNode <- function(value) {
-    stopifnot(is_scalar_complex(value))
+ComplexLiteralExpressionRNode <- function(representation) { ## nolint
+    stopifnot(is_scalar_complex(representation))
 
-    .Call(C_complex_literal_expression_r_node_create, value)
+    .Call(C_complex_literal_expression_r_node_create, representation)
 }

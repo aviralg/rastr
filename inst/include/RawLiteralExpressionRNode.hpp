@@ -8,17 +8,17 @@ namespace ast {
 
 class RawLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
-    explicit RawLiteralExpressionRNode(const Rbyte value = 0)
-        : LiteralExpressionRNode(), value_(value) {
+    explicit RawLiteralExpressionRNode(const Rbyte representation = 0)
+        : LiteralExpressionRNode(), representation_(representation) {
         set_type(Type::RawLiteralExpressionRNode);
     }
 
-    const Rbyte get_value() const {
-        return value_;
+    const Rbyte get_representation() const {
+        return representation_;
     }
 
-    void set_value(const Rbyte value) {
-        value_ = value;
+    void set_representation(const Rbyte representation) {
+        representation_ = representation;
     }
 
     static void initialize();
@@ -34,7 +34,7 @@ class RawLiteralExpressionRNode: public LiteralExpressionRNode {
     static void destroy_sexp(SEXP r_node);
 
   private:
-    Rbyte value_;
+    Rbyte representation_;
 
     static SEXP class_;
 };

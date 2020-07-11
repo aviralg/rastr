@@ -8,17 +8,17 @@ namespace ast {
 
 class DoubleLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
-    explicit DoubleLiteralExpressionRNode(double value = 0.0)
-        : LiteralExpressionRNode(), value_(value) {
+    explicit DoubleLiteralExpressionRNode(double representation = 0.0)
+        : LiteralExpressionRNode(), representation_(representation) {
         set_type(Type::DoubleLiteralExpressionRNode);
     }
 
-    double get_value() const {
-        return value_;
+    double get_representation() const {
+        return representation_;
     }
 
-    void set_value(double value) {
-        value_ = value;
+    void set_representation(double representation) {
+        representation_ = representation;
     }
 
     static void initialize();
@@ -34,7 +34,7 @@ class DoubleLiteralExpressionRNode: public LiteralExpressionRNode {
     static void destroy_sexp(SEXP r_node);
 
   private:
-    double value_;
+    double representation_;
 
     static SEXP class_;
 };

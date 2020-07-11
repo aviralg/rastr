@@ -4,32 +4,33 @@
 using rastr::ast::CharacterLiteralExpressionRNode;
 using rastr::ast::CharacterLiteralExpressionRNodeSPtr;
 
-SEXP r_character_literal_expression_r_node_create(SEXP r_value) {
-    const char* value = CHAR(asChar(r_value));
+SEXP r_character_literal_expression_r_node_create(SEXP r_representation) {
+    const char* representation = CHAR(asChar(r_representation));
 
     CharacterLiteralExpressionRNodeSPtr node =
-        std::make_shared<CharacterLiteralExpressionRNode>(value);
+        std::make_shared<CharacterLiteralExpressionRNode>(representation);
 
     return CharacterLiteralExpressionRNode::to_sexp(node);
 }
 
-SEXP r_character_literal_expression_r_node_get_value(SEXP r_node) {
+SEXP r_character_literal_expression_r_node_get_representation(SEXP r_node) {
     CharacterLiteralExpressionRNodeSPtr node =
         CharacterLiteralExpressionRNode::from_sexp(r_node);
 
-    const std::string& value = node->get_value();
+    const std::string& representation = node->get_representation();
 
-    return mkString(value.c_str());
+    return mkString(representation.c_str());
 }
 
-SEXP r_character_literal_expression_r_node_set_value(SEXP r_node,
-                                                     SEXP r_value) {
+SEXP r_character_literal_expression_r_node_set_representation(
+    SEXP r_node,
+    SEXP r_representation) {
     CharacterLiteralExpressionRNodeSPtr node =
         CharacterLiteralExpressionRNode::from_sexp(r_node);
 
-    const char* value = CHAR(asChar(r_value));
+    const char* representation = CHAR(asChar(r_representation));
 
-    node->set_value(value);
+    node->set_representation(representation);
 
     return r_node;
 }

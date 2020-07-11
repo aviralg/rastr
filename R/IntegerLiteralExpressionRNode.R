@@ -1,7 +1,7 @@
 
 #' @export
-IntegerLiteralExpressionRNode <- function(value) {
-    stopifnot(is_scalar_integer(value))
+IntegerLiteralExpressionRNode <- function(representation) { ## nolint
+    stopifnot(is_scalar_integer(representation))
 
-    .Call(C_integer_literal_expression_r_node_create, value)
+    .Call(C_integer_literal_expression_r_node_create, representation)
 }

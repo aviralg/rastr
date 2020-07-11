@@ -8,17 +8,18 @@ namespace ast {
 
 class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
-    explicit CharacterLiteralExpressionRNode(const std::string& value = "")
-        : LiteralExpressionRNode(), value_(value) {
+    explicit CharacterLiteralExpressionRNode(
+        const std::string& representation = "")
+        : LiteralExpressionRNode(), representation_(representation) {
         set_type(Type::CharacterLiteralExpressionRNode);
     }
 
-    const std::string& get_value() const {
-        return value_;
+    const std::string& get_representation() const {
+        return representation_;
     }
 
-    void set_value(const std::string& value) {
-        value_ = value;
+    void set_representation(const std::string& representation) {
+        representation_ = representation;
     }
 
     static void initialize();
@@ -35,7 +36,7 @@ class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
     static void destroy_sexp(SEXP r_node);
 
   private:
-    std::string value_;
+    std::string representation_;
 
     static SEXP class_;
 };

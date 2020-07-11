@@ -4,31 +4,33 @@
 using rastr::ast::LogicalLiteralExpressionRNode;
 using rastr::ast::LogicalLiteralExpressionRNodeSPtr;
 
-SEXP r_logical_literal_expression_r_node_create(SEXP r_value) {
-    bool value = asLogical(r_value);
+SEXP r_logical_literal_expression_r_node_create(SEXP r_representation) {
+    bool representation = asLogical(r_representation);
 
     LogicalLiteralExpressionRNodeSPtr node =
-        std::make_shared<LogicalLiteralExpressionRNode>(value);
+        std::make_shared<LogicalLiteralExpressionRNode>(representation);
 
     return LogicalLiteralExpressionRNode::to_sexp(node);
 }
 
-SEXP r_logical_literal_expression_r_node_get_value(SEXP r_node) {
+SEXP r_logical_literal_expression_r_node_get_representation(SEXP r_node) {
     LogicalLiteralExpressionRNodeSPtr node =
         LogicalLiteralExpressionRNode::from_sexp(r_node);
 
-    bool value = node->get_value();
+    bool representation = node->get_representation();
 
-    return ScalarLogical(value);
+    return ScalarLogical(representation);
 }
 
-SEXP r_logical_literal_expression_r_node_set_value(SEXP r_node, SEXP r_value) {
+SEXP r_logical_literal_expression_r_node_set_representation(
+    SEXP r_node,
+    SEXP r_representation) {
     LogicalLiteralExpressionRNodeSPtr node =
         LogicalLiteralExpressionRNode::from_sexp(r_node);
 
-    bool value = asLogical(r_value);
+    bool representation = asLogical(r_representation);
 
-    node->set_value(value);
+    node->set_representation(representation);
 
     return r_node;
 }
