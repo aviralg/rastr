@@ -1,6 +1,8 @@
 #include "r_complex_literal_expression_r_node.h"
 #include "ComplexLiteralExpressionRNode.hpp"
 
+using rastr::from_sexp;
+using rastr::to_sexp;
 using rastr::ast::ComplexLiteralExpressionRNode;
 using rastr::ast::ComplexLiteralExpressionRNodeSPtr;
 
@@ -10,12 +12,12 @@ SEXP r_complex_literal_expression_r_node_create(SEXP r_representation) {
     ComplexLiteralExpressionRNodeSPtr node =
         std::make_shared<ComplexLiteralExpressionRNode>(representation);
 
-    return ComplexLiteralExpressionRNode::to_sexp(node);
+    return to_sexp<ComplexLiteralExpressionRNode>(node);
 }
 
 SEXP r_complex_literal_expression_r_node_get_representation(SEXP r_node) {
     ComplexLiteralExpressionRNodeSPtr node =
-        ComplexLiteralExpressionRNode::from_sexp(r_node);
+        from_sexp<ComplexLiteralExpressionRNode>(r_node);
 
     const Rcomplex& representation = node->get_representation();
 
@@ -33,7 +35,7 @@ SEXP r_complex_literal_expression_r_node_set_representation(
     SEXP r_node,
     SEXP r_representation) {
     ComplexLiteralExpressionRNodeSPtr node =
-        ComplexLiteralExpressionRNode::from_sexp(r_node);
+        from_sexp<ComplexLiteralExpressionRNode>(r_node);
 
     Rcomplex representation = COMPLEX(r_representation)[0];
 

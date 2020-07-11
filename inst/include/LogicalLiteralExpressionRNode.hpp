@@ -27,13 +27,6 @@ class LogicalLiteralExpressionRNode: public LiteralExpressionRNode {
 
     static SEXP get_class();
 
-    static std::shared_ptr<LogicalLiteralExpressionRNode>
-    from_sexp(SEXP r_node);
-
-    static SEXP to_sexp(std::shared_ptr<LogicalLiteralExpressionRNode> node);
-
-    static void destroy_sexp(SEXP r_node);
-
   private:
     bool representation_;
 

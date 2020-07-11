@@ -27,12 +27,6 @@ class SymbolExpressionRNode: public ExpressionRNode {
 
     static SEXP get_class();
 
-    static std::shared_ptr<SymbolExpressionRNode> from_sexp(SEXP r_node);
-
-    static SEXP to_sexp(std::shared_ptr<SymbolExpressionRNode> node);
-
-    static void destroy_sexp(SEXP r_node);
-
   private:
     std::string representation_;
 

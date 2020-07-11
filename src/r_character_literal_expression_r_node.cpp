@@ -1,6 +1,8 @@
 #include "r_character_literal_expression_r_node.h"
 #include "CharacterLiteralExpressionRNode.hpp"
 
+using rastr::from_sexp;
+using rastr::to_sexp;
 using rastr::ast::CharacterLiteralExpressionRNode;
 using rastr::ast::CharacterLiteralExpressionRNodeSPtr;
 
@@ -10,12 +12,12 @@ SEXP r_character_literal_expression_r_node_create(SEXP r_representation) {
     CharacterLiteralExpressionRNodeSPtr node =
         std::make_shared<CharacterLiteralExpressionRNode>(representation);
 
-    return CharacterLiteralExpressionRNode::to_sexp(node);
+    return to_sexp<CharacterLiteralExpressionRNode>(node);
 }
 
 SEXP r_character_literal_expression_r_node_get_representation(SEXP r_node) {
     CharacterLiteralExpressionRNodeSPtr node =
-        CharacterLiteralExpressionRNode::from_sexp(r_node);
+        from_sexp<CharacterLiteralExpressionRNode>(r_node);
 
     const std::string& representation = node->get_representation();
 
@@ -26,7 +28,7 @@ SEXP r_character_literal_expression_r_node_set_representation(
     SEXP r_node,
     SEXP r_representation) {
     CharacterLiteralExpressionRNodeSPtr node =
-        CharacterLiteralExpressionRNode::from_sexp(r_node);
+        from_sexp<CharacterLiteralExpressionRNode>(r_node);
 
     const char* representation = CHAR(asChar(r_representation));
 

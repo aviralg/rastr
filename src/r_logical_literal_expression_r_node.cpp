@@ -1,6 +1,8 @@
 #include "r_logical_literal_expression_r_node.h"
 #include "LogicalLiteralExpressionRNode.hpp"
 
+using rastr::from_sexp;
+using rastr::to_sexp;
 using rastr::ast::LogicalLiteralExpressionRNode;
 using rastr::ast::LogicalLiteralExpressionRNodeSPtr;
 
@@ -10,12 +12,12 @@ SEXP r_logical_literal_expression_r_node_create(SEXP r_representation) {
     LogicalLiteralExpressionRNodeSPtr node =
         std::make_shared<LogicalLiteralExpressionRNode>(representation);
 
-    return LogicalLiteralExpressionRNode::to_sexp(node);
+    return to_sexp<LogicalLiteralExpressionRNode>(node);
 }
 
 SEXP r_logical_literal_expression_r_node_get_representation(SEXP r_node) {
     LogicalLiteralExpressionRNodeSPtr node =
-        LogicalLiteralExpressionRNode::from_sexp(r_node);
+        from_sexp<LogicalLiteralExpressionRNode>(r_node);
 
     bool representation = node->get_representation();
 
@@ -26,7 +28,7 @@ SEXP r_logical_literal_expression_r_node_set_representation(
     SEXP r_node,
     SEXP r_representation) {
     LogicalLiteralExpressionRNodeSPtr node =
-        LogicalLiteralExpressionRNode::from_sexp(r_node);
+        from_sexp<LogicalLiteralExpressionRNode>(r_node);
 
     bool representation = asLogical(r_representation);
 

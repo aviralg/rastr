@@ -28,13 +28,6 @@ class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
 
     static SEXP get_class();
 
-    static std::shared_ptr<CharacterLiteralExpressionRNode>
-    from_sexp(SEXP r_node);
-
-    static SEXP to_sexp(std::shared_ptr<CharacterLiteralExpressionRNode> node);
-
-    static void destroy_sexp(SEXP r_node);
-
   private:
     std::string representation_;
 

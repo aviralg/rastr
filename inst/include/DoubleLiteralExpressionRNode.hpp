@@ -27,12 +27,6 @@ class DoubleLiteralExpressionRNode: public LiteralExpressionRNode {
 
     static SEXP get_class();
 
-    static std::shared_ptr<DoubleLiteralExpressionRNode> from_sexp(SEXP r_node);
-
-    static SEXP to_sexp(std::shared_ptr<DoubleLiteralExpressionRNode> node);
-
-    static void destroy_sexp(SEXP r_node);
-
   private:
     double representation_;
 

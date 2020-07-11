@@ -48,12 +48,6 @@ class DelimitedRNode: public RNode {
 
     static SEXP get_class();
 
-    static std::shared_ptr<DelimitedRNode> from_sexp(SEXP r_node);
-
-    static SEXP to_sexp(std::shared_ptr<DelimitedRNode> node);
-
-    static void destroy_sexp(SEXP r_node);
-
   private:
     DelimiterRNodeSPtr opening_delimiter_;
     RNodeSPtr node_;

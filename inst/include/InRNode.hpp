@@ -47,12 +47,6 @@ class InRNode: public RNode {
 
     static SEXP get_class();
 
-    static std::shared_ptr<InRNode> from_sexp(SEXP r_node);
-
-    static SEXP to_sexp(std::shared_ptr<InRNode> node);
-
-    static void destroy_sexp(SEXP r_node);
-
   private:
     SymbolExpressionRNodeSPtr symbol_;
     KeywordRNodeSPtr keyword_;
