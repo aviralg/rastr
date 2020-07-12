@@ -6,6 +6,21 @@
 #include "ComplexLiteralExpressionRNode.hpp"
 #include "LogicalLiteralExpressionRNode.hpp"
 #include "RawLiteralExpressionRNode.hpp"
+#include "ConditionRNode.hpp"
+#include "DelimitedRNode.hpp"
+#include "DelimiterRNode.hpp"
+#include "ForLoopExpressionRNode.hpp"
+#include "FunctionCallExpressionRNode.hpp"
+#include "FunctionDefinitionExpressionRNode.hpp"
+#include "IfConditionalExpressionRNode.hpp"
+#include "IfElseConditionalExpressionRNode.hpp"
+#include "InRNode.hpp"
+#include "KeywordRNode.hpp"
+#include "ParameterSequenceRNode.hpp"
+#include "RepeatLoopExpressionRNode.hpp"
+#include "SeparatorRNode.hpp"
+#include "SymbolExpressionRNode.hpp"
+#include "WhileLoopExpressionRNode.hpp"
 
 namespace rastr {
 
@@ -45,6 +60,22 @@ void initialize() {
     ast::ComplexLiteralExpressionRNode::initialize();
     ast::LogicalLiteralExpressionRNode::initialize();
     ast::RawLiteralExpressionRNode::initialize();
+    ast::ArgumentSequenceRNode::initialize();
+    ast::ConditionRNode::initialize();
+    ast::DelimitedRNode::initialize();
+    ast::DelimiterRNode::initialize();
+    ast::ForLoopExpressionRNode::initialize();
+    ast::FunctionCallExpressionRNode::initialize();
+    ast::FunctionDefinitionExpressionRNode::initialize();
+    ast::IfConditionalExpressionRNode::initialize();
+    ast::IfElseConditionalExpressionRNode::initialize();
+    ast::InRNode::initialize();
+    ast::KeywordRNode::initialize();
+    ast::ParameterSequenceRNode::initialize();
+    ast::RepeatLoopExpressionRNode::initialize();
+    ast::SeparatorRNode::initialize();
+    ast::SymbolExpressionRNode::initialize();
+    ast::WhileLoopExpressionRNode::initialize();
 }
 
 } // namespace rastr
