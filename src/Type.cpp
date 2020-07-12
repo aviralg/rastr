@@ -25,12 +25,26 @@ const std::string type_to_string(const Type type) {
         return "SymbolExpressionRNode";
     case Type::KeywordRNode:
         return "KeywordRNode";
+    case Type::SeparatorRNode:
+        return "SeparatorRNode";
     case Type::ForLoopExpressionRNode:
         return "ForLoopExpressionRNode";
     case Type::WhileLoopExpressionRNode:
         return "WhileLoopExpressionRNode";
     case Type::RepeatLoopExpressionRNode:
         return "RepeatLoopExpressionRNode";
+    case Type::ParameterSequenceRNode:
+        return "ParameterSequenceRNode";
+    case Type::ArgumentSequenceRNode:
+        return "ArgumentSequenceRNode";
+    case Type::FunctionDefinitionExpressionRNode:
+        return "FunctionDefinitionExpressionRNode";
+    case Type::FunctionCallExpressionRNode:
+        return "FunctionCallExpressionRNode";
+    case Type::IfConditionalExpressionRNode:
+        return "IfConditionalExpressionRNode";
+    case Type::IfElseConditionalExpressionRNode:
+        return "IfElseConditionalExpressionRNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -58,12 +72,26 @@ Type string_to_type(const std::string& type) {
         return Type::SymbolExpressionRNode;
     } else if (type == "KeywordRNode") {
         return Type::KeywordRNode;
+    } else if (type == "SeparatorRNode") {
+        return Type::SeparatorRNode;
     } else if (type == "ForLoopExpressionRNode") {
         return Type::ForLoopExpressionRNode;
     } else if (type == "WhileLoopExpressionRNode") {
         return Type::WhileLoopExpressionRNode;
     } else if (type == "RepeatLoopExpressionRNode") {
         return Type::RepeatLoopExpressionRNode;
+    } else if (type == "ParameterSequenceRNode") {
+        return Type::ParameterSequenceRNode;
+    } else if (type == "ArgumentSequenceRNode") {
+        return Type::ArgumentSequenceRNode;
+    } else if (type == "FunctionDefinitionExpressionRNode") {
+        return Type::FunctionDefinitionExpressionRNode;
+    } else if (type == "FunctionCallExpressionRNode") {
+        return Type::FunctionCallExpressionRNode;
+    } else if (type == "IfConditionalExpressionRNode") {
+        return Type::IfConditionalExpressionRNode;
+    } else if (type == "IfElseConditionalExpressionRNode") {
+        return Type::IfElseConditionalExpressionRNode;
     } else {
         return Type::UndefinedNode;
     }

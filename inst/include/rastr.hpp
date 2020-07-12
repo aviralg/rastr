@@ -46,6 +46,8 @@ SEXP to_sexp(std::shared_ptr<T> node) {
     return r_node;
 }
 
+void initialize();
+
 } // namespace rastr
 
 #endif /* RASTR_RASTR_HPP */

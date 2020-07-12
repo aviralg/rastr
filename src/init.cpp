@@ -1,3 +1,4 @@
+#include "r_rastr.h"
 #include "r_character_literal_expression_r_node.h"
 #include "r_complex_literal_expression_r_node.h"
 #include "r_double_literal_expression_r_node.h"
@@ -47,5 +48,6 @@ static const R_CallMethodDef CallEntries[] = {
 void R_init_rastr(DllInfo* dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
+    r_rastr_initialize();
 }
 }

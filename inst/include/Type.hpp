@@ -17,9 +17,16 @@ enum class Type {
     DelimitedRNode,
     SymbolExpressionRNode,
     KeywordRNode,
+    SeparatorRNode,
     ForLoopExpressionRNode,
     WhileLoopExpressionRNode,
     RepeatLoopExpressionRNode,
+    ParameterSequenceRNode,
+    ArgumentSequenceRNode,
+    FunctionDefinitionExpressionRNode,
+    FunctionCallExpressionRNode,
+    IfConditionalExpressionRNode,
+    IfElseConditionalExpressionRNode,
     UndefinedNode
 };
 

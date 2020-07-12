@@ -3,7 +3,7 @@
 
 #include "LoopExpressionRNode.hpp"
 #include "KeywordRNode.hpp"
-#include "DelimitedRNode.hpp"
+#include "ConditionRNode.hpp"
 #include "ExpressionRNode.hpp"
 
 namespace rastr {
@@ -12,17 +12,17 @@ namespace ast {
 class WhileLoopExpressionRNode: public virtual LoopExpressionRNode {
   public:
     explicit WhileLoopExpressionRNode(KeywordRNodeSPtr keyword,
-                                      DelimitedRNodeSPtr condition,
+                                      ConditionRNodeSPtr condition,
                                       ExpressionRNodeSPtr body)
         : LoopExpressionRNode(keyword, body) {
         set_type(Type::WhileLoopExpressionRNode);
     }
 
-    DelimitedRNodeSPtr get_condition() const {
+    ConditionRNodeSPtr get_condition() const {
         return condition_;
     }
 
-    void set_condition(DelimitedRNodeSPtr condition) {
+    void set_condition(ConditionRNodeSPtr condition) {
         condition_ = condition;
     }
 
@@ -33,7 +33,7 @@ class WhileLoopExpressionRNode: public virtual LoopExpressionRNode {
     static SEXP get_class();
 
   private:
-    DelimitedRNodeSPtr condition_;
+    ConditionRNodeSPtr condition_;
 
     static SEXP class_;
 };
