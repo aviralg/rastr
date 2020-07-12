@@ -7,7 +7,7 @@
 namespace rastr {
 namespace ast {
 
-class LoopExpressionRNode: public virtual ExpressionRNode {
+class LoopExpressionRNode: public ExpressionRNode {
   public:
     LoopExpressionRNode(KeywordRNodeSPtr keyword, ExpressionRNodeSPtr body)
         : ExpressionRNode(), keyword_(keyword), body_(body) {

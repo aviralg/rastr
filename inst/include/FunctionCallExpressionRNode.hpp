@@ -8,7 +8,7 @@
 namespace rastr {
 namespace ast {
 
-class FunctionCallExpressionRNode: public virtual ExpressionRNode {
+class FunctionCallExpressionRNode: public ExpressionRNode {
   public:
     explicit FunctionCallExpressionRNode(ArgumentSequenceRNodeSPtr arguments,
                                          ExpressionRNodeSPtr function)

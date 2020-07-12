@@ -10,7 +10,7 @@ namespace rastr {
 namespace ast {
 
 class IfElseConditionalExpressionRNode
-    : public virtual ConditionalExpressionRNode {
+    : public ConditionalExpressionRNode {
   public:
     explicit IfElseConditionalExpressionRNode(
         KeywordRNodeSPtr if_keyword,

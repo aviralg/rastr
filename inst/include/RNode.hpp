@@ -6,7 +6,7 @@
 namespace rastr {
 namespace ast {
 
-class RNode: public virtual Node {
+class RNode: public Node {
   public:
     RNode(): Node() {
     }

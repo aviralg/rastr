@@ -6,7 +6,7 @@
 namespace rastr {
 namespace ast {
 
-class ParameterSequenceRNode: public virtual ExpressionSequenceRNode {
+class ParameterSequenceRNode: public ExpressionSequenceRNode {
   public:
     explicit ParameterSequenceRNode(DelimiterRNodeSPtr opening_delimiter,
                                     DelimiterRNodeSPtr closing_delimiter)

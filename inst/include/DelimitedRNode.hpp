@@ -7,7 +7,7 @@
 namespace rastr {
 namespace ast {
 
-class DelimitedRNode: public virtual RNode {
+class DelimitedRNode: public RNode {
   public:
     explicit DelimitedRNode(DelimiterRNodeSPtr opening_delimiter,
                             DelimiterRNodeSPtr closing_delimiter)

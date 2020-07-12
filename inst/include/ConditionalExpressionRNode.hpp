@@ -7,7 +7,7 @@
 namespace rastr {
 namespace ast {
 
-class ConditionalExpressionRNode: public virtual ExpressionRNode {
+class ConditionalExpressionRNode: public ExpressionRNode {
   public:
     explicit ConditionalExpressionRNode(ConditionRNodeSPtr condition)
         : ExpressionRNode(), condition_(condition) {

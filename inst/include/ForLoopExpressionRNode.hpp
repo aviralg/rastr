@@ -9,7 +9,7 @@
 namespace rastr {
 namespace ast {
 
-class ForLoopExpressionRNode: public virtual LoopExpressionRNode {
+class ForLoopExpressionRNode: public LoopExpressionRNode {
   public:
     explicit ForLoopExpressionRNode(KeywordRNodeSPtr keyword,
                                     ConditionRNodeSPtr condition,
