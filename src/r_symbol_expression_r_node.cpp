@@ -1,8 +1,7 @@
 #include "r_symbol_expression_r_node.h"
 #include "SymbolExpressionRNode.hpp"
+#include "r_cast.hpp"
 
-using rastr::from_sexp;
-using rastr::to_sexp;
 using rastr::ast::SymbolExpressionRNode;
 using rastr::ast::SymbolExpressionRNodeSPtr;
 

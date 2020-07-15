@@ -1,8 +1,7 @@
 #include "r_double_literal_expression_r_node.h"
 #include "DoubleLiteralExpressionRNode.hpp"
+#include "r_cast.hpp"
 
-using rastr::from_sexp;
-using rastr::to_sexp;
 using rastr::ast::DoubleLiteralExpressionRNode;
 using rastr::ast::DoubleLiteralExpressionRNodeSPtr;
 

@@ -1,8 +1,7 @@
 #include "r_integer_literal_expression_r_node.h"
 #include "IntegerLiteralExpressionRNode.hpp"
+#include "r_cast.hpp"
 
-using rastr::from_sexp;
-using rastr::to_sexp;
 using rastr::ast::IntegerLiteralExpressionRNode;
 using rastr::ast::IntegerLiteralExpressionRNodeSPtr;
 

@@ -1,8 +1,7 @@
 #include "r_keyword_r_node.h"
 #include "KeywordRNode.hpp"
+#include "r_cast.hpp"
 
-using rastr::from_sexp;
-using rastr::to_sexp;
 using rastr::ast::KeywordRNode;
 using rastr::ast::KeywordRNodeSPtr;
 

@@ -8,6 +8,7 @@
 #include "r_operator_r_node.h"
 #include "r_keyword_r_node.h"
 #include "r_symbol_expression_r_node.h"
+#include "r_function_definition_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -56,6 +57,14 @@ static const R_CallMethodDef CallEntries[] = {
     /* SymbolExpressionRNode */
     {"symbol_expression_r_node_create", (DL_FUNC) &r_symbol_expression_r_node_create, 1},
     {"symbol_expression_r_node_get_representation", (DL_FUNC) &r_symbol_expression_r_node_get_representation, 1},
+
+    {"function_definition_expression_r_node_create", (DL_FUNC) &r_function_definition_expression_r_node_create, 3},
+    {"function_definition_expression_r_node_get_keyword", (DL_FUNC) &r_function_definition_expression_r_node_get_keyword, 1},
+    {"function_definition_expression_r_node_set_keyword", (DL_FUNC) &r_function_definition_expression_r_node_set_keyword, 2},
+    {"function_definition_expression_r_node_get_body", (DL_FUNC) &r_function_definition_expression_r_node_get_body, 1},
+    {"function_definition_expression_r_node_set_body", (DL_FUNC) &r_function_definition_expression_r_node_set_body, 2},
+    {"function_definition_expression_r_node_get_parameters", (DL_FUNC) &r_function_definition_expression_r_node_get_parameters, 1},
+    {"function_definition_expression_r_node_set_parameters", (DL_FUNC) &r_function_definition_expression_r_node_set_parameters, 2},
 
     {NULL, NULL, 0}
 };

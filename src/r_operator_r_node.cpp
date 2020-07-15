@@ -1,8 +1,7 @@
 #include "r_operator_r_node.h"
 #include "OperatorRNode.hpp"
+#include "r_cast.hpp"
 
-using rastr::from_sexp;
-using rastr::to_sexp;
 using rastr::ast::OperatorRNode;
 using rastr::ast::OperatorRNodeSPtr;
 

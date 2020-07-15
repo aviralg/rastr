@@ -1,8 +1,7 @@
 #include "r_logical_literal_expression_r_node.h"
 #include "LogicalLiteralExpressionRNode.hpp"
+#include "r_cast.hpp"
 
-using rastr::from_sexp;
-using rastr::to_sexp;
 using rastr::ast::LogicalLiteralExpressionRNode;
 using rastr::ast::LogicalLiteralExpressionRNodeSPtr;
 

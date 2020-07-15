@@ -44,6 +44,8 @@ class BinaryExpressionRNode: public ExpressionRNode {
     static SEXP class_;
 };
 
+using BinaryExpressionRNodeSPtr = std::shared_ptr<BinaryExpressionRNode>;
+
 } // namespace ast
 } // namespace rastr
 
