@@ -21,6 +21,7 @@
 #include "SeparatorRNode.hpp"
 #include "SymbolExpressionRNode.hpp"
 #include "WhileLoopExpressionRNode.hpp"
+#include "BinaryExpressionRNode.hpp"
 
 namespace rastr {
 
@@ -76,6 +77,7 @@ void initialize() {
     ast::SeparatorRNode::initialize();
     ast::SymbolExpressionRNode::initialize();
     ast::WhileLoopExpressionRNode::initialize();
+    ast::BinaryExpressionRNode::initialize();
 }
 
 } // namespace rastr

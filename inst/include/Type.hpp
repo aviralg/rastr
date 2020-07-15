@@ -27,6 +27,8 @@ enum class Type {
     FunctionCallExpressionRNode,
     IfConditionalExpressionRNode,
     IfElseConditionalExpressionRNode,
+    OperatorRNode,
+    BinaryExpressionRNode,
     UndefinedNode
 };
 
