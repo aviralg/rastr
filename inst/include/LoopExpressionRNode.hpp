@@ -41,6 +41,8 @@ class LoopExpressionRNode: public ExpressionRNode {
     ExpressionRNodeSPtr body_;
 };
 
+using LoopExpressionRNodeSPtr = std::shared_ptr<LoopExpressionRNode>;
+
 } // namespace ast
 } // namespace rastr
 
