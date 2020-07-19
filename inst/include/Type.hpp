@@ -33,6 +33,7 @@ enum class Type {
     IndexSequenceRNode,
     IndexingExpressionRNode,
     MissingExpressionRNode,
+    GroupExpressionRNode,
     UndefinedNode
 };
 
