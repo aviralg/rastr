@@ -31,6 +31,7 @@ enum class Type {
     UnaryExpressionRNode,
     InRNode,
     IndexSequenceRNode,
+    IndexingExpressionRNode,
     UndefinedNode
 };
 
