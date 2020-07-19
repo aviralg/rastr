@@ -32,6 +32,7 @@ enum class Type {
     InRNode,
     IndexSequenceRNode,
     IndexingExpressionRNode,
+    BlockExpressionRNode,
     MissingExpressionRNode,
     GroupExpressionRNode,
     UndefinedNode

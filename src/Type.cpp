@@ -55,6 +55,8 @@ const std::string type_to_string(const Type type) {
         return "IndexSequenceRNode";
     case Type::IndexingExpressionRNode:
         return "IndexingExpressionRNode";
+    case Type::BlockExpressionRNode:
+        return "BlockExpressionRNode";
     case Type::MissingExpressionRNode:
         return "MissingExpressionRNode";
     case Type::GroupExpressionRNode:
@@ -63,7 +65,7 @@ const std::string type_to_string(const Type type) {
         return "UndefinedNode";
     }
     return "UndefinedNode";
-}
+} // namespace ast
 
 Type string_to_type(const std::string& type) {
     if (type == "DoubleLiteralExpressionRNode") {
@@ -116,6 +118,8 @@ Type string_to_type(const std::string& type) {
         return Type::IndexingExpressionRNode;
     } else if (type == "InRNode") {
         return Type::InRNode;
+    } else if (type == "BlockExpressionRNode") {
+        return Type::BlockExpressionRNode;
     } else if (type == "MissingExpressionRNode") {
         return Type::MissingExpressionRNode;
     } else if (type == "GroupExpressionRNode") {
