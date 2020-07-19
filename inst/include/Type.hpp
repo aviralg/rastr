@@ -17,7 +17,6 @@ enum class Type {
     DelimitedRNode,
     SymbolExpressionRNode,
     KeywordRNode,
-    SeparatorRNode,
     ForLoopExpressionRNode,
     WhileLoopExpressionRNode,
     RepeatLoopExpressionRNode,

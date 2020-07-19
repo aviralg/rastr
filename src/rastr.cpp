@@ -18,7 +18,6 @@
 #include "KeywordRNode.hpp"
 #include "ParameterSequenceRNode.hpp"
 #include "RepeatLoopExpressionRNode.hpp"
-#include "SeparatorRNode.hpp"
 #include "SymbolExpressionRNode.hpp"
 #include "WhileLoopExpressionRNode.hpp"
 #include "BinaryExpressionRNode.hpp"
@@ -74,7 +73,6 @@ void initialize() {
     ast::KeywordRNode::initialize();
     ast::ParameterSequenceRNode::initialize();
     ast::RepeatLoopExpressionRNode::initialize();
-    ast::SeparatorRNode::initialize();
     ast::SymbolExpressionRNode::initialize();
     ast::WhileLoopExpressionRNode::initialize();
     ast::BinaryExpressionRNode::initialize();

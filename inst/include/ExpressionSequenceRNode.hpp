@@ -3,7 +3,7 @@
 
 #include "BoundedRNode.hpp"
 #include "ExpressionRNode.hpp"
-#include "SeparatorRNode.hpp"
+#include "DelimiterRNode.hpp"
 
 namespace rastr {
 namespace ast {
@@ -19,20 +19,20 @@ class ExpressionSequenceRNode: public BoundedRNode {
         return expressions_[index];
     }
 
-    SeparatorRNodeSPtr get_separator(int index) const {
-        return separators_[index];
+    DelimiterRNodeSPtr get_delimiter(int index) const {
+        return delimiters_[index];
     }
 
     void set_expression(int index, ExpressionRNodeSPtr expression) {
         expressions_[index] = expression;
     }
 
-    void set_separator(int index, SeparatorRNodeSPtr separator) {
-        separators_[index] = separator;
+    void set_delimiter(int index, DelimiterRNodeSPtr delimiter) {
+        delimiters_[index] = delimiter;
     }
 
-    void append(SeparatorRNodeSPtr separator, ExpressionRNodeSPtr expression) {
-        separators_.push_back(separator);
+    void append(DelimiterRNodeSPtr delimiter, ExpressionRNodeSPtr expression) {
+        delimiters_.push_back(delimiter);
         expressions_.push_back(expression);
     }
 
@@ -42,7 +42,7 @@ class ExpressionSequenceRNode: public BoundedRNode {
 
   private:
     std::vector<ExpressionRNodeSPtr> expressions_;
-    std::vector<SeparatorRNodeSPtr> separators_;
+    std::vector<DelimiterRNodeSPtr> delimiters_;
 }; // namespace ast
 
 using ExpressionSequenceRNodeSPtr = std::shared_ptr<ExpressionSequenceRNode>;

@@ -25,8 +25,6 @@ const std::string type_to_string(const Type type) {
         return "SymbolExpressionRNode";
     case Type::KeywordRNode:
         return "KeywordRNode";
-    case Type::SeparatorRNode:
-        return "SeparatorRNode";
     case Type::ForLoopExpressionRNode:
         return "ForLoopExpressionRNode";
     case Type::WhileLoopExpressionRNode:
@@ -78,8 +76,6 @@ Type string_to_type(const std::string& type) {
         return Type::SymbolExpressionRNode;
     } else if (type == "KeywordRNode") {
         return Type::KeywordRNode;
-    } else if (type == "SeparatorRNode") {
-        return Type::SeparatorRNode;
     } else if (type == "ForLoopExpressionRNode") {
         return Type::ForLoopExpressionRNode;
     } else if (type == "WhileLoopExpressionRNode") {
