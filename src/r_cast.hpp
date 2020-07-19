@@ -171,7 +171,7 @@ to_sexp<rastr::ast::RNode>(std::shared_ptr<rastr::ast::RNode> node) {
         return to_sexp(downcasted_node);
     } else if (node->is_expression_node()) {
         ExpressionRNodeSPtr downcasted_node =
-            std::static_pointer_cast<ExpressionRNode>(node);
+            std::dynamic_pointer_cast<ExpressionRNode>(node);
         return to_sexp<ExpressionRNode>(downcasted_node);
     }
 
