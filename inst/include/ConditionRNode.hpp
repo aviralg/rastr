@@ -1,17 +1,17 @@
 #ifndef RASTR_AST_CONDITION_RNODE_HPP
 #define RASTR_AST_CONDITION_RNODE_HPP
 
-#include "DelimitedRNode.hpp"
+#include "BoundedRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ConditionRNode: public DelimitedRNode {
+class ConditionRNode: public BoundedRNode {
   public:
     explicit ConditionRNode(DelimiterRNodeSPtr opening_delimiter,
                             RNodeSPtr condition,
                             DelimiterRNodeSPtr closing_delimiter)
-        : DelimitedRNode(opening_delimiter, closing_delimiter)
+        : BoundedRNode(opening_delimiter, closing_delimiter)
         , condition_(condition) {
     }
 

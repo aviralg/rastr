@@ -1,18 +1,18 @@
 #ifndef RASTR_AST_EXPRESSION_SEQUENCE_RNODE_HPP
 #define RASTR_AST_EXPRESSION_SEQUENCE_RNODE_HPP
 
-#include "DelimitedRNode.hpp"
+#include "BoundedRNode.hpp"
 #include "ExpressionRNode.hpp"
 #include "SeparatorRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ExpressionSequenceRNode: public DelimitedRNode {
+class ExpressionSequenceRNode: public BoundedRNode {
   public:
     explicit ExpressionSequenceRNode(DelimiterRNodeSPtr opening_delimiter,
                                      DelimiterRNodeSPtr closing_delimiter)
-        : DelimitedRNode(opening_delimiter, closing_delimiter) {
+        : BoundedRNode(opening_delimiter, closing_delimiter) {
     }
 
     ExpressionRNodeSPtr get_expression(int index) const {
