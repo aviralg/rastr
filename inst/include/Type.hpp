@@ -30,6 +30,7 @@ enum class Type {
     BinaryExpressionRNode,
     UnaryExpressionRNode,
     InRNode,
+    IndexSequenceRNode,
     UndefinedNode
 };
 
