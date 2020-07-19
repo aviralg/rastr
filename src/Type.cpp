@@ -55,6 +55,8 @@ const std::string type_to_string(const Type type) {
         return "IndexSequenceRNode";
     case Type::IndexingExpressionRNode:
         return "IndexingExpressionRNode";
+    case Type::MissingExpressionRNode:
+        return "MissingExpressionRNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -112,6 +114,8 @@ Type string_to_type(const std::string& type) {
         return Type::IndexingExpressionRNode;
     } else if (type == "InRNode") {
         return Type::InRNode;
+    } else if (type == "MissingExpressionRNode") {
+        return Type::MissingExpressionRNode;
     } else {
         return Type::UndefinedNode;
     }
