@@ -28,6 +28,7 @@ enum class Type {
     IfElseConditionalExpressionRNode,
     OperatorRNode,
     BinaryExpressionRNode,
+    UnaryExpressionRNode,
     InRNode,
     UndefinedNode
 };

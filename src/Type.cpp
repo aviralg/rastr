@@ -47,6 +47,8 @@ const std::string type_to_string(const Type type) {
         return "OperatorRNode";
     case Type::BinaryExpressionRNode:
         return "BinaryExpressionRNode";
+    case Type::UnaryExpressionRNode:
+        return "UnaryExpressionRNode";
     case Type::InRNode:
         return "InRNode";
     case Type::UndefinedNode:
@@ -98,6 +100,8 @@ Type string_to_type(const std::string& type) {
         return Type::OperatorRNode;
     } else if (type == "BinaryExpressionRNode") {
         return Type::BinaryExpressionRNode;
+    } else if (type == "UnaryExpressionRNode") {
+        return Type::UnaryExpressionRNode;
     } else if (type == "InRNode") {
         return Type::InRNode;
     } else {
