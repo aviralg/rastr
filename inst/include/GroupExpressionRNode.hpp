@@ -12,10 +12,20 @@ class GroupExpressionRNode
     , public ExpressionRNode {
   public:
     explicit GroupExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
+                                  ExpressionRNodeSPtr expression,
                                   DelimiterRNodeSPtr closing_delimiter)
         : BoundedRNode(opening_delimiter, closing_delimiter)
-        , ExpressionRNode() {
+        , ExpressionRNode()
+        , expression_(expression) {
         set_type(Type::GroupExpressionRNode);
+    }
+
+    ExpressionRNodeSPtr get_expression() const {
+        return expression_;
+    }
+
+    void set_expression(ExpressionRNodeSPtr expression) {
+        expression_ = expression;
     }
 
     static void initialize();
@@ -25,6 +35,8 @@ class GroupExpressionRNode
     static SEXP get_class();
 
   private:
+    ExpressionRNodeSPtr expression_;
+
     static SEXP class_;
 };
 

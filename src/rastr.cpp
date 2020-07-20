@@ -16,7 +16,7 @@
 #include "IfElseConditionalExpressionRNode.hpp"
 #include "InRNode.hpp"
 #include "KeywordRNode.hpp"
-#include "ParameterSequenceRNode.hpp"
+#include "ExpressionSequenceRNode.hpp"
 #include "RepeatLoopExpressionRNode.hpp"
 #include "SymbolExpressionRNode.hpp"
 #include "WhileLoopExpressionRNode.hpp"
@@ -60,7 +60,6 @@ void initialize() {
     ast::ComplexLiteralExpressionRNode::initialize();
     ast::LogicalLiteralExpressionRNode::initialize();
     ast::RawLiteralExpressionRNode::initialize();
-    ast::ArgumentSequenceRNode::initialize();
     ast::ConditionRNode::initialize();
     ast::DelimitedRNode::initialize();
     ast::DelimiterRNode::initialize();
@@ -71,7 +70,7 @@ void initialize() {
     ast::IfElseConditionalExpressionRNode::initialize();
     ast::InRNode::initialize();
     ast::KeywordRNode::initialize();
-    ast::ParameterSequenceRNode::initialize();
+    ast::ExpressionSequenceRNode::initialize();
     ast::RepeatLoopExpressionRNode::initialize();
     ast::SymbolExpressionRNode::initialize();
     ast::WhileLoopExpressionRNode::initialize();

@@ -1,24 +1,24 @@
-#include "ParameterSequenceRNode.hpp"
+#include "ExpressionSequenceRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-SEXP ParameterSequenceRNode::class_ = NULL;
+SEXP ExpressionSequenceRNode::class_ = NULL;
 
-void ParameterSequenceRNode::initialize() {
-    class_ = rastr::create_class({"rastr_node_r_sequence_parameter",
+void ExpressionSequenceRNode::initialize() {
+    class_ = rastr::create_class({"rastr_node_r_sequence_expression",
                                   "rastr_node_r_sequence",
                                   "rastr_node_r",
                                   "rastr_node"});
     R_PreserveObject(class_);
 }
 
-void ParameterSequenceRNode::finalize() {
+void ExpressionSequenceRNode::finalize() {
     R_ReleaseObject(class_);
     class_ = NULL;
 }
 
-SEXP ParameterSequenceRNode::get_class() {
+SEXP ExpressionSequenceRNode::get_class() {
     return class_;
 }
 

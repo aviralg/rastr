@@ -10,9 +10,14 @@ namespace ast {
 
 class ExpressionSequenceRNode: public BoundedRNode {
   public:
+    explicit ExpressionSequenceRNode(): BoundedRNode() {
+        set_type(Type::ExpressionSequenceRNode);
+    }
+
     explicit ExpressionSequenceRNode(DelimiterRNodeSPtr opening_delimiter,
                                      DelimiterRNodeSPtr closing_delimiter)
-        : BoundedRNode(opening_delimiter, closing_delimiter) {
+        : ExpressionSequenceRNode() {
+        set_delimiters(opening_delimiter, closing_delimiter);
     }
 
     ExpressionRNodeSPtr get_expression(int index) const {
@@ -40,9 +45,17 @@ class ExpressionSequenceRNode: public BoundedRNode {
         return expressions_.size();
     }
 
+    static void initialize();
+
+    static void finalize();
+
+    static SEXP get_class();
+
   private:
     std::vector<ExpressionRNodeSPtr> expressions_;
     std::vector<DelimiterRNodeSPtr> delimiters_;
+
+    static SEXP class_;
 }; // namespace ast
 
 using ExpressionSequenceRNodeSPtr = std::shared_ptr<ExpressionSequenceRNode>;

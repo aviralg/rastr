@@ -1,7 +1,7 @@
 #ifndef RASTR_AST_FUNCTION_CALL_EXPRESSION_RNODE_HPP
 #define RASTR_AST_FUNCTION_CALL_EXPRESSION_RNODE_HPP
 
-#include "ArgumentSequenceRNode.hpp"
+#include "ExpressionSequenceRNode.hpp"
 #include "KeywordRNode.hpp"
 #include "ExpressionRNode.hpp"
 
@@ -10,18 +10,10 @@ namespace ast {
 
 class FunctionCallExpressionRNode: public ExpressionRNode {
   public:
-    explicit FunctionCallExpressionRNode(ArgumentSequenceRNodeSPtr arguments,
-                                         ExpressionRNodeSPtr function)
-        : ExpressionRNode(), arguments_(arguments), function_(function) {
+    explicit FunctionCallExpressionRNode(ExpressionRNodeSPtr function,
+                                         ExpressionSequenceRNodeSPtr arguments)
+        : ExpressionRNode(), function_(function), arguments_(arguments) {
         set_type(Type::FunctionCallExpressionRNode);
-    }
-
-    ArgumentSequenceRNodeSPtr get_arguments() const {
-        return arguments_;
-    }
-
-    void set_arguments(ArgumentSequenceRNodeSPtr arguments) {
-        arguments_ = arguments;
     }
 
     ExpressionRNodeSPtr get_function() const {
@@ -32,6 +24,14 @@ class FunctionCallExpressionRNode: public ExpressionRNode {
         function_ = function;
     }
 
+    ExpressionSequenceRNodeSPtr get_arguments() const {
+        return arguments_;
+    }
+
+    void set_arguments(ExpressionSequenceRNodeSPtr arguments) {
+        arguments_ = arguments;
+    }
+
     static void initialize();
 
     static void finalize();
@@ -39,7 +39,7 @@ class FunctionCallExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    ArgumentSequenceRNodeSPtr arguments_;
+    ExpressionSequenceRNodeSPtr arguments_;
     ExpressionRNodeSPtr function_;
 
     static SEXP class_;

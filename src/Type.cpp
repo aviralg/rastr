@@ -31,10 +31,8 @@ const std::string type_to_string(const Type type) {
         return "WhileLoopExpressionRNode";
     case Type::RepeatLoopExpressionRNode:
         return "RepeatLoopExpressionRNode";
-    case Type::ParameterSequenceRNode:
-        return "ParameterSequenceRNode";
-    case Type::ArgumentSequenceRNode:
-        return "ArgumentSequenceRNode";
+    case Type::ExpressionSequenceRNode:
+        return "ExpressionSequenceRNode";
     case Type::FunctionDefinitionExpressionRNode:
         return "FunctionDefinitionExpressionRNode";
     case Type::FunctionCallExpressionRNode:
@@ -51,8 +49,6 @@ const std::string type_to_string(const Type type) {
         return "UnaryExpressionRNode";
     case Type::InRNode:
         return "InRNode";
-    case Type::IndexSequenceRNode:
-        return "IndexSequenceRNode";
     case Type::IndexingExpressionRNode:
         return "IndexingExpressionRNode";
     case Type::BlockExpressionRNode:
@@ -94,10 +90,8 @@ Type string_to_type(const std::string& type) {
         return Type::WhileLoopExpressionRNode;
     } else if (type == "RepeatLoopExpressionRNode") {
         return Type::RepeatLoopExpressionRNode;
-    } else if (type == "ParameterSequenceRNode") {
-        return Type::ParameterSequenceRNode;
-    } else if (type == "ArgumentSequenceRNode") {
-        return Type::ArgumentSequenceRNode;
+    } else if (type == "ExpressionSequenceRNode") {
+        return Type::ExpressionSequenceRNode;
     } else if (type == "FunctionDefinitionExpressionRNode") {
         return Type::FunctionDefinitionExpressionRNode;
     } else if (type == "FunctionCallExpressionRNode") {
@@ -112,8 +106,6 @@ Type string_to_type(const std::string& type) {
         return Type::BinaryExpressionRNode;
     } else if (type == "UnaryExpressionRNode") {
         return Type::UnaryExpressionRNode;
-    } else if (type == "IndexSequenceRNode") {
-        return Type::IndexSequenceRNode;
     } else if (type == "IndexingExpressionRNode") {
         return Type::IndexingExpressionRNode;
     } else if (type == "InRNode") {

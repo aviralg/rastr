@@ -2,7 +2,7 @@
 #define RASTR_AST_INDEXING_EXPRESSION_RNODE_HPP
 
 #include "ExpressionRNode.hpp"
-#include "IndexSequenceRNode.hpp"
+#include "ExpressionSequenceRNode.hpp"
 
 namespace rastr {
 namespace ast {
@@ -10,7 +10,7 @@ namespace ast {
 class IndexingExpressionRNode: public ExpressionRNode {
   public:
     IndexingExpressionRNode(ExpressionRNodeSPtr body,
-                            IndexSequenceRNodeSPtr indices)
+                            ExpressionSequenceRNodeSPtr indices)
         : ExpressionRNode(), body_(body), indices_(indices) {
         set_type(Type::IndexingExpressionRNode);
     }
@@ -23,11 +23,11 @@ class IndexingExpressionRNode: public ExpressionRNode {
         body_ = body;
     }
 
-    IndexSequenceRNodeSPtr get_index_expressions() const {
+    ExpressionSequenceRNodeSPtr get_index_expressions() const {
         return indices_;
     }
 
-    void set_indices(IndexSequenceRNodeSPtr indices) {
+    void set_indices(ExpressionSequenceRNodeSPtr indices) {
         indices_ = indices;
     }
 
@@ -39,7 +39,7 @@ class IndexingExpressionRNode: public ExpressionRNode {
 
   private:
     ExpressionRNodeSPtr body_;
-    IndexSequenceRNodeSPtr indices_;
+    ExpressionSequenceRNodeSPtr indices_;
 
     static SEXP class_;
 };

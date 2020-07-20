@@ -4,20 +4,20 @@
 
 using rastr::ast::ExpressionRNode;
 using rastr::ast::ExpressionRNodeSPtr;
+using rastr::ast::ExpressionSequenceRNode;
+using rastr::ast::ExpressionSequenceRNodeSPtr;
 using rastr::ast::FunctionDefinitionExpressionRNode;
 using rastr::ast::FunctionDefinitionExpressionRNodeSPtr;
 using rastr::ast::KeywordRNode;
 using rastr::ast::KeywordRNodeSPtr;
-using rastr::ast::ParameterSequenceRNode;
-using rastr::ast::ParameterSequenceRNodeSPtr;
 
 SEXP r_function_definition_expression_r_node_create(SEXP r_keyword,
                                                     SEXP r_parameters,
                                                     SEXP r_body) {
     KeywordRNodeSPtr keyword = from_sexp<KeywordRNode>(r_keyword);
 
-    ParameterSequenceRNodeSPtr parameters =
-        from_sexp<ParameterSequenceRNode>(r_parameters);
+    ExpressionSequenceRNodeSPtr parameters =
+        from_sexp<ExpressionSequenceRNode>(r_parameters);
 
     ExpressionRNodeSPtr body = from_sexp<ExpressionRNode>(r_body);
 
@@ -74,9 +74,9 @@ SEXP r_function_definition_expression_r_node_get_parameters(SEXP r_node) {
     FunctionDefinitionExpressionRNodeSPtr node =
         from_sexp<FunctionDefinitionExpressionRNode>(r_node);
 
-    ParameterSequenceRNodeSPtr parameters = node->get_parameters();
+    ExpressionSequenceRNodeSPtr parameters = node->get_parameters();
 
-    return to_sexp<ParameterSequenceRNode>(parameters);
+    return to_sexp<ExpressionSequenceRNode>(parameters);
 }
 
 SEXP r_function_definition_expression_r_node_set_parameters(SEXP r_node,
@@ -84,8 +84,8 @@ SEXP r_function_definition_expression_r_node_set_parameters(SEXP r_node,
     FunctionDefinitionExpressionRNodeSPtr node =
         from_sexp<FunctionDefinitionExpressionRNode>(r_node);
 
-    ParameterSequenceRNodeSPtr parameters =
-        from_sexp<ParameterSequenceRNode>(r_parameters);
+    ExpressionSequenceRNodeSPtr parameters =
+        from_sexp<ExpressionSequenceRNode>(r_parameters);
 
     node->set_parameters(parameters);
 

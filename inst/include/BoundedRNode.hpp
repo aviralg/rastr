@@ -9,11 +9,13 @@ namespace ast {
 
 class BoundedRNode: public virtual RNode {
   public:
+    explicit BoundedRNode(): RNode() {
+    }
+
     explicit BoundedRNode(DelimiterRNodeSPtr opening_delimiter,
                           DelimiterRNodeSPtr closing_delimiter)
-        : RNode()
-        , opening_delimiter_(opening_delimiter)
-        , closing_delimiter_(closing_delimiter) {
+        : BoundedRNode() {
+        set_delimiters(opening_delimiter, closing_delimiter);
     }
 
     DelimiterRNodeSPtr get_opening_delimiter() const {
@@ -30,6 +32,12 @@ class BoundedRNode: public virtual RNode {
 
     void set_closing_delimiter(DelimiterRNodeSPtr closing_delimiter) {
         closing_delimiter_ = closing_delimiter;
+    }
+
+    void set_delimiters(DelimiterRNodeSPtr opening_delimiter,
+                        DelimiterRNodeSPtr closing_delimiter) {
+        set_opening_delimiter(opening_delimiter);
+        set_closing_delimiter(closing_delimiter);
     }
 
     static void initialize();

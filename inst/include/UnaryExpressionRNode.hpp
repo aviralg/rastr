@@ -21,6 +21,10 @@ class UnaryExpressionRNode: public ExpressionRNode {
         return expression_;
     }
 
+    void set_expression(ExpressionRNodeSPtr expression) {
+        expression_ = expression;
+    }
+
     static void initialize();
 
     static void finalize();
