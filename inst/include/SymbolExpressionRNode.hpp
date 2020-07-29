@@ -8,8 +8,9 @@ namespace ast {
 
 class SymbolExpressionRNode: public ExpressionRNode {
   public:
-    explicit SymbolExpressionRNode(const std::string& representation = "")
-        : ExpressionRNode(), representation_(representation) {
+    explicit SymbolExpressionRNode(const std::string& representation = "",
+                                   bool quoted = false)
+        : ExpressionRNode(), representation_(representation), quoted_(quoted) {
         set_type(Type::SymbolExpressionRNode);
     }
 
@@ -21,6 +22,14 @@ class SymbolExpressionRNode: public ExpressionRNode {
         representation_ = representation;
     }
 
+    bool is_quoted() const {
+        return quoted_;
+    }
+
+    void set_quoted(bool quoted) {
+        quoted_ = quoted;
+    }
+
     static void initialize();
 
     static void finalize();
@@ -29,6 +38,7 @@ class SymbolExpressionRNode: public ExpressionRNode {
 
   private:
     std::string representation_;
+    bool quoted_;
 
     static SEXP class_;
 };
