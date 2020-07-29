@@ -41,6 +41,14 @@ class ExpressionSequenceRNode: public BoundedRNode {
         expressions_.push_back(expression);
     }
 
+    void append_delimiter(DelimiterRNodeSPtr delimiter) {
+        delimiters_.push_back(delimiter);
+    }
+
+    void append_expression(ExpressionRNodeSPtr expression) {
+        expressions_.push_back(expression);
+    }
+
     int get_size() const {
         return expressions_.size();
     }
