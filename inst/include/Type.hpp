@@ -13,6 +13,10 @@ enum class Type {
     LogicalLiteralExpressionRNode,
     RawLiteralExpressionRNode,
     CharacterLiteralExpressionRNode,
+    RawStringLiteralExpressionRNode,
+    ConstantLiteralExpressionRNode,
+    NextExpressionRNode,
+    BreakExpressionRNode,
     DelimiterRNode,
     DelimitedRNode,
     SymbolExpressionRNode,
@@ -33,7 +37,9 @@ enum class Type {
     BlockExpressionRNode,
     MissingExpressionRNode,
     GroupExpressionRNode,
-    UndefinedNode
+    EndRNode,
+    UndefinedNode,
+
 };
 
 const std::string type_to_string(const Type type);

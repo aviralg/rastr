@@ -17,6 +17,14 @@ const std::string type_to_string(const Type type) {
         return "RawLiteralExpressionRNode";
     case Type::CharacterLiteralExpressionRNode:
         return "CharacterLiteralExpressionRNode";
+    case Type::RawStringLiteralExpressionRNode:
+        return "RawStringLiteralExpressionRNode";
+    case Type::ConstantLiteralExpressionRNode:
+        return "ConstantLiteralExpressionRNode";
+    case Type::NextExpressionRNode:
+        return "NextExpressionRNode";
+    case Type::BreakExpressionRNode:
+        return "BreakExpressionRNode";
     case Type::DelimiterRNode:
         return "DelimiterRNode";
     case Type::DelimitedRNode:
@@ -57,6 +65,8 @@ const std::string type_to_string(const Type type) {
         return "MissingExpressionRNode";
     case Type::GroupExpressionRNode:
         return "GroupExpressionRNode";
+    case Type::EndRNode:
+        return "EndRNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -76,6 +86,14 @@ Type string_to_type(const std::string& type) {
         return Type::RawLiteralExpressionRNode;
     } else if (type == "CharacterLiteralExpressionRNode") {
         return Type::CharacterLiteralExpressionRNode;
+    } else if (type == "RawStringLiteralExpressionRNode") {
+        return Type::RawStringLiteralExpressionRNode;
+    } else if (type == "ConstantLiteralExpressionRNode") {
+        return Type::ConstantLiteralExpressionRNode;
+    } else if (type == "NextExpressionRNode") {
+        return Type::NextExpressionRNode;
+    } else if (type == "BreakExpressionRNode") {
+        return Type::BreakExpressionRNode;
     } else if (type == "DelimiterRNode") {
         return Type::DelimiterRNode;
     } else if (type == "DelimitedRNode") {
@@ -116,6 +134,8 @@ Type string_to_type(const std::string& type) {
         return Type::MissingExpressionRNode;
     } else if (type == "GroupExpressionRNode") {
         return Type::GroupExpressionRNode;
+    } else if (type == "EndRNode") {
+        return Type::EndRNode;
     } else {
         return Type::UndefinedNode;
     }
