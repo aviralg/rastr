@@ -1,0 +1,381 @@
+/* -*- C++ -*- */
+%output  "Parser.cxx"
+%defines "Parser.hxx"
+
+%skeleton "lalr1.cc"
+%require "3.5"
+
+%define api.parser.class {Parser}
+%define api.namespace {rastr::r::parser}
+/* %define api.location.type {rastr::r::parser::Parser::location_type} */
+
+/* assert correct cleanup of semantic value objects */
+%define parse.assert
+
+%define parse.trace
+
+/* increase usefulness of error messages */
+%define parse.error verbose
+%parse-param { rastr::r::parser::Lexer& lexer}
+/* { rastr::r::parser::ParsingContext& context } */
+
+/* call yylex with a location */
+%locations
+
+%define api.value.type {rastr::ast::RNode*}
+
+/* %define api.token.constructor */
+/* %define api.token.prefix {TOKEN_} */
+
+%token-table
+
+%token LPAREN RPAREN RSQPAREN LBRACE RBRACE EXCLAMATION NEWLINE DOUBLE_EXCLAMATION
+%token COMMA SEMICOLON
+%token END_OF_INPUT ERROR
+%token STR_CONST LITERAL_CONST INT_CONST FLOAT_CONST COMPLEX_CONST RAW_STRING_CONST NULL_CONST SYMBOL FUNCTION
+%token INCOMPLETE_STRING
+%token LEFT_ASSIGN EQ_ASSIGN RIGHT_ASSIGN LBB
+%token FOR IN IF ELSE WHILE NEXT BREAK REPEAT
+%token GT GE LT LE EQ NE AND OR AND2 OR2
+%token NS_GET NS_GET_INT
+%token COMMENT LINE_DIRECTIVE
+%token SYMBOL_FORMALS
+%token EQ_FORMALS
+%token EQ_SUB SYMBOL_SUB
+%token SYMBOL_FUNCTION_CALL
+%token SYMBOL_PACKAGE
+%token COLON_ASSIGN
+%token SLOT
+%token MINUS PLUS TILDE QUESTION COLON ASTERISK SLASH CARET SPECIAL LSQPAREN DOLLAR AT
+%nterm prog
+%nterm expr_or_assign_or_help
+%nterm expr_or_help
+%nterm expr
+%nterm cond
+%nterm ifcond
+%nterm forcond
+%nterm exprlist
+%nterm sublist
+%nterm sub
+%nterm formlist
+
+
+/* This is the precedence table, low to high */
+%left  QUESTION
+%left	 LOW WHILE FOR REPEAT
+%right IF
+%left	 ELSE
+%right LEFT_ASSIGN
+%right EQ_ASSIGN
+%left	 RIGHT_ASSIGN
+%left	 '~' TILDE
+%left	 OR OR2
+%left	 AND AND2
+%left	 UNOT NOT
+%nonassoc   	GT GE LT LE EQ NE
+%left  PLUS MINUS
+%left  ASTERISK SLASH
+%left  SPECIAL
+%left  COLON
+%left  UMINUS UPLUS
+%right CARET
+%left  DOLLAR AT
+%left  NS_GET NS_GET_INT
+%nonassoc	LPAREN LSQPAREN LBB
+
+/* inserted near top of header + source file */
+%code requires {
+    #include <string>
+    #include <iostream>
+    namespace rastr {
+        namespace r {
+            namespace parser {
+                class Lexer;
+            }
+        }
+    }
+    #include "ast.hpp"
+    using namespace rastr::ast;
+}
+
+%code {
+    #include <string>
+    #include <iostream>
+    #include "Lexer.hpp"
+    #undef yylex
+    #define yylex lexer.yylex
+
+
+RNode* create_binary_expression(RNode* op_ptr, RNode* left_expr_ptr, RNode* right_expr_ptr) {
+    auto op = wrap<OperatorRNode>(op_ptr);
+    auto left_expr = wrap<ExpressionRNode>(left_expr_ptr);
+    auto right_expr = wrap<ExpressionRNode>(right_expr_ptr);
+    return new BinaryExpressionRNode(op, left_expr, right_expr);
+}
+
+RNode* create_unary_expression(RNode* op_ptr, RNode* expr_ptr) {
+    auto op = wrap<OperatorRNode>(op_ptr);
+    auto expr = wrap<ExpressionRNode>(expr_ptr);
+    return new UnaryExpressionRNode(op, expr);
+}
+
+ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
+                                                        RNode *opening_delimiter_ptr,
+                                                        RNode *closing_delimiter_ptr) {
+    auto seq = wrap<ExpressionSequenceRNode>(seq_ptr);
+    auto opening_delimiter = wrap<DelimiterRNode>(opening_delimiter_ptr);
+    auto closing_delimiter = wrap<DelimiterRNode>(closing_delimiter_ptr);
+    seq -> set_delimiters(opening_delimiter, closing_delimiter);
+    return seq;
+}
+
+}
+
+%%
+
+prog: END_OF_INPUT                                                              { yyresult = 0; /*$1;*/ YYACCEPT; }
+    | NEWLINE                                                                   { yyresult = 0; goto yyreturn; }
+    | expr_or_assign_or_help NEWLINE                                            { yyresult = 0; /*std::cout << $1 + $2;*/ goto yyreturn; }
+    | expr_or_assign_or_help SEMICOLON                                          { yyresult = 0; /*std::cout << $1 + $2;*/ goto yyreturn; }
+    | error                                                                     { YYABORT; }
+    ;
+
+expr_or_assign_or_help: expr                                                    { $$ = $1; }
+                      | expr_or_assign_or_help EQ_ASSIGN expr_or_assign_or_help { $$ = create_binary_expression($2, $1, $3); }
+                      | expr_or_assign_or_help QUESTION  expr_or_assign_or_help { $$ = create_binary_expression($2, $1, $3); }
+                      ;
+
+expr_or_help: expr                                                              { $$ = $1; }
+            | expr_or_help QUESTION expr_or_help                                { $$ = create_binary_expression($2, $1, $3); }
+            ;
+
+expr: INT_CONST                                                                 { $$ = $1; } // IntegerLiteralExpressionRNode
+    | FLOAT_CONST                                                               { $$ = $1; } // DoubleLiteralExpressionRNode
+    | COMPLEX_CONST                                                             { $$ = $1; } // ComplexLiteralExpressionRNode
+    | LITERAL_CONST                                                             { $$ = $1; }
+    | STR_CONST                                                                 { $$ = $1; } // CharacterLiteralRNode
+    | RAW_STRING_CONST                                                          { $$ = $1; } // RawStringLiteralExpressionRNode
+    | NULL_CONST                                                                { $$ = $1; }
+    | SYMBOL                                                                    { $$ = $1; }
+    | LBRACE exprlist RBRACE                                                    {
+                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($2);
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($3);
+                                                                                  block -> set_delimiters(opening_delimiter, closing_delimiter);
+                                                                                  $$ = block;
+                                                                                  lexer.disable_eat_lines();
+                                                                                }
+    | LPAREN expr_or_assign_or_help RPAREN                                      { $$ = new GroupExpressionRNode(wrap<DelimiterRNode>($1),
+                                                                                                                wrap<ExpressionRNode>($2),
+                                                                                                                wrap<DelimiterRNode>($3)); }
+    | MINUS expr %prec UMINUS                                                   { $$ = create_unary_expression($1, $2); }
+    | PLUS expr %prec UMINUS                                                    { $$ = create_unary_expression($1, $2); }
+    | EXCLAMATION expr %prec UNOT                                               { $$ = create_unary_expression($1, $2); }
+    | DOUBLE_EXCLAMATION expr %prec UNOT                                        { $$ = create_unary_expression($1, $2); }
+    | TILDE expr %prec TILDE                                                    { $$ = create_unary_expression($1, $2); }
+    | QUESTION expr_or_assign_or_help                                           { $$ = create_unary_expression($1, $2); }
+    | expr COLON  expr                                                          { $$ = create_binary_expression($2, $1, $3); }
+    | expr PLUS  expr                                                           { $$ = create_binary_expression($2, $1, $3); }
+    | expr MINUS expr                                                           { $$ = create_binary_expression($2, $1, $3); }
+    | expr ASTERISK expr                                                        { $$ = create_binary_expression($2, $1, $3); }
+    | expr SLASH expr                                                           { $$ = create_binary_expression($2, $1, $3); }
+    | expr CARET expr                                                           { $$ = create_binary_expression($2, $1, $3); }
+    | expr SPECIAL expr                                                         { $$ = create_binary_expression($2, $1, $3); }
+    | expr TILDE expr                                                           { $$ = create_binary_expression($2, $1, $3); }
+    | expr LT expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr LE expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr EQ expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr NE expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr GE expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr GT expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr AND expr                                                             { $$ = create_binary_expression($2, $1, $3); }
+    | expr OR expr                                                              { $$ = create_binary_expression($2, $1, $3); }
+    | expr AND2 expr                                                            { $$ = create_binary_expression($2, $1, $3); }
+    | expr OR2 expr                                                             { $$ = create_binary_expression($2, $1, $3); }
+    | expr LEFT_ASSIGN expr                                                     { $$ = create_binary_expression($2, $1, $3); }
+    | expr RIGHT_ASSIGN expr                                                    { $$ = create_binary_expression($2, $1, $3); }
+    | FUNCTION LPAREN formlist RPAREN cr expr_or_assign_or_help %prec LOW       {
+                                                                                  auto keyword = wrap<KeywordRNode>($1);
+                                                                                  auto params = delimit_expression_sequence($3, $2, $4);
+                                                                                  auto body = wrap<ExpressionRNode>($6);
+                                                                                  $$ = new FunctionDefinitionExpressionRNode(keyword, params, body);
+                                                                                }
+    | expr LPAREN sublist RPAREN                                                {
+                                                                                  auto target = wrap<ExpressionRNode>($1);
+                                                                                  auto args = delimit_expression_sequence($3, $2, $4);
+                                                                                  $$ = new FunctionCallExpressionRNode(target, args);
+                                                                                }
+    | IF ifcond expr_or_assign_or_help                                          {
+                                                                                  $$ = new IfConditionalExpressionRNode(wrap<KeywordRNode>($1),
+                                                                                                                        wrap<ConditionRNode>($2),
+                                                                                                                        wrap<ExpressionRNode>($3));
+                                                                                }
+    | IF ifcond expr_or_assign_or_help ELSE expr_or_assign_or_help              {
+                                                                                  $$ = new IfElseConditionalExpressionRNode(wrap<KeywordRNode>($1),
+                                                                                                                            wrap<ConditionRNode>($2),
+                                                                                                                            wrap<ExpressionRNode>($3),
+                                                                                                                            wrap<KeywordRNode>($4),
+                                                                                                                            wrap<ExpressionRNode>($5));
+                                                                                }
+    | FOR forcond expr_or_assign_or_help %prec FOR                              {
+                                                                                  $$ = new ForLoopExpressionRNode(wrap<KeywordRNode>($1),
+                                                                                                                  wrap<ConditionRNode>($2),
+                                                                                                                  wrap<ExpressionRNode>($3));
+                                                                                }
+    | WHILE cond expr_or_assign_or_help                                         {
+                                                                                  $$ = new WhileLoopExpressionRNode(wrap<KeywordRNode>($1),
+                                                                                                                    wrap<ConditionRNode>($2),
+                                                                                                                    wrap<ExpressionRNode>($3));
+                                                                                }
+    | REPEAT expr_or_assign_or_help                                             {
+                                                                                  $$ = new RepeatLoopExpressionRNode(wrap<KeywordRNode>($1),
+                                                                                                                     wrap<ExpressionRNode>($2));
+                                                                                }
+    | expr LBB sublist RSQPAREN RSQPAREN                                        {
+                                                                                  auto expr = wrap<ExpressionRNode>($1);
+                                                                                  auto indices = delimit_expression_sequence($3, $2, $4);
+                                                                                  $$ = new IndexingExpressionRNode(expr, indices);
+                                                                                }
+    | expr LSQPAREN sublist RSQPAREN                                            {
+                                                                                  auto expr = wrap<ExpressionRNode>($1);
+                                                                                  auto indices = delimit_expression_sequence($3, $2, $4);
+                                                                                  $$ = new IndexingExpressionRNode(expr, indices);
+                                                                                }
+    | SYMBOL NS_GET SYMBOL                                                      { $$ = create_binary_expression($2, $1, $3); }
+    | SYMBOL NS_GET STR_CONST                                                   { $$ = create_binary_expression($2, $1, $3); }
+    | STR_CONST NS_GET SYMBOL                                                   { $$ = create_binary_expression($2, $1, $3); }
+    | STR_CONST NS_GET STR_CONST                                                { $$ = create_binary_expression($2, $1, $3); }
+    | SYMBOL NS_GET_INT SYMBOL                                                  { $$ = create_binary_expression($2, $1, $3); }
+    | SYMBOL NS_GET_INT STR_CONST                                               { $$ = create_binary_expression($2, $1, $3); }
+    | STR_CONST NS_GET_INT SYMBOL                                               { $$ = create_binary_expression($2, $1, $3); }
+    | STR_CONST NS_GET_INT STR_CONST                                            { $$ = create_binary_expression($2, $1, $3); }
+    | expr DOLLAR SYMBOL                                                        { $$ = create_binary_expression($2, $1, $3); }
+    | expr DOLLAR STR_CONST                                                     { $$ = create_binary_expression($2, $1, $3); }
+    | expr AT SYMBOL                                                            { $$ = create_binary_expression($2, $1, $3); }
+    | expr AT STR_CONST                                                         { $$ = create_binary_expression($2, $1, $3); }
+    | NEXT                                                                      { $$ = $1;  }
+    | BREAK                                                                     { $$ = $1; }
+    ;
+
+cond: LPAREN expr_or_help RPAREN                                                {
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($3);
+                                                                                  auto expr = wrap<RNode>($2);
+                                                                                  $$ = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
+                                                                                  lexer.enable_eat_lines();
+                                                                                }
+    ;
+
+ifcond: LPAREN expr_or_help RPAREN                                              {
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($3);
+                                                                                  auto expr = wrap<RNode>($2);
+                                                                                  $$ = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
+                                                                                  lexer.enable_eat_lines();
+                                                                                }
+      ;
+
+forcond: LPAREN SYMBOL IN expr_or_help RPAREN                                   {
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($5);
+                                                                                  auto expr = wrap<ExpressionRNode>($4);
+                                                                                  auto keyword = wrap<KeywordRNode>($3);
+                                                                                  auto sym = wrap<SymbolExpressionRNode>($2);
+                                                                                  auto condition = std::make_shared<InRNode>(sym, keyword, expr);
+                                                                                  $$ = new ConditionRNode(opening_delimiter, condition, closing_delimiter);
+                                                                                  lexer.enable_eat_lines();
+                                                                                }
+       ;
+
+exprlist:                                                                       { $$ = new BlockExpressionRNode(); }
+        | expr_or_assign_or_help                                                {
+                                                                                  auto block = new BlockExpressionRNode();
+                                                                                  block -> append_expression(wrap<ExpressionRNode>($1));
+                                                                                  $$ = block;
+                                                                                }
+        | exprlist SEMICOLON expr_or_assign_or_help                             {
+                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
+                                                                                  block -> append(delimiter, wrap<ExpressionRNode>($3));
+                                                                                  $$ = block;
+                                                                                }
+        | exprlist SEMICOLON                                                    {
+                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
+                                                                                  block -> append_delimiter(delimiter);
+                                                                                  $$ = block;
+                                                                                }
+        | exprlist NEWLINE expr_or_assign_or_help                               {
+                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
+                                                                                  block -> append(delimiter, wrap<ExpressionRNode>($3));
+                                                                                  $$ = block;
+                                                                                }
+        | exprlist NEWLINE                                                      {
+                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
+                                                                                  block -> append_delimiter(delimiter);
+                                                                                  $$ = block;
+                                                                                }
+        ;
+
+sublist: sub                                                                    {
+                                                                                  auto seq = new ExpressionSequenceRNode();
+                                                                                  seq -> append_expression(wrap<ExpressionRNode>($1));
+                                                                                  $$ = seq;
+                                                                                }
+       | sublist cr COMMA sub                                                   {
+                                                                                  auto seq = dynamic_cast<ExpressionSequenceRNode*>($1);
+                                                                                  auto delimiter = wrap<DelimiterRNode>($3);
+                                                                                  seq -> append(delimiter, wrap<ExpressionRNode>($4));
+                                                                                  $$ = seq;
+                                                                                }
+       ;
+
+sub:                                                                            { $$ = new MissingExpressionRNode(); }
+   | expr_or_help                                                               { $$ = $1; }
+   | SYMBOL EQ_ASSIGN                                                           { $$ = create_binary_expression($2, $1, new MissingExpressionRNode()); }
+   | SYMBOL EQ_ASSIGN expr_or_help                                              { $$ = create_binary_expression($2, $1, $3); }
+   | STR_CONST EQ_ASSIGN                                                        { $$ = create_binary_expression($2, $1, new MissingExpressionRNode()); }
+   | STR_CONST EQ_ASSIGN expr_or_help                                           { $$ = create_binary_expression($2, $1, $3); }
+   | NULL_CONST EQ_ASSIGN                                                       { $$ = create_binary_expression($2, $1, new MissingExpressionRNode()); }
+   | NULL_CONST EQ_ASSIGN expr_or_help                                          { $$ = create_binary_expression($2, $1, $3); }
+   ;
+
+formlist:                                                                       { $$ = new ExpressionSequenceRNode(); }
+        | SYMBOL                                                                {
+                                                                                  auto seq = new ExpressionSequenceRNode();
+                                                                                  auto element = wrap<SymbolExpressionRNode>($1);
+                                                                                  seq -> append_expression(element);
+                                                                                  $$ = seq;
+                                                                                }
+        | SYMBOL EQ_ASSIGN expr_or_help                                         {
+                                                                                  auto seq = new ExpressionSequenceRNode();
+                                                                                  auto element = wrap<ExpressionRNode>(create_binary_expression($2, $1, $3));
+                                                                                  seq -> append_expression(element);
+                                                                                  $$ = seq;
+                                                                                }
+        | formlist COMMA SYMBOL                                                 {
+                                                                                  auto seq = dynamic_cast<ExpressionSequenceRNode*>($1);
+                                                                                  auto element = wrap<SymbolExpressionRNode>($3);
+                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
+                                                                                  seq -> append(delimiter, element);
+                                                                                  $$ = seq;
+                                                                                }
+        | formlist COMMA SYMBOL EQ_ASSIGN expr_or_help                          {
+                                                                                  auto seq = dynamic_cast<ExpressionSequenceRNode*>($1);
+                                                                                  auto element = wrap<ExpressionRNode>(create_binary_expression($4, $3, $5));
+                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
+                                                                                  seq -> append(delimiter, element);
+                                                                                  $$ = seq;
+                                                                                }
+        ;
+
+cr: { lexer.enable_eat_lines(); }
+  ;
+
+%%
+
+void rastr::r::parser::Parser::error(const location_type& location, const std::string& message) {
+    std::cerr << message << " at " << location;
+}

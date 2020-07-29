@@ -1,11 +1,18 @@
 SOURCEDIR := src
 INCLUDEDIR := inst/include
+GRAMMARDIR := grammar
 
 SOURCES := $(shell find $(SOURCEDIR) -name '*.cpp')
 INCLUDES := $(shell find $(INCLUDEDIR) -name '*.hpp') $(shell find $(SOURCEDIR) -name '*.h')
 
 CPPCHECK := cppcheck
 SCAN_BUILD := scan-build
+BISON := bison
+FLEX := flex
+MV := mv
+CD := cd
+FLEXFLAGS := -v
+BISONFLAGS := -v
 
 .PHONY: all build check document test
 
@@ -62,3 +69,19 @@ cppcheck:
 	              -I inst/include/                                        \
 	             $(SOURCES)                                               \
 	             $(INCLUDES)
+
+################################################################################
+# PARSER
+################################################################################
+
+.PHONY: parser
+parser: $(SOURCEDIR)/Parser.cxx.cpp $(SOURCEDIR)/Parser.hxx $(SOURCEDIR)/Lexer.cxx.cpp $(SOURCEDIR)/Lexer.hxx
+	@:
+
+$(SOURCEDIR)/Parser.cxx.cpp $(SOURCEDIR)/Parser.hxx $(SOURCEDIR)/Lexer.cxx.cpp $(SOURCEDIR)/Lexer.hxx: $(GRAMMARDIR)/Parser.yxx $(GRAMMARDIR)/Lexer.lxx
+	$(CD) $(GRAMMARDIR) && $(BISON) $(BISONFLAGS) --xml --graph=Parser.gv Parser.yxx
+	$(MV) $(GRAMMARDIR)/Parser.cxx $(SOURCEDIR)/Parser.cxx.cpp
+	$(MV) $(GRAMMARDIR)/Parser.hxx $(SOURCEDIR)/Parser.hxx
+	$(CD) $(GRAMMARDIR) && $(FLEX) $(FLEXFLAGS) Lexer.lxx
+	$(MV) $(GRAMMARDIR)/Lexer.cxx $(SOURCEDIR)/Lexer.cxx.cpp
+	$(MV) $(GRAMMARDIR)/Lexer.hxx $(SOURCEDIR)/Lexer.hxx

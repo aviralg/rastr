@@ -1,0 +1,440 @@
+/* -*- C++ -*- */
+%option outfile="Lexer.cxx"
+%option header-file="Lexer.hxx"
+%option yyclass="rastr::parser::Lexer"
+%option debug
+%option nodefault
+%option noyywrap
+%option c++
+
+%{
+#include <string>
+#include <iostream>
+#include "Lexer.hpp"
+
+RNode* mkInt(const std::string& s) {
+    double value = R_atof(s.c_str()); /* or R_strtol? */
+    int representation = static_cast<int>(value);
+    return new rastr::ast::IntegerLiteralExpressionRNode(representation);
+}
+
+RNode* mkFloat(const std::string& s) {
+    double representation = R_atof(s.c_str()); /* or R_strtol? */
+    return new rastr::ast::DoubleLiteralExpressionRNode(representation);
+}
+
+RNode* mkComplex(const std::string& s) {
+    Rcomplex representation;
+    representation.r = 0;
+    representation.i = R_atof(s.c_str()); /* FIXME: make certain the value is legitimate. */
+    return new rastr::ast::ComplexLiteralExpressionRNode(representation);
+}
+
+
+#define HANDLE_TOKEN(token_name)                          \
+    *yylval = yytext;                                     \
+    return rastr::r::parser::Parser::token::token_name;
+
+#define HANDLE_ERROR() \
+    throw rastr::r::parser::Parser::syntax_error(*yylloc, "TODO: add error message" + std::string(yytext));
+
+#define HANDLE_TOKEN_WITH_CONTENT(token_name, content)    \
+    *yylval = content;                                    \
+    return rastr::r::parser::Parser::token::token_name;
+
+#define HANDLE_SYMBOL_TOKEN(text, quoted)                          \
+    *yylval = new rastr::ast::SymbolExpressionRNode(text, quoted); \
+    return rastr::r::parser::Parser::token::SYMBOL;
+
+#define HANDLE_OPERATOR_TOKEN(token_name)                 \
+    *yylval = new rastr::ast::OperatorRNode(yytext);  \
+    return rastr::r::parser::Parser::token::token_name;
+
+#define HANDLE_DELIMITER_TOKEN(token_name)                 \
+    *yylval = new rastr::ast::DelimiterRNode(yytext);  \
+    return rastr::r::parser::Parser::token::token_name;
+
+#define HANDLE_KEYWORD_TOKEN(token_name)                 \
+    *yylval = new rastr::ast::KeywordRNode(yytext);  \
+    return rastr::r::parser::Parser::token::token_name;
+
+#define HANDLE_CONSTANT_LITERAL_TOKEN(token_name)                \
+    *yylval = new rastr::ast::ConstantLiteralExpressionRNode(yytext);  \
+    return rastr::r::parser::Parser::token::token_name;
+
+/* Code run each time a pattern is matched. */
+#define YY_USER_ACTION  yylloc->columns(yyleng);
+
+%}
+
+%option noyywrap c++
+
+
+BLANK               [ \t\r\n#]
+VARARG              \.\.\.
+IDENTIFIER          [a-zA-Z.][a-zA-Z0-9._]*
+NON_HEX             [^0-9A-Fa-f]
+NON_OCT             [^0-7]
+SPECIALVALUE        %[. ]*%
+QUOTE               [`'"]
+NUM_BEGIN           [.]?[0-9]
+
+%x quoted_identifier
+%x special_value
+%x single_quoted_string
+%x double_quoted_string
+
+%%
+
+%{
+    /* Code run each time yylex is called. */
+    yylloc -> step();
+%}
+
+<<EOF>>                         {
+                                    *yylval = new rastr::ast::EndRNode();
+                                    return rastr::r::parser::Parser::token::END_OF_INPUT;
+                                }
+\n                              {
+                                    yylloc -> lines(yyleng);
+                                    HANDLE_DELIMITER_TOKEN(NEWLINE);
+                                }
+[ \t\f]+                        { yylloc -> step(); }
+";"                             { HANDLE_DELIMITER_TOKEN(SEMICOLON)                 }
+"<="                            { HANDLE_OPERATOR_TOKEN(LE)                         }
+">="                            { HANDLE_OPERATOR_TOKEN(GE)                         }
+"<-"                            { HANDLE_OPERATOR_TOKEN(LEFT_ASSIGN)                }
+"<<-"                           { HANDLE_OPERATOR_TOKEN(LEFT_ASSIGN)                }
+"<"                             { HANDLE_OPERATOR_TOKEN(LT)                         }
+">"                             { HANDLE_OPERATOR_TOKEN(GT)                         }
+"->>"                           { HANDLE_OPERATOR_TOKEN(RIGHT_ASSIGN)               }
+"->"                            { HANDLE_OPERATOR_TOKEN(RIGHT_ASSIGN)               }
+"-"                             { HANDLE_OPERATOR_TOKEN(MINUS)                      }
+"!="                            { HANDLE_OPERATOR_TOKEN(NE)                         }
+"="                             { HANDLE_OPERATOR_TOKEN(EQ_ASSIGN)                  }
+"!"                             { HANDLE_OPERATOR_TOKEN(EXCLAMATION)                }
+"!!"                            { HANDLE_OPERATOR_TOKEN(DOUBLE_EXCLAMATION)         }
+"=="                            { HANDLE_OPERATOR_TOKEN(EQ)                         }
+":::"                           { HANDLE_OPERATOR_TOKEN(NS_GET_INT)                 }
+"::"                            { HANDLE_OPERATOR_TOKEN(NS_GET)                     }
+":="                            { HANDLE_OPERATOR_TOKEN(COLON_ASSIGN)               }
+":"                             { HANDLE_OPERATOR_TOKEN(COLON)                      }
+"&&"                            { HANDLE_OPERATOR_TOKEN(AND2)                       }
+"&"                             { HANDLE_OPERATOR_TOKEN(AND)                        }
+"||"                            { HANDLE_OPERATOR_TOKEN(OR2)                        }
+"|"                             { HANDLE_OPERATOR_TOKEN(OR)                         }
+"{"                             { HANDLE_DELIMITER_TOKEN(LBRACE)                    }
+"}"                             { HANDLE_DELIMITER_TOKEN(RBRACE)                    }
+"("                             { HANDLE_DELIMITER_TOKEN(LPAREN)                    }
+")"                             { HANDLE_DELIMITER_TOKEN(RPAREN)                    }
+"[["                            { HANDLE_DELIMITER_TOKEN(LBB)                       }
+"["                             { HANDLE_DELIMITER_TOKEN(LSQPAREN)                  }
+"]"                             { HANDLE_DELIMITER_TOKEN(RSQPAREN)                  }
+"?"                             { HANDLE_OPERATOR_TOKEN(QUESTION)                   }
+"*"                             { HANDLE_OPERATOR_TOKEN(ASTERISK)                   }
+"+"                             { HANDLE_OPERATOR_TOKEN(PLUS)                       }
+"/"                             { HANDLE_OPERATOR_TOKEN(SLASH)                      }
+"^"                             { HANDLE_OPERATOR_TOKEN(CARET)                      }
+"**"                            { HANDLE_OPERATOR_TOKEN(CARET)                      }
+"~"                             { HANDLE_OPERATOR_TOKEN(TILDE)                      }
+"$"                             { HANDLE_OPERATOR_TOKEN(DOLLAR)                     }
+"@"                             { HANDLE_OPERATOR_TOKEN(AT)                         }
+","                             { HANDLE_DELIMITER_TOKEN(COMMA)                     }
+"NULL"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(NULL_CONST)         }
+"NA"	                          { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"TRUE"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"FALSE"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"Inf"	                          { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NaN"	                          { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NA_integer_"                   { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NA_real_"                      { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NA_character_"                 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NA_complex_"                   { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"function"                      { HANDLE_KEYWORD_TOKEN(FUNCTION);          }
+"while"	                        { HANDLE_KEYWORD_TOKEN(WHILE);             }
+"repeat"	                      { HANDLE_KEYWORD_TOKEN(REPEAT);            }
+"for"	                          { HANDLE_KEYWORD_TOKEN(FOR);	             }
+"if"	                          { HANDLE_KEYWORD_TOKEN(IF);	               }
+"in"	                          { HANDLE_KEYWORD_TOKEN(IN);                }
+"else"	                        { HANDLE_KEYWORD_TOKEN(ELSE);              }
+"next"	                        {
+                                    *yylval = new rastr::ast::NextExpressionRNode(yytext);
+                                    return rastr::r::parser::Parser::token::NEXT;
+                                }
+"break"	                        {
+                                    *yylval = new rastr::ast::BreakExpressionRNode(yytext);
+                                    return rastr::r::parser::Parser::token::BREAK;
+                                }
+"..."	                          { HANDLE_SYMBOL_TOKEN(yytext, false)       }
+"%"[^\n%]"%"                    { HANDLE_OPERATOR_TOKEN(SPECIAL);          }
+
+{QUOTE}                         {
+                                    clear_token_buffer();
+                                    char current;
+                                    char quote = *yytext;
+                                    char previous = quote;
+                                    for(current = yyinput(); ;current = yyinput()) {
+                                        if(current == EOF) {
+                                            std::cerr << "unterminated special value" << std::endl;
+                                            exit(1);
+                                            break;
+
+                                        }
+                                        if(current == quote && previous != '\\') {
+                                            std::string constructor;
+                                            if(quote == '`') {
+                                                 HANDLE_SYMBOL_TOKEN(get_token_buffer(), true)
+                                            }
+                                            else if(quote == '\'' || quote == '"') {
+                                                 *yylval = new rastr::ast::CharacterLiteralExpressionRNode(get_token_buffer(), quote);
+                                                 return rastr::r::parser::Parser::token::STR_CONST;
+                                            }
+                                            break;
+                                        }
+                                        else {
+                                            push_token_buffer(current);
+                                        }
+                                        previous = current;
+                                    }
+                                }
+
+{NUM_BEGIN}                     {
+                                    if (strlen(yytext) == 2) {
+                                        unput_(yytext[1]);
+                                    }
+                                    char c = yytext[0];
+
+                                    clear_token_buffer();
+                                    int seendot = (c == '.');
+                                    int seenexp = 0;
+                                    int last = c;
+                                    int nd = 0;
+                                    int asNumeric = 0;
+                                    int count = 1; /* The number of characters seen */
+
+                                    push_token_buffer(c);
+                                    /* We don't care about other than ASCII digits */
+                                    while (isdigit(c = yyinput()) ||           //
+                                           c == '.' || c == 'e' || c == 'E' || //
+                                           c == 'x' || c == 'X' || c == 'L') {
+                                        count++;
+
+                                        /* must be at the end.  Won't allow 1Le3 (at present). */
+                                        if (c == 'L') {
+                                            push_token_buffer(c);
+                                            break;
+                                        }
+
+                                        if (c == 'x' || c == 'X') {
+                                            if (count > 2 || last != '0')
+                                                break; /* 0x must be first */
+                                            push_token_buffer(c);
+                                            while (isdigit(c = yyinput()) || ('a' <= c && c <= 'f') ||
+                                                   ('A' <= c && c <= 'F') || c == '.') {
+                                                if (c == '.') {
+                                                    if (seendot)
+                                                        HANDLE_ERROR();
+                                                    seendot = 1;
+                                                }
+                                                push_token_buffer(c);
+                                                nd++;
+                                            }
+                                            if (nd == 0)
+                                                HANDLE_ERROR();
+                                            if (c == 'p' || c == 'P') {
+                                                seenexp = 1;
+                                                push_token_buffer(c);
+                                                c = yyinput();
+                                                if (!isdigit(c) && c != '+' && c != '-')
+                                                    HANDLE_ERROR();
+                                                if (c == '+' || c == '-') {
+                                                    push_token_buffer(c);
+                                                    c = yyinput();
+                                                }
+                                                for (nd = 0; isdigit(c); c = yyinput(), nd++)
+                                                    push_token_buffer(c);
+                                                if (nd == 0)
+                                                    HANDLE_ERROR();
+                                            }
+                                            if (seendot && !seenexp)
+                                                HANDLE_ERROR();
+                                            break;
+                                        }
+                                        if (c == 'E' || c == 'e') {
+                                            if (seenexp)
+                                                break;
+                                            seenexp = 1;
+                                            seendot = seendot == 1 ? seendot : 2;
+                                            push_token_buffer(c);
+                                            c = yyinput();
+                                            if (!isdigit(c) && c != '+' && c != '-')
+                                                HANDLE_ERROR();
+                                            if (c == '+' || c == '-') {
+                                                push_token_buffer(c);
+                                                c = yyinput();
+                                                if (!isdigit(c))
+                                                    HANDLE_ERROR();
+                                            }
+                                        }
+                                        if (c == '.') {
+                                            if (seendot)
+                                                break;
+                                            seendot = 1;
+                                        }
+                                        push_token_buffer(c);
+                                        last = c;
+                                    }
+
+                                    if (c == 'i')
+                                        push_token_buffer(c); /* for getParseData */
+
+                                    /*NOTE: representation finished at this point:  YYTEXT_PUSH('\0', yyp);
+                                     */
+                                    /* Make certain that things are okay. */
+                                    if (c == 'L') {
+                                        double a = R_atof(get_token_buffer().c_str());
+                                        int b = (int) a;
+                                        /* We are asked to create an integer via the L, so we check that the
+                                           double and int values are the same. If not, this is a problem and
+                                           we will not lose information and so use the numeric value.
+                                        */
+                                        if (a != (double) b) {
+                                            if (seendot == 1 && seenexp == 0)
+                                                fprintf(stderr,
+                                                        "integer literal %s contains decimal; using "
+                                                        "numeric value",
+                                                        get_token_buffer().c_str());
+                                            else {
+                                                /* hide the L for the warning message */
+                                                fprintf(stderr,
+                                                        "non-integer value %s qualified with L; using "
+                                                        "numeric value",
+                                                        get_token_buffer().c_str());
+                                            }
+                                            asNumeric = 1;
+                                            seenexp = 1;
+                                        }
+                                    }
+
+                                    if (c == 'i') {
+                                        *yylval = mkComplex(get_token_buffer());
+                                        return rastr::r::parser::Parser::token::COMPLEX_CONST;
+                                    } else if (c == 'L' && asNumeric == 0) {
+                                        if (seendot == 1 && seenexp == 0)
+                                            fprintf(stderr,
+                                                    "integer literal %s contains unnecessary decimal point",
+                                                    get_token_buffer().c_str());
+                                            *yylval = mkInt(get_token_buffer());
+                                            return rastr::r::parser::Parser::token::INT_CONST;
+                                #if 0 /* do this to make 123 integer not double */
+                                                                    } else if(!(seendot || seenexp)) {
+                                                                	if(c != 'L') unput_(c);
+                                                                	    double a = R_atof(get_token_buffer().c_str());
+                                                                	    int b = (int) a;
+                                                                	    if(a != (double) b) {
+                                                                          *yylval = mkFloat(get_token_buffer());
+                                                                          return rastr::r::parser::Parser::token::FLOAT_CONST;
+                                                                      }
+                                                                      else {
+                                                                          *yylval = mkInt(get_token_buffer());
+                                                                          return rastr::r::parser::Parser::token::INT_CONST;
+                                                                      }
+                                #endif
+                                    } else {
+                                        if (c != 'L')
+                                            unput_(c);
+                                            *yylval = mkFloat(get_token_buffer());
+                                            return rastr::r::parser::Parser::token::FLOAT_CONST;
+                                    }
+                                }
+
+
+
+
+
+"."[._a-zA-Z][._a-zA-Z0-9]*     { HANDLE_SYMBOL_TOKEN(yytext, false) }
+[a-zA-Z][._a-zA-Z0-9]*          { HANDLE_SYMBOL_TOKEN(yytext, false) }
+
+[rR]['"][-]*[|({(]              {
+                                    token_buffer_.clear();
+                                    closing_delimiter_.clear();
+                                    opening_delimiter_.clear();
+
+                                    char current;
+                                    char quote = yytext[1];
+                                    char delimiter = '\0';
+                                    int opening_dash_count = 0;
+                                    int closing_dash_count = 0;
+
+                                    opening_delimiter_.append(yytext);
+                                    delimiter = opening_delimiter_.back();
+
+                                    for(int index = 2; yytext[index] == '-'; ++index, ++opening_dash_count);
+
+                                    for(current = yyinput(); ;current = yyinput()) {
+                                        if(current == EOF) {
+                                           std::cerr << "unterminated raw string" << std::endl;
+                                                        exit(1);
+                                        }
+                                        else if(matched_pair(delimiter, current)) {
+                                               closing_delimiter_.push_back(current);
+                                               for(current = yyinput(); current == '-'; current = yyinput()) {
+                                                   ++closing_dash_count;
+                                                   closing_delimiter_.push_back(current);
+                                               }
+                                               if(current == EOF) {
+                                                        std::cerr << "unterminated raw string" << std::endl;
+                                                        exit(1);
+                                               }
+                                               else if(closing_dash_count == opening_dash_count && current == quote) {
+                                                   /* we are done */
+                                                   closing_delimiter_.push_back(current);
+                                                   *yylval = new rastr::ast::RawStringLiteralExpressionRNode(opening_delimiter_,
+                                                                                                             get_token_buffer(),
+                                                                                                             closing_delimiter_);
+                                                   return rastr::r::parser::Parser::token::RAW_STRING_CONST;
+                                                   break;
+                                               }
+                                               else {
+                                                   token_buffer_.append(closing_delimiter_);
+                                                   closing_delimiter_.clear();
+                                                   token_buffer_.push_back(current);
+                                                   continue;
+                                               }
+                                        }
+                                        else {
+                                            token_buffer_.push_back(current);
+                                        }
+                                    }
+                                }
+
+
+.            {
+                 std::cerr << "invalid character: " + std::string(yytext);
+                 exit(1);
+             }
+%%
+
+/*
+int main(int argc, char** argv) {
+    FlexLexer* lexer = new rastr::r::parser::Lexer();
+    while(lexer->yylex() != 0);
+    return 0;
+}
+*/
+
+void rastr::r::parser::Lexer::unput_(int c) {
+    unput(c);
+}
+
+int rastr::r::parser::Lexer::typeofnext() {
+        int k, c;
+
+        c = yyinput();
+        if (isdigit(c))
+            k = 1;
+        else
+            k = 2;
+        unput_(c);
+        return k;
+    }
