@@ -10,11 +10,14 @@ class BlockExpressionRNode
     : public ExpressionSequenceRNode
     , public ExpressionRNode {
   public:
+    explicit BlockExpressionRNode()
+        : ExpressionSequenceRNode(), ExpressionRNode() {
+    }
     explicit BlockExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
                                   DelimiterRNodeSPtr closing_delimiter)
-        : ExpressionSequenceRNode(opening_delimiter, closing_delimiter)
-        , ExpressionRNode() {
+        : BlockExpressionRNode() {
         set_type(Type::BlockExpressionRNode);
+        set_delimiters(opening_delimiter, closing_delimiter);
     }
 
     static void initialize();
