@@ -9,8 +9,11 @@ namespace ast {
 class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
     explicit CharacterLiteralExpressionRNode(
-        const std::string& representation = "")
-        : LiteralExpressionRNode(), representation_(representation) {
+        const std::string& representation = "",
+        const char quote = '"')
+        : LiteralExpressionRNode()
+        , representation_(representation)
+        , quote_(quote) {
         set_type(Type::CharacterLiteralExpressionRNode);
     }
 
@@ -22,6 +25,14 @@ class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
         representation_ = representation;
     }
 
+    const char get_quote() const {
+        return quote_;
+    }
+
+    void set_quote(const char quote) {
+        quote_ = quote;
+    }
+
     static void initialize();
 
     static void finalize();
@@ -30,6 +41,7 @@ class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
 
   private:
     std::string representation_;
+    char quote_;
 
     static SEXP class_;
 };
