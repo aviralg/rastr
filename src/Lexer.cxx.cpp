@@ -1260,7 +1260,7 @@ case 61:
 YY_RULE_SETUP
 #line 162 "Lexer.lxx"
 {
-                                    *yylval = new rastr::ast::NextExpressionRNode(yytext);
+                                    *yylval = new rastr::ast::NextExpressionRNode();
                                     return rastr::r::parser::Parser::token::NEXT;
                                 }
 	YY_BREAK
@@ -1268,7 +1268,7 @@ case 62:
 YY_RULE_SETUP
 #line 166 "Lexer.lxx"
 {
-                                    *yylval = new rastr::ast::BreakExpressionRNode(yytext);
+                                    *yylval = new rastr::ast::BreakExpressionRNode();
                                     return rastr::r::parser::Parser::token::BREAK;
                                 }
 	YY_BREAK

@@ -159,11 +159,11 @@ NUM_BEGIN           [.]?[0-9]
 "in"	                          { HANDLE_KEYWORD_TOKEN(IN);                }
 "else"	                        { HANDLE_KEYWORD_TOKEN(ELSE);              }
 "next"	                        {
-                                    *yylval = new rastr::ast::NextExpressionRNode(yytext);
+                                    *yylval = new rastr::ast::NextExpressionRNode();
                                     return rastr::r::parser::Parser::token::NEXT;
                                 }
 "break"	                        {
-                                    *yylval = new rastr::ast::BreakExpressionRNode(yytext);
+                                    *yylval = new rastr::ast::BreakExpressionRNode();
                                     return rastr::r::parser::Parser::token::BREAK;
                                 }
 "..."	                          { HANDLE_SYMBOL_TOKEN(yytext, false)       }

@@ -2,23 +2,18 @@
 #define RASTR_AST_BREAK_EXPRESSION_RNODE_HPP
 
 #include "ExpressionRNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class BreakExpressionRNode: public ExpressionRNode {
+class BreakExpressionRNode
+    : public ExpressionRNode
+    , public IRepresentation {
   public:
-    explicit BreakExpressionRNode(const std::string& representation = "")
-        : ExpressionRNode(), representation_(representation) {
+    explicit BreakExpressionRNode()
+        : ExpressionRNode(), IRepresentation("break") {
         set_type(Type::BreakExpressionRNode);
-    }
-
-    const std::string& get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(const std::string& representation) {
-        representation_ = representation;
     }
 
     static void initialize();
@@ -28,8 +23,6 @@ class BreakExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    std::string representation_;
-
     static SEXP class_;
 };
 

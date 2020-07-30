@@ -2,23 +2,17 @@
 #define RASTR_AST_NEXT_EXPRESSION_RNODE_HPP
 
 #include "ExpressionRNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class NextExpressionRNode: public ExpressionRNode {
+class NextExpressionRNode
+    : public ExpressionRNode
+    , public IRepresentation {
   public:
-    explicit NextExpressionRNode(const std::string& representation = "")
-        : ExpressionRNode(), representation_(representation) {
+    explicit NextExpressionRNode(): ExpressionRNode(), IRepresentation("next") {
         set_type(Type::NextExpressionRNode);
-    }
-
-    const std::string& get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(const std::string& representation) {
-        representation_ = representation;
     }
 
     static void initialize();
@@ -28,8 +22,6 @@ class NextExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    std::string representation_;
-
     static SEXP class_;
 };
 
