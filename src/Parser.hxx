@@ -45,7 +45,7 @@
 #ifndef YY_YY_PARSER_HXX_INCLUDED
 # define YY_YY_PARSER_HXX_INCLUDED
 // "%code requires" blocks.
-#line 87 "Parser.yxx"
+#line 86 "Parser.yxx"
 
     #include <string>
     #include <iostream>
@@ -53,13 +53,20 @@
         namespace r {
             namespace parser {
                 class Lexer;
+                class Parser;
             }
         }
     }
+    //namespace rastr {
+    //    namespace ast {
+    //        class ProgramRNode;
+    //    }
+    //}
     #include "ast.hpp"
+    #include "Location.hpp"
     using namespace rastr::ast;
 
-#line 63 "Parser.hxx"
+#line 70 "Parser.hxx"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -104,7 +111,7 @@
 #else
 # define YY_CONSTEXPR
 #endif
-# include "location.hh"
+
 
 
 #ifndef YY_ATTRIBUTE_PURE
@@ -189,7 +196,7 @@
 
 #line 9 "Parser.yxx"
 namespace rastr { namespace r { namespace parser {
-#line 193 "Parser.hxx"
+#line 200 "Parser.hxx"
 
 
 
@@ -205,7 +212,7 @@ namespace rastr { namespace r { namespace parser {
     typedef YYSTYPE semantic_type;
 #endif
     /// Symbol locations.
-    typedef location location_type;
+    typedef rastr::r::parser::Location location_type;
 
     /// Syntax errors thrown from user actions.
     struct syntax_error : std::runtime_error
@@ -245,68 +252,67 @@ namespace rastr { namespace r { namespace parser {
     COMMA = 266,                   // COMMA
     SEMICOLON = 267,               // SEMICOLON
     END_OF_INPUT = 268,            // END_OF_INPUT
-    ERROR = 269,                   // ERROR
-    STR_CONST = 270,               // STR_CONST
-    LITERAL_CONST = 271,           // LITERAL_CONST
-    INT_CONST = 272,               // INT_CONST
-    FLOAT_CONST = 273,             // FLOAT_CONST
-    COMPLEX_CONST = 274,           // COMPLEX_CONST
-    RAW_STRING_CONST = 275,        // RAW_STRING_CONST
-    NULL_CONST = 276,              // NULL_CONST
-    SYMBOL = 277,                  // SYMBOL
-    FUNCTION = 278,                // FUNCTION
-    INCOMPLETE_STRING = 279,       // INCOMPLETE_STRING
-    LEFT_ASSIGN = 280,             // LEFT_ASSIGN
-    EQ_ASSIGN = 281,               // EQ_ASSIGN
-    RIGHT_ASSIGN = 282,            // RIGHT_ASSIGN
-    LBB = 283,                     // LBB
-    FOR = 284,                     // FOR
-    IN = 285,                      // IN
-    IF = 286,                      // IF
-    ELSE = 287,                    // ELSE
-    WHILE = 288,                   // WHILE
-    NEXT = 289,                    // NEXT
-    BREAK = 290,                   // BREAK
-    REPEAT = 291,                  // REPEAT
-    GT = 292,                      // GT
-    GE = 293,                      // GE
-    LT = 294,                      // LT
-    LE = 295,                      // LE
-    EQ = 296,                      // EQ
-    NE = 297,                      // NE
-    AND = 298,                     // AND
-    OR = 299,                      // OR
-    AND2 = 300,                    // AND2
-    OR2 = 301,                     // OR2
-    NS_GET = 302,                  // NS_GET
-    NS_GET_INT = 303,              // NS_GET_INT
-    COMMENT = 304,                 // COMMENT
-    LINE_DIRECTIVE = 305,          // LINE_DIRECTIVE
-    SYMBOL_FORMALS = 306,          // SYMBOL_FORMALS
-    EQ_FORMALS = 307,              // EQ_FORMALS
-    EQ_SUB = 308,                  // EQ_SUB
-    SYMBOL_SUB = 309,              // SYMBOL_SUB
-    SYMBOL_FUNCTION_CALL = 310,    // SYMBOL_FUNCTION_CALL
-    SYMBOL_PACKAGE = 311,          // SYMBOL_PACKAGE
-    COLON_ASSIGN = 312,            // COLON_ASSIGN
-    SLOT = 313,                    // SLOT
-    MINUS = 314,                   // MINUS
-    PLUS = 315,                    // PLUS
-    TILDE = 316,                   // TILDE
-    QUESTION = 317,                // QUESTION
-    COLON = 318,                   // COLON
-    ASTERISK = 319,                // ASTERISK
-    SLASH = 320,                   // SLASH
-    CARET = 321,                   // CARET
-    SPECIAL = 322,                 // SPECIAL
-    LSQPAREN = 323,                // LSQPAREN
-    DOLLAR = 324,                  // DOLLAR
-    AT = 325,                      // AT
-    LOW = 326,                     // LOW
-    UNOT = 327,                    // UNOT
-    NOT = 328,                     // NOT
-    UMINUS = 329,                  // UMINUS
-    UPLUS = 330                    // UPLUS
+    STR_CONST = 269,               // STR_CONST
+    LITERAL_CONST = 270,           // LITERAL_CONST
+    INT_CONST = 271,               // INT_CONST
+    FLOAT_CONST = 272,             // FLOAT_CONST
+    COMPLEX_CONST = 273,           // COMPLEX_CONST
+    RAW_STRING_CONST = 274,        // RAW_STRING_CONST
+    NULL_CONST = 275,              // NULL_CONST
+    SYMBOL = 276,                  // SYMBOL
+    FUNCTION = 277,                // FUNCTION
+    INCOMPLETE_STRING = 278,       // INCOMPLETE_STRING
+    LEFT_ASSIGN = 279,             // LEFT_ASSIGN
+    EQ_ASSIGN = 280,               // EQ_ASSIGN
+    RIGHT_ASSIGN = 281,            // RIGHT_ASSIGN
+    LBB = 282,                     // LBB
+    FOR = 283,                     // FOR
+    IN = 284,                      // IN
+    IF = 285,                      // IF
+    ELSE = 286,                    // ELSE
+    WHILE = 287,                   // WHILE
+    NEXT = 288,                    // NEXT
+    BREAK = 289,                   // BREAK
+    REPEAT = 290,                  // REPEAT
+    GT = 291,                      // GT
+    GE = 292,                      // GE
+    LT = 293,                      // LT
+    LE = 294,                      // LE
+    EQ = 295,                      // EQ
+    NE = 296,                      // NE
+    AND = 297,                     // AND
+    OR = 298,                      // OR
+    AND2 = 299,                    // AND2
+    OR2 = 300,                     // OR2
+    NS_GET = 301,                  // NS_GET
+    NS_GET_INT = 302,              // NS_GET_INT
+    COMMENT = 303,                 // COMMENT
+    LINE_DIRECTIVE = 304,          // LINE_DIRECTIVE
+    SYMBOL_FORMALS = 305,          // SYMBOL_FORMALS
+    EQ_FORMALS = 306,              // EQ_FORMALS
+    EQ_SUB = 307,                  // EQ_SUB
+    SYMBOL_SUB = 308,              // SYMBOL_SUB
+    SYMBOL_FUNCTION_CALL = 309,    // SYMBOL_FUNCTION_CALL
+    SYMBOL_PACKAGE = 310,          // SYMBOL_PACKAGE
+    COLON_ASSIGN = 311,            // COLON_ASSIGN
+    SLOT = 312,                    // SLOT
+    MINUS = 313,                   // MINUS
+    PLUS = 314,                    // PLUS
+    TILDE = 315,                   // TILDE
+    QUESTION = 316,                // QUESTION
+    COLON = 317,                   // COLON
+    ASTERISK = 318,                // ASTERISK
+    SLASH = 319,                   // SLASH
+    CARET = 320,                   // CARET
+    SPECIAL = 321,                 // SPECIAL
+    LSQPAREN = 322,                // LSQPAREN
+    DOLLAR = 323,                  // DOLLAR
+    AT = 324,                      // AT
+    LOW = 325,                     // LOW
+    UNOT = 326,                    // UNOT
+    NOT = 327,                     // NOT
+    UMINUS = 328,                  // UMINUS
+    UPLUS = 329                    // UPLUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -323,7 +329,7 @@ namespace rastr { namespace r { namespace parser {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 77, ///< Number of tokens.
+        YYNTOKENS = 76, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -339,82 +345,83 @@ namespace rastr { namespace r { namespace parser {
         S_COMMA = 11,                            // COMMA
         S_SEMICOLON = 12,                        // SEMICOLON
         S_END_OF_INPUT = 13,                     // END_OF_INPUT
-        S_ERROR = 14,                            // ERROR
-        S_STR_CONST = 15,                        // STR_CONST
-        S_LITERAL_CONST = 16,                    // LITERAL_CONST
-        S_INT_CONST = 17,                        // INT_CONST
-        S_FLOAT_CONST = 18,                      // FLOAT_CONST
-        S_COMPLEX_CONST = 19,                    // COMPLEX_CONST
-        S_RAW_STRING_CONST = 20,                 // RAW_STRING_CONST
-        S_NULL_CONST = 21,                       // NULL_CONST
-        S_SYMBOL = 22,                           // SYMBOL
-        S_FUNCTION = 23,                         // FUNCTION
-        S_INCOMPLETE_STRING = 24,                // INCOMPLETE_STRING
-        S_LEFT_ASSIGN = 25,                      // LEFT_ASSIGN
-        S_EQ_ASSIGN = 26,                        // EQ_ASSIGN
-        S_RIGHT_ASSIGN = 27,                     // RIGHT_ASSIGN
-        S_LBB = 28,                              // LBB
-        S_FOR = 29,                              // FOR
-        S_IN = 30,                               // IN
-        S_IF = 31,                               // IF
-        S_ELSE = 32,                             // ELSE
-        S_WHILE = 33,                            // WHILE
-        S_NEXT = 34,                             // NEXT
-        S_BREAK = 35,                            // BREAK
-        S_REPEAT = 36,                           // REPEAT
-        S_GT = 37,                               // GT
-        S_GE = 38,                               // GE
-        S_LT = 39,                               // LT
-        S_LE = 40,                               // LE
-        S_EQ = 41,                               // EQ
-        S_NE = 42,                               // NE
-        S_AND = 43,                              // AND
-        S_OR = 44,                               // OR
-        S_AND2 = 45,                             // AND2
-        S_OR2 = 46,                              // OR2
-        S_NS_GET = 47,                           // NS_GET
-        S_NS_GET_INT = 48,                       // NS_GET_INT
-        S_COMMENT = 49,                          // COMMENT
-        S_LINE_DIRECTIVE = 50,                   // LINE_DIRECTIVE
-        S_SYMBOL_FORMALS = 51,                   // SYMBOL_FORMALS
-        S_EQ_FORMALS = 52,                       // EQ_FORMALS
-        S_EQ_SUB = 53,                           // EQ_SUB
-        S_SYMBOL_SUB = 54,                       // SYMBOL_SUB
-        S_SYMBOL_FUNCTION_CALL = 55,             // SYMBOL_FUNCTION_CALL
-        S_SYMBOL_PACKAGE = 56,                   // SYMBOL_PACKAGE
-        S_COLON_ASSIGN = 57,                     // COLON_ASSIGN
-        S_SLOT = 58,                             // SLOT
-        S_MINUS = 59,                            // MINUS
-        S_PLUS = 60,                             // PLUS
-        S_TILDE = 61,                            // TILDE
-        S_QUESTION = 62,                         // QUESTION
-        S_COLON = 63,                            // COLON
-        S_ASTERISK = 64,                         // ASTERISK
-        S_SLASH = 65,                            // SLASH
-        S_CARET = 66,                            // CARET
-        S_SPECIAL = 67,                          // SPECIAL
-        S_LSQPAREN = 68,                         // LSQPAREN
-        S_DOLLAR = 69,                           // DOLLAR
-        S_AT = 70,                               // AT
-        S_LOW = 71,                              // LOW
-        S_72_ = 72,                              // '~'
-        S_UNOT = 73,                             // UNOT
-        S_NOT = 74,                              // NOT
-        S_UMINUS = 75,                           // UMINUS
-        S_UPLUS = 76,                            // UPLUS
-        S_YYACCEPT = 77,                         // $accept
-        S_prog = 78,                             // prog
-        S_expr_or_assign_or_help = 79,           // expr_or_assign_or_help
-        S_expr_or_help = 80,                     // expr_or_help
-        S_expr = 81,                             // expr
-        S_cond = 82,                             // cond
-        S_ifcond = 83,                           // ifcond
-        S_forcond = 84,                          // forcond
-        S_exprlist = 85,                         // exprlist
-        S_sublist = 86,                          // sublist
-        S_sub = 87,                              // sub
-        S_formlist = 88,                         // formlist
-        S_cr = 89                                // cr
+        S_STR_CONST = 14,                        // STR_CONST
+        S_LITERAL_CONST = 15,                    // LITERAL_CONST
+        S_INT_CONST = 16,                        // INT_CONST
+        S_FLOAT_CONST = 17,                      // FLOAT_CONST
+        S_COMPLEX_CONST = 18,                    // COMPLEX_CONST
+        S_RAW_STRING_CONST = 19,                 // RAW_STRING_CONST
+        S_NULL_CONST = 20,                       // NULL_CONST
+        S_SYMBOL = 21,                           // SYMBOL
+        S_FUNCTION = 22,                         // FUNCTION
+        S_INCOMPLETE_STRING = 23,                // INCOMPLETE_STRING
+        S_LEFT_ASSIGN = 24,                      // LEFT_ASSIGN
+        S_EQ_ASSIGN = 25,                        // EQ_ASSIGN
+        S_RIGHT_ASSIGN = 26,                     // RIGHT_ASSIGN
+        S_LBB = 27,                              // LBB
+        S_FOR = 28,                              // FOR
+        S_IN = 29,                               // IN
+        S_IF = 30,                               // IF
+        S_ELSE = 31,                             // ELSE
+        S_WHILE = 32,                            // WHILE
+        S_NEXT = 33,                             // NEXT
+        S_BREAK = 34,                            // BREAK
+        S_REPEAT = 35,                           // REPEAT
+        S_GT = 36,                               // GT
+        S_GE = 37,                               // GE
+        S_LT = 38,                               // LT
+        S_LE = 39,                               // LE
+        S_EQ = 40,                               // EQ
+        S_NE = 41,                               // NE
+        S_AND = 42,                              // AND
+        S_OR = 43,                               // OR
+        S_AND2 = 44,                             // AND2
+        S_OR2 = 45,                              // OR2
+        S_NS_GET = 46,                           // NS_GET
+        S_NS_GET_INT = 47,                       // NS_GET_INT
+        S_COMMENT = 48,                          // COMMENT
+        S_LINE_DIRECTIVE = 49,                   // LINE_DIRECTIVE
+        S_SYMBOL_FORMALS = 50,                   // SYMBOL_FORMALS
+        S_EQ_FORMALS = 51,                       // EQ_FORMALS
+        S_EQ_SUB = 52,                           // EQ_SUB
+        S_SYMBOL_SUB = 53,                       // SYMBOL_SUB
+        S_SYMBOL_FUNCTION_CALL = 54,             // SYMBOL_FUNCTION_CALL
+        S_SYMBOL_PACKAGE = 55,                   // SYMBOL_PACKAGE
+        S_COLON_ASSIGN = 56,                     // COLON_ASSIGN
+        S_SLOT = 57,                             // SLOT
+        S_MINUS = 58,                            // MINUS
+        S_PLUS = 59,                             // PLUS
+        S_TILDE = 60,                            // TILDE
+        S_QUESTION = 61,                         // QUESTION
+        S_COLON = 62,                            // COLON
+        S_ASTERISK = 63,                         // ASTERISK
+        S_SLASH = 64,                            // SLASH
+        S_CARET = 65,                            // CARET
+        S_SPECIAL = 66,                          // SPECIAL
+        S_LSQPAREN = 67,                         // LSQPAREN
+        S_DOLLAR = 68,                           // DOLLAR
+        S_AT = 69,                               // AT
+        S_LOW = 70,                              // LOW
+        S_71_ = 71,                              // '~'
+        S_UNOT = 72,                             // UNOT
+        S_NOT = 73,                              // NOT
+        S_UMINUS = 74,                           // UMINUS
+        S_UPLUS = 75,                            // UPLUS
+        S_YYACCEPT = 76,                         // $accept
+        S_prog = 77,                             // prog
+        S_expr_or_assign_or_help = 78,           // expr_or_assign_or_help
+        S_expr_or_help = 79,                     // expr_or_help
+        S_expr = 80,                             // expr
+        S_cond = 81,                             // cond
+        S_ifcond = 82,                           // ifcond
+        S_forcond = 83,                          // forcond
+        S_exprlist = 84,                         // exprlist
+        S_sublist = 85,                          // sublist
+        S_sub = 86,                              // sub
+        S_formlist = 87,                         // formlist
+        S_proglist = 88,                         // proglist
+        S_formlist_inner = 89,                   // formlist_inner
+        S_cr = 90                                // cr
       };
     };
 
@@ -548,7 +555,7 @@ namespace rastr { namespace r { namespace parser {
     {};
 
     /// Build a parser object.
-    Parser (rastr::r::parser::Lexer& lexer_yyarg);
+    Parser (rastr::r::parser::Lexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr program_yyarg);
     virtual ~Parser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -922,21 +929,22 @@ namespace rastr { namespace r { namespace parser {
     /// Constants.
     enum
     {
-      yylast_ = 539,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
-      yyfinal_ = 51 ///< Termination state number.
+      yylast_ = 504,     ///< Last index in yytable_.
+      yynnts_ = 15,  ///< Number of nonterminal symbols.
+      yyfinal_ = 49 ///< Termination state number.
     };
 
 
     // User arguments.
     rastr::r::parser::Lexer& lexer;
+    rastr::ast::ProgramRNodeSPtr program;
 
   };
 
 
 #line 9 "Parser.yxx"
 } } } // rastr::r::parser
-#line 940 "Parser.hxx"
+#line 948 "Parser.hxx"
 
 
 

@@ -26,8 +26,11 @@ namespace parser {
 /* https://westes.github.io/flex/manual/Cxx.html#Cxx */
 class Lexer: public yyFlexLexer {
   public:
-    Lexer()
-        : yyFlexLexer(std::cin, std::cout), eat_lines_(false), saved_(false) {
+    Lexer(): Lexer(std::cin) {
+    }
+
+    explicit Lexer(std::istream& istream)
+        : yyFlexLexer(istream, std::cout), eat_lines_(false), saved_(false) {
     }
 
     int yylex_inner(rastr::r::parser::Parser::semantic_type* yylval,
@@ -202,9 +205,11 @@ class Lexer: public yyFlexLexer {
 
         case Parser::token::SYMBOL:
         case Parser::token::STR_CONST:
+        case Parser::token::LITERAL_CONST:
         case Parser::token::INT_CONST:
         case Parser::token::FLOAT_CONST:
         case Parser::token::COMPLEX_CONST:
+        case Parser::token::RAW_STRING_CONST:
         case Parser::token::NULL_CONST:
         case Parser::token::NEXT:
         case Parser::token::BREAK:

@@ -7,7 +7,7 @@
 
 %define api.parser.class {Parser}
 %define api.namespace {rastr::r::parser}
-/* %define api.location.type {rastr::r::parser::Parser::location_type} */
+%define api.location.type {rastr::r::parser::Location}
 
 /* assert correct cleanup of semantic value objects */
 %define parse.assert
@@ -16,8 +16,7 @@
 
 /* increase usefulness of error messages */
 %define parse.error verbose
-%parse-param { rastr::r::parser::Lexer& lexer}
-/* { rastr::r::parser::ParsingContext& context } */
+%parse-param { rastr::r::parser::Lexer& lexer} { rastr::ast::ProgramRNodeSPtr program}
 
 /* call yylex with a location */
 %locations
@@ -31,7 +30,7 @@
 
 %token LPAREN RPAREN RSQPAREN LBRACE RBRACE EXCLAMATION NEWLINE DOUBLE_EXCLAMATION
 %token COMMA SEMICOLON
-%token END_OF_INPUT ERROR
+%token END_OF_INPUT
 %token STR_CONST LITERAL_CONST INT_CONST FLOAT_CONST COMPLEX_CONST RAW_STRING_CONST NULL_CONST SYMBOL FUNCTION
 %token INCOMPLETE_STRING
 %token LEFT_ASSIGN EQ_ASSIGN RIGHT_ASSIGN LBB
@@ -91,16 +90,24 @@
         namespace r {
             namespace parser {
                 class Lexer;
+                class Parser;
             }
         }
     }
+    //namespace rastr {
+    //    namespace ast {
+    //        class ProgramRNode;
+    //    }
+    //}
     #include "ast.hpp"
+    #include "Location.hpp"
     using namespace rastr::ast;
 }
 
 %code {
     #include <string>
     #include <iostream>
+    #include "ast.hpp"
     #include "Lexer.hpp"
     #undef yylex
     #define yylex lexer.yylex
@@ -131,14 +138,29 @@ ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
 
 }
 
-%%
 
-prog: END_OF_INPUT                                                              { yyresult = 0; /*$1;*/ YYACCEPT; }
-    | NEWLINE                                                                   { yyresult = 0; goto yyreturn; }
-    | expr_or_assign_or_help NEWLINE                                            { yyresult = 0; /*std::cout << $1 + $2;*/ goto yyreturn; }
-    | expr_or_assign_or_help SEMICOLON                                          { yyresult = 0; /*std::cout << $1 + $2;*/ goto yyreturn; }
-    | error                                                                     { YYABORT; }
-    ;
+%%
+prog: proglist END_OF_INPUT                                                     { yyresult = 0; YYACCEPT; }
+
+proglist:                                                                       { }
+        | expr_or_assign_or_help                                                {
+                                                                                  program -> push_back(wrap<ExpressionRNode>($1));
+                                                                                  $$ = nullptr;
+                                                                                }
+        | proglist SEMICOLON expr_or_assign_or_help                             {
+                                                                                  program -> push_back(wrap<ExpressionRNode>($3));
+                                                                                  $$ = nullptr;
+                                                                                }
+        | proglist SEMICOLON                                                    {
+                                                                                  $$ = nullptr;
+                                                                                }
+        | proglist NEWLINE expr_or_assign_or_help                               {
+                                                                                  program -> push_back(wrap<ExpressionRNode>($3));
+                                                                                  $$ = nullptr;
+                                                                                }
+        | proglist NEWLINE                                                      {
+                                                                                }
+        ;
 
 expr_or_assign_or_help: expr                                                    { $$ = $1; }
                       | expr_or_assign_or_help EQ_ASSIGN expr_or_assign_or_help { $$ = create_binary_expression($2, $1, $3); }
@@ -158,7 +180,7 @@ expr: INT_CONST                                                                 
     | NULL_CONST                                                                { $$ = $1; }
     | SYMBOL                                                                    { $$ = $1; }
     | LBRACE exprlist RBRACE                                                    {
-                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($2);
+                                                                                  auto block = static_cast<BlockExpressionRNode*>($2);
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>($1);
                                                                                   auto closing_delimiter = wrap<DelimiterRNode>($3);
                                                                                   block -> set_delimiters(opening_delimiter, closing_delimiter);
@@ -294,25 +316,25 @@ exprlist:                                                                       
                                                                                   $$ = block;
                                                                                 }
         | exprlist SEMICOLON expr_or_assign_or_help                             {
-                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
                                                                                   auto delimiter = wrap<DelimiterRNode>($2);
                                                                                   block -> append(delimiter, wrap<ExpressionRNode>($3));
                                                                                   $$ = block;
                                                                                 }
         | exprlist SEMICOLON                                                    {
-                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
                                                                                   auto delimiter = wrap<DelimiterRNode>($2);
                                                                                   block -> append_delimiter(delimiter);
                                                                                   $$ = block;
                                                                                 }
         | exprlist NEWLINE expr_or_assign_or_help                               {
-                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
                                                                                   auto delimiter = wrap<DelimiterRNode>($2);
                                                                                   block -> append(delimiter, wrap<ExpressionRNode>($3));
                                                                                   $$ = block;
                                                                                 }
         | exprlist NEWLINE                                                      {
-                                                                                  auto block = dynamic_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
                                                                                   auto delimiter = wrap<DelimiterRNode>($2);
                                                                                   block -> append_delimiter(delimiter);
                                                                                   $$ = block;
@@ -325,7 +347,7 @@ sublist: sub                                                                    
                                                                                   $$ = seq;
                                                                                 }
        | sublist cr COMMA sub                                                   {
-                                                                                  auto seq = dynamic_cast<ExpressionSequenceRNode*>($1);
+                                                                                  auto seq = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   auto delimiter = wrap<DelimiterRNode>($3);
                                                                                   seq -> append(delimiter, wrap<ExpressionRNode>($4));
                                                                                   $$ = seq;
@@ -343,7 +365,10 @@ sub:                                                                            
    ;
 
 formlist:                                                                       { $$ = new ExpressionSequenceRNode(); }
-        | SYMBOL                                                                {
+        | formlist_inner                                                        { $$ = $1; }
+        ;
+
+formlist_inner: SYMBOL                                                          {
                                                                                   auto seq = new ExpressionSequenceRNode();
                                                                                   auto element = wrap<SymbolExpressionRNode>($1);
                                                                                   seq -> append_expression(element);
@@ -356,14 +381,14 @@ formlist:                                                                       
                                                                                   $$ = seq;
                                                                                 }
         | formlist COMMA SYMBOL                                                 {
-                                                                                  auto seq = dynamic_cast<ExpressionSequenceRNode*>($1);
+                                                                                  auto seq = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   auto element = wrap<SymbolExpressionRNode>($3);
                                                                                   auto delimiter = wrap<DelimiterRNode>($2);
                                                                                   seq -> append(delimiter, element);
                                                                                   $$ = seq;
                                                                                 }
         | formlist COMMA SYMBOL EQ_ASSIGN expr_or_help                          {
-                                                                                  auto seq = dynamic_cast<ExpressionSequenceRNode*>($1);
+                                                                                  auto seq = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   auto element = wrap<ExpressionRNode>(create_binary_expression($4, $3, $5));
                                                                                   auto delimiter = wrap<DelimiterRNode>($2);
                                                                                   seq -> append(delimiter, element);

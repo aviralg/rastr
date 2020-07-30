@@ -100,6 +100,7 @@ NUM_BEGIN           [.]?[0-9]
                                     HANDLE_DELIMITER_TOKEN(NEWLINE);
                                 }
 [ \t\f]+                        { yylloc -> step(); }
+#.*                             { yylloc -> step();              }
 ";"                             { HANDLE_DELIMITER_TOKEN(SEMICOLON)                 }
 "<="                            { HANDLE_OPERATOR_TOKEN(LE)                         }
 ">="                            { HANDLE_OPERATOR_TOKEN(GE)                         }
@@ -166,22 +167,29 @@ NUM_BEGIN           [.]?[0-9]
                                     return rastr::r::parser::Parser::token::BREAK;
                                 }
 "..."	                          { HANDLE_SYMBOL_TOKEN(yytext, false)       }
-"%"[^\n%]"%"                    { HANDLE_OPERATOR_TOKEN(SPECIAL);          }
+%[^\n%]*%                       { HANDLE_OPERATOR_TOKEN(SPECIAL);          }
 
 {QUOTE}                         {
                                     clear_token_buffer();
                                     char current;
                                     char quote = *yytext;
                                     char previous = quote;
+                                    int consecutive_backslashes = 0;
                                     for(current = yyinput(); ;current = yyinput()) {
                                         if(current == EOF) {
                                             std::cerr << "unterminated special value" << std::endl;
                                             exit(1);
                                             break;
-
                                         }
-                                        if(current == quote && previous != '\\') {
-                                            std::string constructor;
+
+                                        if (previous == '\\') {
+                                            ++consecutive_backslashes;
+                                        }
+                                        else {
+                                            consecutive_backslashes = 0;
+                                        }
+
+                                        if(current == quote && (consecutive_backslashes % 2) == 0) {
                                             if(quote == '`') {
                                                  HANDLE_SYMBOL_TOKEN(get_token_buffer(), true)
                                             }
@@ -351,7 +359,7 @@ NUM_BEGIN           [.]?[0-9]
 
 
 
-
+"."                             { HANDLE_SYMBOL_TOKEN(yytext, false) }
 "."[._a-zA-Z][._a-zA-Z0-9]*     { HANDLE_SYMBOL_TOKEN(yytext, false) }
 [a-zA-Z][._a-zA-Z0-9]*          { HANDLE_SYMBOL_TOKEN(yytext, false) }
 
@@ -410,8 +418,8 @@ NUM_BEGIN           [.]?[0-9]
 
 
 .            {
-                 std::cerr << "invalid character: " + std::string(yytext);
-                 exit(1);
+                 HANDLE_ERROR();
+                 /* exit(1); */
              }
 %%
 
