@@ -1,7 +1,7 @@
 #ifndef RASTR_RASTR_HPP
 #define RASTR_RASTR_HPP
 
-#include <Rinternals.h>
+#include "RIncludes.hpp"
 #include <memory>
 #include <vector>
 #include <string>

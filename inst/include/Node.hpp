@@ -68,6 +68,10 @@ class Node {
         return get_language() == Language::CPP;
     }
 
+    virtual bool is_program_node() const {
+        return false;
+    }
+
     virtual bool is_expression_node() const {
         return false;
     }

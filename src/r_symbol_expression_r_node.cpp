@@ -9,7 +9,7 @@ SEXP r_symbol_expression_r_node_create(SEXP r_representation) {
     const char* representation = CHAR(asChar(r_representation));
 
     SymbolExpressionRNodeSPtr node =
-        std::make_shared<SymbolExpressionRNode>(representation);
+        std::make_shared<SymbolExpressionRNode>(representation, false);
 
     return to_sexp<SymbolExpressionRNode>(node);
 }

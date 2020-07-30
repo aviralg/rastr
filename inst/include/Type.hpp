@@ -18,7 +18,7 @@ enum class Type {
     NextExpressionRNode,
     BreakExpressionRNode,
     DelimiterRNode,
-    DelimitedRNode,
+    TerminatedExpressionRNode,
     SymbolExpressionRNode,
     KeywordRNode,
     ForLoopExpressionRNode,
@@ -38,8 +38,8 @@ enum class Type {
     MissingExpressionRNode,
     GroupExpressionRNode,
     EndRNode,
+    ProgramRNode,
     UndefinedNode,
-
 };
 
 const std::string type_to_string(const Type type);

@@ -27,8 +27,8 @@ const std::string type_to_string(const Type type) {
         return "BreakExpressionRNode";
     case Type::DelimiterRNode:
         return "DelimiterRNode";
-    case Type::DelimitedRNode:
-        return "DelimitedRNode";
+    case Type::TerminatedExpressionRNode:
+        return "TerminatedExpressionRNode";
     case Type::SymbolExpressionRNode:
         return "SymbolExpressionRNode";
     case Type::KeywordRNode:
@@ -67,6 +67,8 @@ const std::string type_to_string(const Type type) {
         return "GroupExpressionRNode";
     case Type::EndRNode:
         return "EndRNode";
+    case Type::ProgramRNode:
+        return "ProgramRNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -96,8 +98,8 @@ Type string_to_type(const std::string& type) {
         return Type::BreakExpressionRNode;
     } else if (type == "DelimiterRNode") {
         return Type::DelimiterRNode;
-    } else if (type == "DelimitedRNode") {
-        return Type::DelimitedRNode;
+    } else if (type == "TerminatedExpressionRNode") {
+        return Type::TerminatedExpressionRNode;
     } else if (type == "SymbolExpressionRNode") {
         return Type::SymbolExpressionRNode;
     } else if (type == "KeywordRNode") {
@@ -136,6 +138,8 @@ Type string_to_type(const std::string& type) {
         return Type::GroupExpressionRNode;
     } else if (type == "EndRNode") {
         return Type::EndRNode;
+    } else if (type == "ProgramRNode") {
+        return Type::ProgramRNode;
     } else {
         return Type::UndefinedNode;
     }

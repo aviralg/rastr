@@ -3,7 +3,6 @@
 
 #include "LoopExpressionRNode.hpp"
 #include "KeywordRNode.hpp"
-#include "DelimitedRNode.hpp"
 #include "ExpressionRNode.hpp"
 
 namespace rastr {

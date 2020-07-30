@@ -1,16 +1,17 @@
 #ifndef RASTR_AST_EXPRESSION_SEQUENCE_RNODE_HPP
 #define RASTR_AST_EXPRESSION_SEQUENCE_RNODE_HPP
 
-#include "BoundedRNode.hpp"
+#include "Bounded.hpp"
 #include "ExpressionRNode.hpp"
-#include "DelimiterRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ExpressionSequenceRNode: public BoundedRNode {
+class ExpressionSequenceRNode
+    : public RNode
+    , public Bounded {
   public:
-    explicit ExpressionSequenceRNode(): BoundedRNode() {
+    explicit ExpressionSequenceRNode(): RNode(), Bounded() {
         set_type(Type::ExpressionSequenceRNode);
     }
 
