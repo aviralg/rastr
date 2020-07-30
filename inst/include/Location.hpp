@@ -2,7 +2,7 @@
 #define RASTR_R_PARSER_LOCATION_HPP
 
 #include "Position.hpp"
-
+#include "SpacingRNode.hpp"
 #include <iostream>
 #include <string>
 
@@ -17,16 +17,18 @@ class Location {
     typedef Position::counter_t counter_t;
 
     /// Construct a Location from \a b to \a e.
-    Location(const Position& b, const Position& e): begin(b), end(e) {
+    Location(const Position& b, const Position& e)
+        : begin(b), end(e), spacing_(new ast::SpacingRNode()) {
     }
 
     /// Construct a 0-width location in \a p.
-    explicit Location(const Position& p = Position()): begin(p), end(p) {
+    explicit Location(const Position& p = Position())
+        : begin(p), end(p), spacing_(new ast::SpacingRNode()) {
     }
 
     /// Construct a 0-width location in \a f, \a l, \a c.
     explicit Location(std::string* f, counter_t l = 1, counter_t c = 1)
-        : begin(f, l, c), end(f, l, c) {
+        : begin(f, l, c), end(f, l, c), spacing_(new ast::SpacingRNode()) {
     }
 
     /// Initialization.
@@ -55,20 +57,12 @@ class Location {
     }
     /** \} */
 
-    void set_prefix(const std::string& prefix) {
-        prefix_ = prefix;
+    ast::SpacingRNodeSPtr get_spacing() const {
+        return spacing_;
     }
 
-    void append_prefix(const char* str) {
-        prefix_.append(str);
-    }
-
-    void append_prefix(const std::string& str) {
-        prefix_.append(str);
-    }
-
-    const std::string& get_prefix() const {
-        return prefix_;
+    void set_spacing(ast::SpacingRNodeSPtr spacing) {
+        spacing_ = spacing;
     }
 
   public:
@@ -77,7 +71,7 @@ class Location {
     /// End of the located region.
     Position end;
 
-    std::string prefix_;
+    ast::SpacingRNodeSPtr spacing_;
 };
 
 /// Join two locations, in place.

@@ -39,6 +39,7 @@ enum class Type {
     GroupExpressionRNode,
     EndRNode,
     ProgramRNode,
+    SpacingRNode,
     UndefinedNode,
 };
 
