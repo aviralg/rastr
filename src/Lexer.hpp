@@ -339,8 +339,6 @@ class Lexer: public yyFlexLexer {
     bool eat_lines_;
     std::string context_;
     std::string token_buffer_;
-    std::string opening_delimiter_;
-    std::string closing_delimiter_;
 };
 
 } // namespace parser

@@ -1495,8 +1495,8 @@ YY_RULE_SETUP
 #line 367 "Lexer.lxx"
 {
                                     token_buffer_.clear();
-                                    closing_delimiter_.clear();
-                                    opening_delimiter_.clear();
+                                    std::string closing_delimiter;
+                                    std::string opening_delimiter;
 
                                     char current;
                                     char quote = yytext[1];
@@ -1504,8 +1504,8 @@ YY_RULE_SETUP
                                     int opening_dash_count = 0;
                                     int closing_dash_count = 0;
 
-                                    opening_delimiter_.append(yytext);
-                                    delimiter = opening_delimiter_.back();
+                                    opening_delimiter.append(yytext);
+                                    delimiter = opening_delimiter.back();
 
                                     for(int index = 2; yytext[index] == '-'; ++index, ++opening_dash_count);
 
@@ -1515,10 +1515,10 @@ YY_RULE_SETUP
                                                         exit(1);
                                         }
                                         else if(matched_pair(delimiter, current)) {
-                                               closing_delimiter_.push_back(current);
+                                               closing_delimiter.push_back(current);
                                                for(current = yyinput(); current == '-'; current = yyinput()) {
                                                    ++closing_dash_count;
-                                                   closing_delimiter_.push_back(current);
+                                                   closing_delimiter.push_back(current);
                                                }
                                                if(current == EOF) {
                                                         std::cerr << "unterminated raw string" << std::endl;
@@ -1526,16 +1526,16 @@ YY_RULE_SETUP
                                                }
                                                else if(closing_dash_count == opening_dash_count && current == quote) {
                                                    /* we are done */
-                                                   closing_delimiter_.push_back(current);
-                                                   *yylval = new rastr::ast::RawStringLiteralExpressionRNode(opening_delimiter_,
+                                                   closing_delimiter.push_back(current);
+                                                   *yylval = new rastr::ast::RawStringLiteralExpressionRNode(opening_delimiter,
                                                                                                              get_token_buffer(),
-                                                                                                             closing_delimiter_);
+                                                                                                             closing_delimiter);
                                                    return rastr::r::parser::Parser::token::RAW_STRING_CONST;
                                                    break;
                                                }
                                                else {
-                                                   token_buffer_.append(closing_delimiter_);
-                                                   closing_delimiter_.clear();
+                                                   token_buffer_.append(closing_delimiter);
+                                                   closing_delimiter.clear();
                                                    token_buffer_.push_back(current);
                                                    continue;
                                                }
