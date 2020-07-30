@@ -2,16 +2,16 @@
 #define RASTR_AST_BLOCK_EXPRESSION_RNODE_HPP
 
 #include "ExpressionRNode.hpp"
-#include "Bounded.hpp"
+#include "IBounded.hpp"
 
 namespace rastr {
 namespace ast {
 
 class BlockExpressionRNode
     : public ExpressionRNode
-    , public Bounded {
+    , public IBounded {
   public:
-    explicit BlockExpressionRNode(): ExpressionRNode(), Bounded() {
+    explicit BlockExpressionRNode(): ExpressionRNode(), IBounded() {
     }
     explicit BlockExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
                                   DelimiterRNodeSPtr closing_delimiter)

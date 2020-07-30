@@ -6,18 +6,18 @@
 namespace rastr {
 namespace ast {
 
-class Bounded {
+class IBounded {
   public:
-    explicit Bounded() {
+    explicit IBounded() {
     }
 
-    explicit Bounded(DelimiterRNodeSPtr opening_delimiter,
+    explicit IBounded(DelimiterRNodeSPtr opening_delimiter,
                      DelimiterRNodeSPtr closing_delimiter)
-        : Bounded() {
+        : IBounded() {
         set_delimiters(opening_delimiter, closing_delimiter);
     }
 
-    virtual ~Bounded() = default;
+    virtual ~IBounded() = default;
 
     DelimiterRNodeSPtr get_opening_delimiter() const {
         return opening_delimiter_;

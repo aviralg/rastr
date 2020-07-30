@@ -1,7 +1,7 @@
 #ifndef RASTR_AST_EXPRESSION_SEQUENCE_RNODE_HPP
 #define RASTR_AST_EXPRESSION_SEQUENCE_RNODE_HPP
 
-#include "Bounded.hpp"
+#include "IBounded.hpp"
 #include "ExpressionRNode.hpp"
 
 namespace rastr {
@@ -9,9 +9,9 @@ namespace ast {
 
 class ExpressionSequenceRNode
     : public RNode
-    , public Bounded {
+    , public IBounded {
   public:
-    explicit ExpressionSequenceRNode(): RNode(), Bounded() {
+    explicit ExpressionSequenceRNode(): RNode(), IBounded() {
         set_type(Type::ExpressionSequenceRNode);
     }
 

@@ -1,7 +1,7 @@
 #ifndef RASTR_AST_GROUP_EXPRESSION_RNODE_HPP
 #define RASTR_AST_GROUP_EXPRESSION_RNODE_HPP
 
-#include "Bounded.hpp"
+#include "IBounded.hpp"
 #include "ExpressionRNode.hpp"
 
 namespace rastr {
@@ -9,13 +9,13 @@ namespace ast {
 
 class GroupExpressionRNode
     : public ExpressionRNode
-    , public Bounded {
+    , public IBounded {
   public:
     explicit GroupExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
                                   ExpressionRNodeSPtr expression,
                                   DelimiterRNodeSPtr closing_delimiter)
         : ExpressionRNode()
-        , Bounded(opening_delimiter, closing_delimiter)
+        , IBounded(opening_delimiter, closing_delimiter)
         , expression_(expression) {
         set_type(Type::GroupExpressionRNode);
     }
