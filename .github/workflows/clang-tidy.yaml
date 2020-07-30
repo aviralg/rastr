@@ -28,6 +28,10 @@ jobs:
           sudo apt-get install clang-10 -qy
           sudo apt-get install clang-tidy-10 -qy
 
+      - name: Install flex
+        run: |
+          sudo apt-get install libfl-dev -qy
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
@@ -46,7 +50,7 @@ jobs:
         run: |
           sudo apt-get install libcurl4 libcurl4-openssl-dev -qy
 
-      - name: Install dependencies
+      - name: Install R dependencies
         run: |
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)

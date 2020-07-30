@@ -42,6 +42,10 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Install flex
+        run: |
+          sudo apt-get install libfl-dev -qy
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
