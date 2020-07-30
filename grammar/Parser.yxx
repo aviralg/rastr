@@ -136,6 +136,15 @@ ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
     return seq;
 }
 
+void add_terminator(ExpressionSequence* seq_ptr, RNode* delimiter_ptr) {
+    auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
+    int size = seq_ptr -> get_size();
+    if(size == 0) { return; }
+    auto expr = seq_ptr -> get_expression(size - 1);
+    auto terminated_expr = std::make_shared<TerminatedExpressionRNode>(expr, delimiter);
+    seq_ptr -> set_expression(size - 1, terminated_expr);
+}
+
 }
 
 
@@ -312,44 +321,42 @@ forcond: LPAREN SYMBOL IN expr_or_help RPAREN                                   
 exprlist:                                                                       { $$ = new BlockExpressionRNode(); }
         | expr_or_assign_or_help                                                {
                                                                                   auto block = new BlockExpressionRNode();
-                                                                                  block -> append_expression(wrap<ExpressionRNode>($1));
+                                                                                  block -> push_back(wrap<ExpressionRNode>($1));
                                                                                   $$ = block;
                                                                                 }
         | exprlist SEMICOLON expr_or_assign_or_help                             {
                                                                                   auto block = static_cast<BlockExpressionRNode*>($1);
-                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
-                                                                                  block -> append(delimiter, wrap<ExpressionRNode>($3));
+                                                                                  add_terminator(block, $2);
+                                                                                  block -> push_back(wrap<ExpressionRNode>($3));
                                                                                   $$ = block;
                                                                                 }
         | exprlist SEMICOLON                                                    {
                                                                                   auto block = static_cast<BlockExpressionRNode*>($1);
-                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
-                                                                                  block -> append_delimiter(delimiter);
+                                                                                  add_terminator(block, $2);
                                                                                   $$ = block;
                                                                                 }
         | exprlist NEWLINE expr_or_assign_or_help                               {
                                                                                   auto block = static_cast<BlockExpressionRNode*>($1);
-                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
-                                                                                  block -> append(delimiter, wrap<ExpressionRNode>($3));
+                                                                                  add_terminator(block, $2);
+                                                                                  block -> push_back(wrap<ExpressionRNode>($3));
                                                                                   $$ = block;
                                                                                 }
         | exprlist NEWLINE                                                      {
                                                                                   auto block = static_cast<BlockExpressionRNode*>($1);
-                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
-                                                                                  block -> append_delimiter(delimiter);
+                                                                                  add_terminator(block, $2);
                                                                                   $$ = block;
                                                                                 }
         ;
 
 sublist: sub                                                                    {
                                                                                   auto seq = new ExpressionSequenceRNode();
-                                                                                  seq -> append_expression(wrap<ExpressionRNode>($1));
+                                                                                  seq -> push_back(wrap<ExpressionRNode>($1));
                                                                                   $$ = seq;
                                                                                 }
        | sublist cr COMMA sub                                                   {
                                                                                   auto seq = static_cast<ExpressionSequenceRNode*>($1);
-                                                                                  auto delimiter = wrap<DelimiterRNode>($3);
-                                                                                  seq -> append(delimiter, wrap<ExpressionRNode>($4));
+                                                                                  add_terminator(seq, $3);
+                                                                                  seq -> push_back(wrap<ExpressionRNode>($4));
                                                                                   $$ = seq;
                                                                                 }
        ;
@@ -371,27 +378,27 @@ formlist:                                                                       
 formlist_inner: SYMBOL                                                          {
                                                                                   auto seq = new ExpressionSequenceRNode();
                                                                                   auto element = wrap<SymbolExpressionRNode>($1);
-                                                                                  seq -> append_expression(element);
+                                                                                  seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
         | SYMBOL EQ_ASSIGN expr_or_help                                         {
                                                                                   auto seq = new ExpressionSequenceRNode();
                                                                                   auto element = wrap<ExpressionRNode>(create_binary_expression($2, $1, $3));
-                                                                                  seq -> append_expression(element);
+                                                                                  seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
         | formlist COMMA SYMBOL                                                 {
                                                                                   auto seq = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   auto element = wrap<SymbolExpressionRNode>($3);
-                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
-                                                                                  seq -> append(delimiter, element);
+                                                                                  add_terminator(seq, $2);
+                                                                                  seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
         | formlist COMMA SYMBOL EQ_ASSIGN expr_or_help                          {
                                                                                   auto seq = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   auto element = wrap<ExpressionRNode>(create_binary_expression($4, $3, $5));
-                                                                                  auto delimiter = wrap<DelimiterRNode>($2);
-                                                                                  seq -> append(delimiter, element);
+                                                                                  add_terminator(seq, $2);
+                                                                                  seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
         ;

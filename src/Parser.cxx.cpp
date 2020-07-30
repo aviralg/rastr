@@ -75,8 +75,17 @@ ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
     return seq;
 }
 
+void add_terminator(ExpressionSequence* seq_ptr, RNode* delimiter_ptr) {
+    auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
+    int size = seq_ptr -> get_size();
+    if(size == 0) { return; }
+    auto expr = seq_ptr -> get_expression(size - 1);
+    auto terminated_expr = std::make_shared<TerminatedExpressionRNode>(expr, delimiter);
+    seq_ptr -> set_expression(size - 1, terminated_expr);
+}
 
-#line 80 "Parser.cxx"
+
+#line 89 "Parser.cxx"
 
 
 #ifndef YY_
@@ -169,7 +178,7 @@ ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
 
 #line 9 "Parser.yxx"
 namespace rastr { namespace r { namespace parser {
-#line 173 "Parser.cxx"
+#line 182 "Parser.cxx"
 
   /// Build a parser object.
   Parser::Parser (rastr::r::parser::Lexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr program_yyarg)
@@ -635,28 +644,19 @@ namespace rastr { namespace r { namespace parser {
           switch (yyn)
             {
   case 2:
-#line 143 "Parser.yxx"
+#line 152 "Parser.yxx"
                                                                                 { yyresult = 0; YYACCEPT; }
-#line 641 "Parser.cxx"
+#line 650 "Parser.cxx"
     break;
 
   case 3:
-#line 145 "Parser.yxx"
+#line 154 "Parser.yxx"
                                                                                 { }
-#line 647 "Parser.cxx"
-    break;
-
-  case 4:
-#line 146 "Parser.yxx"
-                                                                                {
-                                                                                  program -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
-                                                                                  yylhs.value = nullptr;
-                                                                                }
 #line 656 "Parser.cxx"
     break;
 
-  case 5:
-#line 150 "Parser.yxx"
+  case 4:
+#line 155 "Parser.yxx"
                                                                                 {
                                                                                   program -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
                                                                                   yylhs.value = nullptr;
@@ -664,110 +664,119 @@ namespace rastr { namespace r { namespace parser {
 #line 665 "Parser.cxx"
     break;
 
-  case 6:
-#line 154 "Parser.yxx"
-                                                                                {
-                                                                                  yylhs.value = nullptr;
-                                                                                }
-#line 673 "Parser.cxx"
-    break;
-
-  case 7:
-#line 157 "Parser.yxx"
+  case 5:
+#line 159 "Parser.yxx"
                                                                                 {
                                                                                   program -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  yylhs.value = nullptr;
+                                                                                }
+#line 674 "Parser.cxx"
+    break;
+
+  case 6:
+#line 163 "Parser.yxx"
+                                                                                {
                                                                                   yylhs.value = nullptr;
                                                                                 }
 #line 682 "Parser.cxx"
     break;
 
+  case 7:
+#line 166 "Parser.yxx"
+                                                                                {
+                                                                                  program -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  yylhs.value = nullptr;
+                                                                                }
+#line 691 "Parser.cxx"
+    break;
+
   case 8:
-#line 161 "Parser.yxx"
+#line 170 "Parser.yxx"
                                                                                 {
                                                                                 }
-#line 689 "Parser.cxx"
+#line 698 "Parser.cxx"
     break;
 
   case 9:
-#line 165 "Parser.yxx"
+#line 174 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 695 "Parser.cxx"
+#line 704 "Parser.cxx"
     break;
 
   case 10:
-#line 166 "Parser.yxx"
+#line 175 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 701 "Parser.cxx"
+#line 710 "Parser.cxx"
     break;
 
   case 11:
-#line 167 "Parser.yxx"
+#line 176 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 707 "Parser.cxx"
+#line 716 "Parser.cxx"
     break;
 
   case 12:
-#line 170 "Parser.yxx"
+#line 179 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 713 "Parser.cxx"
+#line 722 "Parser.cxx"
     break;
 
   case 13:
-#line 171 "Parser.yxx"
+#line 180 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 719 "Parser.cxx"
+#line 728 "Parser.cxx"
     break;
 
   case 14:
-#line 174 "Parser.yxx"
+#line 183 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 725 "Parser.cxx"
+#line 734 "Parser.cxx"
     break;
 
   case 15:
-#line 175 "Parser.yxx"
+#line 184 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 731 "Parser.cxx"
+#line 740 "Parser.cxx"
     break;
 
   case 16:
-#line 176 "Parser.yxx"
+#line 185 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 737 "Parser.cxx"
+#line 746 "Parser.cxx"
     break;
 
   case 17:
-#line 177 "Parser.yxx"
+#line 186 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 743 "Parser.cxx"
+#line 752 "Parser.cxx"
     break;
 
   case 18:
-#line 178 "Parser.yxx"
+#line 187 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 749 "Parser.cxx"
+#line 758 "Parser.cxx"
     break;
 
   case 19:
-#line 179 "Parser.yxx"
+#line 188 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 755 "Parser.cxx"
+#line 764 "Parser.cxx"
     break;
 
   case 20:
-#line 180 "Parser.yxx"
+#line 189 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 761 "Parser.cxx"
+#line 770 "Parser.cxx"
     break;
 
   case 21:
-#line 181 "Parser.yxx"
+#line 190 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 767 "Parser.cxx"
+#line 776 "Parser.cxx"
     break;
 
   case 22:
-#line 182 "Parser.yxx"
+#line 191 "Parser.yxx"
                                                                                 {
                                                                                   auto block = static_cast<BlockExpressionRNode*>(yystack_[1].value);
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>(yystack_[2].value);
@@ -776,206 +785,206 @@ namespace rastr { namespace r { namespace parser {
                                                                                   yylhs.value = block;
                                                                                   lexer.disable_eat_lines();
                                                                                 }
-#line 780 "Parser.cxx"
+#line 789 "Parser.cxx"
     break;
 
   case 23:
-#line 190 "Parser.yxx"
+#line 199 "Parser.yxx"
                                                                                 { yylhs.value = new GroupExpressionRNode(wrap<DelimiterRNode>(yystack_[2].value),
                                                                                                                 wrap<ExpressionRNode>(yystack_[1].value),
                                                                                                                 wrap<DelimiterRNode>(yystack_[0].value)); }
-#line 788 "Parser.cxx"
+#line 797 "Parser.cxx"
     break;
 
   case 24:
-#line 193 "Parser.yxx"
+#line 202 "Parser.yxx"
                                                                                 { yylhs.value = create_unary_expression(yystack_[1].value, yystack_[0].value); }
-#line 794 "Parser.cxx"
+#line 803 "Parser.cxx"
     break;
 
   case 25:
-#line 194 "Parser.yxx"
+#line 203 "Parser.yxx"
                                                                                 { yylhs.value = create_unary_expression(yystack_[1].value, yystack_[0].value); }
-#line 800 "Parser.cxx"
+#line 809 "Parser.cxx"
     break;
 
   case 26:
-#line 195 "Parser.yxx"
+#line 204 "Parser.yxx"
                                                                                 { yylhs.value = create_unary_expression(yystack_[1].value, yystack_[0].value); }
-#line 806 "Parser.cxx"
+#line 815 "Parser.cxx"
     break;
 
   case 27:
-#line 196 "Parser.yxx"
+#line 205 "Parser.yxx"
                                                                                 { yylhs.value = create_unary_expression(yystack_[1].value, yystack_[0].value); }
-#line 812 "Parser.cxx"
+#line 821 "Parser.cxx"
     break;
 
   case 28:
-#line 197 "Parser.yxx"
+#line 206 "Parser.yxx"
                                                                                 { yylhs.value = create_unary_expression(yystack_[1].value, yystack_[0].value); }
-#line 818 "Parser.cxx"
+#line 827 "Parser.cxx"
     break;
 
   case 29:
-#line 198 "Parser.yxx"
+#line 207 "Parser.yxx"
                                                                                 { yylhs.value = create_unary_expression(yystack_[1].value, yystack_[0].value); }
-#line 824 "Parser.cxx"
+#line 833 "Parser.cxx"
     break;
 
   case 30:
-#line 199 "Parser.yxx"
+#line 208 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 830 "Parser.cxx"
+#line 839 "Parser.cxx"
     break;
 
   case 31:
-#line 200 "Parser.yxx"
+#line 209 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 836 "Parser.cxx"
+#line 845 "Parser.cxx"
     break;
 
   case 32:
-#line 201 "Parser.yxx"
+#line 210 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 842 "Parser.cxx"
+#line 851 "Parser.cxx"
     break;
 
   case 33:
-#line 202 "Parser.yxx"
+#line 211 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 848 "Parser.cxx"
+#line 857 "Parser.cxx"
     break;
 
   case 34:
-#line 203 "Parser.yxx"
+#line 212 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 854 "Parser.cxx"
+#line 863 "Parser.cxx"
     break;
 
   case 35:
-#line 204 "Parser.yxx"
+#line 213 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 860 "Parser.cxx"
+#line 869 "Parser.cxx"
     break;
 
   case 36:
-#line 205 "Parser.yxx"
+#line 214 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 866 "Parser.cxx"
+#line 875 "Parser.cxx"
     break;
 
   case 37:
-#line 206 "Parser.yxx"
+#line 215 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 872 "Parser.cxx"
+#line 881 "Parser.cxx"
     break;
 
   case 38:
-#line 207 "Parser.yxx"
+#line 216 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 878 "Parser.cxx"
+#line 887 "Parser.cxx"
     break;
 
   case 39:
-#line 208 "Parser.yxx"
+#line 217 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 884 "Parser.cxx"
+#line 893 "Parser.cxx"
     break;
 
   case 40:
-#line 209 "Parser.yxx"
+#line 218 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 890 "Parser.cxx"
+#line 899 "Parser.cxx"
     break;
 
   case 41:
-#line 210 "Parser.yxx"
+#line 219 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 896 "Parser.cxx"
+#line 905 "Parser.cxx"
     break;
 
   case 42:
-#line 211 "Parser.yxx"
+#line 220 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 902 "Parser.cxx"
+#line 911 "Parser.cxx"
     break;
 
   case 43:
-#line 212 "Parser.yxx"
+#line 221 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 908 "Parser.cxx"
+#line 917 "Parser.cxx"
     break;
 
   case 44:
-#line 213 "Parser.yxx"
+#line 222 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 914 "Parser.cxx"
+#line 923 "Parser.cxx"
     break;
 
   case 45:
-#line 214 "Parser.yxx"
+#line 223 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 920 "Parser.cxx"
+#line 929 "Parser.cxx"
     break;
 
   case 46:
-#line 215 "Parser.yxx"
+#line 224 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 926 "Parser.cxx"
+#line 935 "Parser.cxx"
     break;
 
   case 47:
-#line 216 "Parser.yxx"
+#line 225 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 932 "Parser.cxx"
+#line 941 "Parser.cxx"
     break;
 
   case 48:
-#line 217 "Parser.yxx"
+#line 226 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 938 "Parser.cxx"
+#line 947 "Parser.cxx"
     break;
 
   case 49:
-#line 218 "Parser.yxx"
+#line 227 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 944 "Parser.cxx"
+#line 953 "Parser.cxx"
     break;
 
   case 50:
-#line 219 "Parser.yxx"
+#line 228 "Parser.yxx"
                                                                                 {
                                                                                   auto keyword = wrap<KeywordRNode>(yystack_[5].value);
                                                                                   auto params = delimit_expression_sequence(yystack_[3].value, yystack_[4].value, yystack_[2].value);
                                                                                   auto body = wrap<ExpressionRNode>(yystack_[0].value);
                                                                                   yylhs.value = new FunctionDefinitionExpressionRNode(keyword, params, body);
                                                                                 }
-#line 955 "Parser.cxx"
+#line 964 "Parser.cxx"
     break;
 
   case 51:
-#line 225 "Parser.yxx"
+#line 234 "Parser.yxx"
                                                                                 {
                                                                                   auto target = wrap<ExpressionRNode>(yystack_[3].value);
                                                                                   auto args = delimit_expression_sequence(yystack_[1].value, yystack_[2].value, yystack_[0].value);
                                                                                   yylhs.value = new FunctionCallExpressionRNode(target, args);
                                                                                 }
-#line 965 "Parser.cxx"
+#line 974 "Parser.cxx"
     break;
 
   case 52:
-#line 230 "Parser.yxx"
+#line 239 "Parser.yxx"
                                                                                 {
                                                                                   yylhs.value = new IfConditionalExpressionRNode(wrap<KeywordRNode>(yystack_[2].value),
                                                                                                                         wrap<ConditionRNode>(yystack_[1].value),
                                                                                                                         wrap<ExpressionRNode>(yystack_[0].value));
                                                                                 }
-#line 975 "Parser.cxx"
+#line 984 "Parser.cxx"
     break;
 
   case 53:
-#line 235 "Parser.yxx"
+#line 244 "Parser.yxx"
                                                                                 {
                                                                                   yylhs.value = new IfElseConditionalExpressionRNode(wrap<KeywordRNode>(yystack_[4].value),
                                                                                                                             wrap<ConditionRNode>(yystack_[3].value),
@@ -983,155 +992,143 @@ namespace rastr { namespace r { namespace parser {
                                                                                                                             wrap<KeywordRNode>(yystack_[1].value),
                                                                                                                             wrap<ExpressionRNode>(yystack_[0].value));
                                                                                 }
-#line 987 "Parser.cxx"
+#line 996 "Parser.cxx"
     break;
 
   case 54:
-#line 242 "Parser.yxx"
+#line 251 "Parser.yxx"
                                                                                 {
                                                                                   yylhs.value = new ForLoopExpressionRNode(wrap<KeywordRNode>(yystack_[2].value),
                                                                                                                   wrap<ConditionRNode>(yystack_[1].value),
                                                                                                                   wrap<ExpressionRNode>(yystack_[0].value));
                                                                                 }
-#line 997 "Parser.cxx"
+#line 1006 "Parser.cxx"
     break;
 
   case 55:
-#line 247 "Parser.yxx"
+#line 256 "Parser.yxx"
                                                                                 {
                                                                                   yylhs.value = new WhileLoopExpressionRNode(wrap<KeywordRNode>(yystack_[2].value),
                                                                                                                     wrap<ConditionRNode>(yystack_[1].value),
                                                                                                                     wrap<ExpressionRNode>(yystack_[0].value));
                                                                                 }
-#line 1007 "Parser.cxx"
+#line 1016 "Parser.cxx"
     break;
 
   case 56:
-#line 252 "Parser.yxx"
+#line 261 "Parser.yxx"
                                                                                 {
                                                                                   yylhs.value = new RepeatLoopExpressionRNode(wrap<KeywordRNode>(yystack_[1].value),
                                                                                                                      wrap<ExpressionRNode>(yystack_[0].value));
                                                                                 }
-#line 1016 "Parser.cxx"
+#line 1025 "Parser.cxx"
     break;
 
   case 57:
-#line 256 "Parser.yxx"
+#line 265 "Parser.yxx"
                                                                                 {
                                                                                   auto expr = wrap<ExpressionRNode>(yystack_[4].value);
                                                                                   auto indices = delimit_expression_sequence(yystack_[2].value, yystack_[3].value, yystack_[1].value);
                                                                                   yylhs.value = new IndexingExpressionRNode(expr, indices);
                                                                                 }
-#line 1026 "Parser.cxx"
+#line 1035 "Parser.cxx"
     break;
 
   case 58:
-#line 261 "Parser.yxx"
+#line 270 "Parser.yxx"
                                                                                 {
                                                                                   auto expr = wrap<ExpressionRNode>(yystack_[3].value);
                                                                                   auto indices = delimit_expression_sequence(yystack_[1].value, yystack_[2].value, yystack_[0].value);
                                                                                   yylhs.value = new IndexingExpressionRNode(expr, indices);
                                                                                 }
-#line 1036 "Parser.cxx"
+#line 1045 "Parser.cxx"
     break;
 
   case 59:
-#line 266 "Parser.yxx"
+#line 275 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1042 "Parser.cxx"
+#line 1051 "Parser.cxx"
     break;
 
   case 60:
-#line 267 "Parser.yxx"
+#line 276 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1048 "Parser.cxx"
+#line 1057 "Parser.cxx"
     break;
 
   case 61:
-#line 268 "Parser.yxx"
+#line 277 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1054 "Parser.cxx"
+#line 1063 "Parser.cxx"
     break;
 
   case 62:
-#line 269 "Parser.yxx"
+#line 278 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1060 "Parser.cxx"
+#line 1069 "Parser.cxx"
     break;
 
   case 63:
-#line 270 "Parser.yxx"
+#line 279 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1066 "Parser.cxx"
+#line 1075 "Parser.cxx"
     break;
 
   case 64:
-#line 271 "Parser.yxx"
+#line 280 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1072 "Parser.cxx"
+#line 1081 "Parser.cxx"
     break;
 
   case 65:
-#line 272 "Parser.yxx"
+#line 281 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1078 "Parser.cxx"
+#line 1087 "Parser.cxx"
     break;
 
   case 66:
-#line 273 "Parser.yxx"
+#line 282 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1084 "Parser.cxx"
+#line 1093 "Parser.cxx"
     break;
 
   case 67:
-#line 274 "Parser.yxx"
+#line 283 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1090 "Parser.cxx"
+#line 1099 "Parser.cxx"
     break;
 
   case 68:
-#line 275 "Parser.yxx"
+#line 284 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1096 "Parser.cxx"
+#line 1105 "Parser.cxx"
     break;
 
   case 69:
-#line 276 "Parser.yxx"
+#line 285 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1102 "Parser.cxx"
+#line 1111 "Parser.cxx"
     break;
 
   case 70:
-#line 277 "Parser.yxx"
+#line 286 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1108 "Parser.cxx"
+#line 1117 "Parser.cxx"
     break;
 
   case 71:
-#line 278 "Parser.yxx"
+#line 287 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value;  }
-#line 1114 "Parser.cxx"
+#line 1123 "Parser.cxx"
     break;
 
   case 72:
-#line 279 "Parser.yxx"
+#line 288 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 1120 "Parser.cxx"
+#line 1129 "Parser.cxx"
     break;
 
   case 73:
-#line 282 "Parser.yxx"
-                                                                                {
-                                                                                  auto opening_delimiter = wrap<DelimiterRNode>(yystack_[2].value);
-                                                                                  auto closing_delimiter = wrap<DelimiterRNode>(yystack_[0].value);
-                                                                                  auto expr = wrap<RNode>(yystack_[1].value);
-                                                                                  yylhs.value = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
-                                                                                  lexer.enable_eat_lines();
-                                                                                }
-#line 1132 "Parser.cxx"
-    break;
-
-  case 74:
 #line 291 "Parser.yxx"
                                                                                 {
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>(yystack_[2].value);
@@ -1140,11 +1137,23 @@ namespace rastr { namespace r { namespace parser {
                                                                                   yylhs.value = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
                                                                                   lexer.enable_eat_lines();
                                                                                 }
-#line 1144 "Parser.cxx"
+#line 1141 "Parser.cxx"
+    break;
+
+  case 74:
+#line 300 "Parser.yxx"
+                                                                                {
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>(yystack_[2].value);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>(yystack_[0].value);
+                                                                                  auto expr = wrap<RNode>(yystack_[1].value);
+                                                                                  yylhs.value = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
+                                                                                  lexer.enable_eat_lines();
+                                                                                }
+#line 1153 "Parser.cxx"
     break;
 
   case 75:
-#line 300 "Parser.yxx"
+#line 309 "Parser.yxx"
                                                                                 {
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>(yystack_[4].value);
                                                                                   auto closing_delimiter = wrap<DelimiterRNode>(yystack_[0].value);
@@ -1155,204 +1164,202 @@ namespace rastr { namespace r { namespace parser {
                                                                                   yylhs.value = new ConditionRNode(opening_delimiter, condition, closing_delimiter);
                                                                                   lexer.enable_eat_lines();
                                                                                 }
-#line 1159 "Parser.cxx"
+#line 1168 "Parser.cxx"
     break;
 
   case 76:
-#line 312 "Parser.yxx"
+#line 321 "Parser.yxx"
                                                                                 { yylhs.value = new BlockExpressionRNode(); }
-#line 1165 "Parser.cxx"
+#line 1174 "Parser.cxx"
     break;
 
   case 77:
-#line 313 "Parser.yxx"
+#line 322 "Parser.yxx"
                                                                                 {
                                                                                   auto block = new BlockExpressionRNode();
-                                                                                  block -> append_expression(wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  block -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
                                                                                   yylhs.value = block;
                                                                                 }
-#line 1175 "Parser.cxx"
+#line 1184 "Parser.cxx"
     break;
 
   case 78:
-#line 318 "Parser.yxx"
+#line 327 "Parser.yxx"
                                                                                 {
                                                                                   auto block = static_cast<BlockExpressionRNode*>(yystack_[2].value);
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[1].value);
-                                                                                  block -> append(delimiter, wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  add_terminator(block, yystack_[1].value);
+                                                                                  block -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
                                                                                   yylhs.value = block;
                                                                                 }
-#line 1186 "Parser.cxx"
+#line 1195 "Parser.cxx"
     break;
 
   case 79:
-#line 324 "Parser.yxx"
+#line 333 "Parser.yxx"
                                                                                 {
                                                                                   auto block = static_cast<BlockExpressionRNode*>(yystack_[1].value);
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[0].value);
-                                                                                  block -> append_delimiter(delimiter);
+                                                                                  add_terminator(block, yystack_[0].value);
                                                                                   yylhs.value = block;
                                                                                 }
-#line 1197 "Parser.cxx"
+#line 1205 "Parser.cxx"
     break;
 
   case 80:
-#line 330 "Parser.yxx"
+#line 338 "Parser.yxx"
                                                                                 {
                                                                                   auto block = static_cast<BlockExpressionRNode*>(yystack_[2].value);
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[1].value);
-                                                                                  block -> append(delimiter, wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  add_terminator(block, yystack_[1].value);
+                                                                                  block -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
                                                                                   yylhs.value = block;
                                                                                 }
-#line 1208 "Parser.cxx"
+#line 1216 "Parser.cxx"
     break;
 
   case 81:
-#line 336 "Parser.yxx"
+#line 344 "Parser.yxx"
                                                                                 {
                                                                                   auto block = static_cast<BlockExpressionRNode*>(yystack_[1].value);
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[0].value);
-                                                                                  block -> append_delimiter(delimiter);
+                                                                                  add_terminator(block, yystack_[0].value);
                                                                                   yylhs.value = block;
                                                                                 }
-#line 1219 "Parser.cxx"
+#line 1226 "Parser.cxx"
     break;
 
   case 82:
-#line 344 "Parser.yxx"
+#line 351 "Parser.yxx"
                                                                                 {
                                                                                   auto seq = new ExpressionSequenceRNode();
-                                                                                  seq -> append_expression(wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  seq -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
                                                                                   yylhs.value = seq;
                                                                                 }
-#line 1229 "Parser.cxx"
+#line 1236 "Parser.cxx"
     break;
 
   case 83:
-#line 349 "Parser.yxx"
+#line 356 "Parser.yxx"
                                                                                 {
                                                                                   auto seq = static_cast<ExpressionSequenceRNode*>(yystack_[3].value);
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[1].value);
-                                                                                  seq -> append(delimiter, wrap<ExpressionRNode>(yystack_[0].value));
+                                                                                  add_terminator(seq, yystack_[1].value);
+                                                                                  seq -> push_back(wrap<ExpressionRNode>(yystack_[0].value));
                                                                                   yylhs.value = seq;
                                                                                 }
-#line 1240 "Parser.cxx"
+#line 1247 "Parser.cxx"
     break;
 
   case 84:
-#line 357 "Parser.yxx"
+#line 364 "Parser.yxx"
                                                                                 { yylhs.value = new MissingExpressionRNode(); }
-#line 1246 "Parser.cxx"
+#line 1253 "Parser.cxx"
     break;
 
   case 85:
-#line 358 "Parser.yxx"
+#line 365 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 1252 "Parser.cxx"
+#line 1259 "Parser.cxx"
     break;
 
   case 86:
-#line 359 "Parser.yxx"
+#line 366 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[0].value, yystack_[1].value, new MissingExpressionRNode()); }
-#line 1258 "Parser.cxx"
+#line 1265 "Parser.cxx"
     break;
 
   case 87:
-#line 360 "Parser.yxx"
+#line 367 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1264 "Parser.cxx"
+#line 1271 "Parser.cxx"
     break;
 
   case 88:
-#line 361 "Parser.yxx"
+#line 368 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[0].value, yystack_[1].value, new MissingExpressionRNode()); }
-#line 1270 "Parser.cxx"
+#line 1277 "Parser.cxx"
     break;
 
   case 89:
-#line 362 "Parser.yxx"
+#line 369 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1276 "Parser.cxx"
+#line 1283 "Parser.cxx"
     break;
 
   case 90:
-#line 363 "Parser.yxx"
+#line 370 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[0].value, yystack_[1].value, new MissingExpressionRNode()); }
-#line 1282 "Parser.cxx"
+#line 1289 "Parser.cxx"
     break;
 
   case 91:
-#line 364 "Parser.yxx"
+#line 371 "Parser.yxx"
                                                                                 { yylhs.value = create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value); }
-#line 1288 "Parser.cxx"
+#line 1295 "Parser.cxx"
     break;
 
   case 92:
-#line 367 "Parser.yxx"
+#line 374 "Parser.yxx"
                                                                                 { yylhs.value = new ExpressionSequenceRNode(); }
-#line 1294 "Parser.cxx"
+#line 1301 "Parser.cxx"
     break;
 
   case 93:
-#line 368 "Parser.yxx"
+#line 375 "Parser.yxx"
                                                                                 { yylhs.value = yystack_[0].value; }
-#line 1300 "Parser.cxx"
+#line 1307 "Parser.cxx"
     break;
 
   case 94:
-#line 371 "Parser.yxx"
+#line 378 "Parser.yxx"
                                                                                 {
                                                                                   auto seq = new ExpressionSequenceRNode();
                                                                                   auto element = wrap<SymbolExpressionRNode>(yystack_[0].value);
-                                                                                  seq -> append_expression(element);
+                                                                                  seq -> push_back(element);
                                                                                   yylhs.value = seq;
                                                                                 }
-#line 1311 "Parser.cxx"
+#line 1318 "Parser.cxx"
     break;
 
   case 95:
-#line 377 "Parser.yxx"
+#line 384 "Parser.yxx"
                                                                                 {
                                                                                   auto seq = new ExpressionSequenceRNode();
                                                                                   auto element = wrap<ExpressionRNode>(create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value));
-                                                                                  seq -> append_expression(element);
+                                                                                  seq -> push_back(element);
                                                                                   yylhs.value = seq;
                                                                                 }
-#line 1322 "Parser.cxx"
+#line 1329 "Parser.cxx"
     break;
 
   case 96:
-#line 383 "Parser.yxx"
+#line 390 "Parser.yxx"
                                                                                 {
                                                                                   auto seq = static_cast<ExpressionSequenceRNode*>(yystack_[2].value);
                                                                                   auto element = wrap<SymbolExpressionRNode>(yystack_[0].value);
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[1].value);
-                                                                                  seq -> append(delimiter, element);
+                                                                                  add_terminator(seq, yystack_[1].value);
+                                                                                  seq -> push_back(element);
                                                                                   yylhs.value = seq;
                                                                                 }
-#line 1334 "Parser.cxx"
+#line 1341 "Parser.cxx"
     break;
 
   case 97:
-#line 390 "Parser.yxx"
+#line 397 "Parser.yxx"
                                                                                 {
                                                                                   auto seq = static_cast<ExpressionSequenceRNode*>(yystack_[4].value);
                                                                                   auto element = wrap<ExpressionRNode>(create_binary_expression(yystack_[1].value, yystack_[2].value, yystack_[0].value));
-                                                                                  auto delimiter = wrap<DelimiterRNode>(yystack_[3].value);
-                                                                                  seq -> append(delimiter, element);
+                                                                                  add_terminator(seq, yystack_[3].value);
+                                                                                  seq -> push_back(element);
                                                                                   yylhs.value = seq;
                                                                                 }
-#line 1346 "Parser.cxx"
+#line 1353 "Parser.cxx"
     break;
 
   case 98:
-#line 399 "Parser.yxx"
+#line 406 "Parser.yxx"
     { lexer.enable_eat_lines(); }
-#line 1352 "Parser.cxx"
+#line 1359 "Parser.cxx"
     break;
 
 
-#line 1356 "Parser.cxx"
+#line 1363 "Parser.cxx"
 
             default:
               break;
@@ -1961,16 +1968,16 @@ namespace rastr { namespace r { namespace parser {
   const short
   Parser::yyrline_[] =
   {
-       0,   143,   143,   145,   146,   150,   154,   157,   161,   165,
-     166,   167,   170,   171,   174,   175,   176,   177,   178,   179,
-     180,   181,   182,   190,   193,   194,   195,   196,   197,   198,
-     199,   200,   201,   202,   203,   204,   205,   206,   207,   208,
-     209,   210,   211,   212,   213,   214,   215,   216,   217,   218,
-     219,   225,   230,   235,   242,   247,   252,   256,   261,   266,
-     267,   268,   269,   270,   271,   272,   273,   274,   275,   276,
-     277,   278,   279,   282,   291,   300,   312,   313,   318,   324,
-     330,   336,   344,   349,   357,   358,   359,   360,   361,   362,
-     363,   364,   367,   368,   371,   377,   383,   390,   399
+       0,   152,   152,   154,   155,   159,   163,   166,   170,   174,
+     175,   176,   179,   180,   183,   184,   185,   186,   187,   188,
+     189,   190,   191,   199,   202,   203,   204,   205,   206,   207,
+     208,   209,   210,   211,   212,   213,   214,   215,   216,   217,
+     218,   219,   220,   221,   222,   223,   224,   225,   226,   227,
+     228,   234,   239,   244,   251,   256,   261,   265,   270,   275,
+     276,   277,   278,   279,   280,   281,   282,   283,   284,   285,
+     286,   287,   288,   291,   300,   309,   321,   322,   327,   333,
+     338,   344,   351,   356,   364,   365,   366,   367,   368,   369,
+     370,   371,   374,   375,   378,   384,   390,   397,   406
   };
 
   void
@@ -2055,9 +2062,9 @@ namespace rastr { namespace r { namespace parser {
 
 #line 9 "Parser.yxx"
 } } } // rastr::r::parser
-#line 2059 "Parser.cxx"
+#line 2066 "Parser.cxx"
 
-#line 402 "Parser.yxx"
+#line 409 "Parser.yxx"
 
 
 void rastr::r::parser::Parser::error(const location_type& location, const std::string& message) {
