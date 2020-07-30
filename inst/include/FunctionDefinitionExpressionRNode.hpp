@@ -2,31 +2,26 @@
 #define RASTR_AST_FUNCTION_DEFINITION_EXPRESSION_RNODE_HPP
 
 #include "ExpressionSequenceRNode.hpp"
-#include "KeywordRNode.hpp"
-#include "ExpressionRNode.hpp"
+#include "IKeyword.hpp"
+#include "IBody.hpp"
 
 namespace rastr {
 namespace ast {
 
-class FunctionDefinitionExpressionRNode: public ExpressionRNode {
+class FunctionDefinitionExpressionRNode
+    : public ExpressionRNode
+    , public IKeyword
+    , public IBody {
   public:
     explicit FunctionDefinitionExpressionRNode(
         KeywordRNodeSPtr keyword,
         ExpressionSequenceRNodeSPtr parameters,
         ExpressionRNodeSPtr body)
         : ExpressionRNode()
-        , keyword_(keyword)
-        , parameters_(parameters)
-        , body_(body) {
+        , IKeyword(keyword)
+        , IBody(body)
+        , parameters_(parameters) {
         set_type(Type::FunctionDefinitionExpressionRNode);
-    }
-
-    KeywordRNodeSPtr get_keyword() const {
-        return keyword_;
-    }
-
-    void set_keyword(KeywordRNodeSPtr keyword) {
-        keyword_ = keyword;
     }
 
     ExpressionSequenceRNodeSPtr get_parameters() const {
@@ -37,14 +32,6 @@ class FunctionDefinitionExpressionRNode: public ExpressionRNode {
         parameters_ = parameters;
     }
 
-    ExpressionRNodeSPtr get_body() const {
-        return body_;
-    }
-
-    void set_body(ExpressionRNodeSPtr body) {
-        body_ = body;
-    }
-
     static void initialize();
 
     static void finalize();
@@ -52,9 +39,7 @@ class FunctionDefinitionExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    KeywordRNodeSPtr keyword_;
     ExpressionSequenceRNodeSPtr parameters_;
-    ExpressionRNodeSPtr body_;
 
     static SEXP class_;
 }; // namespace ast
