@@ -2,15 +2,11 @@
 #define RASTR_AST_IF_ELSE_CONDITIONAL_EXPRESSION_RNODE_HPP
 
 #include "ConditionalExpressionRNode.hpp"
-#include "KeywordRNode.hpp"
-#include "ConditionRNode.hpp"
-#include "ExpressionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class IfElseConditionalExpressionRNode
-    : public ConditionalExpressionRNode {
+class IfElseConditionalExpressionRNode: public ConditionalExpressionRNode {
   public:
     explicit IfElseConditionalExpressionRNode(
         KeywordRNodeSPtr if_keyword,
@@ -18,28 +14,12 @@ class IfElseConditionalExpressionRNode
         ExpressionRNodeSPtr consequent_expression,
         KeywordRNodeSPtr else_keyword,
         ExpressionRNodeSPtr alternative_expression)
-        : ConditionalExpressionRNode(condition)
-        , if_keyword_(if_keyword)
-        , consequent_expression_(consequent_expression)
+        : ConditionalExpressionRNode(if_keyword,
+                                     condition,
+                                     consequent_expression)
         , else_keyword_(else_keyword)
         , alternative_expression_(alternative_expression) {
         set_type(Type::IfElseConditionalExpressionRNode);
-    }
-
-    KeywordRNodeSPtr get_if_keyword() const {
-        return if_keyword_;
-    }
-
-    void set_if_keyword(KeywordRNodeSPtr if_keyword) {
-        if_keyword_ = if_keyword;
-    }
-
-    ExpressionRNodeSPtr get_consequent_expression() const {
-        return consequent_expression_;
-    }
-
-    void set_consequent_expression(ExpressionRNodeSPtr consequent_expression) {
-        consequent_expression_ = consequent_expression;
     }
 
     KeywordRNodeSPtr get_else_keyword() const {
@@ -66,8 +46,6 @@ class IfElseConditionalExpressionRNode
     static SEXP get_class();
 
   private:
-    KeywordRNodeSPtr if_keyword_;
-    ExpressionRNodeSPtr consequent_expression_;
     KeywordRNodeSPtr else_keyword_;
     ExpressionRNodeSPtr alternative_expression_;
 
