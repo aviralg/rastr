@@ -66,7 +66,11 @@ cppcheck:
 	             --quiet                                                  \
 	             --suppress=missingInclude                                \
 	             --suppress=unusedFunction                                \
-	              -I inst/include/                                        \
+	             -I inst/include/                                         \
+	             --suppress=*:Lexer.cxx                                   \
+	             --suppress=*:Lexer.lxx                                   \
+	             --suppress=*:Parser.cxx                                  \
+	             --suppress=*:Parser.hxx                                  \
 	             $(SOURCES)                                               \
 	             $(INCLUDES)
 
