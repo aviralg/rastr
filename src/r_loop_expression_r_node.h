@@ -1,6 +1,4 @@
-#include <R.h>
-#include <R_ext/Error.h>
-#include <Rdefines.h>
+#include "RIncludes.hpp"
 
 extern "C" {
 SEXP r_loop_expression_r_node_get_keyword(SEXP r_node);

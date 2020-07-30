@@ -1,6 +1,4 @@
-#include <R.h>
-#include <R_ext/Error.h>
-#include <Rdefines.h>
+#include "RIncludes.hpp"
 
 extern "C" {
 SEXP r_function_definition_expression_r_node_create(SEXP r_keyword,

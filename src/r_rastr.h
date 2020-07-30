@@ -1,8 +1,7 @@
 #ifndef RASTR_R_RASTR_HPP
 #define RASTR_R_RASTR_HPP
 
-#include "r_rastr.h"
-#include <Rinternals.h>
+#include "RIncludes.hpp"
 
 extern "C" {
 SEXP r_rastr_initialize();
