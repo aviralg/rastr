@@ -30,7 +30,14 @@ class Lexer: public yyFlexLexer {
     }
 
     explicit Lexer(std::istream& istream)
-        : yyFlexLexer(istream, std::cout), eat_lines_(false), saved_(false) {
+        : yyFlexLexer(istream, std::cout)
+        , saved_yylval_(nullptr)
+        , saved_yylloc_()
+        , saved_token_(0)
+        , saved_(false)
+        , eat_lines_(false)
+        , context_("")
+        , token_buffer_("") {
     }
 
     int yylex_inner(rastr::r::parser::Parser::semantic_type* yylval,
@@ -41,6 +48,7 @@ class Lexer: public yyFlexLexer {
         if (saved_) {
             *yylval = saved_yylval_;
             *yylloc = saved_yylloc_;
+            saved_yylval_ = nullptr;
             saved_ = false;
             return saved_token_;
         } else {
