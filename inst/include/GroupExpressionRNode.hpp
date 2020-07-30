@@ -2,30 +2,23 @@
 #define RASTR_AST_GROUP_EXPRESSION_RNODE_HPP
 
 #include "IBounded.hpp"
-#include "ExpressionRNode.hpp"
+#include "IBody.hpp"
 
 namespace rastr {
 namespace ast {
 
 class GroupExpressionRNode
     : public ExpressionRNode
-    , public IBounded {
+    , public IBounded
+    , public IBody {
   public:
     explicit GroupExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
-                                  ExpressionRNodeSPtr expression,
+                                  ExpressionRNodeSPtr body,
                                   DelimiterRNodeSPtr closing_delimiter)
         : ExpressionRNode()
         , IBounded(opening_delimiter, closing_delimiter)
-        , expression_(expression) {
+        , IBody(body) {
         set_type(Type::GroupExpressionRNode);
-    }
-
-    ExpressionRNodeSPtr get_expression() const {
-        return expression_;
-    }
-
-    void set_expression(ExpressionRNodeSPtr expression) {
-        expression_ = expression;
     }
 
     static void initialize();
@@ -35,8 +28,6 @@ class GroupExpressionRNode
     static SEXP get_class();
 
   private:
-    ExpressionRNodeSPtr expression_;
-
     static SEXP class_;
 };
 
