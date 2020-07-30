@@ -1,28 +1,26 @@
 #ifndef RASTR_AST_UNARY_EXPRESSION_RNODE_HPP
 #define RASTR_AST_UNARY_EXPRESSION_RNODE_HPP
 
-#include "OperatorRNode.hpp"
+#include "IOperator.hpp"
 #include "ExpressionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class UnaryExpressionRNode: public ExpressionRNode {
+class UnaryExpressionRNode
+    : public ExpressionRNode
+    , public IOperator {
   public:
-    UnaryExpressionRNode(OperatorRNodeSPtr op, ExpressionRNodeSPtr expression)
-        : ExpressionRNode(), op_(op), expression_(expression) {
+    UnaryExpressionRNode(OperatorRNodeSPtr op, ExpressionRNodeSPtr operand)
+        : ExpressionRNode(), IOperator(op), operand_(operand) {
     }
 
-    OperatorRNodeSPtr get_operator() const {
-        return op_;
+    ExpressionRNodeSPtr get_operand() const {
+        return operand_;
     }
 
-    ExpressionRNodeSPtr get_expression() const {
-        return expression_;
-    }
-
-    void set_expression(ExpressionRNodeSPtr expression) {
-        expression_ = expression;
+    void set_operand(ExpressionRNodeSPtr operand) {
+        operand_ = operand;
     }
 
     static void initialize();
@@ -32,8 +30,7 @@ class UnaryExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    OperatorRNodeSPtr op_;
-    ExpressionRNodeSPtr expression_;
+    ExpressionRNodeSPtr operand_;
 
     static SEXP class_;
 };
