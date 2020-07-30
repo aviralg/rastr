@@ -1,44 +1,26 @@
 #ifndef RASTR_AST_LOOP_EXPRESSION_RNODE_HPP
 #define RASTR_AST_LOOP_EXPRESSION_RNODE_HPP
 
-#include "ExpressionRNode.hpp"
-#include "KeywordRNode.hpp"
+#include "IBody.hpp"
+#include "IKeyword.hpp"
 
 namespace rastr {
 namespace ast {
 
-class LoopExpressionRNode: public ExpressionRNode {
+class LoopExpressionRNode
+    : public ExpressionRNode
+    , public IKeyword
+    , public IBody {
   public:
     LoopExpressionRNode(KeywordRNodeSPtr keyword, ExpressionRNodeSPtr body)
-        : ExpressionRNode(), keyword_(keyword), body_(body) {
+        : ExpressionRNode(), IKeyword(keyword), IBody(body) {
     }
 
-    virtual ~LoopExpressionRNode() {
-    }
+    virtual ~LoopExpressionRNode() = default;
 
     bool is_loop_expression_node() const override {
         return true;
     }
-
-    KeywordRNodeSPtr get_keyword() const {
-        return keyword_;
-    }
-
-    void set_keyword(KeywordRNodeSPtr keyword) {
-        keyword_ = keyword;
-    }
-
-    ExpressionRNodeSPtr get_body() const {
-        return body_;
-    }
-
-    void set_body(ExpressionRNodeSPtr body) {
-        body_ = body;
-    }
-
-  private:
-    KeywordRNodeSPtr keyword_;
-    ExpressionRNodeSPtr body_;
 };
 
 using LoopExpressionRNodeSPtr = std::shared_ptr<LoopExpressionRNode>;
