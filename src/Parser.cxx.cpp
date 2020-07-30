@@ -75,7 +75,7 @@ ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
     return seq;
 }
 
-void add_terminator(ExpressionSequence* seq_ptr, RNode* delimiter_ptr) {
+void add_terminator(ISequence* seq_ptr, RNode* delimiter_ptr) {
     auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
     int size = seq_ptr -> get_size();
     if(size == 0) { return; }

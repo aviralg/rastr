@@ -2,7 +2,7 @@
 #define RASTR_AST_PROGRAM_RNODE_HPP
 
 #include "RNode.hpp"
-#include "ExpressionSequence.hpp"
+#include "ISequence.hpp"
 #include "SyntaxError.hpp"
 
 namespace rastr {
@@ -10,9 +10,9 @@ namespace ast {
 
 class ProgramRNode
     : public RNode
-    , public ExpressionSequence {
+    , public ISequence {
   public:
-    ProgramRNode(): RNode(), ExpressionSequence(), syntax_error_() {
+    ProgramRNode(): RNode(), ISequence(), syntax_error_() {
         set_type(Type::ProgramRNode);
     }
 

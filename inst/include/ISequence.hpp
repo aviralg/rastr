@@ -1,18 +1,17 @@
-#ifndef RASTR_AST_EXPRESSION_SEQUENCE_HPP
-#define RASTR_AST_EXPRESSION_SEQUENCE_HPP
+#ifndef RASTR_AST_I_SEQUENCE_HPP
+#define RASTR_AST_I_SEQUENCE_HPP
 
 #include "ExpressionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ExpressionSequence {
+class ISequence {
   public:
-    explicit ExpressionSequence() {
+    explicit ISequence() {
     }
 
-    virtual ~ExpressionSequence() {
-    }
+    virtual ~ISequence() = default;
 
     ExpressionRNodeSPtr get_expression(int index) const {
         return expressions_[index];
@@ -37,4 +36,4 @@ class ExpressionSequence {
 } // namespace ast
 } // namespace rastr
 
-#endif /* RASTR_AST_EXPRESSION_SEQUENCE_HPP */
+#endif /* RASTR_AST_I_SEQUENCE_HPP */

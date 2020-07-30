@@ -3,7 +3,7 @@
 
 #include "ExpressionRNode.hpp"
 #include "IBounded.hpp"
-#include "ExpressionSequence.hpp"
+#include "ISequence.hpp"
 
 namespace rastr {
 namespace ast {
@@ -11,10 +11,10 @@ namespace ast {
 class BlockExpressionRNode
     : public ExpressionRNode
     , public IBounded
-    , public ExpressionSequence {
+    , public ISequence {
   public:
     explicit BlockExpressionRNode()
-        : ExpressionRNode(), IBounded(), ExpressionSequence() {
+        : ExpressionRNode(), IBounded(), ISequence() {
     }
     explicit BlockExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
                                   DelimiterRNodeSPtr closing_delimiter)

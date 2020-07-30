@@ -3,7 +3,7 @@
 
 #include "IBounded.hpp"
 #include "ExpressionRNode.hpp"
-#include "ExpressionSequence.hpp"
+#include "ISequence.hpp"
 
 namespace rastr {
 namespace ast {
@@ -11,10 +11,9 @@ namespace ast {
 class ExpressionSequenceRNode
     : public RNode
     , public IBounded
-    , public ExpressionSequence {
+    , public ISequence {
   public:
-    explicit ExpressionSequenceRNode()
-        : RNode(), IBounded(), ExpressionSequence() {
+    explicit ExpressionSequenceRNode(): RNode(), IBounded(), ISequence() {
         set_type(Type::ExpressionSequenceRNode);
     }
 
