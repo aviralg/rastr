@@ -2,28 +2,20 @@
 #define RASTR_AST_WHILE_LOOP_EXPRESSION_RNODE_HPP
 
 #include "LoopExpressionRNode.hpp"
-#include "KeywordRNode.hpp"
-#include "ConditionRNode.hpp"
-#include "ExpressionRNode.hpp"
+#include "ICondition.hpp"
 
 namespace rastr {
 namespace ast {
 
-class WhileLoopExpressionRNode: public LoopExpressionRNode {
+class WhileLoopExpressionRNode
+    : public LoopExpressionRNode
+    , public ICondition {
   public:
     explicit WhileLoopExpressionRNode(KeywordRNodeSPtr keyword,
                                       ConditionRNodeSPtr condition,
                                       ExpressionRNodeSPtr body)
-        : LoopExpressionRNode(keyword, body) {
+        : LoopExpressionRNode(keyword, body), ICondition(condition) {
         set_type(Type::WhileLoopExpressionRNode);
-    }
-
-    ConditionRNodeSPtr get_condition() const {
-        return condition_;
-    }
-
-    void set_condition(ConditionRNodeSPtr condition) {
-        condition_ = condition;
     }
 
     static void initialize();
@@ -33,8 +25,6 @@ class WhileLoopExpressionRNode: public LoopExpressionRNode {
     static SEXP get_class();
 
   private:
-    ConditionRNodeSPtr condition_;
-
     static SEXP class_;
 };
 
