@@ -8,7 +8,7 @@ namespace ast {
 
 class ICondition {
   public:
-    ICondition(ConditionRNodeSPtr condition): condition_(condition) {
+    explicit ICondition(ConditionRNodeSPtr condition): condition_(condition) {
     }
 
     virtual ~ICondition() = default;

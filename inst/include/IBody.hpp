@@ -8,7 +8,7 @@ namespace ast {
 
 class IBody {
   public:
-    IBody(ExpressionRNodeSPtr body): body_(body) {
+    explicit IBody(ExpressionRNodeSPtr body): body_(body) {
     }
 
     virtual ~IBody() = default;

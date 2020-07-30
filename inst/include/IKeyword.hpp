@@ -8,7 +8,7 @@ namespace ast {
 
 class IKeyword {
   public:
-    IKeyword(KeywordRNodeSPtr keyword): keyword_(keyword) {
+    explicit IKeyword(KeywordRNodeSPtr keyword): keyword_(keyword) {
     }
 
     virtual ~IKeyword() = default;

@@ -8,7 +8,7 @@ namespace ast {
 
 class IOperator {
   public:
-    IOperator(OperatorRNodeSPtr op): op_(op) {
+    explicit IOperator(OperatorRNodeSPtr op): op_(op) {
     }
 
     virtual ~IOperator() = default;

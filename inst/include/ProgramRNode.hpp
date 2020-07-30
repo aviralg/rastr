@@ -30,7 +30,7 @@ class ProgramRNode
         return syntax_error_;
     }
 
-    void set_syntax_error(rastr::r::parser::SyntaxError syntax_error) {
+    void set_syntax_error(const rastr::r::parser::SyntaxError& syntax_error) {
         syntax_error_ = syntax_error;
     }
 

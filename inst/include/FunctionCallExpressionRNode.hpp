@@ -39,8 +39,8 @@ class FunctionCallExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    ExpressionSequenceRNodeSPtr arguments_;
     ExpressionRNodeSPtr function_;
+    ExpressionSequenceRNodeSPtr arguments_;
 
     static SEXP class_;
 }; // namespace ast

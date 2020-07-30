@@ -8,7 +8,7 @@ namespace ast {
 
 class IRepresentation {
   public:
-    IRepresentation(const std::string& representation)
+    explicit IRepresentation(const std::string& representation)
         : representation_(representation) {
     }
 
