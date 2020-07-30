@@ -2,19 +2,18 @@
 #define RASTR_AST_OPERATOR_RNODE_HPP
 
 #include "RNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class OperatorRNode: public RNode {
+class OperatorRNode
+    : public RNode
+    , public IRepresentation {
   public:
-    explicit OperatorRNode(const std::string& representation = "")
-        : RNode(), representation_(representation) {
+    explicit OperatorRNode(const std::string& representation)
+        : RNode(), IRepresentation(representation) {
         set_type(Type::OperatorRNode);
-    }
-
-    const std::string& get_representation() const {
-        return representation_;
     }
 
     static void initialize();
@@ -24,8 +23,6 @@ class OperatorRNode: public RNode {
     static SEXP get_class();
 
   private:
-    std::string representation_;
-
     static SEXP class_;
 };
 
