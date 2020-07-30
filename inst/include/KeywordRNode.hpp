@@ -2,23 +2,18 @@
 #define RASTR_AST_KEYWORD_RNODE_HPP
 
 #include "RNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class KeywordRNode: public RNode {
+class KeywordRNode
+    : public RNode
+    , public IRepresentation {
   public:
-    explicit KeywordRNode(const std::string& representation = "")
-        : RNode(), representation_(representation) {
+    explicit KeywordRNode(const std::string& representation)
+        : RNode(), IRepresentation(representation) {
         set_type(Type::KeywordRNode);
-    }
-
-    const std::string& get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(const std::string& representation) {
-        representation_ = representation;
     }
 
     static void initialize();
@@ -28,8 +23,6 @@ class KeywordRNode: public RNode {
     static SEXP get_class();
 
   private:
-    std::string representation_;
-
     static SEXP class_;
 };
 
