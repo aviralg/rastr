@@ -2,24 +2,18 @@
 #define RASTR_AST_CONSTANT_LITERAL_EXPRESSION_RNODE_HPP
 
 #include "LiteralExpressionRNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ConstantLiteralExpressionRNode: public LiteralExpressionRNode {
+class ConstantLiteralExpressionRNode
+    : public LiteralExpressionRNode
+    , public IRepresentation {
   public:
-    explicit ConstantLiteralExpressionRNode(
-        const std::string& representation = "")
-        : LiteralExpressionRNode(), representation_(representation) {
+    explicit ConstantLiteralExpressionRNode(const std::string& representation)
+        : LiteralExpressionRNode(), IRepresentation(representation) {
         set_type(Type::ConstantLiteralExpressionRNode);
-    }
-
-    const std::string& get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(const std::string& representation) {
-        representation_ = representation;
     }
 
     static void initialize();
@@ -29,8 +23,6 @@ class ConstantLiteralExpressionRNode: public LiteralExpressionRNode {
     static SEXP get_class();
 
   private:
-    std::string representation_;
-
     static SEXP class_;
 };
 
