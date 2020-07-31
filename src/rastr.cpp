@@ -61,9 +61,11 @@ void initialize() {
     ast::UnaryOperationExpressionRNode::initialize();
     ast::InRNode::initialize();
     ast::IndexingExpressionRNode::initialize();
+    ast::SubsettingExpressionRNode::initialize();
     ast::BlockExpressionRNode::initialize();
     ast::MissingExpressionRNode::initialize();
     ast::GroupExpressionRNode::initialize();
+    ast::BeginRNode::initialize();
     ast::EndRNode::initialize();
     ast::ProgramRNode::initialize();
 }
