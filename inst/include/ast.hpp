@@ -36,6 +36,7 @@
 #include "UnaryOperationExpressionRNode.hpp"
 #include "WhileLoopExpressionRNode.hpp"
 #include "RawStringLiteralExpressionRNode.hpp"
+#include "SubsettingExpressionRNode.hpp"
 #include "EndRNode.hpp"
 #include "BeginRNode.hpp"
 #include "ProgramRNode.hpp"

@@ -34,6 +34,7 @@ enum class Type {
     UnaryOperationExpressionRNode,
     InRNode,
     IndexingExpressionRNode,
+    SubsettingExpressionRNode,
     BlockExpressionRNode,
     MissingExpressionRNode,
     GroupExpressionRNode,

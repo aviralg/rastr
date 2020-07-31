@@ -59,6 +59,8 @@ const std::string type_to_string(const Type type) {
         return "InRNode";
     case Type::IndexingExpressionRNode:
         return "IndexingExpressionRNode";
+    case Type::SubsettingExpressionRNode:
+        return "SubsettingExpressionRNode";
     case Type::BlockExpressionRNode:
         return "BlockExpressionRNode";
     case Type::MissingExpressionRNode:
@@ -132,6 +134,8 @@ Type string_to_type(const std::string& type) {
         return Type::UnaryOperationExpressionRNode;
     } else if (type == "IndexingExpressionRNode") {
         return Type::IndexingExpressionRNode;
+    } else if (type == "SubsettingExpressionRNode") {
+        return Type::SubsettingExpressionRNode;
     } else if (type == "InRNode") {
         return Type::InRNode;
     } else if (type == "BlockExpressionRNode") {
