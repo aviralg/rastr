@@ -56,13 +56,13 @@ RNode* create_binary_expression(RNode* op_ptr, RNode* left_expr_ptr, RNode* righ
     auto op = wrap<OperatorRNode>(op_ptr);
     auto left_expr = wrap<ExpressionRNode>(left_expr_ptr);
     auto right_expr = wrap<ExpressionRNode>(right_expr_ptr);
-    return new BinaryExpressionRNode(op, left_expr, right_expr);
+    return new BinaryOperationExpressionRNode(op, left_expr, right_expr);
 }
 
 RNode* create_unary_expression(RNode* op_ptr, RNode* expr_ptr) {
     auto op = wrap<OperatorRNode>(op_ptr);
     auto expr = wrap<ExpressionRNode>(expr_ptr);
-    return new UnaryExpressionRNode(op, expr);
+    return new UnaryOperationExpressionRNode(op, expr);
 }
 
 ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,

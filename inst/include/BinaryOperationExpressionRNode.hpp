@@ -1,21 +1,17 @@
 #ifndef RASTR_AST_BINARY_EXPRESSION_RNODE_HPP
 #define RASTR_AST_BINARY_EXPRESSION_RNODE_HPP
 
-#include "IOperator.hpp"
-#include "ExpressionRNode.hpp"
+#include "OperationExpressionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class BinaryExpressionRNode
-    : public ExpressionRNode
-    , public IOperator {
+class BinaryOperationExpressionRNode: public OperationExpressionRNode {
   public:
-    BinaryExpressionRNode(OperatorRNodeSPtr op,
+    BinaryOperationExpressionRNode(OperatorRNodeSPtr op,
                           ExpressionRNodeSPtr first_operand,
                           ExpressionRNodeSPtr second_operand)
-        : ExpressionRNode()
-        , IOperator(op)
+        : OperationExpressionRNode(op)
         , first_operand_(first_operand)
         , second_operand_(second_operand) {
     }
@@ -41,7 +37,7 @@ class BinaryExpressionRNode
     static SEXP class_;
 };
 
-using BinaryExpressionRNodeSPtr = std::shared_ptr<BinaryExpressionRNode>;
+using BinaryOperationExpressionRNodeSPtr = std::shared_ptr<BinaryOperationExpressionRNode>;
 
 } // namespace ast
 } // namespace rastr

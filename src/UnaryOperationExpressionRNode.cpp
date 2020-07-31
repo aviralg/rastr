@@ -1,24 +1,24 @@
-#include "BinaryExpressionRNode.hpp"
+#include "UnaryOperationExpressionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-SEXP BinaryExpressionRNode::class_ = NULL;
+SEXP UnaryOperationExpressionRNode::class_ = NULL;
 
-void BinaryExpressionRNode::initialize() {
-    class_ = rastr::create_class({"rastr_node_r_expression_binary",
+void UnaryOperationExpressionRNode::initialize() {
+    class_ = rastr::create_class({"rastr_node_r_expression_unary",
                                   "rastr_node_r_expression",
                                   "rastr_node_r",
                                   "rastr_node"});
     R_PreserveObject(class_);
 }
 
-void BinaryExpressionRNode::finalize() {
+void UnaryOperationExpressionRNode::finalize() {
     R_ReleaseObject(class_);
     class_ = NULL;
 }
 
-SEXP BinaryExpressionRNode::get_class() {
+SEXP UnaryOperationExpressionRNode::get_class() {
     return class_;
 }
 

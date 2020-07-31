@@ -1,7 +1,7 @@
 #ifndef RASTR_AST_HPP
 #define RASTR_AST_HPP
 
-#include "BinaryExpressionRNode.hpp"
+#include "BinaryOperationExpressionRNode.hpp"
 #include "BlockExpressionRNode.hpp"
 #include "ConstantLiteralExpressionRNode.hpp"
 #include "CharacterLiteralExpressionRNode.hpp"
@@ -33,7 +33,7 @@
 #include "RawLiteralExpressionRNode.hpp"
 #include "RepeatLoopExpressionRNode.hpp"
 #include "SymbolExpressionRNode.hpp"
-#include "UnaryExpressionRNode.hpp"
+#include "UnaryOperationExpressionRNode.hpp"
 #include "WhileLoopExpressionRNode.hpp"
 #include "RawStringLiteralExpressionRNode.hpp"
 #include "EndRNode.hpp"
