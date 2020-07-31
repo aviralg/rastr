@@ -41,7 +41,6 @@ enum class Type {
     BeginRNode,
     EndRNode,
     ProgramRNode,
-    SpacingRNode,
     ConditionRNode,
     UndefinedNode,
 };

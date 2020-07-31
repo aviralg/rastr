@@ -1,14 +1,16 @@
-#ifndef RASTR_AST_SPACING_RNODE_HPP
-#define RASTR_AST_SPACING_RNODE_HPP
+#ifndef RASTR_AST_SPACING_HPP
+#define RASTR_AST_SPACING_HPP
 
-#include "RNode.hpp"
+#include <vector>
+#include <string>
+#include <memory>
 
 namespace rastr {
-namespace ast {
+namespace parser {
 
-class SpacingRNode: public RNode {
+class Spacing {
   public:
-    explicit SpacingRNode(): RNode(Type::SpacingRNode) {
+    Spacing() {
     }
 
     int get_size() const {
@@ -31,21 +33,13 @@ class SpacingRNode: public RNode {
         spacing_.push_back(spaces);
     }
 
-    static void initialize();
-
-    static void finalize();
-
-    static SEXP get_class();
-
   private:
     std::vector<std::string> spacing_;
-
-    static SEXP class_;
 };
 
-using SpacingRNodeSPtr = std::shared_ptr<SpacingRNode>;
+using SpacingSPtr = std::shared_ptr<Spacing>;
 
-} // namespace ast
+} // namespace parser
 } // namespace rastr
 
-#endif /* RASTR_AST_SPACING_RNODE_HPP */
+#endif /* RASTR_AST_SPACING_HPP */

@@ -2,7 +2,7 @@
 #define RASTR_R_PARSER_LOCATION_HPP
 
 #include "Position.hpp"
-#include "SpacingRNode.hpp"
+#include "Spacing.hpp"
 #include <iostream>
 #include <string>
 
@@ -18,17 +18,17 @@ class Location {
 
     /// Construct a Location from \a b to \a e.
     Location(const Position& b, const Position& e)
-        : begin(b), end(e), spacing_(new ast::SpacingRNode()) {
+        : begin(b), end(e), spacing_(new rastr::parser::Spacing()) {
     }
 
     /// Construct a 0-width location in \a p.
     explicit Location(const Position& p = Position())
-        : begin(p), end(p), spacing_(new ast::SpacingRNode()) {
+        : begin(p), end(p), spacing_(new rastr::parser::Spacing()) {
     }
 
     /// Construct a 0-width location in \a f, \a l, \a c.
     explicit Location(std::string* f, counter_t l = 1, counter_t c = 1)
-        : begin(f, l, c), end(f, l, c), spacing_(new ast::SpacingRNode()) {
+        : begin(f, l, c), end(f, l, c), spacing_(new rastr::parser::Spacing()) {
     }
 
     /// Initialization.
@@ -57,11 +57,11 @@ class Location {
     }
     /** \} */
 
-    ast::SpacingRNodeSPtr get_spacing() const {
+    rastr::parser::SpacingSPtr get_spacing() const {
         return spacing_;
     }
 
-    void set_spacing(ast::SpacingRNodeSPtr spacing) {
+    void set_spacing(rastr::parser::SpacingSPtr spacing) {
         spacing_ = spacing;
     }
 
@@ -71,7 +71,7 @@ class Location {
     /// End of the located region.
     Position end;
 
-    ast::SpacingRNodeSPtr spacing_;
+    rastr::parser::SpacingSPtr spacing_;
 };
 
 /// Join two locations, in place.
