@@ -1,34 +1,64 @@
 #ifndef RASTR_AST_INDEXING_EXPRESSION_RNODE_HPP
 #define RASTR_AST_INDEXING_EXPRESSION_RNODE_HPP
 
-#include "ExpressionRNode.hpp"
 #include "ExpressionSequenceRNode.hpp"
+#include "IObject.hpp"
+#include "IIndices.hpp"
 
 namespace rastr {
 namespace ast {
 
-class IndexingExpressionRNode: public ExpressionRNode {
+class IndexingExpressionRNode
+    : public ExpressionRNode
+    , public IObject
+    , public IIndices {
   public:
-    IndexingExpressionRNode(ExpressionRNodeSPtr body,
-                            ExpressionSequenceRNodeSPtr indices)
-        : ExpressionRNode(), body_(body), indices_(indices) {
+    IndexingExpressionRNode(ExpressionRNodeSPtr object,
+                            DelimiterRNodeSPtr opening_delimiter,
+                            ExpressionSequenceRNodeSPtr indices,
+                            DelimiterRNodeSPtr first_closing_delimiter,
+                            DelimiterRNodeSPtr second_closing_delimiter)
+        : ExpressionRNode()
+        , IObject(object)
+        , IIndices(indices)
+        , opening_delimiter_(opening_delimiter)
+        , first_closing_delimiter_(first_closing_delimiter)
+        , second_closing_delimiter_(second_closing_delimiter) {
         set_type(Type::IndexingExpressionRNode);
     }
 
-    ExpressionRNodeSPtr get_body() const {
-        return body_;
+    DelimiterRNodeSPtr get_opening_delimiter() const {
+        return opening_delimiter_;
     }
 
-    void set_body(ExpressionRNodeSPtr body) {
-        body_ = body;
+    void set_opening_delimiter(DelimiterRNodeSPtr opening_delimiter) {
+        opening_delimiter_ = opening_delimiter;
     }
 
-    ExpressionSequenceRNodeSPtr get_index_expressions() const {
-        return indices_;
+    DelimiterRNodeSPtr get_first_closing_delimiter() const {
+        return first_closing_delimiter_;
     }
 
-    void set_indices(ExpressionSequenceRNodeSPtr indices) {
-        indices_ = indices;
+    void
+    set_first_closing_delimiter(DelimiterRNodeSPtr first_closing_delimiter) {
+        first_closing_delimiter_ = first_closing_delimiter;
+    }
+
+    DelimiterRNodeSPtr get_second_closing_delimiter() const {
+        return second_closing_delimiter_;
+    }
+
+    void
+    set_second_closing_delimiter(DelimiterRNodeSPtr second_closing_delimiter) {
+        second_closing_delimiter_ = second_closing_delimiter;
+    }
+
+    void set_delimiters(DelimiterRNodeSPtr opening_delimiter,
+                        DelimiterRNodeSPtr first_closing_delimiter,
+                        DelimiterRNodeSPtr second_closing_delimiter) {
+        set_opening_delimiter(opening_delimiter);
+        set_first_closing_delimiter(first_closing_delimiter);
+        set_second_closing_delimiter(second_closing_delimiter);
     }
 
     static void initialize();
@@ -38,8 +68,9 @@ class IndexingExpressionRNode: public ExpressionRNode {
     static SEXP get_class();
 
   private:
-    ExpressionRNodeSPtr body_;
-    ExpressionSequenceRNodeSPtr indices_;
+    DelimiterRNodeSPtr opening_delimiter_;
+    DelimiterRNodeSPtr first_closing_delimiter_;
+    DelimiterRNodeSPtr second_closing_delimiter_;
 
     static SEXP class_;
 };

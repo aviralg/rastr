@@ -419,9 +419,8 @@ namespace rastr { namespace r { namespace parser {
         S_sublist = 85,                          // sublist
         S_sub = 86,                              // sub
         S_formlist = 87,                         // formlist
-        S_proglist = 88,                         // proglist
-        S_formlist_inner = 89,                   // formlist_inner
-        S_cr = 90                                // cr
+        S_formlist_inner = 88,                   // formlist_inner
+        S_cr = 89                                // cr
       };
     };
 
@@ -555,7 +554,7 @@ namespace rastr { namespace r { namespace parser {
     {};
 
     /// Build a parser object.
-    Parser (rastr::r::parser::Lexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr program_yyarg);
+    Parser (rastr::r::parser::Lexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr& program_yyarg);
     virtual ~Parser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -929,22 +928,22 @@ namespace rastr { namespace r { namespace parser {
     /// Constants.
     enum
     {
-      yylast_ = 504,     ///< Last index in yytable_.
-      yynnts_ = 15,  ///< Number of nonterminal symbols.
-      yyfinal_ = 49 ///< Termination state number.
+      yylast_ = 497,     ///< Last index in yytable_.
+      yynnts_ = 14,  ///< Number of nonterminal symbols.
+      yyfinal_ = 48 ///< Termination state number.
     };
 
 
     // User arguments.
     rastr::r::parser::Lexer& lexer;
-    rastr::ast::ProgramRNodeSPtr program;
+    rastr::ast::ProgramRNodeSPtr& program;
 
   };
 
 
 #line 9 "Parser.yxx"
 } } } // rastr::r::parser
-#line 948 "Parser.hxx"
+#line 947 "Parser.hxx"
 
 
 

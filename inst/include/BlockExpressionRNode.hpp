@@ -1,9 +1,8 @@
 #ifndef RASTR_AST_BLOCK_EXPRESSION_RNODE_HPP
 #define RASTR_AST_BLOCK_EXPRESSION_RNODE_HPP
 
-#include "ExpressionRNode.hpp"
 #include "IBounded.hpp"
-#include "ISequence.hpp"
+#include "IExpressions.hpp"
 
 namespace rastr {
 namespace ast {
@@ -11,16 +10,15 @@ namespace ast {
 class BlockExpressionRNode
     : public ExpressionRNode
     , public IBounded
-    , public ISequence {
+    , public IExpressions {
   public:
-    explicit BlockExpressionRNode()
-        : ExpressionRNode(), IBounded(), ISequence() {
-    }
-    explicit BlockExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
-                                  DelimiterRNodeSPtr closing_delimiter)
-        : BlockExpressionRNode() {
+    BlockExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
+                         ExpressionSequenceRNodeSPtr expressions,
+                         DelimiterRNodeSPtr closing_delimiter)
+        : ExpressionRNode()
+        , IBounded(opening_delimiter, closing_delimiter)
+        , IExpressions(expressions) {
         set_type(Type::BlockExpressionRNode);
-        set_delimiters(opening_delimiter, closing_delimiter);
     }
 
     static void initialize();

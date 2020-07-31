@@ -14,18 +14,20 @@ using rastr::ast::KeywordRNodeSPtr;
 SEXP r_function_definition_expression_r_node_create(SEXP r_keyword,
                                                     SEXP r_parameters,
                                                     SEXP r_body) {
-    KeywordRNodeSPtr keyword = from_sexp<KeywordRNode>(r_keyword);
-
-    ExpressionSequenceRNodeSPtr parameters =
-        from_sexp<ExpressionSequenceRNode>(r_parameters);
-
-    ExpressionRNodeSPtr body = from_sexp<ExpressionRNode>(r_body);
-
-    FunctionDefinitionExpressionRNodeSPtr node =
-        std::make_shared<FunctionDefinitionExpressionRNode>(
-            keyword, parameters, body);
-
-    return to_sexp<FunctionDefinitionExpressionRNode>(node);
+    /*TODO*/
+    // KeywordRNodeSPtr keyword = from_sexp<KeywordRNode>(r_keyword);
+    //
+    // ExpressionSequenceRNodeSPtr parameters =
+    //    from_sexp<ExpressionSequenceRNode>(r_parameters);
+    //
+    // ExpressionRNodeSPtr body = from_sexp<ExpressionRNode>(r_body);
+    //
+    // FunctionDefinitionExpressionRNodeSPtr node =
+    //    std::make_shared<FunctionDefinitionExpressionRNode>(
+    //        keyword, parameters, body);
+    //
+    // return to_sexp<FunctionDefinitionExpressionRNode>(node);
+    return R_NilValue;
 }
 
 SEXP r_function_definition_expression_r_node_get_keyword(SEXP r_node) {

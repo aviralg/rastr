@@ -3,16 +3,23 @@
 
 #include "ExpressionSequenceRNode.hpp"
 #include "KeywordRNode.hpp"
-#include "ExpressionRNode.hpp"
+#include "IBounded.hpp"
 
 namespace rastr {
 namespace ast {
 
-class FunctionCallExpressionRNode: public ExpressionRNode {
+class FunctionCallExpressionRNode
+    : public ExpressionRNode
+    , public IBounded {
   public:
     explicit FunctionCallExpressionRNode(ExpressionRNodeSPtr function,
-                                         ExpressionSequenceRNodeSPtr arguments)
-        : ExpressionRNode(), function_(function), arguments_(arguments) {
+                                         DelimiterRNodeSPtr opening_delimiter,
+                                         ExpressionSequenceRNodeSPtr arguments,
+                                         DelimiterRNodeSPtr closing_delimiter)
+        : ExpressionRNode()
+        , IBounded(opening_delimiter, closing_delimiter)
+        , function_(function)
+        , arguments_(arguments) {
         set_type(Type::FunctionCallExpressionRNode);
     }
 

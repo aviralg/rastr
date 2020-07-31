@@ -25,11 +25,12 @@ ProgramRNodeSPtr parse_(std::istream& input_stream,
                         const std::string& input_stream_name,
                         bool debug_lexer,
                         bool debug_parser) {
-    ProgramRNodeSPtr program = std::make_shared<ProgramRNode>();
+    ProgramRNodeSPtr program;
     Lexer lexer(input_stream);
     Parser parser(lexer, program);
     parser.parse();
-    std::cout << "Size is " << program -> get_size() << std::endl;
+    std::cout << "Size is " << program->get_expressions()->get_size()
+              << std::endl;
     return program;
 }
 

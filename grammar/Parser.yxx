@@ -16,7 +16,7 @@
 
 /* increase usefulness of error messages */
 %define parse.error verbose
-%parse-param { rastr::r::parser::Lexer& lexer} { rastr::ast::ProgramRNodeSPtr program}
+%parse-param { rastr::r::parser::Lexer& lexer} { rastr::ast::ProgramRNodeSPtr& program}
 
 /* call yylex with a location */
 %locations
@@ -126,50 +126,27 @@ RNode* create_unary_expression(RNode* op_ptr, RNode* expr_ptr) {
     return new UnaryOperationExpressionRNode(op, expr);
 }
 
-ExpressionSequenceRNodeSPtr delimit_expression_sequence(RNode* seq_ptr,
-                                                        RNode *opening_delimiter_ptr,
-                                                        RNode *closing_delimiter_ptr) {
-    auto seq = wrap<ExpressionSequenceRNode>(seq_ptr);
-    auto opening_delimiter = wrap<DelimiterRNode>(opening_delimiter_ptr);
-    auto closing_delimiter = wrap<DelimiterRNode>(closing_delimiter_ptr);
-    seq -> set_delimiters(opening_delimiter, closing_delimiter);
-    return seq;
-}
-
-void add_terminator(ISequence* seq_ptr, RNode* delimiter_ptr) {
+void add_terminator(ExpressionSequenceRNode* seq_ptr, RNode* delimiter_ptr) {
     auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
     int size = seq_ptr -> get_size();
     if(size == 0) { return; }
-    auto expr = seq_ptr -> get_expression(size - 1);
+    auto expr = seq_ptr -> get_element(size - 1);
     auto terminated_expr = std::make_shared<TerminatedExpressionRNode>(expr, delimiter);
-    seq_ptr -> set_expression(size - 1, terminated_expr);
+    seq_ptr -> set_element(size - 1, terminated_expr);
 }
 
 }
 
 
 %%
-prog: proglist END_OF_INPUT                                                     { yyresult = 0; YYACCEPT; }
-
-proglist:                                                                       { }
-        | expr_or_assign_or_help                                                {
-                                                                                  program -> push_back(wrap<ExpressionRNode>($1));
-                                                                                  $$ = nullptr;
+prog: exprlist END_OF_INPUT                                                     {
+                                                                                  auto begin = std::make_shared<BeginRNode>();
+                                                                                  auto exprs = wrap<ExpressionSequenceRNode>($1);
+                                                                                  auto end = wrap<EndRNode>($2);
+                                                                                  program.reset(new ProgramRNode(begin, exprs, end));
+                                                                                  yyresult = 0;
+                                                                                  YYACCEPT;
                                                                                 }
-        | proglist SEMICOLON expr_or_assign_or_help                             {
-                                                                                  program -> push_back(wrap<ExpressionRNode>($3));
-                                                                                  $$ = nullptr;
-                                                                                }
-        | proglist SEMICOLON                                                    {
-                                                                                  $$ = nullptr;
-                                                                                }
-        | proglist NEWLINE expr_or_assign_or_help                               {
-                                                                                  program -> push_back(wrap<ExpressionRNode>($3));
-                                                                                  $$ = nullptr;
-                                                                                }
-        | proglist NEWLINE                                                      {
-                                                                                }
-        ;
 
 expr_or_assign_or_help: expr                                                    { $$ = $1; }
                       | expr_or_assign_or_help EQ_ASSIGN expr_or_assign_or_help { $$ = create_binary_expression($2, $1, $3); }
@@ -189,16 +166,18 @@ expr: INT_CONST                                                                 
     | NULL_CONST                                                                { $$ = $1; }
     | SYMBOL                                                                    { $$ = $1; }
     | LBRACE exprlist RBRACE                                                    {
-                                                                                  auto block = static_cast<BlockExpressionRNode*>($2);
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>($1);
+                                                                                  auto exprs = wrap<ExpressionSequenceRNode>($2);
                                                                                   auto closing_delimiter = wrap<DelimiterRNode>($3);
-                                                                                  block -> set_delimiters(opening_delimiter, closing_delimiter);
-                                                                                  $$ = block;
+                                                                                  $$ = new BlockExpressionRNode(opening_delimiter, exprs, closing_delimiter);
                                                                                   lexer.disable_eat_lines();
                                                                                 }
-    | LPAREN expr_or_assign_or_help RPAREN                                      { $$ = new GroupExpressionRNode(wrap<DelimiterRNode>($1),
-                                                                                                                wrap<ExpressionRNode>($2),
-                                                                                                                wrap<DelimiterRNode>($3)); }
+    | LPAREN expr_or_assign_or_help RPAREN                                      {
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
+                                                                                  auto body = wrap<ExpressionRNode>($2);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($3);
+                                                                                  $$ = new GroupExpressionRNode(opening_delimiter, body, closing_delimiter);
+                                                                                }
     | MINUS expr %prec UMINUS                                                   { $$ = create_unary_expression($1, $2); }
     | PLUS expr %prec UMINUS                                                    { $$ = create_unary_expression($1, $2); }
     | EXCLAMATION expr %prec UNOT                                               { $$ = create_unary_expression($1, $2); }
@@ -227,14 +206,18 @@ expr: INT_CONST                                                                 
     | expr RIGHT_ASSIGN expr                                                    { $$ = create_binary_expression($2, $1, $3); }
     | FUNCTION LPAREN formlist RPAREN cr expr_or_assign_or_help %prec LOW       {
                                                                                   auto keyword = wrap<KeywordRNode>($1);
-                                                                                  auto params = delimit_expression_sequence($3, $2, $4);
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($2);
+                                                                                  auto params = wrap<ExpressionSequenceRNode>($3);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($4);
                                                                                   auto body = wrap<ExpressionRNode>($6);
-                                                                                  $$ = new FunctionDefinitionExpressionRNode(keyword, params, body);
+                                                                                  $$ = new FunctionDefinitionExpressionRNode(keyword, opening_delimiter, params, closing_delimiter, body);
                                                                                 }
     | expr LPAREN sublist RPAREN                                                {
                                                                                   auto target = wrap<ExpressionRNode>($1);
-                                                                                  auto args = delimit_expression_sequence($3, $2, $4);
-                                                                                  $$ = new FunctionCallExpressionRNode(target, args);
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($2);
+                                                                                  auto args = wrap<ExpressionSequenceRNode>($3);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($4);
+                                                                                  $$ = new FunctionCallExpressionRNode(target, opening_delimiter, args, closing_delimiter);
                                                                                 }
     | IF ifcond expr_or_assign_or_help                                          {
                                                                                   $$ = new IfConditionalExpressionRNode(wrap<KeywordRNode>($1),
@@ -263,14 +246,26 @@ expr: INT_CONST                                                                 
                                                                                                                      wrap<ExpressionRNode>($2));
                                                                                 }
     | expr LBB sublist RSQPAREN RSQPAREN                                        {
-                                                                                  auto expr = wrap<ExpressionRNode>($1);
-                                                                                  auto indices = delimit_expression_sequence($3, $2, $4);
-                                                                                  $$ = new IndexingExpressionRNode(expr, indices);
+                                                                                  auto object = wrap<ExpressionRNode>($1);
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($2);
+                                                                                  auto indices = wrap<ExpressionSequenceRNode>($3);
+                                                                                  auto first_closing_delimiter = wrap<DelimiterRNode>($4);
+                                                                                  auto second_closing_delimiter = wrap<DelimiterRNode>($5);
+                                                                                  $$ =  new IndexingExpressionRNode(object,
+                                                                                                                    opening_delimiter,
+                                                                                                                    indices,
+                                                                                                                    first_closing_delimiter,
+                                                                                                                    second_closing_delimiter);
                                                                                 }
     | expr LSQPAREN sublist RSQPAREN                                            {
-                                                                                  auto expr = wrap<ExpressionRNode>($1);
-                                                                                  auto indices = delimit_expression_sequence($3, $2, $4);
-                                                                                  $$ = new IndexingExpressionRNode(expr, indices);
+                                                                                  auto object = wrap<ExpressionRNode>($1);
+                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($2);
+                                                                                  auto indices = wrap<ExpressionSequenceRNode>($3);
+                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($4);
+                                                                                  $$ =  new SubsettingExpressionRNode(object,
+                                                                                                                      opening_delimiter,
+                                                                                                                      indices,
+                                                                                                                      closing_delimiter);
                                                                                 }
     | SYMBOL NS_GET SYMBOL                                                      { $$ = create_binary_expression($2, $1, $3); }
     | SYMBOL NS_GET STR_CONST                                                   { $$ = create_binary_expression($2, $1, $3); }
@@ -284,7 +279,7 @@ expr: INT_CONST                                                                 
     | expr DOLLAR STR_CONST                                                     { $$ = create_binary_expression($2, $1, $3); }
     | expr AT SYMBOL                                                            { $$ = create_binary_expression($2, $1, $3); }
     | expr AT STR_CONST                                                         { $$ = create_binary_expression($2, $1, $3); }
-    | NEXT                                                                      { $$ = $1;  }
+    | NEXT                                                                      { $$ = $1; }
     | BREAK                                                                     { $$ = $1; }
     ;
 
@@ -318,31 +313,31 @@ forcond: LPAREN SYMBOL IN expr_or_help RPAREN                                   
                                                                                 }
        ;
 
-exprlist:                                                                       { $$ = new BlockExpressionRNode(); }
+exprlist:                                                                       { $$ = new ExpressionSequenceRNode(); }
         | expr_or_assign_or_help                                                {
-                                                                                  auto block = new BlockExpressionRNode();
+                                                                                  auto block = new ExpressionSequenceRNode();
                                                                                   block -> push_back(wrap<ExpressionRNode>($1));
                                                                                   $$ = block;
                                                                                 }
         | exprlist SEMICOLON expr_or_assign_or_help                             {
-                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   add_terminator(block, $2);
                                                                                   block -> push_back(wrap<ExpressionRNode>($3));
                                                                                   $$ = block;
                                                                                 }
         | exprlist SEMICOLON                                                    {
-                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   add_terminator(block, $2);
                                                                                   $$ = block;
                                                                                 }
         | exprlist NEWLINE expr_or_assign_or_help                               {
-                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   add_terminator(block, $2);
                                                                                   block -> push_back(wrap<ExpressionRNode>($3));
                                                                                   $$ = block;
                                                                                 }
         | exprlist NEWLINE                                                      {
-                                                                                  auto block = static_cast<BlockExpressionRNode*>($1);
+                                                                                  auto block = static_cast<ExpressionSequenceRNode*>($1);
                                                                                   add_terminator(block, $2);
                                                                                   $$ = block;
                                                                                 }

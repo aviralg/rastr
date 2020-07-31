@@ -57,8 +57,8 @@ void initialize() {
     ast::IfConditionalExpressionRNode::initialize();
     ast::IfElseConditionalExpressionRNode::initialize();
     ast::OperatorRNode::initialize();
-    ast::BinaryExpressionRNode::initialize();
-    ast::UnaryExpressionRNode::initialize();
+    ast::BinaryOperationExpressionRNode::initialize();
+    ast::UnaryOperationExpressionRNode::initialize();
     ast::InRNode::initialize();
     ast::IndexingExpressionRNode::initialize();
     ast::BlockExpressionRNode::initialize();

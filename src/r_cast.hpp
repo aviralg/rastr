@@ -19,7 +19,7 @@
 #include "InRNode.hpp"
 #include "WhileLoopExpressionRNode.hpp"
 #include "ForLoopExpressionRNode.hpp"
-#include "BinaryExpressionRNode.hpp"
+#include "BinaryOperationExpressionRNode.hpp"
 
 template <typename T>
 void destroy_sexp(SEXP r_node) {
@@ -54,8 +54,8 @@ SEXP to_sexp(std::shared_ptr<T> node) {
 template <>
 inline SEXP to_sexp<rastr::ast::ExpressionRNode>(
     std::shared_ptr<rastr::ast::ExpressionRNode> node) {
-    using rastr::ast::BinaryExpressionRNode;
-    using rastr::ast::BinaryExpressionRNodeSPtr;
+    using rastr::ast::BinaryOperationExpressionRNode;
+    using rastr::ast::BinaryOperationExpressionRNodeSPtr;
     using rastr::ast::CharacterLiteralExpressionRNode;
     using rastr::ast::CharacterLiteralExpressionRNodeSPtr;
     using rastr::ast::ComplexLiteralExpressionRNode;
@@ -144,9 +144,9 @@ inline SEXP to_sexp<rastr::ast::ExpressionRNode>(
         auto downcasted_node =
             std::static_pointer_cast<IfElseConditionalExpressionRNode>(node);
         return to_sexp(downcasted_node);
-    } else if (type == Type::BinaryExpressionRNode) {
+    } else if (type == Type::BinaryOperationExpressionRNode) {
         auto downcasted_node =
-            std::static_pointer_cast<BinaryExpressionRNode>(node);
+            std::static_pointer_cast<BinaryOperationExpressionRNode>(node);
         return to_sexp(downcasted_node);
     }
 

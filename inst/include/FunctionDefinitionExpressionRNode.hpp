@@ -4,6 +4,7 @@
 #include "ExpressionSequenceRNode.hpp"
 #include "IKeyword.hpp"
 #include "IBody.hpp"
+#include "IBounded.hpp"
 
 namespace rastr {
 namespace ast {
@@ -11,14 +12,18 @@ namespace ast {
 class FunctionDefinitionExpressionRNode
     : public ExpressionRNode
     , public IKeyword
+    , public IBounded
     , public IBody {
   public:
     explicit FunctionDefinitionExpressionRNode(
         KeywordRNodeSPtr keyword,
+        DelimiterRNodeSPtr opening_delimiter,
         ExpressionSequenceRNodeSPtr parameters,
+        DelimiterRNodeSPtr closing_delimiter,
         ExpressionRNodeSPtr body)
         : ExpressionRNode()
         , IKeyword(keyword)
+        , IBounded(opening_delimiter, closing_delimiter)
         , IBody(body)
         , parameters_(parameters) {
         set_type(Type::FunctionDefinitionExpressionRNode);

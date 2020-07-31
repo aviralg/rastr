@@ -8,13 +8,10 @@ namespace ast {
 
 class IBounded {
   public:
-    explicit IBounded() {
-    }
-
-    explicit IBounded(DelimiterRNodeSPtr opening_delimiter,
-                     DelimiterRNodeSPtr closing_delimiter)
-        : IBounded() {
-        set_delimiters(opening_delimiter, closing_delimiter);
+    IBounded(DelimiterRNodeSPtr opening_delimiter,
+             DelimiterRNodeSPtr closing_delimiter)
+        : opening_delimiter_(opening_delimiter)
+        , closing_delimiter_(closing_delimiter) {
     }
 
     virtual ~IBounded() = default;
