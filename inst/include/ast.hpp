@@ -37,6 +37,7 @@
 #include "WhileLoopExpressionRNode.hpp"
 #include "RawStringLiteralExpressionRNode.hpp"
 #include "EndRNode.hpp"
+#include "BeginRNode.hpp"
 #include "ProgramRNode.hpp"
 
 template <typename T>

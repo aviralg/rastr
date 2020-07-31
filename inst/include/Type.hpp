@@ -37,6 +37,7 @@ enum class Type {
     BlockExpressionRNode,
     MissingExpressionRNode,
     GroupExpressionRNode,
+    BeginRNode,
     EndRNode,
     ProgramRNode,
     SpacingRNode,
