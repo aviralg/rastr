@@ -17,8 +17,10 @@ class ProgramRNode
     ProgramRNode(BeginRNodeSPtr begin,
                  ExpressionSequenceRNodeSPtr expressions,
                  EndRNodeSPtr end)
-        : RNode(), IExpressions(expressions), begin_(begin), end_(end) {
-        set_type(Type::ProgramRNode);
+        : RNode(Type::ProgramRNode)
+        , IExpressions(expressions)
+        , begin_(begin)
+        , end_(end) {
     }
 
     ~ProgramRNode() = default;

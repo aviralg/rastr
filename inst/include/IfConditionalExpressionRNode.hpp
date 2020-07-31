@@ -12,10 +12,10 @@ class IfConditionalExpressionRNode: public ConditionalExpressionRNode {
         KeywordRNodeSPtr if_keyword,
         ConditionRNodeSPtr condition,
         ExpressionRNodeSPtr consequent_expression)
-        : ConditionalExpressionRNode(if_keyword,
+        : ConditionalExpressionRNode(Type::IfConditionalExpressionRNode,
+                                     if_keyword,
                                      condition,
                                      consequent_expression) {
-        set_type(Type::IfConditionalExpressionRNode);
     }
 
     static void initialize();

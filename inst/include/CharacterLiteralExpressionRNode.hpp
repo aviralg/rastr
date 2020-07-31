@@ -11,10 +11,9 @@ class CharacterLiteralExpressionRNode: public LiteralExpressionRNode {
     explicit CharacterLiteralExpressionRNode(
         const std::string& representation = "",
         const char quote = '"')
-        : LiteralExpressionRNode()
+        : LiteralExpressionRNode(Type::CharacterLiteralExpressionRNode)
         , representation_(representation)
         , quote_(quote) {
-        set_type(Type::CharacterLiteralExpressionRNode);
     }
 
     const std::string& get_representation() const {

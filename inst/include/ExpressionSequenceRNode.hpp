@@ -9,8 +9,7 @@ namespace ast {
 
 class ExpressionSequenceRNode: public RNode {
   public:
-    explicit ExpressionSequenceRNode(): RNode() {
-        set_type(Type::ExpressionSequenceRNode);
+    explicit ExpressionSequenceRNode(): RNode(Type::ExpressionSequenceRNode) {
     }
 
     ExpressionRNodeSPtr get_element(int index) const {

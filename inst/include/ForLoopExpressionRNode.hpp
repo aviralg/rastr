@@ -14,8 +14,8 @@ class ForLoopExpressionRNode
     explicit ForLoopExpressionRNode(KeywordRNodeSPtr keyword,
                                     ConditionRNodeSPtr condition,
                                     ExpressionRNodeSPtr body)
-        : LoopExpressionRNode(keyword, body), ICondition(condition) {
-        set_type(Type::ForLoopExpressionRNode);
+        : LoopExpressionRNode(Type::ForLoopExpressionRNode, keyword, body)
+        , ICondition(condition) {
     }
 
     static void initialize();

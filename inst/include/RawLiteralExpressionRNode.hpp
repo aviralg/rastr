@@ -9,8 +9,8 @@ namespace ast {
 class RawLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
     explicit RawLiteralExpressionRNode(const Rbyte representation = 0)
-        : LiteralExpressionRNode(), representation_(representation) {
-        set_type(Type::RawLiteralExpressionRNode);
+        : LiteralExpressionRNode(Type::RawLiteralExpressionRNode)
+        , representation_(representation) {
     }
 
     const Rbyte get_representation() const {

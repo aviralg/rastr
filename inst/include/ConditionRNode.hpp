@@ -14,7 +14,7 @@ class ConditionRNode
     explicit ConditionRNode(DelimiterRNodeSPtr opening_delimiter,
                             RNodeSPtr condition,
                             DelimiterRNodeSPtr closing_delimiter)
-        : RNode()
+        : RNode(Type::ConditionRNode)
         , IBounded(opening_delimiter, closing_delimiter)
         , condition_(condition) {
     }

@@ -9,8 +9,8 @@ namespace ast {
 class ComplexLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
     explicit ComplexLiteralExpressionRNode(const Rcomplex& representation)
-        : LiteralExpressionRNode(), representation_(representation) {
-        set_type(Type::ComplexLiteralExpressionRNode);
+        : LiteralExpressionRNode(Type::ComplexLiteralExpressionRNode)
+        , representation_(representation) {
     }
 
     const Rcomplex& get_representation() const {

@@ -8,8 +8,7 @@ namespace ast {
 
 class MissingExpressionRNode: public ExpressionRNode {
   public:
-    MissingExpressionRNode(): ExpressionRNode() {
-        set_type(Type::MissingExpressionRNode);
+    MissingExpressionRNode(): ExpressionRNode(Type::MissingExpressionRNode) {
     }
 
     static void initialize();

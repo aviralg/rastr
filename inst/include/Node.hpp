@@ -15,10 +15,10 @@ namespace ast {
 
 class Node {
   public:
-    Node()
+    Node(Type type)
         : id_(Node::get_next_id_())
         , r_data_(get_undefined_object())
-        , type_(Type::UndefinedNode) {
+        , type_(type) {
     }
 
     virtual ~Node() {
@@ -44,10 +44,6 @@ class Node {
 
     bool has_data() const {
         return is_defined_object(r_data_);
-    }
-
-    void set_type(Type type) {
-        type_ = type;
     }
 
     Type get_type() const {

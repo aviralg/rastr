@@ -12,8 +12,8 @@ class ConstantLiteralExpressionRNode
     , public IRepresentation {
   public:
     explicit ConstantLiteralExpressionRNode(const std::string& representation)
-        : LiteralExpressionRNode(), IRepresentation(representation) {
-        set_type(Type::ConstantLiteralExpressionRNode);
+        : LiteralExpressionRNode(Type::ConstantLiteralExpressionRNode)
+        , IRepresentation(representation) {
     }
 
     static void initialize();

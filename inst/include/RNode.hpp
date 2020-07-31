@@ -8,7 +8,7 @@ namespace ast {
 
 class RNode: public Node {
   public:
-    RNode(): Node() {
+    RNode(Type type): Node(type) {
     }
 
     virtual ~RNode() {

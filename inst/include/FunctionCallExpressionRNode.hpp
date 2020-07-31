@@ -16,11 +16,10 @@ class FunctionCallExpressionRNode
                                          DelimiterRNodeSPtr opening_delimiter,
                                          ExpressionSequenceRNodeSPtr arguments,
                                          DelimiterRNodeSPtr closing_delimiter)
-        : ExpressionRNode()
+        : ExpressionRNode(Type::FunctionCallExpressionRNode)
         , IBounded(opening_delimiter, closing_delimiter)
         , function_(function)
         , arguments_(arguments) {
-        set_type(Type::FunctionCallExpressionRNode);
     }
 
     ExpressionRNodeSPtr get_function() const {

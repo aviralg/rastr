@@ -14,12 +14,12 @@ class IfElseConditionalExpressionRNode: public ConditionalExpressionRNode {
         ExpressionRNodeSPtr consequent_expression,
         KeywordRNodeSPtr else_keyword,
         ExpressionRNodeSPtr alternative_expression)
-        : ConditionalExpressionRNode(if_keyword,
+        : ConditionalExpressionRNode(Type::IfElseConditionalExpressionRNode,
+                                     if_keyword,
                                      condition,
                                      consequent_expression)
         , else_keyword_(else_keyword)
         , alternative_expression_(alternative_expression) {
-        set_type(Type::IfElseConditionalExpressionRNode);
     }
 
     KeywordRNodeSPtr get_else_keyword() const {

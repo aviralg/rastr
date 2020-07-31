@@ -8,7 +8,7 @@ namespace ast {
 
 class LiteralExpressionRNode: public ExpressionRNode {
   public:
-    LiteralExpressionRNode(): ExpressionRNode() {
+    LiteralExpressionRNode(Type type): ExpressionRNode(type) {
     }
 
     virtual ~LiteralExpressionRNode() {

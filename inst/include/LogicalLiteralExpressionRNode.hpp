@@ -9,8 +9,8 @@ namespace ast {
 class LogicalLiteralExpressionRNode: public LiteralExpressionRNode {
   public:
     explicit LogicalLiteralExpressionRNode(bool representation = true)
-        : LiteralExpressionRNode(), representation_(representation) {
-        set_type(Type::LogicalLiteralExpressionRNode);
+        : LiteralExpressionRNode(Type::LogicalLiteralExpressionRNode)
+        , representation_(representation) {
     }
 
     bool get_representation() const {

@@ -21,12 +21,11 @@ class FunctionDefinitionExpressionRNode
         ExpressionSequenceRNodeSPtr parameters,
         DelimiterRNodeSPtr closing_delimiter,
         ExpressionRNodeSPtr body)
-        : ExpressionRNode()
+        : ExpressionRNode(Type::FunctionDefinitionExpressionRNode)
         , IKeyword(keyword)
         , IBounded(opening_delimiter, closing_delimiter)
         , IBody(body)
         , parameters_(parameters) {
-        set_type(Type::FunctionDefinitionExpressionRNode);
     }
 
     ExpressionSequenceRNodeSPtr get_parameters() const {

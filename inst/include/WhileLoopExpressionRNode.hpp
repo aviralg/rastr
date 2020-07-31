@@ -14,8 +14,8 @@ class WhileLoopExpressionRNode
     explicit WhileLoopExpressionRNode(KeywordRNodeSPtr keyword,
                                       ConditionRNodeSPtr condition,
                                       ExpressionRNodeSPtr body)
-        : LoopExpressionRNode(keyword, body), ICondition(condition) {
-        set_type(Type::WhileLoopExpressionRNode);
+        : LoopExpressionRNode(Type::WhileLoopExpressionRNode, keyword, body)
+        , ICondition(condition) {
     }
 
     static void initialize();

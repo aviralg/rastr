@@ -11,8 +11,8 @@ class OperationExpressionRNode
     : public ExpressionRNode
     , public IOperator {
   public:
-    OperationExpressionRNode(OperatorRNodeSPtr op)
-        : ExpressionRNode(), IOperator(op) {
+    OperationExpressionRNode(Type type, OperatorRNodeSPtr op)
+        : ExpressionRNode(type), IOperator(op) {
     }
 
     virtual ~OperationExpressionRNode() = default;

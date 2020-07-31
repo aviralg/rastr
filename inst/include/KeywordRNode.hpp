@@ -12,8 +12,7 @@ class KeywordRNode
     , public IRepresentation {
   public:
     explicit KeywordRNode(const std::string& representation)
-        : RNode(), IRepresentation(representation) {
-        set_type(Type::KeywordRNode);
+        : RNode(Type::KeywordRNode), IRepresentation(representation) {
     }
 
     static void initialize();

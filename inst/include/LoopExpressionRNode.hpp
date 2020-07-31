@@ -12,8 +12,10 @@ class LoopExpressionRNode
     , public IKeyword
     , public IBody {
   public:
-    LoopExpressionRNode(KeywordRNodeSPtr keyword, ExpressionRNodeSPtr body)
-        : ExpressionRNode(), IKeyword(keyword), IBody(body) {
+    LoopExpressionRNode(Type type,
+                        KeywordRNodeSPtr keyword,
+                        ExpressionRNodeSPtr body)
+        : ExpressionRNode(type), IKeyword(keyword), IBody(body) {
     }
 
     virtual ~LoopExpressionRNode() = default;

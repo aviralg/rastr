@@ -13,7 +13,9 @@ class TerminatedExpressionRNode
   public:
     explicit TerminatedExpressionRNode(ExpressionRNodeSPtr body,
                                        DelimiterRNodeSPtr delimiter)
-        : ExpressionRNode(), IBody(body), delimiter_(delimiter) {
+        : ExpressionRNode(Type::TerminatedExpressionRNode)
+        , IBody(body)
+        , delimiter_(delimiter) {
     }
 
     DelimiterRNodeSPtr get_delimiter() const {

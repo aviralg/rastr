@@ -9,9 +9,9 @@ namespace ast {
 class BinaryOperationExpressionRNode: public OperationExpressionRNode {
   public:
     BinaryOperationExpressionRNode(OperatorRNodeSPtr op,
-                          ExpressionRNodeSPtr first_operand,
-                          ExpressionRNodeSPtr second_operand)
-        : OperationExpressionRNode(op)
+                                   ExpressionRNodeSPtr first_operand,
+                                   ExpressionRNodeSPtr second_operand)
+        : OperationExpressionRNode(Type::BinaryOperationExpressionRNode, op)
         , first_operand_(first_operand)
         , second_operand_(second_operand) {
     }
@@ -37,7 +37,8 @@ class BinaryOperationExpressionRNode: public OperationExpressionRNode {
     static SEXP class_;
 };
 
-using BinaryOperationExpressionRNodeSPtr = std::shared_ptr<BinaryOperationExpressionRNode>;
+using BinaryOperationExpressionRNodeSPtr =
+    std::shared_ptr<BinaryOperationExpressionRNode>;
 
 } // namespace ast
 } // namespace rastr

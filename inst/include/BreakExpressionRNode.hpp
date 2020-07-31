@@ -12,8 +12,8 @@ class BreakExpressionRNode
     , public IRepresentation {
   public:
     explicit BreakExpressionRNode()
-        : ExpressionRNode(), IRepresentation("break") {
-        set_type(Type::BreakExpressionRNode);
+        : ExpressionRNode(Type::BreakExpressionRNode)
+        , IRepresentation("break") {
     }
 
     static void initialize();

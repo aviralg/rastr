@@ -15,10 +15,9 @@ class BlockExpressionRNode
     BlockExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
                          ExpressionSequenceRNodeSPtr expressions,
                          DelimiterRNodeSPtr closing_delimiter)
-        : ExpressionRNode()
+        : ExpressionRNode(Type::BlockExpressionRNode)
         , IBounded(opening_delimiter, closing_delimiter)
         , IExpressions(expressions) {
-        set_type(Type::BlockExpressionRNode);
     }
 
     static void initialize();

@@ -14,8 +14,10 @@ class InRNode: public RNode {
     explicit InRNode(SymbolExpressionRNodeSPtr symbol,
                      KeywordRNodeSPtr keyword,
                      ExpressionRNodeSPtr expression)
-        : RNode(), symbol_(symbol), keyword_(keyword), expression_(expression) {
-        set_type(Type::InRNode);
+        : RNode(Type::InRNode)
+        , symbol_(symbol)
+        , keyword_(keyword)
+        , expression_(expression) {
     }
 
     SymbolExpressionRNodeSPtr get_symbol() const {

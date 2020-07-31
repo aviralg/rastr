@@ -10,8 +10,9 @@ class SymbolExpressionRNode: public ExpressionRNode {
   public:
     explicit SymbolExpressionRNode(const std::string& representation,
                                    bool quoted)
-        : ExpressionRNode(), representation_(representation), quoted_(quoted) {
-        set_type(Type::SymbolExpressionRNode);
+        : ExpressionRNode(Type::SymbolExpressionRNode)
+        , representation_(representation)
+        , quoted_(quoted) {
     }
 
     const std::string& get_representation() const {

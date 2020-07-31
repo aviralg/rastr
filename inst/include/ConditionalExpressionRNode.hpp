@@ -13,10 +13,11 @@ class ConditionalExpressionRNode
     , public ICondition {
   public:
     explicit ConditionalExpressionRNode(
+        Type type,
         KeywordRNodeSPtr if_keyword,
         ConditionRNodeSPtr condition,
         ExpressionRNodeSPtr consequent_expression)
-        : ExpressionRNode()
+        : ExpressionRNode(type)
         , ICondition(condition)
         , if_keyword_(if_keyword)
         , consequent_expression_(consequent_expression) {

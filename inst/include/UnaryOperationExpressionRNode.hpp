@@ -8,8 +8,10 @@ namespace ast {
 
 class UnaryOperationExpressionRNode: public OperationExpressionRNode {
   public:
-    UnaryOperationExpressionRNode(OperatorRNodeSPtr op, ExpressionRNodeSPtr operand)
-        : OperationExpressionRNode(op), operand_(operand) {
+    UnaryOperationExpressionRNode(OperatorRNodeSPtr op,
+                                  ExpressionRNodeSPtr operand)
+        : OperationExpressionRNode(Type::UnaryOperationExpressionRNode, op)
+        , operand_(operand) {
     }
 
     ExpressionRNodeSPtr get_operand() const {
@@ -32,7 +34,8 @@ class UnaryOperationExpressionRNode: public OperationExpressionRNode {
     static SEXP class_;
 };
 
-using UnaryOperationExpressionRNodeSPtr = std::shared_ptr<UnaryOperationExpressionRNode>;
+using UnaryOperationExpressionRNodeSPtr =
+    std::shared_ptr<UnaryOperationExpressionRNode>;
 
 } // namespace ast
 } // namespace rastr

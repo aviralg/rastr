@@ -20,11 +20,10 @@ class SubsettingExpressionRNode
                               DelimiterRNodeSPtr opening_delimiter,
                               ExpressionSequenceRNodeSPtr indices,
                               DelimiterRNodeSPtr closing_delimiter)
-        : ExpressionRNode()
+        : ExpressionRNode(Type::SubsettingExpressionRNode)
         , IObject(object)
         , IBounded(opening_delimiter, closing_delimiter)
         , IIndices(indices) {
-        set_type(Type::SubsettingExpressionRNode);
     }
 
     static void initialize();

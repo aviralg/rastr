@@ -12,8 +12,8 @@ class RawStringLiteralExpressionRNode: public LiteralExpressionRNode {
         const std::string& opening_delimiter,
         const std::string& closing_delimiter,
         const std::string& representation = "")
-        : LiteralExpressionRNode(), representation_(representation) {
-        set_type(Type::RawStringLiteralExpressionRNode);
+        : LiteralExpressionRNode(Type::RawStringLiteralExpressionRNode)
+        , representation_(representation) {
     }
 
     const std::string& get_representation() const {

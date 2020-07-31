@@ -12,8 +12,7 @@ class DelimiterRNode
     , public IRepresentation {
   public:
     explicit DelimiterRNode(const std::string& representation = "")
-        : RNode(), IRepresentation(representation) {
-        set_type(Type::DelimiterRNode);
+        : RNode(Type::DelimiterRNode), IRepresentation(representation) {
     }
 
     static void initialize();

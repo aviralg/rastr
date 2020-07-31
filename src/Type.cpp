@@ -75,6 +75,8 @@ const std::string type_to_string(const Type type) {
         return "ProgramRNode";
     case Type::SpacingRNode:
         return "SpacingRNode";
+    case Type::ConditionRNode:
+        return "ConditionRNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -152,6 +154,8 @@ Type string_to_type(const std::string& type) {
         return Type::ProgramRNode;
     } else if (type == "SpacingRNode") {
         return Type::SpacingRNode;
+    } else if (type == "ConditionRNode") {
+        return Type::ConditionRNode;
     } else {
         return Type::UndefinedNode;
     }

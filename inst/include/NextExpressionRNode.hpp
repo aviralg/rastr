@@ -11,8 +11,8 @@ class NextExpressionRNode
     : public ExpressionRNode
     , public IRepresentation {
   public:
-    explicit NextExpressionRNode(): ExpressionRNode(), IRepresentation("next") {
-        set_type(Type::NextExpressionRNode);
+    explicit NextExpressionRNode()
+        : ExpressionRNode(Type::NextExpressionRNode), IRepresentation("next") {
     }
 
     static void initialize();

@@ -18,13 +18,12 @@ class IndexingExpressionRNode
                             ExpressionSequenceRNodeSPtr indices,
                             DelimiterRNodeSPtr first_closing_delimiter,
                             DelimiterRNodeSPtr second_closing_delimiter)
-        : ExpressionRNode()
+        : ExpressionRNode(Type::IndexingExpressionRNode)
         , IObject(object)
         , IIndices(indices)
         , opening_delimiter_(opening_delimiter)
         , first_closing_delimiter_(first_closing_delimiter)
         , second_closing_delimiter_(second_closing_delimiter) {
-        set_type(Type::IndexingExpressionRNode);
     }
 
     DelimiterRNodeSPtr get_opening_delimiter() const {

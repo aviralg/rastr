@@ -8,8 +8,7 @@ namespace ast {
 
 class BeginRNode: public RNode {
   public:
-    explicit BeginRNode(): RNode() {
-        set_type(Type::BeginRNode);
+    explicit BeginRNode(): RNode(Type::BeginRNode) {
     }
 
     static void initialize();

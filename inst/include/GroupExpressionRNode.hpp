@@ -15,10 +15,9 @@ class GroupExpressionRNode
     explicit GroupExpressionRNode(DelimiterRNodeSPtr opening_delimiter,
                                   ExpressionRNodeSPtr body,
                                   DelimiterRNodeSPtr closing_delimiter)
-        : ExpressionRNode()
+        : ExpressionRNode(Type::GroupExpressionRNode)
         , IBounded(opening_delimiter, closing_delimiter)
         , IBody(body) {
-        set_type(Type::GroupExpressionRNode);
     }
 
     static void initialize();

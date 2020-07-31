@@ -12,8 +12,7 @@ class RepeatLoopExpressionRNode: public LoopExpressionRNode {
   public:
     explicit RepeatLoopExpressionRNode(KeywordRNodeSPtr keyword,
                                        ExpressionRNodeSPtr body)
-        : LoopExpressionRNode(keyword, body) {
-        set_type(Type::RepeatLoopExpressionRNode);
+        : LoopExpressionRNode(Type::RepeatLoopExpressionRNode, keyword, body) {
     }
 
     static void initialize();

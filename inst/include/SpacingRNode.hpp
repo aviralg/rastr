@@ -8,8 +8,7 @@ namespace ast {
 
 class SpacingRNode: public RNode {
   public:
-    explicit SpacingRNode(): RNode() {
-        set_type(Type::SpacingRNode);
+    explicit SpacingRNode(): RNode(Type::SpacingRNode) {
     }
 
     int get_size() const {

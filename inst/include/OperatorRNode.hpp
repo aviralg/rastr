@@ -12,8 +12,7 @@ class OperatorRNode
     , public IRepresentation {
   public:
     explicit OperatorRNode(const std::string& representation)
-        : RNode(), IRepresentation(representation) {
-        set_type(Type::OperatorRNode);
+        : RNode(Type::OperatorRNode), IRepresentation(representation) {
     }
 
     static void initialize();
