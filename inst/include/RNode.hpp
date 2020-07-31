@@ -11,10 +11,9 @@ class RNode: public Node {
     RNode(Type type): Node(type) {
     }
 
-    virtual ~RNode() {
-    }
+    virtual ~RNode() = default;
 
-    rastr::ast::Language get_language() const override {
+    Language get_language() const override {
         return Language::R;
     }
 };

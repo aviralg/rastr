@@ -21,8 +21,7 @@ class Node {
         , type_(type) {
     }
 
-    virtual ~Node() {
-    }
+    virtual ~Node() = default;
 
     int get_id() const {
         return id_;

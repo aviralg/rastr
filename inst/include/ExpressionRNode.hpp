@@ -11,8 +11,7 @@ class ExpressionRNode: public RNode {
     ExpressionRNode(Type type): RNode(type) {
     }
 
-    virtual ~ExpressionRNode() {
-    }
+    virtual ~ExpressionRNode() = default;
 
     bool is_expression_node() const override {
         return true;

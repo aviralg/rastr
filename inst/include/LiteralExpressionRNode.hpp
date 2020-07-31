@@ -11,8 +11,7 @@ class LiteralExpressionRNode: public ExpressionRNode {
     LiteralExpressionRNode(Type type): ExpressionRNode(type) {
     }
 
-    virtual ~LiteralExpressionRNode() {
-    }
+    virtual ~LiteralExpressionRNode() = default;
 
     bool is_literal_expression_node() const override {
         return true;
