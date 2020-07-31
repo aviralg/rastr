@@ -73,45 +73,48 @@ class Location {
     SpacingSPtr spacing_;
 };
 
+} // namespace parser
+} // namespace rastr
+
 /// Join two locations, in place.
-inline Location& operator+=(Location& res, const Location& end) {
+inline rastr::parser::Location& operator+=(rastr::parser::Location& res, const rastr::parser::Location& end) {
     res.end = end.end;
     return res;
 }
 
 /// Join two locations.
-inline Location operator+(Location res, const Location& end) {
+inline rastr::parser::Location operator+(rastr::parser::Location res, const rastr::parser::Location& end) {
     return res += end;
 }
 
 /// Add \a width columns to the end position, in place.
-inline Location& operator+=(Location& res, Location::counter_t width) {
+inline rastr::parser::Location& operator+=(rastr::parser::Location& res, rastr::parser::Location::counter_t width) {
     res.columns(width);
     return res;
 }
 
 /// Add \a width columns to the end position.
-inline Location operator+(Location res, Location::counter_t width) {
+inline rastr::parser::Location operator+(rastr::parser::Location res, rastr::parser::Location::counter_t width) {
     return res += width;
 }
 
 /// Subtract \a width columns to the end position, in place.
-inline Location& operator-=(Location& res, Location::counter_t width) {
+inline rastr::parser::Location& operator-=(rastr::parser::Location& res, rastr::parser::Location::counter_t width) {
     return res += -width;
 }
 
 /// Subtract \a width columns to the end position.
-inline Location operator-(Location res, Location::counter_t width) {
+inline rastr::parser::Location operator-(rastr::parser::Location res, rastr::parser::Location::counter_t width) {
     return res -= width;
 }
 
 /// Compare two location objects.
-inline bool operator==(const Location& loc1, const Location& loc2) {
+inline bool operator==(const rastr::parser::Location& loc1, const rastr::parser::Location& loc2) {
     return loc1.begin == loc2.begin && loc1.end == loc2.end;
 }
 
 /// Compare two location objects.
-inline bool operator!=(const Location& loc1, const Location& loc2) {
+inline bool operator!=(const rastr::parser::Location& loc1, const rastr::parser::Location& loc2) {
     return !(loc1 == loc2);
 }
 
@@ -123,8 +126,8 @@ inline bool operator!=(const Location& loc1, const Location& loc2) {
  */
 template <typename YYChar>
 std::basic_ostream<YYChar>& operator<<(std::basic_ostream<YYChar>& ostr,
-                                       const Location& loc) {
-    Location::counter_t end_col = 0 < loc.end.column ? loc.end.column - 1 : 0;
+                                       const rastr::parser::Location& loc) {
+    rastr::parser::Location::counter_t end_col = 0 < loc.end.column ? loc.end.column - 1 : 0;
     ostr << loc.begin;
     if (loc.end.filename &&
         (!loc.begin.filename || *loc.begin.filename != *loc.end.filename))
@@ -137,11 +140,7 @@ std::basic_ostream<YYChar>& operator<<(std::basic_ostream<YYChar>& ostr,
     return ostr;
 }
 
-} // namespace parser
-} // namespace rastr
-
-std::ostream& operator<<(std::ostream& os,
-                         const rastr::parser::Location& loc);
+std::ostream& operator<<(std::ostream& os, const rastr::parser::Location& loc);
 
 std::string to_string(const rastr::parser::Location& loc);
 

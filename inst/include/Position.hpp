@@ -58,29 +58,41 @@ class Position {
     }
 };
 
+} // namespace parser
+} // namespace rastr
+
 /// Add \a width columns, in place.
-inline Position& operator+=(Position& res, Position::counter_t width) {
+inline rastr::parser::Position&
+operator+=(rastr::parser::Position& res,
+           rastr::parser::Position::counter_t width) {
     res.columns(width);
     return res;
 }
 
 /// Add \a width columns.
-inline Position operator+(Position res, Position::counter_t width) {
+inline rastr::parser::Position
+operator+(rastr::parser::Position res,
+          rastr::parser::Position::counter_t width) {
     return res += width;
 }
 
 /// Subtract \a width columns, in place.
-inline Position& operator-=(Position& res, Position::counter_t width) {
+inline rastr::parser::Position&
+operator-=(rastr::parser::Position& res,
+           rastr::parser::Position::counter_t width) {
     return res += -width;
 }
 
 /// Subtract \a width columns.
-inline Position operator-(Position res, Position::counter_t width) {
+inline rastr::parser::Position
+operator-(rastr::parser::Position res,
+          rastr::parser::Position::counter_t width) {
     return res -= width;
 }
 
 /// Compare two Position objects.
-inline bool operator==(const Position& pos1, const Position& pos2) {
+inline bool operator==(const rastr::parser::Position& pos1,
+                       const rastr::parser::Position& pos2) {
     return (
         pos1.line == pos2.line && pos1.column == pos2.column &&
         (pos1.filename == pos2.filename ||
@@ -88,7 +100,8 @@ inline bool operator==(const Position& pos1, const Position& pos2) {
 }
 
 /// Compare two Position objects.
-inline bool operator!=(const Position& pos1, const Position& pos2) {
+inline bool operator!=(const rastr::parser::Position& pos1,
+                       const rastr::parser::Position& pos2) {
     return !(pos1 == pos2);
 }
 
@@ -98,13 +111,10 @@ inline bool operator!=(const Position& pos1, const Position& pos2) {
  */
 template <typename YYChar>
 std::basic_ostream<YYChar>& operator<<(std::basic_ostream<YYChar>& ostr,
-                                       const Position& pos) {
+                                       const rastr::parser::Position& pos) {
     if (pos.filename)
         ostr << *pos.filename << ':';
     return ostr << pos.line << '.' << pos.column;
 }
-
-} // namespace parser
-} // namespace rastr
 
 #endif /* RASTR_R_PARSER_POSITION_HPP */
