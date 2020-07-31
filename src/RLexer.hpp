@@ -1,8 +1,7 @@
-#ifndef RASTR_LEXER_HPP
-#    define RASTR_LEXER_HPP
+#ifndef RASTR_RLEXER_HPP
+#    define RASTR_RLEXER_HPP
 
-#    include "Parser.hxx"
-
+#    include "RParser.hxx"
 #    include <iostream>
 #    include <string>
 //#include "parser/ParsingContext.hpp"
@@ -15,21 +14,20 @@
 
 /* Tell flex which function to define */
 #    undef YY_DECL
-#    define YY_DECL                                          \
-        int rastr::r::parser::Lexer::yylex_inner(            \
-            rastr::r::parser::Parser::semantic_type* yylval, \
-            rastr::r::parser::Parser::location_type* yylloc)
+#    define YY_DECL                                        \
+        int rastr::parser::RLexer::yylex_inner(            \
+            rastr::parser::RParser::semantic_type* yylval, \
+            rastr::parser::RParser::location_type* yylloc)
 
 namespace rastr {
-namespace r {
 namespace parser {
 /* https://westes.github.io/flex/manual/Cxx.html#Cxx */
-class Lexer: public yyFlexLexer {
+class RLexer: public yyFlexLexer {
   public:
-    Lexer(): Lexer(std::cin) {
+    RLexer(): RLexer(std::cin) {
     }
 
-    explicit Lexer(std::istream& istream)
+    explicit RLexer(std::istream& istream)
         : yyFlexLexer(istream, std::cout)
         , saved_yylval_(nullptr)
         , saved_yylloc_()
@@ -40,11 +38,11 @@ class Lexer: public yyFlexLexer {
         , token_buffer_("") {
     }
 
-    int yylex_inner(rastr::r::parser::Parser::semantic_type* yylval,
-                    rastr::r::parser::Parser::location_type* yylloc);
+    int yylex_inner(RParser::semantic_type* yylval,
+                    RParser::location_type* yylloc);
 
-    int yylex_helper(rastr::r::parser::Parser::semantic_type* yylval,
-                     rastr::r::parser::Parser::location_type* yylloc) {
+    int yylex_helper(RParser::semantic_type* yylval,
+                     RParser::location_type* yylloc) {
         if (saved_) {
             *yylval = saved_yylval_;
             *yylloc = saved_yylloc_;
@@ -56,8 +54,7 @@ class Lexer: public yyFlexLexer {
         }
     }
 
-    int yylex(rastr::r::parser::Parser::semantic_type* yylval,
-              rastr::r::parser::Parser::location_type* yylloc) {
+    int yylex(RParser::semantic_type* yylval, RParser::location_type* yylloc) {
         int token;
 
     again:
@@ -70,7 +67,7 @@ class Lexer: public yyFlexLexer {
         /* deals directly with newlines in the */
         /* body of "if" statements. */
 
-        if (token == Parser::token::NEWLINE) {
+        if (token == RParser::token::NEWLINE) {
             if (should_eat_lines() || peek_context() == '[' ||
                 peek_context() == '(')
                 goto again;
@@ -83,7 +80,7 @@ class Lexer: public yyFlexLexer {
             if (peek_context() == 'i') {
                 /* Find the next non-newline token */
 
-                while (token == Parser::token::NEWLINE) {
+                while (token == RParser::token::NEWLINE) {
                     token = yylex_helper(yylval, yylloc);
                     // std::cout << *yylval;
                 }
@@ -94,9 +91,9 @@ class Lexer: public yyFlexLexer {
                 /* The corresponding "i" values are */
                 /* popped off the context stack. */
 
-                if (token == Parser::token::RBRACE ||
-                    token == Parser::token::RPAREN ||
-                    token == Parser::token::RSQPAREN) {
+                if (token == RParser::token::RBRACE ||
+                    token == RParser::token::RPAREN ||
+                    token == RParser::token::RSQPAREN) {
                     while (peek_context() == 'i')
                         pop_context_if('i');
                     pop_context();
@@ -108,7 +105,7 @@ class Lexer: public yyFlexLexer {
                 /* so we pop just a single "i" of the */
                 /* context stack. */
 
-                if (token == Parser::token::COMMA) {
+                if (token == RParser::token::COMMA) {
                     pop_context_if('i');
                     return token;
                 }
@@ -122,10 +119,10 @@ class Lexer: public yyFlexLexer {
                 /* is lost, so we pop the "i" from the context */
                 /* stack. */
 
-                if (token == Parser::token::ELSE) {
+                if (token == RParser::token::ELSE) {
                     enable_eat_lines();
                     pop_context_if('i');
-                    return Parser::token::ELSE;
+                    return RParser::token::ELSE;
                 } else {
                     pop_context_if('i');
                     saved_token_ = token;
@@ -133,10 +130,10 @@ class Lexer: public yyFlexLexer {
                     saved_yylloc_ = *yylloc;
                     saved_ = true;
                     *yylval = new rastr::ast::DelimiterRNode("\n");
-                    return Parser::token::NEWLINE;
+                    return RParser::token::NEWLINE;
                 }
             } else {
-                return Parser::token::NEWLINE;
+                return RParser::token::NEWLINE;
             }
         }
 
@@ -147,43 +144,43 @@ class Lexer: public yyFlexLexer {
             /* the following tokens are discarded. The */
             /* expressions are clearly incomplete. */
 
-        case Parser::token::PLUS:
-        case Parser::token::MINUS:
-        case Parser::token::ASTERISK:
-        case Parser::token::SLASH:
-        case Parser::token::CARET:
-        case Parser::token::LT:
-        case Parser::token::LE:
-        case Parser::token::GE:
-        case Parser::token::GT:
-        case Parser::token::EQ:
-        case Parser::token::NE:
-        case Parser::token::OR:
-        case Parser::token::AND:
-        case Parser::token::OR2:
-        case Parser::token::AND2:
-        case Parser::token::SPECIAL:
-        case Parser::token::FUNCTION:
-        case Parser::token::WHILE:
-        case Parser::token::REPEAT:
-        case Parser::token::FOR:
-        case Parser::token::IN:
-        case Parser::token::QUESTION:
-        case Parser::token::EXCLAMATION:
-        case Parser::token::COLON:
-        case Parser::token::TILDE:
-        case Parser::token::DOLLAR:
-        case Parser::token::AT:
-        case Parser::token::LEFT_ASSIGN:
-        case Parser::token::RIGHT_ASSIGN:
-        case Parser::token::EQ_ASSIGN:
+        case RParser::token::PLUS:
+        case RParser::token::MINUS:
+        case RParser::token::ASTERISK:
+        case RParser::token::SLASH:
+        case RParser::token::CARET:
+        case RParser::token::LT:
+        case RParser::token::LE:
+        case RParser::token::GE:
+        case RParser::token::GT:
+        case RParser::token::EQ:
+        case RParser::token::NE:
+        case RParser::token::OR:
+        case RParser::token::AND:
+        case RParser::token::OR2:
+        case RParser::token::AND2:
+        case RParser::token::SPECIAL:
+        case RParser::token::FUNCTION:
+        case RParser::token::WHILE:
+        case RParser::token::REPEAT:
+        case RParser::token::FOR:
+        case RParser::token::IN:
+        case RParser::token::QUESTION:
+        case RParser::token::EXCLAMATION:
+        case RParser::token::COLON:
+        case RParser::token::TILDE:
+        case RParser::token::DOLLAR:
+        case RParser::token::AT:
+        case RParser::token::LEFT_ASSIGN:
+        case RParser::token::RIGHT_ASSIGN:
+        case RParser::token::EQ_ASSIGN:
             enable_eat_lines();
             break;
 
             /* Push any "if" statements found and */
             /* discard any immediately following newlines. */
 
-        case Parser::token::IF:
+        case RParser::token::IF:
             if (peek_context() == '{' || peek_context() == '[' ||
                 peek_context() == '(' || peek_context() == 'i') {
                 push_context('i');
@@ -195,7 +192,7 @@ class Lexer: public yyFlexLexer {
             /* statements and discard any immediately */
             /* following newlines. */
 
-        case Parser::token::ELSE:
+        case RParser::token::ELSE:
             pop_context_if('i');
             enable_eat_lines();
             break;
@@ -203,60 +200,60 @@ class Lexer: public yyFlexLexer {
             /* These tokens terminate any immediately */
             /* preceding "if" statements. */
 
-        case Parser::token::SEMICOLON:
-        case Parser::token::COMMA:
+        case RParser::token::SEMICOLON:
+        case RParser::token::COMMA:
             pop_context_if('i');
             break;
 
             /* Any newlines following these tokens can */
             /* indicate the end of an expression. */
 
-        case Parser::token::SYMBOL:
-        case Parser::token::STR_CONST:
-        case Parser::token::LITERAL_CONST:
-        case Parser::token::INT_CONST:
-        case Parser::token::FLOAT_CONST:
-        case Parser::token::COMPLEX_CONST:
-        case Parser::token::RAW_STRING_CONST:
-        case Parser::token::NULL_CONST:
-        case Parser::token::NEXT:
-        case Parser::token::BREAK:
+        case RParser::token::SYMBOL:
+        case RParser::token::STR_CONST:
+        case RParser::token::LITERAL_CONST:
+        case RParser::token::INT_CONST:
+        case RParser::token::FLOAT_CONST:
+        case RParser::token::COMPLEX_CONST:
+        case RParser::token::RAW_STRING_CONST:
+        case RParser::token::NULL_CONST:
+        case RParser::token::NEXT:
+        case RParser::token::BREAK:
             disable_eat_lines();
             break;
 
             /* Handle brackets, braces and parentheses */
-        case Parser::token::LBB:
+        case RParser::token::LBB:
             push_context('[');
             push_context('[');
             break;
 
-        case Parser::token::LSQPAREN:
+        case RParser::token::LSQPAREN:
             push_context('[');
             break;
 
-        case Parser::token::LBRACE:
+        case RParser::token::LBRACE:
             push_context('{');
             enable_eat_lines();
             break;
 
-        case Parser::token::LPAREN:
+        case RParser::token::LPAREN:
             push_context('(');
             break;
 
-        case Parser::token::RSQPAREN:
+        case RParser::token::RSQPAREN:
             while (peek_context() == 'i')
                 pop_context_if('i');
             pop_context();
             disable_eat_lines();
             break;
 
-        case Parser::token::RBRACE:
+        case RParser::token::RBRACE:
             while (peek_context() == 'i')
                 pop_context_if('i');
             pop_context();
             break;
 
-        case Parser::token::RPAREN:
+        case RParser::token::RPAREN:
             while (peek_context() == 'i')
                 pop_context_if('i');
             pop_context();
@@ -305,8 +302,7 @@ class Lexer: public yyFlexLexer {
    an ANSI digit or not */
     int typeofnext();
 
-    rastr::r::parser::Parser::token_type
-    numeric_token(rastr::r::parser::Parser::semantic_type* yylval, char c);
+    RParser::token_type numeric_token(RParser::semantic_type* yylval, char c);
 
     double R_atof(const char* number) {
         return atof(number);
@@ -341,7 +337,7 @@ class Lexer: public yyFlexLexer {
     }
 
     rastr::ast::RNode* saved_yylval_;
-    Parser::location_type saved_yylloc_;
+    RParser::location_type saved_yylloc_;
     int saved_token_;
     bool saved_;
     bool eat_lines_;
@@ -350,7 +346,6 @@ class Lexer: public yyFlexLexer {
 };
 
 } // namespace parser
-} // namespace r
 } // namespace rastr
 
 #endif /* RASTR_LEXER_HPP */

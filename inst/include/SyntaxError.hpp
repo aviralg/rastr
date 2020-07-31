@@ -5,7 +5,6 @@
 #include "Location.hpp"
 
 namespace rastr {
-namespace r {
 namespace parser {
 
 class SyntaxError {
@@ -13,7 +12,7 @@ class SyntaxError {
     SyntaxError(): valid_(false) {
     }
 
-    SyntaxError(rastr::r::parser::Location& location, std::string& description)
+    SyntaxError(Location& location, std::string& description)
         : valid_(true), location_(location), description_(description) {
     }
 
@@ -21,7 +20,7 @@ class SyntaxError {
         return valid_;
     }
 
-    const rastr::r::parser::Location& get_location() const {
+    const Location& get_location() const {
         return location_;
     }
 
@@ -31,12 +30,11 @@ class SyntaxError {
 
   private:
     bool valid_;
-    rastr::r::parser::Location location_;
+    Location location_;
     std::string description_;
 };
 
 } // namespace parser
-} // namespace r
 } // namespace rastr
 
 #endif /* RASTR_R_PARSER_SYNTAX_ERROR_HPP */

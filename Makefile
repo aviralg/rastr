@@ -79,13 +79,13 @@ cppcheck:
 ################################################################################
 
 .PHONY: parser
-parser: $(SOURCEDIR)/Parser.cxx.cpp $(SOURCEDIR)/Parser.hxx $(SOURCEDIR)/Lexer.cxx.cpp $(SOURCEDIR)/Lexer.hxx
+parser: $(SOURCEDIR)/RParser.cxx.cpp $(SOURCEDIR)/RParser.hxx $(SOURCEDIR)/RLexer.cxx.cpp $(SOURCEDIR)/RLexer.hxx
 	@:
 
-$(SOURCEDIR)/Parser.cxx.cpp $(SOURCEDIR)/Parser.hxx $(SOURCEDIR)/Lexer.cxx.cpp $(SOURCEDIR)/Lexer.hxx: $(GRAMMARDIR)/Parser.yxx $(GRAMMARDIR)/Lexer.lxx
-	$(CD) $(GRAMMARDIR) && $(BISON) $(BISONFLAGS) --xml --graph=Parser.gv Parser.yxx
-	$(MV) $(GRAMMARDIR)/Parser.cxx $(SOURCEDIR)/Parser.cxx.cpp
-	$(MV) $(GRAMMARDIR)/Parser.hxx $(SOURCEDIR)/Parser.hxx
-	$(CD) $(GRAMMARDIR) && $(FLEX) $(FLEXFLAGS) Lexer.lxx
-	$(MV) $(GRAMMARDIR)/Lexer.cxx $(SOURCEDIR)/Lexer.cxx.cpp
-	$(MV) $(GRAMMARDIR)/Lexer.hxx $(SOURCEDIR)/Lexer.hxx
+$(SOURCEDIR)/RParser.cxx.cpp $(SOURCEDIR)/RParser.hxx $(SOURCEDIR)/RLexer.cxx.cpp $(SOURCEDIR)/RLexer.hxx: $(GRAMMARDIR)/RParser.yxx $(GRAMMARDIR)/RLexer.lxx
+	$(CD) $(GRAMMARDIR) && $(BISON) $(BISONFLAGS) --xml --graph=RParser.gv RParser.yxx
+	$(MV) $(GRAMMARDIR)/RParser.cxx $(SOURCEDIR)/RParser.cxx.cpp
+	$(MV) $(GRAMMARDIR)/RParser.hxx $(SOURCEDIR)/RParser.hxx
+	$(CD) $(GRAMMARDIR) && $(FLEX) $(FLEXFLAGS) RLexer.lxx
+	$(MV) $(GRAMMARDIR)/RLexer.cxx $(SOURCEDIR)/RLexer.cxx.cpp
+	$(MV) $(GRAMMARDIR)/RLexer.hxx $(SOURCEDIR)/RLexer.hxx

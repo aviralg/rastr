@@ -3,8 +3,8 @@
 #include <sstream>
 
 std::ostream& operator<<(std::ostream& os,
-                         const rastr::r::parser::Location& loc) {
-    rastr::r::parser::Location::counter_t end_col =
+                         const rastr::parser::Location& loc) {
+    rastr::parser::Location::counter_t end_col =
         0 < loc.end.column ? loc.end.column - 1 : 0;
     os << loc.begin;
     if (loc.end.filename &&
@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& os,
     return os;
 }
 
-std::string to_string(const rastr::r::parser::Location& loc) {
+std::string to_string(const rastr::parser::Location& loc) {
     std::ostringstream output_stream;
     output_stream << loc;
     return output_stream.str();

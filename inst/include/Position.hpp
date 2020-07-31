@@ -5,7 +5,6 @@
 #include <string>
 
 namespace rastr {
-namespace r {
 namespace parser {
 
 /// A point in a source file.
@@ -106,7 +105,6 @@ std::basic_ostream<YYChar>& operator<<(std::basic_ostream<YYChar>& ostr,
 }
 
 } // namespace parser
-} // namespace r
 } // namespace rastr
 
 #endif /* RASTR_R_PARSER_POSITION_HPP */

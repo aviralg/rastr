@@ -1,13 +1,13 @@
 /* -*- C++ -*- */
-%output  "Parser.cxx"
-%defines "Parser.hxx"
+%output  "RParser.cxx"
+%defines "RParser.hxx"
 
 %skeleton "lalr1.cc"
 %require "3.5"
 
-%define api.parser.class {Parser}
-%define api.namespace {rastr::r::parser}
-%define api.location.type {rastr::r::parser::Location}
+%define api.parser.class {RParser}
+%define api.namespace {rastr::parser}
+%define api.location.type {rastr::parser::Location}
 
 /* assert correct cleanup of semantic value objects */
 %define parse.assert
@@ -16,7 +16,7 @@
 
 /* increase usefulness of error messages */
 %define parse.error verbose
-%parse-param { rastr::r::parser::Lexer& lexer} { rastr::ast::ProgramRNodeSPtr& program}
+%parse-param { rastr::parser::RLexer& lexer} { rastr::ast::ProgramRNodeSPtr& program}
 
 /* call yylex with a location */
 %locations
@@ -87,18 +87,12 @@
     #include <string>
     #include <iostream>
     namespace rastr {
-        namespace r {
-            namespace parser {
-                class Lexer;
-                class Parser;
-            }
+        namespace parser {
+            class RLexer;
+            class RParser;
         }
     }
-    //namespace rastr {
-    //    namespace ast {
-    //        class ProgramRNode;
-    //    }
-    //}
+
     #include "ast.hpp"
     #include "Location.hpp"
     using namespace rastr::ast;
@@ -108,7 +102,7 @@
     #include <string>
     #include <iostream>
     #include "ast.hpp"
-    #include "Lexer.hpp"
+    #include "RLexer.hpp"
     #undef yylex
     #define yylex lexer.yylex
 
@@ -403,6 +397,6 @@ cr: { lexer.enable_eat_lines(); }
 
 %%
 
-void rastr::r::parser::Parser::error(const location_type& location, const std::string& message) {
+void rastr::parser::RParser::error(const location_type& location, const std::string& message) {
     std::cerr << message << " at " << location;
 }

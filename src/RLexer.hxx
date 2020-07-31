@@ -2,9 +2,9 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 5 "Lexer.hxx"
+#line 5 "RLexer.hxx"
 
-#line 7 "Lexer.hxx"
+#line 7 "RLexer.hxx"
 
 #define  YY_INT_ALIGNED short int
 
@@ -269,7 +269,7 @@ int yyFlexLexer::yylex()
 	return 0;
 	}
 
-#define YY_DECL int rastr::parser::Lexer::yylex()
+#define YY_DECL int rastr::parser::RLexer::yylex()
 
 /* %if-c-only Standard (non-C++) definition */
 /* %endif */
@@ -531,9 +531,9 @@ static int yy_flex_strlen ( const char * );
 #undef yyTABLES_NAME
 #endif
 
-#line 425 "Lexer.lxx"
+#line 425 "RLexer.lxx"
 
 
-#line 537 "Lexer.hxx"
+#line 537 "RLexer.hxx"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

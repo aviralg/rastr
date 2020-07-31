@@ -1,9 +1,9 @@
 #include "r_parser.h"
 #include "parser.hpp"
 
-using rastr::r::parser::parse_file;
-using rastr::r::parser::parse_stdin;
-using rastr::r::parser::parse_string;
+using rastr::parser::parse_file;
+using rastr::parser::parse_stdin;
+using rastr::parser::parse_string;
 
 SEXP r_parser_parse_stdin() {
     auto node = parse_stdin(false, false);

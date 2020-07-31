@@ -33,11 +33,11 @@ class ProgramRNode
         return syntax_error_.is_valid();
     }
 
-    rastr::r::parser::SyntaxError get_syntax_error() const {
+    rastr::parser::SyntaxError get_syntax_error() const {
         return syntax_error_;
     }
 
-    void set_syntax_error(const rastr::r::parser::SyntaxError& syntax_error) {
+    void set_syntax_error(const rastr::parser::SyntaxError& syntax_error) {
         syntax_error_ = syntax_error;
     }
 
@@ -51,7 +51,7 @@ class ProgramRNode
     BeginRNodeSPtr begin_;
     EndRNodeSPtr end_;
 
-    rastr::r::parser::SyntaxError syntax_error_;
+    rastr::parser::SyntaxError syntax_error_;
 
     static SEXP class_;
 };

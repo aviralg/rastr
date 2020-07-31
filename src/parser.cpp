@@ -1,13 +1,12 @@
 #include "ast.hpp"
 #include "parser.hpp"
-#include "Lexer.hpp"
-#include "Parser.hxx"
+#include "RLexer.hpp"
+#include "RParser.hxx"
 
 #include <fstream>
 #include <sstream>
 
 namespace rastr {
-namespace r {
 namespace parser {
 
 using rastr::ast::ProgramRNode;
@@ -26,8 +25,8 @@ ProgramRNodeSPtr parse_(std::istream& input_stream,
                         bool debug_lexer,
                         bool debug_parser) {
     ProgramRNodeSPtr program;
-    Lexer lexer(input_stream);
-    Parser parser(lexer, program);
+    RLexer lexer(input_stream);
+    RParser parser(lexer, program);
     parser.parse();
     std::cout << "Size is " << program->get_expressions()->get_size()
               << std::endl;
@@ -56,5 +55,4 @@ parse_file(const std::string& filepath, bool debug_lexer, bool debug_parser) {
 }
 
 } // namespace parser
-} // namespace r
 } // namespace rastr

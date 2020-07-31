@@ -32,8 +32,8 @@
 
 
 /**
- ** \file Parser.hxx
- ** Define the rastr::r::parser::parser class.
+ ** \file RParser.hxx
+ ** Define the rastr::parser::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
@@ -42,31 +42,25 @@
 // especially those whose name start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
-#ifndef YY_YY_PARSER_HXX_INCLUDED
-# define YY_YY_PARSER_HXX_INCLUDED
+#ifndef YY_YY_RPARSER_HXX_INCLUDED
+# define YY_YY_RPARSER_HXX_INCLUDED
 // "%code requires" blocks.
-#line 86 "Parser.yxx"
+#line 86 "RParser.yxx"
 
     #include <string>
     #include <iostream>
     namespace rastr {
-        namespace r {
-            namespace parser {
-                class Lexer;
-                class Parser;
-            }
+        namespace parser {
+            class RLexer;
+            class RParser;
         }
     }
-    //namespace rastr {
-    //    namespace ast {
-    //        class ProgramRNode;
-    //    }
-    //}
+
     #include "ast.hpp"
     #include "Location.hpp"
     using namespace rastr::ast;
 
-#line 70 "Parser.hxx"
+#line 64 "RParser.hxx"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -194,15 +188,15 @@
 # define YYDEBUG 1
 #endif
 
-#line 9 "Parser.yxx"
-namespace rastr { namespace r { namespace parser {
-#line 200 "Parser.hxx"
+#line 9 "RParser.yxx"
+namespace rastr { namespace parser {
+#line 194 "RParser.hxx"
 
 
 
 
   /// A Bison parser.
-  class Parser
+  class RParser
   {
   public:
 #ifndef YYSTYPE
@@ -212,7 +206,7 @@ namespace rastr { namespace r { namespace parser {
     typedef YYSTYPE semantic_type;
 #endif
     /// Symbol locations.
-    typedef rastr::r::parser::Location location_type;
+    typedef rastr::parser::Location location_type;
 
     /// Syntax errors thrown from user actions.
     struct syntax_error : std::runtime_error
@@ -483,7 +477,7 @@ namespace rastr { namespace r { namespace parser {
       /// The user-facing name of this symbol.
       std::string name () const YY_NOEXCEPT
       {
-        return Parser::symbol_name (this->kind ());
+        return RParser::symbol_name (this->kind ());
       }
 
       /// Backward compatibility (Bison 3.6).
@@ -554,14 +548,14 @@ namespace rastr { namespace r { namespace parser {
     {};
 
     /// Build a parser object.
-    Parser (rastr::r::parser::Lexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr& program_yyarg);
-    virtual ~Parser ();
+    RParser (rastr::parser::RLexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr& program_yyarg);
+    virtual ~RParser ();
 
 #if 201103L <= YY_CPLUSPLUS
     /// Non copyable.
-    Parser (const Parser&) = delete;
+    RParser (const RParser&) = delete;
     /// Non copyable.
-    Parser& operator= (const Parser&) = delete;
+    RParser& operator= (const RParser&) = delete;
 #endif
 
     /// Parse.  An alias for parse ().
@@ -603,7 +597,7 @@ namespace rastr { namespace r { namespace parser {
     class context
     {
     public:
-      context (const Parser& yyparser, const symbol_type& yyla);
+      context (const RParser& yyparser, const symbol_type& yyla);
       const symbol_type& lookahead () const { return yyla_; }
       symbol_kind_type token () const { return yyla_.kind (); }
       const location_type& location () const { return yyla_.location; }
@@ -614,16 +608,16 @@ namespace rastr { namespace r { namespace parser {
       int expected_tokens (symbol_kind_type yyarg[], int yyargn) const;
 
     private:
-      const Parser& yyparser_;
+      const RParser& yyparser_;
       const symbol_type& yyla_;
     };
 
   private:
 #if YY_CPLUSPLUS < 201103L
     /// Non copyable.
-    Parser (const Parser&);
+    RParser (const RParser&);
     /// Non copyable.
-    Parser& operator= (const Parser&);
+    RParser& operator= (const RParser&);
 #endif
 
 
@@ -935,18 +929,18 @@ namespace rastr { namespace r { namespace parser {
 
 
     // User arguments.
-    rastr::r::parser::Lexer& lexer;
+    rastr::parser::RLexer& lexer;
     rastr::ast::ProgramRNodeSPtr& program;
 
   };
 
 
-#line 9 "Parser.yxx"
-} } } // rastr::r::parser
-#line 947 "Parser.hxx"
+#line 9 "RParser.yxx"
+} } // rastr::parser
+#line 941 "RParser.hxx"
 
 
 
 
 
-#endif // !YY_YY_PARSER_HXX_INCLUDED
+#endif // !YY_YY_RPARSER_HXX_INCLUDED

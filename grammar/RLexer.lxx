@@ -1,7 +1,7 @@
 /* -*- C++ -*- */
-%option outfile="Lexer.cxx"
-%option header-file="Lexer.hxx"
-%option yyclass="rastr::parser::Lexer"
+%option outfile="RLexer.cxx"
+%option header-file="RLexer.hxx"
+%option yyclass="rastr::parser::RLexer"
 %option debug
 %option nodefault
 %option noyywrap
@@ -10,7 +10,7 @@
 %{
 #include <string>
 #include <iostream>
-#include "Lexer.hpp"
+#include "RLexer.hpp"
 
 RNode* mkInt(const std::string& s) {
     double value = R_atof(s.c_str()); /* or R_strtol? */
@@ -33,34 +33,34 @@ RNode* mkComplex(const std::string& s) {
 
 #define HANDLE_TOKEN(token_name)                          \
     *yylval = yytext;                                     \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_ERROR() \
-    throw rastr::r::parser::Parser::syntax_error(*yylloc, "TODO: add error message" + std::string(yytext));
+    throw rastr::parser::RParser::syntax_error(*yylloc, "TODO: add error message" + std::string(yytext));
 
 #define HANDLE_TOKEN_WITH_CONTENT(token_name, content)    \
     *yylval = content;                                    \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_SYMBOL_TOKEN(text, quoted)                          \
     *yylval = new rastr::ast::SymbolExpressionRNode(text, quoted); \
-    return rastr::r::parser::Parser::token::SYMBOL;
+    return rastr::parser::RParser::token::SYMBOL;
 
 #define HANDLE_OPERATOR_TOKEN(token_name)                 \
     *yylval = new rastr::ast::OperatorRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_DELIMITER_TOKEN(token_name)                 \
     *yylval = new rastr::ast::DelimiterRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_KEYWORD_TOKEN(token_name)                 \
     *yylval = new rastr::ast::KeywordRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_CONSTANT_LITERAL_TOKEN(token_name)                \
     *yylval = new rastr::ast::ConstantLiteralExpressionRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 /* Code run each time a pattern is matched. */
 #define YY_USER_ACTION  yylloc->columns(yyleng);
@@ -93,7 +93,7 @@ NUM_BEGIN           [.]?[0-9]
 
 <<EOF>>                         {
                                     *yylval = new rastr::ast::EndRNode();
-                                    return rastr::r::parser::Parser::token::END_OF_INPUT;
+                                    return rastr::parser::RParser::token::END_OF_INPUT;
                                 }
 \n                              {
                                     yylloc -> lines(yyleng);
@@ -160,11 +160,11 @@ NUM_BEGIN           [.]?[0-9]
 "else"	                        { HANDLE_KEYWORD_TOKEN(ELSE);              }
 "next"	                        {
                                     *yylval = new rastr::ast::NextExpressionRNode();
-                                    return rastr::r::parser::Parser::token::NEXT;
+                                    return rastr::parser::RParser::token::NEXT;
                                 }
 "break"	                        {
                                     *yylval = new rastr::ast::BreakExpressionRNode();
-                                    return rastr::r::parser::Parser::token::BREAK;
+                                    return rastr::parser::RParser::token::BREAK;
                                 }
 "..."	                          { HANDLE_SYMBOL_TOKEN(yytext, false)       }
 %[^\n%]*%                       { HANDLE_OPERATOR_TOKEN(SPECIAL);          }
@@ -195,7 +195,7 @@ NUM_BEGIN           [.]?[0-9]
                                             }
                                             else if(quote == '\'' || quote == '"') {
                                                  *yylval = new rastr::ast::CharacterLiteralExpressionRNode(get_token_buffer(), quote);
-                                                 return rastr::r::parser::Parser::token::STR_CONST;
+                                                 return rastr::parser::RParser::token::STR_CONST;
                                             }
                                             break;
                                         }
@@ -326,14 +326,14 @@ NUM_BEGIN           [.]?[0-9]
 
                                     if (c == 'i') {
                                         *yylval = mkComplex(get_token_buffer());
-                                        return rastr::r::parser::Parser::token::COMPLEX_CONST;
+                                        return rastr::parser::RParser::token::COMPLEX_CONST;
                                     } else if (c == 'L' && asNumeric == 0) {
                                         if (seendot == 1 && seenexp == 0)
                                             fprintf(stderr,
                                                     "integer literal %s contains unnecessary decimal point",
                                                     get_token_buffer().c_str());
                                             *yylval = mkInt(get_token_buffer());
-                                            return rastr::r::parser::Parser::token::INT_CONST;
+                                            return rastr::parser::RParser::token::INT_CONST;
                                 #if 0 /* do this to make 123 integer not double */
                                                                     } else if(!(seendot || seenexp)) {
                                                                 	if(c != 'L') unput_(c);
@@ -341,18 +341,18 @@ NUM_BEGIN           [.]?[0-9]
                                                                 	    int b = (int) a;
                                                                 	    if(a != (double) b) {
                                                                           *yylval = mkFloat(get_token_buffer());
-                                                                          return rastr::r::parser::Parser::token::FLOAT_CONST;
+                                                                          return rastr::parser::RParser::token::FLOAT_CONST;
                                                                       }
                                                                       else {
                                                                           *yylval = mkInt(get_token_buffer());
-                                                                          return rastr::r::parser::Parser::token::INT_CONST;
+                                                                          return rastr::parser::RParser::token::INT_CONST;
                                                                       }
                                 #endif
                                     } else {
                                         if (c != 'L')
                                             unput_(c);
                                             *yylval = mkFloat(get_token_buffer());
-                                            return rastr::r::parser::Parser::token::FLOAT_CONST;
+                                            return rastr::parser::RParser::token::FLOAT_CONST;
                                     }
                                 }
 
@@ -400,7 +400,7 @@ NUM_BEGIN           [.]?[0-9]
                                                    *yylval = new rastr::ast::RawStringLiteralExpressionRNode(opening_delimiter,
                                                                                                              get_token_buffer(),
                                                                                                              closing_delimiter);
-                                                   return rastr::r::parser::Parser::token::RAW_STRING_CONST;
+                                                   return rastr::parser::RParser::token::RAW_STRING_CONST;
                                                    break;
                                                }
                                                else {
@@ -425,17 +425,17 @@ NUM_BEGIN           [.]?[0-9]
 
 /*
 int main(int argc, char** argv) {
-    FlexLexer* lexer = new rastr::r::parser::Lexer();
+    FlexLexer* lexer = new rastr::parser::RLexer();
     while(lexer->yylex() != 0);
     return 0;
 }
 */
 
-void rastr::r::parser::Lexer::unput_(int c) {
+void rastr::parser::RLexer::unput_(int c) {
     unput(c);
 }
 
-int rastr::r::parser::Lexer::typeofnext() {
+int rastr::parser::RLexer::typeofnext() {
         int k, c;
 
         c = yyinput();

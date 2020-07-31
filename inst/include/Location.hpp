@@ -7,7 +7,6 @@
 #include <string>
 
 namespace rastr {
-namespace r {
 namespace parser {
 
 /// Two points in a source file.
@@ -18,17 +17,17 @@ class Location {
 
     /// Construct a Location from \a b to \a e.
     Location(const Position& b, const Position& e)
-        : begin(b), end(e), spacing_(new rastr::parser::Spacing()) {
+        : begin(b), end(e), spacing_(new Spacing()) {
     }
 
     /// Construct a 0-width location in \a p.
     explicit Location(const Position& p = Position())
-        : begin(p), end(p), spacing_(new rastr::parser::Spacing()) {
+        : begin(p), end(p), spacing_(new Spacing()) {
     }
 
     /// Construct a 0-width location in \a f, \a l, \a c.
     explicit Location(std::string* f, counter_t l = 1, counter_t c = 1)
-        : begin(f, l, c), end(f, l, c), spacing_(new rastr::parser::Spacing()) {
+        : begin(f, l, c), end(f, l, c), spacing_(new Spacing()) {
     }
 
     /// Initialization.
@@ -57,11 +56,11 @@ class Location {
     }
     /** \} */
 
-    rastr::parser::SpacingSPtr get_spacing() const {
+    SpacingSPtr get_spacing() const {
         return spacing_;
     }
 
-    void set_spacing(rastr::parser::SpacingSPtr spacing) {
+    void set_spacing(SpacingSPtr spacing) {
         spacing_ = spacing;
     }
 
@@ -71,7 +70,7 @@ class Location {
     /// End of the located region.
     Position end;
 
-    rastr::parser::SpacingSPtr spacing_;
+    SpacingSPtr spacing_;
 };
 
 /// Join two locations, in place.
@@ -139,12 +138,11 @@ std::basic_ostream<YYChar>& operator<<(std::basic_ostream<YYChar>& ostr,
 }
 
 } // namespace parser
-} // namespace r
 } // namespace rastr
 
 std::ostream& operator<<(std::ostream& os,
-                         const rastr::r::parser::Location& loc);
+                         const rastr::parser::Location& loc);
 
-std::string to_string(const rastr::r::parser::Location& loc);
+std::string to_string(const rastr::parser::Location& loc);
 
 #endif /* RASTR_R_PARSER_LOCATION_HPP */

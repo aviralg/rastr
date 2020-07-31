@@ -1,6 +1,6 @@
-#line 1 "Lexer.cxx"
+#line 1 "RLexer.cxx"
 
-#line 3 "Lexer.cxx"
+#line 3 "RLexer.cxx"
 
 #define  YY_INT_ALIGNED short int
 
@@ -375,7 +375,7 @@ int yyFlexLexer::yylex()
 	return 0;
 	}
 
-#define YY_DECL int rastr::parser::Lexer::yylex()
+#define YY_DECL int rastr::parser::RLexer::yylex()
 
 /* %% [1.5] DFA */
 
@@ -595,12 +595,12 @@ static const flex_int16_t yy_rule_linenum[72] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "Lexer.lxx"
+#line 1 "RLexer.lxx"
 /* -*- C++ -*- */
-#line 11 "Lexer.lxx"
+#line 11 "RLexer.lxx"
 #include <string>
 #include <iostream>
-#include "Lexer.hpp"
+#include "RLexer.hpp"
 
 RNode* mkInt(const std::string& s) {
     double value = R_atof(s.c_str()); /* or R_strtol? */
@@ -623,41 +623,41 @@ RNode* mkComplex(const std::string& s) {
 
 #define HANDLE_TOKEN(token_name)                          \
     *yylval = yytext;                                     \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_ERROR() \
-    throw rastr::r::parser::Parser::syntax_error(*yylloc, "TODO: add error message" + std::string(yytext));
+    throw rastr::parser::RParser::syntax_error(*yylloc, "TODO: add error message" + std::string(yytext));
 
 #define HANDLE_TOKEN_WITH_CONTENT(token_name, content)    \
     *yylval = content;                                    \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_SYMBOL_TOKEN(text, quoted)                          \
     *yylval = new rastr::ast::SymbolExpressionRNode(text, quoted); \
-    return rastr::r::parser::Parser::token::SYMBOL;
+    return rastr::parser::RParser::token::SYMBOL;
 
 #define HANDLE_OPERATOR_TOKEN(token_name)                 \
     *yylval = new rastr::ast::OperatorRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_DELIMITER_TOKEN(token_name)                 \
     *yylval = new rastr::ast::DelimiterRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_KEYWORD_TOKEN(token_name)                 \
     *yylval = new rastr::ast::KeywordRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 #define HANDLE_CONSTANT_LITERAL_TOKEN(token_name)                \
     *yylval = new rastr::ast::ConstantLiteralExpressionRNode(yytext);  \
-    return rastr::r::parser::Parser::token::token_name;
+    return rastr::parser::RParser::token::token_name;
 
 /* Code run each time a pattern is matched. */
 #define YY_USER_ACTION  yylloc->columns(yyleng);
 
-#line 658 "Lexer.cxx"
+#line 658 "RLexer.cxx"
 
-#line 660 "Lexer.cxx"
+#line 660 "RLexer.cxx"
 
 #define INITIAL 0
 #define quoted_identifier 1
@@ -853,16 +853,16 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 87 "Lexer.lxx"
+#line 87 "RLexer.lxx"
 
 
 
-#line 91 "Lexer.lxx"
+#line 91 "RLexer.lxx"
     /* Code run each time yylex is called. */
     yylloc -> step();
 
 
-#line 865 "Lexer.cxx"
+#line 865 "RLexer.cxx"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -946,16 +946,16 @@ case YY_STATE_EOF(quoted_identifier):
 case YY_STATE_EOF(special_value):
 case YY_STATE_EOF(single_quoted_string):
 case YY_STATE_EOF(double_quoted_string):
-#line 95 "Lexer.lxx"
+#line 95 "RLexer.lxx"
 {
                                     *yylval = new rastr::ast::EndRNode();
-                                    return rastr::r::parser::Parser::token::END_OF_INPUT;
+                                    return rastr::parser::RParser::token::END_OF_INPUT;
                                 }
 	YY_BREAK
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 99 "Lexer.lxx"
+#line 99 "RLexer.lxx"
 {
                                     yylloc -> lines(yyleng);
                                     HANDLE_DELIMITER_TOKEN(NEWLINE);
@@ -963,328 +963,328 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 103 "Lexer.lxx"
+#line 103 "RLexer.lxx"
 { yylloc -> step(); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 104 "Lexer.lxx"
+#line 104 "RLexer.lxx"
 { yylloc -> step();              }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 105 "Lexer.lxx"
+#line 105 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(SEMICOLON)                 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 106 "Lexer.lxx"
+#line 106 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LE)                         }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 107 "Lexer.lxx"
+#line 107 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(GE)                         }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 108 "Lexer.lxx"
+#line 108 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LEFT_ASSIGN)                }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 109 "Lexer.lxx"
+#line 109 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LEFT_ASSIGN)                }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 110 "Lexer.lxx"
+#line 110 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LT)                         }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 111 "Lexer.lxx"
+#line 111 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(GT)                         }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 112 "Lexer.lxx"
+#line 112 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(RIGHT_ASSIGN)               }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 113 "Lexer.lxx"
+#line 113 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(RIGHT_ASSIGN)               }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 114 "Lexer.lxx"
+#line 114 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(MINUS)                      }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 115 "Lexer.lxx"
+#line 115 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(NE)                         }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 116 "Lexer.lxx"
+#line 116 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(EQ_ASSIGN)                  }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 117 "Lexer.lxx"
+#line 117 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(EXCLAMATION)                }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 118 "Lexer.lxx"
+#line 118 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(DOUBLE_EXCLAMATION)         }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 119 "Lexer.lxx"
+#line 119 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(EQ)                         }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 120 "Lexer.lxx"
+#line 120 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(NS_GET_INT)                 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 121 "Lexer.lxx"
+#line 121 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(NS_GET)                     }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 122 "Lexer.lxx"
+#line 122 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(COLON_ASSIGN)               }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 123 "Lexer.lxx"
+#line 123 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(COLON)                      }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 124 "Lexer.lxx"
+#line 124 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(AND2)                       }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 125 "Lexer.lxx"
+#line 125 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(AND)                        }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 126 "Lexer.lxx"
+#line 126 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(OR2)                        }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 127 "Lexer.lxx"
+#line 127 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(OR)                         }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 128 "Lexer.lxx"
+#line 128 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LBRACE)                    }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 129 "Lexer.lxx"
+#line 129 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(RBRACE)                    }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 130 "Lexer.lxx"
+#line 130 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LPAREN)                    }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 131 "Lexer.lxx"
+#line 131 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(RPAREN)                    }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 132 "Lexer.lxx"
+#line 132 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LBB)                       }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 133 "Lexer.lxx"
+#line 133 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LSQPAREN)                  }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 134 "Lexer.lxx"
+#line 134 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(RSQPAREN)                  }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 135 "Lexer.lxx"
+#line 135 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(QUESTION)                   }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 136 "Lexer.lxx"
+#line 136 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(ASTERISK)                   }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 137 "Lexer.lxx"
+#line 137 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(PLUS)                       }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 138 "Lexer.lxx"
+#line 138 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(SLASH)                      }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 139 "Lexer.lxx"
+#line 139 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(CARET)                      }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 140 "Lexer.lxx"
+#line 140 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(CARET)                      }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 141 "Lexer.lxx"
+#line 141 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(TILDE)                      }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 142 "Lexer.lxx"
+#line 142 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(DOLLAR)                     }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 143 "Lexer.lxx"
+#line 143 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(AT)                         }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 144 "Lexer.lxx"
+#line 144 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(COMMA)                     }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 145 "Lexer.lxx"
+#line 145 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(NULL_CONST)         }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 146 "Lexer.lxx"
+#line 146 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 147 "Lexer.lxx"
+#line 147 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 148 "Lexer.lxx"
+#line 148 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 149 "Lexer.lxx"
+#line 149 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 150 "Lexer.lxx"
+#line 150 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 151 "Lexer.lxx"
+#line 151 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 152 "Lexer.lxx"
+#line 152 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 153 "Lexer.lxx"
+#line 153 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 154 "Lexer.lxx"
+#line 154 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 155 "Lexer.lxx"
+#line 155 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(FUNCTION);          }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 156 "Lexer.lxx"
+#line 156 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(WHILE);             }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 157 "Lexer.lxx"
+#line 157 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(REPEAT);            }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 158 "Lexer.lxx"
+#line 158 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(FOR);	             }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 159 "Lexer.lxx"
+#line 159 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(IF);	               }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 160 "Lexer.lxx"
+#line 160 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(IN);                }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 161 "Lexer.lxx"
+#line 161 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(ELSE);              }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 162 "Lexer.lxx"
+#line 162 "RLexer.lxx"
 {
                                     *yylval = new rastr::ast::NextExpressionRNode();
-                                    return rastr::r::parser::Parser::token::NEXT;
+                                    return rastr::parser::RParser::token::NEXT;
                                 }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 166 "Lexer.lxx"
+#line 166 "RLexer.lxx"
 {
                                     *yylval = new rastr::ast::BreakExpressionRNode();
-                                    return rastr::r::parser::Parser::token::BREAK;
+                                    return rastr::parser::RParser::token::BREAK;
                                 }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 170 "Lexer.lxx"
+#line 170 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false)       }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 171 "Lexer.lxx"
+#line 171 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(SPECIAL);          }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 173 "Lexer.lxx"
+#line 173 "RLexer.lxx"
 {
                                     clear_token_buffer();
                                     char current;
@@ -1311,7 +1311,7 @@ YY_RULE_SETUP
                                             }
                                             else if(quote == '\'' || quote == '"') {
                                                  *yylval = new rastr::ast::CharacterLiteralExpressionRNode(get_token_buffer(), quote);
-                                                 return rastr::r::parser::Parser::token::STR_CONST;
+                                                 return rastr::parser::RParser::token::STR_CONST;
                                             }
                                             break;
                                         }
@@ -1324,7 +1324,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 210 "Lexer.lxx"
+#line 210 "RLexer.lxx"
 {
                                     if (strlen(yytext) == 2) {
                                         unput_(yytext[1]);
@@ -1445,14 +1445,14 @@ YY_RULE_SETUP
 
                                     if (c == 'i') {
                                         *yylval = mkComplex(get_token_buffer());
-                                        return rastr::r::parser::Parser::token::COMPLEX_CONST;
+                                        return rastr::parser::RParser::token::COMPLEX_CONST;
                                     } else if (c == 'L' && asNumeric == 0) {
                                         if (seendot == 1 && seenexp == 0)
                                             fprintf(stderr,
                                                     "integer literal %s contains unnecessary decimal point",
                                                     get_token_buffer().c_str());
                                             *yylval = mkInt(get_token_buffer());
-                                            return rastr::r::parser::Parser::token::INT_CONST;
+                                            return rastr::parser::RParser::token::INT_CONST;
                                 #if 0 /* do this to make 123 integer not double */
                                                                     } else if(!(seendot || seenexp)) {
                                                                 	if(c != 'L') unput_(c);
@@ -1460,39 +1460,39 @@ YY_RULE_SETUP
                                                                 	    int b = (int) a;
                                                                 	    if(a != (double) b) {
                                                                           *yylval = mkFloat(get_token_buffer());
-                                                                          return rastr::r::parser::Parser::token::FLOAT_CONST;
+                                                                          return rastr::parser::RParser::token::FLOAT_CONST;
                                                                       }
                                                                       else {
                                                                           *yylval = mkInt(get_token_buffer());
-                                                                          return rastr::r::parser::Parser::token::INT_CONST;
+                                                                          return rastr::parser::RParser::token::INT_CONST;
                                                                       }
                                 #endif
                                     } else {
                                         if (c != 'L')
                                             unput_(c);
                                             *yylval = mkFloat(get_token_buffer());
-                                            return rastr::r::parser::Parser::token::FLOAT_CONST;
+                                            return rastr::parser::RParser::token::FLOAT_CONST;
                                     }
                                 }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 363 "Lexer.lxx"
+#line 363 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false) }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 364 "Lexer.lxx"
+#line 364 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false) }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 365 "Lexer.lxx"
+#line 365 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false) }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 367 "Lexer.lxx"
+#line 367 "RLexer.lxx"
 {
                                     token_buffer_.clear();
                                     std::string closing_delimiter;
@@ -1530,7 +1530,7 @@ YY_RULE_SETUP
                                                    *yylval = new rastr::ast::RawStringLiteralExpressionRNode(opening_delimiter,
                                                                                                              get_token_buffer(),
                                                                                                              closing_delimiter);
-                                                   return rastr::r::parser::Parser::token::RAW_STRING_CONST;
+                                                   return rastr::parser::RParser::token::RAW_STRING_CONST;
                                                    break;
                                                }
                                                else {
@@ -1548,7 +1548,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 421 "Lexer.lxx"
+#line 421 "RLexer.lxx"
 {
                  HANDLE_ERROR();
                  /* exit(1); */
@@ -1556,10 +1556,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 425 "Lexer.lxx"
+#line 425 "RLexer.lxx"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1562 "Lexer.cxx"
+#line 1562 "RLexer.cxx"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2675,22 +2675,22 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 425 "Lexer.lxx"
+#line 425 "RLexer.lxx"
 
 
 /*
 int main(int argc, char** argv) {
-    FlexLexer* lexer = new rastr::r::parser::Lexer();
+    FlexLexer* lexer = new rastr::parser::RLexer();
     while(lexer->yylex() != 0);
     return 0;
 }
 */
 
-void rastr::r::parser::Lexer::unput_(int c) {
+void rastr::parser::RLexer::unput_(int c) {
     unput(c);
 }
 
-int rastr::r::parser::Lexer::typeofnext() {
+int rastr::parser::RLexer::typeofnext() {
         int k, c;
 
         c = yyinput();
