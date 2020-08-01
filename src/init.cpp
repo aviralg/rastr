@@ -33,6 +33,7 @@
 #include "r_rastr_ast_function_call_expression_r_node.h"
 #include "r_rastr_ast_expression_sequence_r_node.h"
 #include "r_rastr_ast_indexing_expression_r_node.h"
+#include "r_rastr_ast_subsetting_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -184,6 +185,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_indexing_expression_r_node_get_second_closing_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_get_second_closing_delimiter, 1},
     {"rastr_ast_indexing_expression_r_node_set_second_closing_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_set_second_closing_delimiter, 2},
     {"rastr_ast_indexing_expression_r_node_set_delimiters", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_set_delimiters, 4},
+
+    /* SubsettingExpressionRNode */
+    {"rastr_ast_subsetting_expression_r_node_create", (DL_FUNC) &r_rastr_ast_subsetting_expression_r_node_create, 4},
 
     {NULL, NULL, 0}
 };
