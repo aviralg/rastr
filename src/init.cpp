@@ -23,6 +23,8 @@
 #include "r_rastr_ast_i_keyword.h"
 #include "r_rastr_ast_i_object.h"
 #include "r_rastr_ast_i_operator.h"
+#include "r_rastr_ast_i_representation.h"
+
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
 
@@ -137,6 +139,9 @@ static const R_CallMethodDef CallEntries[] = {
     /* IExpressions */
     {"rastr_ast_i_expressions_get_expressions", (DL_FUNC) &r_rastr_ast_i_expressions_get_expressions, 1},
     {"rastr_ast_i_expressions_set_expressions", (DL_FUNC) &r_rastr_ast_i_expressions_set_expressions, 2},
+
+    /* IRepresentation */
+    {"rastr_ast_i_representation_get_representation", (DL_FUNC) &r_rastr_ast_i_representation_get_representation, 1},
 
     {NULL, NULL, 0}
 };
