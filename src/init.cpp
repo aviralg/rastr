@@ -20,6 +20,7 @@
 #include "r_rastr_ast_i_indices.h"
 #include "r_rastr_ast_i_keyword.h"
 #include "r_rastr_ast_i_object.h"
+#include "r_rastr_ast_i_operator.h"
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
 
@@ -122,6 +123,10 @@ static const R_CallMethodDef CallEntries[] = {
     /* IKeyword */
     {"rastr_ast_i_keyword_get_keyword", (DL_FUNC) &r_rastr_ast_i_keyword_get_keyword, 1},
     {"rastr_ast_i_keyword_set_keyword", (DL_FUNC) &r_rastr_ast_i_keyword_set_keyword, 2},
+
+    /* IOperator */
+    {"rastr_ast_i_operator_get_operator", (DL_FUNC) &r_rastr_ast_i_operator_get_operator, 1},
+    {"rastr_ast_i_operator_set_operator", (DL_FUNC) &r_rastr_ast_i_operator_set_operator, 2},
 
     {NULL, NULL, 0}
 };

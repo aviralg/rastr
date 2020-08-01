@@ -25,6 +25,8 @@ class IOperator {
     OperatorRNodeSPtr op_;
 };
 
+using IOperatorSPtr = std::shared_ptr<IOperator>;
+
 } // namespace ast
 } // namespace rastr
 
