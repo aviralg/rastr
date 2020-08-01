@@ -2,29 +2,17 @@
 #define RASTR_R_CAST_HPP
 
 #include <memory>
-#include "ExpressionRNode.hpp"
-#include "CharacterLiteralExpressionRNode.hpp"
-#include "ComplexLiteralExpressionRNode.hpp"
-#include "DoubleLiteralExpressionRNode.hpp"
-#include "FunctionCallExpressionRNode.hpp"
-#include "FunctionDefinitionExpressionRNode.hpp"
-#include "IfConditionalExpressionRNode.hpp"
-#include "IfElseConditionalExpressionRNode.hpp"
-#include "IntegerLiteralExpressionRNode.hpp"
-#include "LogicalLiteralExpressionRNode.hpp"
-#include "RawLiteralExpressionRNode.hpp"
-#include "RepeatLoopExpressionRNode.hpp"
-#include "SymbolExpressionRNode.hpp"
-#include "Type.hpp"
-#include "InRNode.hpp"
-#include "WhileLoopExpressionRNode.hpp"
-#include "ForLoopExpressionRNode.hpp"
-#include "BinaryOperationExpressionRNode.hpp"
+#include "ast.hpp"
 
-template <typename T>
-void destroy_sexp(SEXP r_node) {
-    delete static_cast<std::shared_ptr<T>*>(R_ExternalPtrAddr(r_node));
-    R_SetExternalPtrAddr(r_node, NULL);
+inline void destroy_sexp(SEXP r_node) {
+    void* node = R_ExternalPtrAddr(r_node);
+    if (node == NULL) {
+        Rf_error("from_sexp: object is null");
+    } else {
+        rastr::ast::NodeSPtr* ptr = static_cast<rastr::ast::NodeSPtr*>(node);
+        delete ptr;
+        R_SetExternalPtrAddr(r_node, NULL);
+    }
 }
 
 template <typename T>
@@ -33,16 +21,18 @@ std::shared_ptr<T> from_sexp(SEXP r_node) {
     if (node == NULL) {
         Rf_error("from_sexp: object is null");
     } else {
-        return *static_cast<std::shared_ptr<T>*>(node);
+        rastr::ast::NodeSPtr sptr = *static_cast<rastr::ast::NodeSPtr*>(node);
+        return std::dynamic_pointer_cast<T>(sptr);
     }
 }
 
 template <typename T>
 SEXP to_sexp(std::shared_ptr<T> node) {
-    SEXP r_node = PROTECT(R_MakeExternalPtr(
-        new std::shared_ptr<T>(node), R_NilValue, R_NilValue));
+    auto ptr = new std::shared_ptr<T>(node);
 
-    R_RegisterCFinalizerEx(r_node, destroy_sexp<T>, TRUE);
+    SEXP r_node = PROTECT(R_MakeExternalPtr(ptr, R_NilValue, R_NilValue));
+
+    R_RegisterCFinalizerEx(r_node, destroy_sexp, TRUE);
 
     setAttrib(r_node, R_ClassSymbol, T::get_class());
 
@@ -179,6 +169,5 @@ to_sexp<rastr::ast::RNode>(std::shared_ptr<rastr::ast::RNode> node) {
     Rf_error("to_sexp::'%s' object not handled", type_str.c_str());
     return R_NilValue;
 }
-
 
 #endif /* RASTR_R_CAST_HPP */
