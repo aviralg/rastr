@@ -25,6 +25,8 @@ class IObject {
     ExpressionRNodeSPtr object_;
 };
 
+using IObjectSPtr = std::shared_ptr<IObject>;
+
 } // namespace ast
 } // namespace rastr
 

@@ -16,6 +16,7 @@
 #include "r_parser.h"
 
 #include "r_rastr_ast_i_body.h"
+#include "r_rastr_ast_i_object.h"
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
 
@@ -100,6 +101,10 @@ static const R_CallMethodDef CallEntries[] = {
     /* IBody */
     {"rastr_ast_i_body_get_body", (DL_FUNC) &r_rastr_ast_i_body_get_body, 1},
     {"rastr_ast_i_body_set_body", (DL_FUNC) &r_rastr_ast_i_body_set_body, 2},
+
+    /* IObject */
+    {"rastr_ast_i_object_get_object", (DL_FUNC) &r_rastr_ast_i_object_get_object, 1},
+    {"rastr_ast_i_object_set_object", (DL_FUNC) &r_rastr_ast_i_object_set_object, 2},
 
     {NULL, NULL, 0}
 };
