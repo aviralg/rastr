@@ -7,7 +7,6 @@
 #include "r_raw_literal_expression_r_node.h"
 
 #include "r_symbol_expression_r_node.h"
-#include "r_function_definition_expression_r_node.h"
 #include "r_loop_expression_r_node.h"
 #include "r_for_loop_expression_r_node.h"
 #include "r_while_loop_expression_r_node.h"
@@ -27,6 +26,8 @@
 #include "r_rastr_ast_operator_r_node.h"
 #include "r_rastr_ast_keyword_r_node.h"
 #include "r_rastr_ast_delimiter_r_node.h"
+
+#include "r_rastr_ast_function_definition_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -64,19 +65,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"raw_literal_expression_r_node_get_representation", (DL_FUNC) &r_raw_literal_expression_r_node_get_representation, 1},
     {"raw_literal_expression_r_node_set_representation", (DL_FUNC) &r_raw_literal_expression_r_node_set_representation, 2},
 
-
     /* SymbolExpressionRNode */
     {"symbol_expression_r_node_create", (DL_FUNC) &r_symbol_expression_r_node_create, 1},
     {"symbol_expression_r_node_get_representation", (DL_FUNC) &r_symbol_expression_r_node_get_representation, 1},
-
-    /* FunctionDefinitionExpressionRNode */
-    {"function_definition_expression_r_node_create", (DL_FUNC) &r_function_definition_expression_r_node_create, 3},
-    {"function_definition_expression_r_node_get_keyword", (DL_FUNC) &r_function_definition_expression_r_node_get_keyword, 1},
-    {"function_definition_expression_r_node_set_keyword", (DL_FUNC) &r_function_definition_expression_r_node_set_keyword, 2},
-    {"function_definition_expression_r_node_get_body", (DL_FUNC) &r_function_definition_expression_r_node_get_body, 1},
-    {"function_definition_expression_r_node_set_body", (DL_FUNC) &r_function_definition_expression_r_node_set_body, 2},
-    {"function_definition_expression_r_node_get_parameters", (DL_FUNC) &r_function_definition_expression_r_node_get_parameters, 1},
-    {"function_definition_expression_r_node_set_parameters", (DL_FUNC) &r_function_definition_expression_r_node_set_parameters, 2},
 
     /* LoopExpressionRNode */
     {"loop_expression_r_node_get_keyword", (DL_FUNC) &r_loop_expression_r_node_get_keyword, 1},
@@ -147,6 +138,11 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* DelimiterRNode */
     {"rastr_ast_delimiter_r_node_create", (DL_FUNC) &r_rastr_ast_delimiter_r_node_create, 1},
+
+    /* FunctionDefinitionExpressionRNode */
+    {"rastr_ast_function_definition_expression_r_node_create", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_create, 5},
+    {"rastr_ast_function_definition_expression_r_node_get_parameters", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_get_parameters, 1},
+    {"rastr_ast_function_definition_expression_r_node_set_parameters", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_set_parameters, 2},
 
     {NULL, NULL, 0}
 };
