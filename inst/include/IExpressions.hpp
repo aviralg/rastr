@@ -26,6 +26,8 @@ class IExpressions {
     ExpressionSequenceRNodeSPtr expressions_;
 };
 
+using IExpressionsSPtr = std::shared_ptr<IExpressions>;
+
 } // namespace ast
 } // namespace rastr
 

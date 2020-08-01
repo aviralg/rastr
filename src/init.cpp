@@ -18,6 +18,7 @@
 #include "r_rastr_ast_i_body.h"
 #include "r_rastr_ast_i_bounded.h"
 #include "r_rastr_ast_i_condition.h"
+#include "r_rastr_ast_i_expressions.h"
 #include "r_rastr_ast_i_indices.h"
 #include "r_rastr_ast_i_keyword.h"
 #include "r_rastr_ast_i_object.h"
@@ -132,6 +133,10 @@ static const R_CallMethodDef CallEntries[] = {
     /* ICondition */
     {"rastr_ast_i_condition_get_condition", (DL_FUNC) &r_rastr_ast_i_condition_get_condition, 1},
     {"rastr_ast_i_condition_set_condition", (DL_FUNC) &r_rastr_ast_i_condition_set_condition, 2},
+
+    /* IExpressions */
+    {"rastr_ast_i_expressions_get_expressions", (DL_FUNC) &r_rastr_ast_i_expressions_get_expressions, 1},
+    {"rastr_ast_i_expressions_set_expressions", (DL_FUNC) &r_rastr_ast_i_expressions_set_expressions, 2},
 
     {NULL, NULL, 0}
 };
