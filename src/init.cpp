@@ -32,6 +32,7 @@
 #include "r_rastr_ast_function_definition_expression_r_node.h"
 #include "r_rastr_ast_function_call_expression_r_node.h"
 #include "r_rastr_ast_expression_sequence_r_node.h"
+#include "r_rastr_ast_indexing_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -173,6 +174,16 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_expression_sequence_r_node_get_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_get_element, 2},
     {"rastr_ast_expression_sequence_r_node_set_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_set_element, 3},
     {"rastr_ast_expression_sequence_r_node_push_back", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_push_back, 2},
+
+    /* IndexingExpressionRNode */
+    {"rastr_ast_indexing_expression_r_node_create", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_create, 5},
+    {"rastr_ast_indexing_expression_r_node_get_opening_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_get_opening_delimiter, 1},
+    {"rastr_ast_indexing_expression_r_node_set_opening_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_set_opening_delimiter, 2},
+    {"rastr_ast_indexing_expression_r_node_get_first_closing_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_get_first_closing_delimiter, 1},
+    {"rastr_ast_indexing_expression_r_node_set_first_closing_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_set_first_closing_delimiter, 2},
+    {"rastr_ast_indexing_expression_r_node_get_second_closing_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_get_second_closing_delimiter, 1},
+    {"rastr_ast_indexing_expression_r_node_set_second_closing_delimiter", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_set_second_closing_delimiter, 2},
+    {"rastr_ast_indexing_expression_r_node_set_delimiters", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_set_delimiters, 4},
 
     {NULL, NULL, 0}
 };
