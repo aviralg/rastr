@@ -28,8 +28,6 @@ ProgramRNodeSPtr parse_(std::istream& input_stream,
     RLexer lexer(input_stream);
     RParser parser(lexer, program);
     parser.parse();
-    std::cout << "Size is " << program->get_expressions()->get_size()
-              << std::endl;
     return program;
 }
 
