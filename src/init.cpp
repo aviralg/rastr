@@ -15,6 +15,7 @@
 #include "r_repeat_loop_expression_r_node.h"
 #include "r_parser.h"
 
+#include "r_rastr_ast_i_body.h"
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
 
@@ -95,6 +96,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"parser_parse_stdin", (DL_FUNC) &r_parser_parse_stdin, 0},
     {"parser_parse_string", (DL_FUNC) &r_parser_parse_string, 1},
     {"parser_parse_file", (DL_FUNC) &r_parser_parse_file, 1},
+
+    /* IBody */
+    {"rastr_ast_i_body_get_body", (DL_FUNC) &r_rastr_ast_i_body_get_body, 1},
+    {"rastr_ast_i_body_set_body", (DL_FUNC) &r_rastr_ast_i_body_set_body, 2},
 
     {NULL, NULL, 0}
 };

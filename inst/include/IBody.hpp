@@ -25,6 +25,8 @@ class IBody {
     ExpressionRNodeSPtr body_;
 };
 
+using IBodySPtr = std::shared_ptr<IBody>;
+
 } // namespace ast
 } // namespace rastr
 
