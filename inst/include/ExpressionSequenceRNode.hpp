@@ -12,6 +12,10 @@ class ExpressionSequenceRNode: public RNode {
     explicit ExpressionSequenceRNode(): RNode(Type::ExpressionSequenceRNode) {
     }
 
+    int get_size() const {
+        return elements_.size();
+    }
+
     ExpressionRNodeSPtr get_element(int index) const {
         return elements_[index];
     }
@@ -22,10 +26,6 @@ class ExpressionSequenceRNode: public RNode {
 
     void push_back(ExpressionRNodeSPtr element) {
         elements_.push_back(element);
-    }
-
-    int get_size() const {
-        return elements_.size();
     }
 
     static void initialize();
