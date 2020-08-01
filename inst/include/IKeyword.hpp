@@ -25,6 +25,8 @@ class IKeyword {
     KeywordRNodeSPtr keyword_;
 };
 
+using IKeywordSPtr = std::shared_ptr<IKeyword>;
+
 } // namespace ast
 } // namespace rastr
 
