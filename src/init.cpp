@@ -26,6 +26,7 @@
 
 #include "r_rastr_ast_operator_r_node.h"
 #include "r_rastr_ast_keyword_r_node.h"
+#include "r_rastr_ast_delimiter_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -143,6 +144,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* KeywordRNode */
     {"rastr_ast_keyword_r_node_create", (DL_FUNC) &r_rastr_ast_keyword_r_node_create, 1},
+
+    /* DelimiterRNode */
+    {"rastr_ast_delimiter_r_node_create", (DL_FUNC) &r_rastr_ast_delimiter_r_node_create, 1},
 
     {NULL, NULL, 0}
 };

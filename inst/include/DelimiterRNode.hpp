@@ -11,7 +11,7 @@ class DelimiterRNode
     : public RNode
     , public IRepresentation {
   public:
-    explicit DelimiterRNode(const std::string& representation = "")
+    explicit DelimiterRNode(const std::string& representation)
         : RNode(Type::DelimiterRNode), IRepresentation(representation) {
     }
 
