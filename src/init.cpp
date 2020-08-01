@@ -28,6 +28,7 @@
 #include "r_rastr_ast_delimiter_r_node.h"
 
 #include "r_rastr_ast_function_definition_expression_r_node.h"
+#include "r_rastr_ast_function_call_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -143,6 +144,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_function_definition_expression_r_node_create", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_create, 5},
     {"rastr_ast_function_definition_expression_r_node_get_parameters", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_get_parameters, 1},
     {"rastr_ast_function_definition_expression_r_node_set_parameters", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_set_parameters, 2},
+
+    /* FunctionCallExpressionRNode */
+    {"rastr_ast_function_call_expression_r_node_create", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_create, 4},
+    {"rastr_ast_function_call_expression_r_node_get_function", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_get_function, 1},
+    {"rastr_ast_function_call_expression_r_node_set_function", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_set_function, 2},
+    {"rastr_ast_function_call_expression_r_node_get_arguments", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_get_arguments, 1},
+    {"rastr_ast_function_call_expression_r_node_set_arguments", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_set_arguments, 2},
 
     {NULL, NULL, 0}
 };

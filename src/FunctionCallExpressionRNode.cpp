@@ -6,10 +6,11 @@ namespace ast {
 SEXP FunctionCallExpressionRNode::class_ = NULL;
 
 void FunctionCallExpressionRNode::initialize() {
-    class_ = rastr::create_class({"rastr_node_r_expression_call_function",
-                                  "rastr_node_r_expression",
-                                  "rastr_node_r",
-                                  "rastr_node"});
+    class_ = rastr::create_class({"rastr_ast_node_r_expression_call_function",
+                                  "rastr_ast_node_r_expression",
+                                  "rastr_ast_node_r",
+                                  "rastr_ast_node",
+                                  "rastr_ast_bounded_i"});
     R_PreserveObject(class_);
 }
 
