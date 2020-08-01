@@ -5,7 +5,6 @@
 #include "r_integer_literal_expression_r_node.h"
 #include "r_logical_literal_expression_r_node.h"
 #include "r_raw_literal_expression_r_node.h"
-#include "r_operator_r_node.h"
 #include "r_keyword_r_node.h"
 #include "r_symbol_expression_r_node.h"
 #include "r_function_definition_expression_r_node.h"
@@ -24,6 +23,8 @@
 #include "r_rastr_ast_i_object.h"
 #include "r_rastr_ast_i_operator.h"
 #include "r_rastr_ast_i_representation.h"
+
+#include "r_rastr_ast_operator_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -60,10 +61,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"raw_literal_expression_r_node_create", (DL_FUNC) &r_raw_literal_expression_r_node_create, 1},
     {"raw_literal_expression_r_node_get_representation", (DL_FUNC) &r_raw_literal_expression_r_node_get_representation, 1},
     {"raw_literal_expression_r_node_set_representation", (DL_FUNC) &r_raw_literal_expression_r_node_set_representation, 2},
-
-    /* OperatorRNode */
-    {"operator_r_node_create", (DL_FUNC) &r_operator_r_node_create, 1},
-    {"operator_r_node_get_representation", (DL_FUNC) &r_operator_r_node_get_representation, 1},
 
     /* KeywordRNode */
     {"keyword_r_node_create", (DL_FUNC) &r_keyword_r_node_create, 1},
@@ -142,6 +139,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* IRepresentation */
     {"rastr_ast_i_representation_get_representation", (DL_FUNC) &r_rastr_ast_i_representation_get_representation, 1},
+
+    /* OperatorRNode */
+    {"rastr_ast_operator_r_node_create", (DL_FUNC) &r_rastr_ast_operator_r_node_create, 1},
 
     {NULL, NULL, 0}
 };
