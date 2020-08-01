@@ -17,6 +17,7 @@
 
 #include "r_rastr_ast_i_body.h"
 #include "r_rastr_ast_i_bounded.h"
+#include "r_rastr_ast_i_indices.h"
 #include "r_rastr_ast_i_object.h"
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -112,6 +113,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_i_bounded_set_opening_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_set_opening_delimiter, 2},
     {"rastr_ast_i_bounded_get_closing_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_get_closing_delimiter, 1},
     {"rastr_ast_i_bounded_set_closing_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_set_closing_delimiter, 2},
+
+    /* IIndices */
+    {"rastr_ast_i_indices_get_indices", (DL_FUNC) &r_rastr_ast_i_indices_get_indices, 1},
+    {"rastr_ast_i_indices_set_indices", (DL_FUNC) &r_rastr_ast_i_indices_set_indices, 2},
 
     {NULL, NULL, 0}
 };

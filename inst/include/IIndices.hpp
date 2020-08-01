@@ -25,6 +25,8 @@ class IIndices {
     ExpressionSequenceRNodeSPtr indices_;
 };
 
+using IIndicesSPtr = std::shared_ptr<IIndices>;
+
 } // namespace ast
 } // namespace rastr
 
