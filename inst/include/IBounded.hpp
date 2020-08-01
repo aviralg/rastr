@@ -43,6 +43,8 @@ class IBounded {
     DelimiterRNodeSPtr closing_delimiter_;
 };
 
+using IBoundedSPtr = std::shared_ptr<IBounded>;
+
 } // namespace ast
 } // namespace rastr
 

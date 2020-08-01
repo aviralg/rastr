@@ -16,6 +16,7 @@
 #include "r_parser.h"
 
 #include "r_rastr_ast_i_body.h"
+#include "r_rastr_ast_i_bounded.h"
 #include "r_rastr_ast_i_object.h"
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -105,6 +106,12 @@ static const R_CallMethodDef CallEntries[] = {
     /* IObject */
     {"rastr_ast_i_object_get_object", (DL_FUNC) &r_rastr_ast_i_object_get_object, 1},
     {"rastr_ast_i_object_set_object", (DL_FUNC) &r_rastr_ast_i_object_set_object, 2},
+
+    /* IBounded */
+    {"rastr_ast_i_bounded_get_opening_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_get_opening_delimiter, 1},
+    {"rastr_ast_i_bounded_set_opening_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_set_opening_delimiter, 2},
+    {"rastr_ast_i_bounded_get_closing_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_get_closing_delimiter, 1},
+    {"rastr_ast_i_bounded_set_closing_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_set_closing_delimiter, 2},
 
     {NULL, NULL, 0}
 };
