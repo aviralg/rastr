@@ -25,6 +25,8 @@ class ICondition {
     ConditionRNodeSPtr condition_;
 };
 
+using IConditionSPtr = std::shared_ptr<ICondition>;
+
 } // namespace ast
 } // namespace rastr
 
