@@ -28,6 +28,7 @@
 #include "r_rastr_ast_delimiter_r_node.h"
 
 #include "r_rastr_ast_unary_operation_expression_r_node.h"
+#include "r_rastr_ast_binary_operation_expression_r_node.h"
 #include "r_rastr_ast_function_definition_expression_r_node.h"
 #include "r_rastr_ast_function_call_expression_r_node.h"
 
@@ -145,6 +146,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_unary_operation_expression_r_node_create", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_create, 2},
     {"rastr_ast_unary_operation_expression_r_node_get_operand", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_get_operand, 1},
     {"rastr_ast_unary_operation_expression_r_node_set_operand", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_set_operand, 2},
+
+    /* BinaryOperationExpressionRNode */
+    {"rastr_ast_binary_operation_expression_r_node_create", (DL_FUNC) &r_rastr_ast_binary_operation_expression_r_node_create, 3},
+    {"rastr_ast_binary_operation_expression_r_node_get_first_operand", (DL_FUNC) &r_rastr_ast_binary_operation_expression_r_node_get_first_operand, 1},
+    {"rastr_ast_binary_operation_expression_r_node_set_first_operand", (DL_FUNC) &r_rastr_ast_binary_operation_expression_r_node_set_first_operand, 2},
+    {"rastr_ast_binary_operation_expression_r_node_get_second_operand", (DL_FUNC) &r_rastr_ast_binary_operation_expression_r_node_get_second_operand, 1},
+    {"rastr_ast_binary_operation_expression_r_node_set_second_operand", (DL_FUNC) &r_rastr_ast_binary_operation_expression_r_node_set_second_operand, 2},
 
     /* FunctionDefinitionExpressionRNode */
     {"rastr_ast_function_definition_expression_r_node_create", (DL_FUNC) &r_rastr_ast_function_definition_expression_r_node_create, 5},

@@ -20,8 +20,16 @@ class BinaryOperationExpressionRNode: public OperationExpressionRNode {
         return first_operand_;
     }
 
+    void set_first_operand(ExpressionRNodeSPtr first_operand) {
+        first_operand_ = first_operand;
+    }
+
     ExpressionRNodeSPtr get_second_operand() const {
         return second_operand_;
+    }
+
+    void set_second_operand(ExpressionRNodeSPtr second_operand) {
+        second_operand_ = second_operand;
     }
 
     static void initialize();
