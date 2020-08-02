@@ -7,7 +7,6 @@
 #include "r_raw_literal_expression_r_node.h"
 
 #include "r_symbol_expression_r_node.h"
-#include "r_while_loop_expression_r_node.h"
 #include "r_repeat_loop_expression_r_node.h"
 #include "r_parser.h"
 
@@ -33,6 +32,7 @@
 #include "r_rastr_ast_indexing_expression_r_node.h"
 #include "r_rastr_ast_subsetting_expression_r_node.h"
 #include "r_rastr_ast_for_loop_expression_r_node.h"
+#include "r_rastr_ast_while_loop_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -73,11 +73,6 @@ static const R_CallMethodDef CallEntries[] = {
     /* SymbolExpressionRNode */
     {"symbol_expression_r_node_create", (DL_FUNC) &r_symbol_expression_r_node_create, 1},
     {"symbol_expression_r_node_get_representation", (DL_FUNC) &r_symbol_expression_r_node_get_representation, 1},
-
-    /* WhileLoopExpressionRNode */
-    {"while_loop_expression_r_node_create", (DL_FUNC) &r_while_loop_expression_r_node_create, 3},
-    {"while_loop_expression_r_node_get_condition", (DL_FUNC) &r_while_loop_expression_r_node_get_condition, 1},
-    {"while_loop_expression_r_node_set_condition", (DL_FUNC) &r_while_loop_expression_r_node_set_condition, 2},
 
     /* RepeatLoopExpressionRNode */
     {"repeat_loop_expression_r_node_create", (DL_FUNC) &r_repeat_loop_expression_r_node_create, 3},
@@ -179,6 +174,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* ForLoopExpressionRNode */
     {"rastr_ast_for_loop_expression_r_node_create", (DL_FUNC) &r_rastr_ast_for_loop_expression_r_node_create, 3},
+
+    /* WhileLoopExpressionRNode */
+    {"rastr_ast_while_loop_expression_r_node_create", (DL_FUNC) &r_rastr_ast_while_loop_expression_r_node_create, 3},
 
     {NULL, NULL, 0}
 };
