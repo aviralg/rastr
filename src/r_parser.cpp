@@ -2,6 +2,7 @@
 #include "parser.hpp"
 #include "r_cast.hpp"
 
+using rastr::ast::FileRNode;
 using rastr::ast::ProgramRNode;
 using rastr::parser::parse_file;
 using rastr::parser::parse_stdin;
@@ -24,5 +25,5 @@ SEXP r_parser_parse_file(SEXP r_filename) {
 
     auto node = parse_file(filepath, false, false);
 
-    return to_sexp<ProgramRNode>(node);
+    return to_sexp<FileRNode>(node);
 }

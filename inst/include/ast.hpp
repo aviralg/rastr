@@ -40,6 +40,7 @@
 #include "EndRNode.hpp"
 #include "BeginRNode.hpp"
 #include "ProgramRNode.hpp"
+#include "FileRNode.hpp"
 
 template <typename T>
 std::shared_ptr<T> wrap(void* ptr) {

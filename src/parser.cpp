@@ -9,6 +9,8 @@
 namespace rastr {
 namespace parser {
 
+using rastr::ast::FileRNode;
+using rastr::ast::FileRNodeSPtr;
 using rastr::ast::ProgramRNode;
 using rastr::ast::ProgramRNodeSPtr;
 
@@ -43,13 +45,15 @@ parse_string(const char* string, bool debug_lexer, bool debug_parser) {
     return parse_(input_stream, input_stream_name, debug_lexer, debug_parser);
 }
 
-ProgramRNodeSPtr
+FileRNodeSPtr
 parse_file(const std::string& filepath, bool debug_lexer, bool debug_parser) {
     /*  TODO: remove this check */
     check_filepath(filepath);
     std::ifstream input_stream(filepath);
     std::string input_stream_name(filepath);
-    return parse_(input_stream, input_stream_name, debug_lexer, debug_parser);
+    auto program =
+        parse_(input_stream, input_stream_name, debug_lexer, debug_parser);
+    return std::make_shared<FileRNode>(filepath, program);
 }
 
 } // namespace parser

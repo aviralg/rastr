@@ -68,6 +68,7 @@ void initialize() {
     ast::BeginRNode::initialize();
     ast::EndRNode::initialize();
     ast::ProgramRNode::initialize();
+    ast::FileRNode::initialize();
 }
 
 } // namespace rastr

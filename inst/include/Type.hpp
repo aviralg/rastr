@@ -41,6 +41,7 @@ enum class Type {
     BeginRNode,
     EndRNode,
     ProgramRNode,
+    FileRNode,
     ConditionRNode,
     UndefinedNode,
 };
