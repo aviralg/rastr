@@ -10,7 +10,7 @@ class IfElseConditionalExpressionRNode: public ConditionalExpressionRNode {
   public:
     explicit IfElseConditionalExpressionRNode(
         KeywordRNodeSPtr if_keyword,
-        ConditionRNodeSPtr condition,
+        ExpressionConditionRNodeSPtr condition,
         ExpressionRNodeSPtr consequent_expression,
         KeywordRNodeSPtr else_keyword,
         ExpressionRNodeSPtr alternative_expression)

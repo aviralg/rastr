@@ -145,29 +145,4 @@ inline SEXP to_sexp<rastr::ast::ExpressionRNode>(
     return R_NilValue;
 }
 
-template <>
-inline SEXP
-to_sexp<rastr::ast::RNode>(std::shared_ptr<rastr::ast::RNode> node) {
-    using rastr::ast::ExpressionRNode;
-    using rastr::ast::ExpressionRNodeSPtr;
-    using rastr::ast::InRNode;
-    using rastr::ast::InRNodeSPtr;
-    using rastr::ast::Type;
-
-    Type type = node->get_type();
-
-    if (type == Type::InRNode) {
-        InRNodeSPtr downcasted_node = std::static_pointer_cast<InRNode>(node);
-        return to_sexp(downcasted_node);
-    } else if (node->is_expression_node()) {
-        ExpressionRNodeSPtr downcasted_node =
-            std::dynamic_pointer_cast<ExpressionRNode>(node);
-        return to_sexp<ExpressionRNode>(downcasted_node);
-    }
-
-    std::string type_str(type_to_string(type));
-    Rf_error("to_sexp::'%s' object not handled", type_str.c_str());
-    return R_NilValue;
-}
-
 #endif /* RASTR_R_CAST_HPP */

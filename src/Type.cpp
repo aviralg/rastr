@@ -55,8 +55,10 @@ const std::string type_to_string(const Type type) {
         return "BinaryOperationExpressionRNode";
     case Type::UnaryOperationExpressionRNode:
         return "UnaryOperationExpressionRNode";
-    case Type::InRNode:
-        return "InRNode";
+    case Type::InConditionRNode:
+        return "InConditionRNode";
+    case Type::ExpressionConditionRNode:
+        return "ExpressionConditionRNode";
     case Type::IndexingExpressionRNode:
         return "IndexingExpressionRNode";
     case Type::SubsettingExpressionRNode:
@@ -75,8 +77,6 @@ const std::string type_to_string(const Type type) {
         return "ProgramRNode";
     case Type::FileRNode:
         return "FileRNode";
-    case Type::ConditionRNode:
-        return "ConditionRNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -138,8 +138,10 @@ Type string_to_type(const std::string& type) {
         return Type::IndexingExpressionRNode;
     } else if (type == "SubsettingExpressionRNode") {
         return Type::SubsettingExpressionRNode;
-    } else if (type == "InRNode") {
-        return Type::InRNode;
+    } else if (type == "InConditionRNode") {
+        return Type::InConditionRNode;
+    } else if (type == "ExpressionConditionRNode") {
+        return Type::ExpressionConditionRNode;
     } else if (type == "BlockExpressionRNode") {
         return Type::BlockExpressionRNode;
     } else if (type == "MissingExpressionRNode") {
@@ -154,8 +156,6 @@ Type string_to_type(const std::string& type) {
         return Type::ProgramRNode;
     } else if (type == "FileRNode") {
         return Type::FileRNode;
-    } else if (type == "ConditionRNode") {
-        return Type::ConditionRNode;
     } else {
         return Type::UndefinedNode;
     }

@@ -10,7 +10,7 @@ class IfConditionalExpressionRNode: public ConditionalExpressionRNode {
   public:
     explicit IfConditionalExpressionRNode(
         KeywordRNodeSPtr if_keyword,
-        ConditionRNodeSPtr condition,
+        ExpressionConditionRNodeSPtr condition,
         ExpressionRNodeSPtr consequent_expression)
         : ConditionalExpressionRNode(Type::IfConditionalExpressionRNode,
                                      if_keyword,

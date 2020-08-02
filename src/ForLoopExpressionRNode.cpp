@@ -12,8 +12,7 @@ void ForLoopExpressionRNode::initialize() {
                                   "rastr_ast_node_r",
                                   "rastr_ast_node",
                                   "rastr_ast_keyword_i",
-                                  "rastr_ast_body_i",
-                                  "rastr_ast_condition_i"});
+                                  "rastr_ast_body_i"});
     R_PreserveObject(class_);
 }
 

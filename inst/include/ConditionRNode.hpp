@@ -11,32 +11,11 @@ class ConditionRNode
     : public RNode
     , public IBounded {
   public:
-    explicit ConditionRNode(DelimiterRNodeSPtr opening_delimiter,
-                            RNodeSPtr condition,
+    explicit ConditionRNode(Type type,
+                            DelimiterRNodeSPtr opening_delimiter,
                             DelimiterRNodeSPtr closing_delimiter)
-        : RNode(Type::ConditionRNode)
-        , IBounded(opening_delimiter, closing_delimiter)
-        , condition_(condition) {
+        : RNode(type), IBounded(opening_delimiter, closing_delimiter) {
     }
-
-    RNodeSPtr get_condition() const {
-        return condition_;
-    }
-
-    void set_condition(RNodeSPtr condition) {
-        condition_ = condition;
-    }
-
-    static void initialize();
-
-    static void finalize();
-
-    static SEXP get_class();
-
-  private:
-    RNodeSPtr condition_;
-
-    static SEXP class_;
 };
 
 using ConditionRNodeSPtr = std::shared_ptr<ConditionRNode>;

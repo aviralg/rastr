@@ -214,6 +214,8 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* ForLoopExpressionRNode */
     {"rastr_ast_for_loop_expression_r_node_create", (DL_FUNC) &r_rastr_ast_for_loop_expression_r_node_create, 3},
+    {"rastr_ast_for_loop_expression_get_condition", (DL_FUNC) &r_rastr_ast_for_loop_expression_get_condition, 1},
+    {"rastr_ast_for_loop_expression_set_condition", (DL_FUNC) &r_rastr_ast_for_loop_expression_set_condition, 2},
 
     /* WhileLoopExpressionRNode */
     {"rastr_ast_while_loop_expression_r_node_create", (DL_FUNC) &r_rastr_ast_while_loop_expression_r_node_create, 3},

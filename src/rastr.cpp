@@ -45,7 +45,6 @@ void initialize() {
     ast::BreakExpressionRNode::initialize();
     ast::TerminatedExpressionRNode::initialize();
     ast::DelimiterRNode::initialize();
-    ast::ConditionRNode::initialize();
     ast::SymbolExpressionRNode::initialize();
     ast::KeywordRNode::initialize();
     ast::ForLoopExpressionRNode::initialize();
@@ -59,7 +58,8 @@ void initialize() {
     ast::OperatorRNode::initialize();
     ast::BinaryOperationExpressionRNode::initialize();
     ast::UnaryOperationExpressionRNode::initialize();
-    ast::InRNode::initialize();
+    ast::InConditionRNode::initialize();
+    ast::ExpressionConditionRNode::initialize();
     ast::IndexingExpressionRNode::initialize();
     ast::SubsettingExpressionRNode::initialize();
     ast::BlockExpressionRNode::initialize();

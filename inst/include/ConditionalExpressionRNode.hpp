@@ -15,7 +15,7 @@ class ConditionalExpressionRNode
     explicit ConditionalExpressionRNode(
         Type type,
         KeywordRNodeSPtr if_keyword,
-        ConditionRNodeSPtr condition,
+        ExpressionConditionRNodeSPtr condition,
         ExpressionRNodeSPtr consequent_expression)
         : ExpressionRNode(type)
         , ICondition(condition)

@@ -120,6 +120,13 @@ RNode* create_unary_expression(RNode* op_ptr, RNode* expr_ptr) {
     return new UnaryOperationExpressionRNode(op, expr);
 }
 
+RNode* create_expression_condition(RNode* expr_ptr, RNode* opening_delimiter_ptr, RNode* closing_delimiter_ptr) {
+    auto expr = wrap<ExpressionRNode>(expr_ptr);
+    auto opening_delimiter = wrap<DelimiterRNode>(opening_delimiter_ptr);
+    auto closing_delimiter = wrap<DelimiterRNode>(closing_delimiter_ptr);
+    return new ExpressionConditionRNode(opening_delimiter, expr, closing_delimiter);
+}
+
 void add_terminator(ExpressionSequenceRNode* seq_ptr, RNode* delimiter_ptr) {
     auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
     int size = seq_ptr -> get_size();
@@ -215,24 +222,24 @@ expr: INT_CONST                                                                 
                                                                                 }
     | IF ifcond expr_or_assign_or_help                                          {
                                                                                   $$ = new IfConditionalExpressionRNode(wrap<KeywordRNode>($1),
-                                                                                                                        wrap<ConditionRNode>($2),
+                                                                                                                        wrap<ExpressionConditionRNode>($2),
                                                                                                                         wrap<ExpressionRNode>($3));
                                                                                 }
     | IF ifcond expr_or_assign_or_help ELSE expr_or_assign_or_help              {
                                                                                   $$ = new IfElseConditionalExpressionRNode(wrap<KeywordRNode>($1),
-                                                                                                                            wrap<ConditionRNode>($2),
+                                                                                                                            wrap<ExpressionConditionRNode>($2),
                                                                                                                             wrap<ExpressionRNode>($3),
                                                                                                                             wrap<KeywordRNode>($4),
                                                                                                                             wrap<ExpressionRNode>($5));
                                                                                 }
     | FOR forcond expr_or_assign_or_help %prec FOR                              {
                                                                                   $$ = new ForLoopExpressionRNode(wrap<KeywordRNode>($1),
-                                                                                                                  wrap<ConditionRNode>($2),
+                                                                                                                  wrap<InConditionRNode>($2),
                                                                                                                   wrap<ExpressionRNode>($3));
                                                                                 }
     | WHILE cond expr_or_assign_or_help                                         {
                                                                                   $$ = new WhileLoopExpressionRNode(wrap<KeywordRNode>($1),
-                                                                                                                    wrap<ConditionRNode>($2),
+                                                                                                                    wrap<ExpressionConditionRNode>($2),
                                                                                                                     wrap<ExpressionRNode>($3));
                                                                                 }
     | REPEAT expr_or_assign_or_help                                             {
@@ -278,19 +285,13 @@ expr: INT_CONST                                                                 
     ;
 
 cond: LPAREN expr_or_help RPAREN                                                {
-                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
-                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($3);
-                                                                                  auto expr = wrap<RNode>($2);
-                                                                                  $$ = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
+                                                                                  $$ = create_expression_condition($2, $1, $3);
                                                                                   lexer.enable_eat_lines();
                                                                                 }
     ;
 
 ifcond: LPAREN expr_or_help RPAREN                                              {
-                                                                                  auto opening_delimiter = wrap<DelimiterRNode>($1);
-                                                                                  auto closing_delimiter = wrap<DelimiterRNode>($3);
-                                                                                  auto expr = wrap<RNode>($2);
-                                                                                  $$ = new ConditionRNode(opening_delimiter, expr, closing_delimiter);
+                                                                                  $$ = create_expression_condition($2, $1, $3);
                                                                                   lexer.enable_eat_lines();
                                                                                 }
       ;
@@ -298,11 +299,9 @@ ifcond: LPAREN expr_or_help RPAREN                                              
 forcond: LPAREN SYMBOL IN expr_or_help RPAREN                                   {
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>($1);
                                                                                   auto closing_delimiter = wrap<DelimiterRNode>($5);
+                                                                                  auto sym = wrap<SymbolExpressionRNode>($2);                                                                                            auto keyword = wrap<KeywordRNode>($3);
                                                                                   auto expr = wrap<ExpressionRNode>($4);
-                                                                                  auto keyword = wrap<KeywordRNode>($3);
-                                                                                  auto sym = wrap<SymbolExpressionRNode>($2);
-                                                                                  auto condition = std::make_shared<InRNode>(sym, keyword, expr);
-                                                                                  $$ = new ConditionRNode(opening_delimiter, condition, closing_delimiter);
+                                                                                  $$ = new InConditionRNode(opening_delimiter, sym, keyword, expr, closing_delimiter);
                                                                                   lexer.enable_eat_lines();
                                                                                 }
        ;

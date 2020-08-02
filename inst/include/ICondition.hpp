@@ -1,28 +1,29 @@
 #ifndef RASTR_I_CONDITION_RNODE_HPP
 #define RASTR_I_CONDITION_RNODE_HPP
 
-#include "ConditionRNode.hpp"
+#include "ExpressionConditionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
 class ICondition {
   public:
-    explicit ICondition(ConditionRNodeSPtr condition): condition_(condition) {
+    explicit ICondition(ExpressionConditionRNodeSPtr condition)
+        : condition_(condition) {
     }
 
     virtual ~ICondition() = default;
 
-    ConditionRNodeSPtr get_condition() const {
+    ExpressionConditionRNodeSPtr get_condition() const {
         return condition_;
     }
 
-    void set_condition(ConditionRNodeSPtr condition) {
+    void set_condition(ExpressionConditionRNodeSPtr condition) {
         condition_ = condition;
     }
 
   private:
-    ConditionRNodeSPtr condition_;
+    ExpressionConditionRNodeSPtr condition_;
 };
 
 using IConditionSPtr = std::shared_ptr<ICondition>;

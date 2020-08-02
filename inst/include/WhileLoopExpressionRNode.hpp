@@ -12,7 +12,7 @@ class WhileLoopExpressionRNode
     , public ICondition {
   public:
     explicit WhileLoopExpressionRNode(KeywordRNodeSPtr keyword,
-                                      ConditionRNodeSPtr condition,
+                                      ExpressionConditionRNodeSPtr condition,
                                       ExpressionRNodeSPtr body)
         : LoopExpressionRNode(Type::WhileLoopExpressionRNode, keyword, body)
         , ICondition(condition) {

@@ -2,20 +2,26 @@
 #define RASTR_AST_FOR_LOOP_EXPRESSION_RNODE_HPP
 
 #include "LoopExpressionRNode.hpp"
-#include "ICondition.hpp"
+#include "InConditionRNode.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ForLoopExpressionRNode
-    : public LoopExpressionRNode
-    , public ICondition {
+class ForLoopExpressionRNode: public LoopExpressionRNode {
   public:
     explicit ForLoopExpressionRNode(KeywordRNodeSPtr keyword,
-                                    ConditionRNodeSPtr condition,
+                                    InConditionRNodeSPtr condition,
                                     ExpressionRNodeSPtr body)
         : LoopExpressionRNode(Type::ForLoopExpressionRNode, keyword, body)
-        , ICondition(condition) {
+        , condition_(condition) {
+    }
+
+    InConditionRNodeSPtr get_condition() const {
+        return condition_;
+    }
+
+    void set_condition(InConditionRNodeSPtr condition) {
+        condition_ = condition;
     }
 
     static void initialize();
@@ -25,6 +31,8 @@ class ForLoopExpressionRNode
     static SEXP get_class();
 
   private:
+    InConditionRNodeSPtr condition_;
+
     static SEXP class_;
 };
 
