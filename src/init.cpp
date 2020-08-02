@@ -103,6 +103,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_i_bounded_set_opening_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_set_opening_delimiter, 2},
     {"rastr_ast_i_bounded_get_closing_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_get_closing_delimiter, 1},
     {"rastr_ast_i_bounded_set_closing_delimiter", (DL_FUNC) &r_rastr_ast_i_bounded_set_closing_delimiter, 2},
+    {"rastr_ast_i_bounded_set_delimiters", (DL_FUNC) &r_rastr_ast_i_bounded_set_delimiters, 3},
 
     /* IIndices */
     {"rastr_ast_i_indices_get_indices", (DL_FUNC) &r_rastr_ast_i_indices_get_indices, 1},

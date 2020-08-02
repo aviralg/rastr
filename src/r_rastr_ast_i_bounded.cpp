@@ -46,3 +46,19 @@ SEXP r_rastr_ast_i_bounded_set_closing_delimiter(SEXP r_i_bounded,
 
     return r_i_bounded;
 }
+
+SEXP r_rastr_ast_i_bounded_set_delimiters(SEXP r_i_bounded,
+                                          SEXP r_opening_delimiter,
+                                          SEXP r_closing_delimiter) {
+    IBoundedSPtr i_bounded = from_sexp<IBounded>(r_i_bounded);
+
+    DelimiterRNodeSPtr opening_delimiter =
+        from_sexp<DelimiterRNode>(r_opening_delimiter);
+
+    DelimiterRNodeSPtr closing_delimiter =
+        from_sexp<DelimiterRNode>(r_closing_delimiter);
+
+    i_bounded->set_delimiters(opening_delimiter, closing_delimiter);
+
+    return r_i_bounded;
+}
