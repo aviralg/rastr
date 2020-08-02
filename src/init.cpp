@@ -24,6 +24,7 @@
 #include "r_rastr_ast_keyword_r_node.h"
 #include "r_rastr_ast_delimiter_r_node.h"
 
+#include "r_rastr_ast_begin_r_node.h"
 #include "r_rastr_ast_unary_operation_expression_r_node.h"
 #include "r_rastr_ast_binary_operation_expression_r_node.h"
 #include "r_rastr_ast_function_definition_expression_r_node.h"
@@ -125,6 +126,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* DelimiterRNode */
     {"rastr_ast_delimiter_r_node_create", (DL_FUNC) &r_rastr_ast_delimiter_r_node_create, 1},
+
+    /* BeginRNode */
+    {"rastr_ast_begin_r_node_create", (DL_FUNC) &r_rastr_ast_begin_r_node_create, 0},
 
     /* UnaryOperationExpressionRNode */
     {"rastr_ast_unary_operation_expression_r_node_create", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_create, 2},
