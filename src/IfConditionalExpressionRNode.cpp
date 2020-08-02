@@ -6,11 +6,12 @@ namespace ast {
 SEXP IfConditionalExpressionRNode::class_ = NULL;
 
 void IfConditionalExpressionRNode::initialize() {
-    class_ = rastr::create_class({"rastr_node_r_expression_conditional_if",
-                                  "rastr_node_r_expression_conditional",
-                                  "rastr_node_r_expression",
-                                  "rastr_node_r",
-                                  "rastr_node"});
+    class_ = rastr::create_class({"rastr_ast_node_r_expression_conditional_if",
+                                  "rastr_ast_node_r_expression_conditional",
+                                  "rastr_ast_node_r_expression",
+                                  "rastr_ast_node_r",
+                                  "rastr_ast_node",
+                                  "rastr_ast_condition_i"});
     R_PreserveObject(class_);
 }
 

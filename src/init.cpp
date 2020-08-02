@@ -46,6 +46,7 @@
 #include "r_rastr_ast_for_loop_expression_r_node.h"
 #include "r_rastr_ast_while_loop_expression_r_node.h"
 #include "r_rastr_ast_repeat_loop_expression_r_node.h"
+#include "r_rastr_ast_if_conditional_expression_r_node.h"
 
 #include <R_ext/Rdynload.h>
 #include <stdio.h>
@@ -232,6 +233,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* RepeatLoopExpressionRNode */
     {"rastr_ast_repeat_loop_expression_r_node_create", (DL_FUNC) &r_rastr_ast_repeat_loop_expression_r_node_create, 2},
+
+    /* IfConditionalExpressionRNode */
+    {"r_rastr_ast_if_conditional_expression_r_node_create", (DL_FUNC) &r_rastr_ast_if_conditional_expression_r_node_create, 3},
 
     {NULL, NULL, 0}
 };
