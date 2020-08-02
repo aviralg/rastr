@@ -32,6 +32,7 @@
 #include "r_rastr_ast_file_r_node.h"
 #include "r_rastr_ast_expression_sequence_r_node.h"
 
+#include "r_rastr_ast_group_expression_r_node.h"
 
 #include "r_rastr_ast_unary_operation_expression_r_node.h"
 #include "r_rastr_ast_binary_operation_expression_r_node.h"
@@ -165,6 +166,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_expression_sequence_r_node_get_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_get_element, 2},
     {"rastr_ast_expression_sequence_r_node_set_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_set_element, 3},
     {"rastr_ast_expression_sequence_r_node_push_back", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_push_back, 2},
+
+    /* GroupExpressionRNode */
+    {"rastr_ast_group_expression_r_node_create", (DL_FUNC) &r_rastr_ast_group_expression_r_node_create, 3},
 
     /* UnaryOperationExpressionRNode */
     {"rastr_ast_unary_operation_expression_r_node_create", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_create, 2},
