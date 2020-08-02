@@ -20,6 +20,8 @@
 #include "r_rastr_ast_i_operator.h"
 #include "r_rastr_ast_i_representation.h"
 
+#include "r_rastr_ast_conditional_expression_r_node.h"
+
 #include "r_rastr_ast_operator_r_node.h"
 #include "r_rastr_ast_keyword_r_node.h"
 #include "r_rastr_ast_delimiter_r_node.h"
@@ -121,6 +123,12 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* IRepresentation */
     {"rastr_ast_i_representation_get_representation", (DL_FUNC) &r_rastr_ast_i_representation_get_representation, 1},
+
+    /* ConditionalExpressionRNode */
+    {"rastr_ast_conditional_expression_r_node_get_if_keyword", (DL_FUNC) &r_rastr_ast_conditional_expression_r_node_get_if_keyword, 1},
+    {"rastr_ast_conditional_expression_r_node_set_if_keyword", (DL_FUNC) &r_rastr_ast_conditional_expression_r_node_set_if_keyword, 2},
+    {"rastr_ast_conditional_expression_r_node_get_consequent_expression", (DL_FUNC) &r_rastr_ast_conditional_expression_r_node_get_consequent_expression, 1},
+    {"rastr_ast_conditional_expression_r_node_set_consequent_expression", (DL_FUNC) &r_rastr_ast_conditional_expression_r_node_set_consequent_expression, 2},
 
     /* OperatorRNode */
     {"rastr_ast_operator_r_node_create", (DL_FUNC) &r_rastr_ast_operator_r_node_create, 1},
