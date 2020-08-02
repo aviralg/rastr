@@ -25,19 +25,15 @@ class ProgramRNode
 
     ~ProgramRNode() = default;
 
-    bool is_program_node() const override {
-        return true;
-    }
-
     bool is_well_formed() const {
-        return syntax_error_.is_valid();
+        return syntax_error_ -> is_valid();
     }
 
-    rastr::parser::SyntaxError get_syntax_error() const {
+    rastr::parser::SyntaxErrorSPtr get_syntax_error() const {
         return syntax_error_;
     }
 
-    void set_syntax_error(const rastr::parser::SyntaxError& syntax_error) {
+    void set_syntax_error(const rastr::parser::SyntaxErrorSPtr& syntax_error) {
         syntax_error_ = syntax_error;
     }
 
@@ -51,7 +47,7 @@ class ProgramRNode
     BeginRNodeSPtr begin_;
     EndRNodeSPtr end_;
 
-    rastr::parser::SyntaxError syntax_error_;
+    rastr::parser::SyntaxErrorSPtr syntax_error_;
 
     static SEXP class_;
 };
