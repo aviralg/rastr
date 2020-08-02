@@ -7,7 +7,6 @@
 #include "r_raw_literal_expression_r_node.h"
 
 #include "r_symbol_expression_r_node.h"
-#include "r_loop_expression_r_node.h"
 #include "r_for_loop_expression_r_node.h"
 #include "r_while_loop_expression_r_node.h"
 #include "r_repeat_loop_expression_r_node.h"
@@ -74,12 +73,6 @@ static const R_CallMethodDef CallEntries[] = {
     /* SymbolExpressionRNode */
     {"symbol_expression_r_node_create", (DL_FUNC) &r_symbol_expression_r_node_create, 1},
     {"symbol_expression_r_node_get_representation", (DL_FUNC) &r_symbol_expression_r_node_get_representation, 1},
-
-    /* LoopExpressionRNode */
-    {"loop_expression_r_node_get_keyword", (DL_FUNC) &r_loop_expression_r_node_get_keyword, 1},
-    {"loop_expression_r_node_set_keyword", (DL_FUNC) &r_loop_expression_r_node_set_keyword, 2},
-    {"loop_expression_r_node_get_body", (DL_FUNC) &r_loop_expression_r_node_get_body, 1},
-    {"loop_expression_r_node_set_body", (DL_FUNC) &r_loop_expression_r_node_set_body, 2},
 
     /* ForLoopExpressionRNode */
     {"for_loop_expression_r_node_create", (DL_FUNC) &r_for_loop_expression_r_node_create, 3},
