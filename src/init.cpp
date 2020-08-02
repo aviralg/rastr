@@ -17,6 +17,7 @@
 #include "r_rastr_ast_i_indices.h"
 #include "r_rastr_ast_i_keyword.h"
 #include "r_rastr_ast_i_symbol.h"
+#include "r_rastr_ast_i_expression.h"
 #include "r_rastr_ast_i_object.h"
 #include "r_rastr_ast_i_operator.h"
 #include "r_rastr_ast_i_representation.h"
@@ -94,6 +95,10 @@ static const R_CallMethodDef CallEntries[] = {
     /* IBody */
     {"rastr_ast_i_body_get_body", (DL_FUNC) &r_rastr_ast_i_body_get_body, 1},
     {"rastr_ast_i_body_set_body", (DL_FUNC) &r_rastr_ast_i_body_set_body, 2},
+
+    /* IExpression */
+    {"rastr_ast_i_expression_get_expression", (DL_FUNC) &r_rastr_ast_i_expression_get_expression, 1},
+    {"rastr_ast_i_expression_set_expression", (DL_FUNC) &r_rastr_ast_i_expression_set_expression, 2},
 
     /* IObject */
     {"rastr_ast_i_object_get_object", (DL_FUNC) &r_rastr_ast_i_object_get_object, 1},
