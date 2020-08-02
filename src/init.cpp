@@ -30,12 +30,13 @@
 #include "r_rastr_ast_end_r_node.h"
 #include "r_rastr_ast_program_r_node.h"
 #include "r_rastr_ast_file_r_node.h"
+#include "r_rastr_ast_expression_sequence_r_node.h"
+
 
 #include "r_rastr_ast_unary_operation_expression_r_node.h"
 #include "r_rastr_ast_binary_operation_expression_r_node.h"
 #include "r_rastr_ast_function_definition_expression_r_node.h"
 #include "r_rastr_ast_function_call_expression_r_node.h"
-#include "r_rastr_ast_expression_sequence_r_node.h"
 #include "r_rastr_ast_indexing_expression_r_node.h"
 #include "r_rastr_ast_subsetting_expression_r_node.h"
 #include "r_rastr_ast_for_loop_expression_r_node.h"
@@ -158,6 +159,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_file_r_node_get_program", (DL_FUNC) &r_rastr_ast_file_r_node_get_program, 1},
     {"rastr_ast_file_r_node_set_program", (DL_FUNC) &r_rastr_ast_file_r_node_set_program, 2},
 
+    /* ExpressionSequenceRNode */
+    {"rastr_ast_expression_sequence_r_node_create", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_create, 0},
+    {"rastr_ast_expression_sequence_r_node_get_size", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_get_size, 1},
+    {"rastr_ast_expression_sequence_r_node_get_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_get_element, 2},
+    {"rastr_ast_expression_sequence_r_node_set_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_set_element, 3},
+    {"rastr_ast_expression_sequence_r_node_push_back", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_push_back, 2},
+
     /* UnaryOperationExpressionRNode */
     {"rastr_ast_unary_operation_expression_r_node_create", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_create, 2},
     {"rastr_ast_unary_operation_expression_r_node_get_operand", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_get_operand, 1},
@@ -181,13 +189,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"rastr_ast_function_call_expression_r_node_set_function", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_set_function, 2},
     {"rastr_ast_function_call_expression_r_node_get_arguments", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_get_arguments, 1},
     {"rastr_ast_function_call_expression_r_node_set_arguments", (DL_FUNC) &r_rastr_ast_function_call_expression_r_node_set_arguments, 2},
-
-    /* ExpressionSequenceRNode */
-    {"rastr_ast_expression_sequence_r_node_create", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_create, 0},
-    {"rastr_ast_expression_sequence_r_node_get_size", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_get_size, 1},
-    {"rastr_ast_expression_sequence_r_node_get_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_get_element, 2},
-    {"rastr_ast_expression_sequence_r_node_set_element", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_set_element, 3},
-    {"rastr_ast_expression_sequence_r_node_push_back", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_push_back, 2},
 
     /* IndexingExpressionRNode */
     {"rastr_ast_indexing_expression_r_node_create", (DL_FUNC) &r_rastr_ast_indexing_expression_r_node_create, 5},
