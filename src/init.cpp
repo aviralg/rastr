@@ -26,6 +26,7 @@
 
 #include "r_rastr_ast_begin_r_node.h"
 #include "r_rastr_ast_end_r_node.h"
+#include "r_rastr_ast_program_r_node.h"
 #include "r_rastr_ast_unary_operation_expression_r_node.h"
 #include "r_rastr_ast_binary_operation_expression_r_node.h"
 #include "r_rastr_ast_function_definition_expression_r_node.h"
@@ -133,6 +134,12 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* EndRNode */
     {"rastr_ast_end_r_node_create", (DL_FUNC) &r_rastr_ast_end_r_node_create, 0},
+
+    /* ProgramRNode */
+    {"rastr_ast_program_r_node_create", (DL_FUNC) &r_rastr_ast_program_r_node_create, 3},
+    {"rastr_ast_program_r_node_is_well_formed", (DL_FUNC) &r_rastr_ast_program_r_node_is_well_formed, 1},
+    {"rastr_ast_program_r_node_get_syntax_error", (DL_FUNC) &r_rastr_ast_program_r_node_get_syntax_error, 1},
+    {"rastr_ast_program_r_node_set_syntax_error", (DL_FUNC) &r_rastr_ast_program_r_node_set_syntax_error, 2},
 
     /* UnaryOperationExpressionRNode */
     {"rastr_ast_unary_operation_expression_r_node_create", (DL_FUNC) &r_rastr_ast_unary_operation_expression_r_node_create, 2},
