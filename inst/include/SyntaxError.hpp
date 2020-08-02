@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Location.hpp"
+#include "rastr.hpp"
 
 namespace rastr {
 namespace parser {
@@ -28,11 +29,21 @@ class SyntaxError {
         return description_;
     }
 
+    static void initialize();
+
+    static void finalize();
+
+    static SEXP get_class();
+
   private:
     bool valid_;
     Location location_;
     std::string description_;
+
+    static SEXP class_;
 };
+
+using SyntaxErrorSPtr = std::shared_ptr<SyntaxError>;
 
 } // namespace parser
 } // namespace rastr
