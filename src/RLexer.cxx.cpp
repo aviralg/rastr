@@ -948,7 +948,7 @@ case YY_STATE_EOF(single_quoted_string):
 case YY_STATE_EOF(double_quoted_string):
 #line 95 "RLexer.lxx"
 {
-                                    *yylval = new rastr::ast::EndRNode();
+                                    *yylval = new rastr::ast::EndNode();
                                     return rastr::parser::RParser::token::END_OF_INPUT;
                                 }
 	YY_BREAK

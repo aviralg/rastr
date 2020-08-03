@@ -69,14 +69,14 @@ const std::string type_to_string(const Type type) {
         return "MissingExpressionRNode";
     case Type::GroupExpressionRNode:
         return "GroupExpressionRNode";
-    case Type::EndRNode:
-        return "EndRNode";
-    case Type::BeginRNode:
-        return "BeginRNode";
-    case Type::ProgramRNode:
-        return "ProgramRNode";
-    case Type::FileRNode:
-        return "FileRNode";
+    case Type::EndNode:
+        return "EndNode";
+    case Type::BeginNode:
+        return "BeginNode";
+    case Type::RProgramNode:
+        return "RProgramNode";
+    case Type::RFileNode:
+        return "RFileNode";
     case Type::UndefinedNode:
         return "UndefinedNode";
     }
@@ -148,14 +148,14 @@ Type string_to_type(const std::string& type) {
         return Type::MissingExpressionRNode;
     } else if (type == "GroupExpressionRNode") {
         return Type::GroupExpressionRNode;
-    } else if (type == "EndRNode") {
-        return Type::EndRNode;
-    } else if (type == "BeginRNode") {
-        return Type::BeginRNode;
-    } else if (type == "ProgramRNode") {
-        return Type::ProgramRNode;
-    } else if (type == "FileRNode") {
-        return Type::FileRNode;
+    } else if (type == "EndNode") {
+        return Type::EndNode;
+    } else if (type == "BeginNode") {
+        return Type::BeginNode;
+    } else if (type == "RProgramNode") {
+        return Type::RProgramNode;
+    } else if (type == "RFileNode") {
+        return Type::RFileNode;
     } else {
         return Type::UndefinedNode;
     }

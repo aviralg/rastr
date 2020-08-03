@@ -4,15 +4,15 @@
 namespace rastr {
 namespace parser {
 
-using rastr::ast::FileRNodeSPtr;
-using rastr::ast::ProgramRNodeSPtr;
+using rastr::ast::RFileNodeSPtr;
+using rastr::ast::RProgramNodeSPtr;
 
-ProgramRNodeSPtr parse_stdin(bool debug_lexer, bool debug_parser);
+RProgramNodeSPtr parse_stdin(bool debug_lexer, bool debug_parser);
 
-ProgramRNodeSPtr
+RProgramNodeSPtr
 parse_string(const char* string, bool debug_lexer, bool debug_parser);
 
-FileRNodeSPtr
+RFileNodeSPtr
 parse_file(const std::string& filepath, bool debug_lexer, bool debug_parser);
 
 } // namespace parser

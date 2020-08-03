@@ -65,10 +65,10 @@ void initialize() {
     ast::BlockExpressionRNode::initialize();
     ast::MissingExpressionRNode::initialize();
     ast::GroupExpressionRNode::initialize();
-    ast::BeginRNode::initialize();
-    ast::EndRNode::initialize();
-    ast::ProgramRNode::initialize();
-    ast::FileRNode::initialize();
+    ast::BeginNode::initialize();
+    ast::EndNode::initialize();
+    ast::RProgramNode::initialize();
+    ast::RFileNode::initialize();
 }
 
 } // namespace rastr

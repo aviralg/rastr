@@ -38,10 +38,10 @@
 #include "WhileLoopExpressionRNode.hpp"
 #include "RawStringLiteralExpressionRNode.hpp"
 #include "SubsettingExpressionRNode.hpp"
-#include "EndRNode.hpp"
-#include "BeginRNode.hpp"
-#include "ProgramRNode.hpp"
-#include "FileRNode.hpp"
+#include "EndNode.hpp"
+#include "BeginNode.hpp"
+#include "RProgramNode.hpp"
+#include "RFileNode.hpp"
 
 template <typename T>
 std::shared_ptr<T> wrap(void* ptr) {

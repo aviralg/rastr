@@ -92,7 +92,7 @@ NUM_BEGIN           [.]?[0-9]
 %}
 
 <<EOF>>                         {
-                                    *yylval = new rastr::ast::EndRNode();
+                                    *yylval = new rastr::ast::EndNode();
                                     return rastr::parser::RParser::token::END_OF_INPUT;
                                 }
 \n                              {

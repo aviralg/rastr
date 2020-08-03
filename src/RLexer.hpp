@@ -336,7 +336,7 @@ class RLexer: public yyFlexLexer {
         return false;
     }
 
-    rastr::ast::RNode* saved_yylval_;
+    RParser::semantic_type saved_yylval_;
     RParser::location_type saved_yylloc_;
     int saved_token_;
     bool saved_;

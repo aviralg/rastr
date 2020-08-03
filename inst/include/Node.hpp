@@ -49,7 +49,9 @@ class Node {
         return type_;
     }
 
-    virtual rastr::ast::Language get_language() const = 0;
+    virtual rastr::ast::Language get_language() const {
+        return Language::Undefined;
+    }
 
     bool is_r_node() const {
         return get_language() == Language::R;

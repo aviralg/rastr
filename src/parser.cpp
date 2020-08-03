@@ -9,10 +9,10 @@
 namespace rastr {
 namespace parser {
 
-using rastr::ast::FileRNode;
-using rastr::ast::FileRNodeSPtr;
-using rastr::ast::ProgramRNode;
-using rastr::ast::ProgramRNodeSPtr;
+using rastr::ast::RFileNode;
+using rastr::ast::RFileNodeSPtr;
+using rastr::ast::RProgramNode;
+using rastr::ast::RProgramNodeSPtr;
 
 void check_filepath(const std::string& filepath) {
     std::ifstream fin(filepath);
@@ -22,30 +22,30 @@ void check_filepath(const std::string& filepath) {
     }
 }
 
-ProgramRNodeSPtr parse_(std::istream& input_stream,
+RProgramNodeSPtr parse_(std::istream& input_stream,
                         const std::string& input_stream_name,
                         bool debug_lexer,
                         bool debug_parser) {
-    ProgramRNodeSPtr program;
+    RProgramNodeSPtr program;
     RLexer lexer(input_stream);
     RParser parser(lexer, program);
     parser.parse();
     return program;
 }
 
-ProgramRNodeSPtr parse_stdin(bool debug_lexer, bool debug_parser) {
+RProgramNodeSPtr parse_stdin(bool debug_lexer, bool debug_parser) {
     std::string input_stream_name("<stdin>");
     return parse_(std::cin, input_stream_name, debug_lexer, debug_parser);
 }
 
-ProgramRNodeSPtr
+RProgramNodeSPtr
 parse_string(const char* string, bool debug_lexer, bool debug_parser) {
     std::istringstream input_stream(string);
     std::string input_stream_name("<string>");
     return parse_(input_stream, input_stream_name, debug_lexer, debug_parser);
 }
 
-FileRNodeSPtr
+RFileNodeSPtr
 parse_file(const std::string& filepath, bool debug_lexer, bool debug_parser) {
     /*  TODO: remove this check */
     check_filepath(filepath);
@@ -53,7 +53,7 @@ parse_file(const std::string& filepath, bool debug_lexer, bool debug_parser) {
     std::string input_stream_name(filepath);
     auto program =
         parse_(input_stream, input_stream_name, debug_lexer, debug_parser);
-    return std::make_shared<FileRNode>(filepath, program);
+    return std::make_shared<RFileNode>(filepath, program);
 }
 
 } // namespace parser

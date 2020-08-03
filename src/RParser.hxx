@@ -201,7 +201,7 @@ namespace rastr { namespace parser {
   public:
 #ifndef YYSTYPE
     /// Symbol semantic values.
-    typedef rastr::ast::RNode* semantic_type;
+    typedef rastr::ast::Node* semantic_type;
 #else
     typedef YYSTYPE semantic_type;
 #endif
@@ -548,7 +548,7 @@ namespace rastr { namespace parser {
     {};
 
     /// Build a parser object.
-    RParser (rastr::parser::RLexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr& program_yyarg);
+    RParser (rastr::parser::RLexer& lexer_yyarg, rastr::ast::RProgramNodeSPtr& program_yyarg);
     virtual ~RParser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -930,7 +930,7 @@ namespace rastr { namespace parser {
 
     // User arguments.
     rastr::parser::RLexer& lexer;
-    rastr::ast::ProgramRNodeSPtr& program;
+    rastr::ast::RProgramNodeSPtr& program;
 
   };
 

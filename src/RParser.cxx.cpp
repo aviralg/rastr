@@ -52,27 +52,27 @@
     #define yylex lexer.yylex
 
 
-RNode* create_binary_expression(RNode* op_ptr, RNode* left_expr_ptr, RNode* right_expr_ptr) {
+Node* create_binary_expression(Node* op_ptr, Node* left_expr_ptr, Node* right_expr_ptr) {
     auto op = wrap<OperatorRNode>(op_ptr);
     auto left_expr = wrap<ExpressionRNode>(left_expr_ptr);
     auto right_expr = wrap<ExpressionRNode>(right_expr_ptr);
     return new BinaryOperationExpressionRNode(op, left_expr, right_expr);
 }
 
-RNode* create_unary_expression(RNode* op_ptr, RNode* expr_ptr) {
+Node* create_unary_expression(Node* op_ptr, Node* expr_ptr) {
     auto op = wrap<OperatorRNode>(op_ptr);
     auto expr = wrap<ExpressionRNode>(expr_ptr);
     return new UnaryOperationExpressionRNode(op, expr);
 }
 
-RNode* create_expression_condition(RNode* expr_ptr, RNode* opening_delimiter_ptr, RNode* closing_delimiter_ptr) {
+Node* create_expression_condition(Node* expr_ptr, Node* opening_delimiter_ptr, Node* closing_delimiter_ptr) {
     auto expr = wrap<ExpressionRNode>(expr_ptr);
     auto opening_delimiter = wrap<DelimiterRNode>(opening_delimiter_ptr);
     auto closing_delimiter = wrap<DelimiterRNode>(closing_delimiter_ptr);
     return new ExpressionConditionRNode(opening_delimiter, expr, closing_delimiter);
 }
 
-void add_terminator(ExpressionSequenceRNode* seq_ptr, RNode* delimiter_ptr) {
+void add_terminator(ExpressionSequenceRNode* seq_ptr, Node* delimiter_ptr) {
     auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
     int size = seq_ptr -> get_size();
     if(size == 0) { return; }
@@ -178,7 +178,7 @@ namespace rastr { namespace parser {
 #line 179 "RParser.cxx"
 
   /// Build a parser object.
-  RParser::RParser (rastr::parser::RLexer& lexer_yyarg, rastr::ast::ProgramRNodeSPtr& program_yyarg)
+  RParser::RParser (rastr::parser::RLexer& lexer_yyarg, rastr::ast::RProgramNodeSPtr& program_yyarg)
 #if YYDEBUG
     : yydebug_ (false),
       yycdebug_ (&std::cerr),
@@ -643,10 +643,10 @@ namespace rastr { namespace parser {
   case 2:
 #line 143 "RParser.yxx"
                                                                                 {
-                                                                                  auto begin = std::make_shared<BeginRNode>();
+                                                                                  auto begin = std::make_shared<BeginNode>();
                                                                                   auto exprs = wrap<ExpressionSequenceRNode>(yystack_[1].value);
-                                                                                  auto end = wrap<EndRNode>(yystack_[0].value);
-                                                                                  program.reset(new ProgramRNode(begin, exprs, end));
+                                                                                  auto end = wrap<EndNode>(yystack_[0].value);
+                                                                                  program.reset(new RProgramNode(begin, exprs, end));
                                                                                   yyresult = 0;
                                                                                   YYACCEPT;
                                                                                 }

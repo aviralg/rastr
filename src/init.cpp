@@ -28,10 +28,11 @@
 #include "r_rastr_ast_keyword_r_node.h"
 #include "r_rastr_ast_delimiter_r_node.h"
 
-#include "r_rastr_ast_begin_r_node.h"
-#include "r_rastr_ast_end_r_node.h"
-#include "r_rastr_ast_program_r_node.h"
-#include "r_rastr_ast_file_r_node.h"
+#include "r_rastr_ast_begin_node.h"
+#include "r_rastr_ast_end_node.h"
+#include "r_rastr_ast_r_program_node.h"
+#include "r_rastr_ast_r_file_node.h"
+
 #include "r_rastr_ast_expression_sequence_r_node.h"
 
 #include "r_rastr_ast_group_expression_r_node.h"
@@ -155,24 +156,24 @@ static const R_CallMethodDef CallEntries[] = {
     /* DelimiterRNode */
     {"rastr_ast_delimiter_r_node_create", (DL_FUNC) &r_rastr_ast_delimiter_r_node_create, 1},
 
-    /* BeginRNode */
-    {"rastr_ast_begin_r_node_create", (DL_FUNC) &r_rastr_ast_begin_r_node_create, 0},
+    /* BeginNode */
+    {"rastr_ast_begin_node_create", (DL_FUNC) &r_rastr_ast_begin_node_create, 0},
 
-    /* EndRNode */
-    {"rastr_ast_end_r_node_create", (DL_FUNC) &r_rastr_ast_end_r_node_create, 0},
+    /* EndNode */
+    {"rastr_ast_end_node_create", (DL_FUNC) &r_rastr_ast_end_node_create, 0},
 
-    /* ProgramRNode */
-    {"rastr_ast_program_r_node_create", (DL_FUNC) &r_rastr_ast_program_r_node_create, 3},
-    {"rastr_ast_program_r_node_is_well_formed", (DL_FUNC) &r_rastr_ast_program_r_node_is_well_formed, 1},
-    {"rastr_ast_program_r_node_get_syntax_error", (DL_FUNC) &r_rastr_ast_program_r_node_get_syntax_error, 1},
-    {"rastr_ast_program_r_node_set_syntax_error", (DL_FUNC) &r_rastr_ast_program_r_node_set_syntax_error, 2},
+    /* RProgramNode */
+    {"rastr_ast_r_program_node_create", (DL_FUNC) &r_rastr_ast_r_program_node_create, 3},
+    {"rastr_ast_r_program_node_is_well_formed", (DL_FUNC) &r_rastr_ast_r_program_node_is_well_formed, 1},
+    {"rastr_ast_r_program_node_get_syntax_error", (DL_FUNC) &r_rastr_ast_r_program_node_get_syntax_error, 1},
+    {"rastr_ast_r_program_node_set_syntax_error", (DL_FUNC) &r_rastr_ast_r_program_node_set_syntax_error, 2},
 
-    /* FileRNode */
-    {"rastr_ast_file_r_node_create", (DL_FUNC) &r_rastr_ast_file_r_node_create, 2},
-    {"rastr_ast_file_r_node_get_filepath", (DL_FUNC) &r_rastr_ast_file_r_node_get_filepath, 1},
-    {"rastr_ast_file_r_node_set_filepath", (DL_FUNC) &r_rastr_ast_file_r_node_set_filepath, 2},
-    {"rastr_ast_file_r_node_get_program", (DL_FUNC) &r_rastr_ast_file_r_node_get_program, 1},
-    {"rastr_ast_file_r_node_set_program", (DL_FUNC) &r_rastr_ast_file_r_node_set_program, 2},
+    /* RFileNode */
+    {"rastr_ast_r_file_node_create", (DL_FUNC) &r_rastr_ast_r_file_node_create, 2},
+    {"rastr_ast_r_file_node_get_filepath", (DL_FUNC) &r_rastr_ast_r_file_node_get_filepath, 1},
+    {"rastr_ast_r_file_node_set_filepath", (DL_FUNC) &r_rastr_ast_r_file_node_set_filepath, 2},
+    {"rastr_ast_r_file_node_get_program", (DL_FUNC) &r_rastr_ast_r_file_node_get_program, 1},
+    {"rastr_ast_r_file_node_set_program", (DL_FUNC) &r_rastr_ast_r_file_node_set_program, 2},
 
     /* ExpressionSequenceRNode */
     {"rastr_ast_expression_sequence_r_node_create", (DL_FUNC) &r_rastr_ast_expression_sequence_r_node_create, 0},

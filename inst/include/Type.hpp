@@ -8,15 +8,15 @@ namespace ast {
 
 enum class Type {
     /* Node */
+    /*      */ RProgramNode,
+    /*      */ RFileNode,
     /*      */ UndefinedNode,
+    /*      */ BeginNode,
+    /*      */ EndNode,
     /*     RNode */
     /*      */ DelimiterRNode,
     /*      */ KeywordRNode,
     /*      */ OperatorRNode,
-    /*      */ BeginRNode,
-    /*      */ EndRNode,
-    /*      */ ProgramRNode,
-    /*      */ FileRNode,
     /*      */ ExpressionSequenceRNode,
     /*         ConditionRNode */
     /*          */ ExpressionConditionRNode,
