@@ -299,7 +299,8 @@ ifcond: LPAREN expr_or_help RPAREN                                              
 forcond: LPAREN SYMBOL IN expr_or_help RPAREN                                   {
                                                                                   auto opening_delimiter = wrap<DelimiterRNode>($1);
                                                                                   auto closing_delimiter = wrap<DelimiterRNode>($5);
-                                                                                  auto sym = wrap<SymbolExpressionRNode>($2);                                                                                            auto keyword = wrap<KeywordRNode>($3);
+                                                                                  auto sym = wrap<SymbolExpressionRNode>($2);
+                                                                                  auto keyword = wrap<KeywordRNode>($3);
                                                                                   auto expr = wrap<ExpressionRNode>($4);
                                                                                   $$ = new InConditionRNode(opening_delimiter, sym, keyword, expr, closing_delimiter);
                                                                                   lexer.enable_eat_lines();

@@ -15,7 +15,7 @@ namespace ast {
 
 class Node {
   public:
-    Node(Type type)
+    explicit Node(Type type)
         : id_(Node::get_next_id_())
         , r_data_(get_undefined_object())
         , type_(type) {
