@@ -2,23 +2,24 @@
 #define RASTR_AST_COMPLEX_LITERAL_EXPRESSION_RNODE_HPP
 
 #include "LiteralExpressionRNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class ComplexLiteralExpressionRNode: public LiteralExpressionRNode {
+class ComplexLiteralExpressionRNode
+    : public LiteralExpressionRNode
+    , public IRepresentation {
   public:
-    explicit ComplexLiteralExpressionRNode(const Rcomplex& representation)
+    explicit ComplexLiteralExpressionRNode(const Rcomplex& value,
+                                           const std::string& representation)
         : LiteralExpressionRNode(Type::ComplexLiteralExpressionRNode)
-        , representation_(representation) {
+        , IRepresentation(representation)
+        , value_(value) {
     }
 
-    const Rcomplex& get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(const Rcomplex& representation) {
-        representation_ = representation;
+    const Rcomplex& get_value() const {
+        return value_;
     }
 
     static void initialize();
@@ -28,7 +29,7 @@ class ComplexLiteralExpressionRNode: public LiteralExpressionRNode {
     static SEXP get_class();
 
   private:
-    Rcomplex representation_;
+    Rcomplex value_;
 
     static SEXP class_;
 };

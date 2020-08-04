@@ -1,9 +1,9 @@
 #include "r_rastr.h"
 #include "r_character_literal_expression_r_node.h"
-#include "r_complex_literal_expression_r_node.h"
-#include "r_double_literal_expression_r_node.h"
-#include "r_integer_literal_expression_r_node.h"
-#include "r_logical_literal_expression_r_node.h"
+#include "r_rastr_ast_complex_literal_expression_r_node.h"
+#include "r_rastr_ast_double_literal_expression_r_node.h"
+#include "r_rastr_ast_integer_literal_expression_r_node.h"
+#include "r_rastr_ast_logical_literal_expression_r_node.h"
 #include "r_raw_literal_expression_r_node.h"
 
 #include "r_symbol_expression_r_node.h"
@@ -65,24 +65,20 @@ static const R_CallMethodDef CallEntries[] = {
     {"character_literal_expression_r_node_set_representation", (DL_FUNC) &r_character_literal_expression_r_node_set_representation, 2},
 
     /* ComplexLiteralExpressionRNode */
-    {"complex_literal_expression_r_node_create", (DL_FUNC) &r_complex_literal_expression_r_node_create, 1},
-    {"complex_literal_expression_r_node_get_representation", (DL_FUNC) &r_complex_literal_expression_r_node_get_representation, 1},
-    {"complex_literal_expression_r_node_set_representation", (DL_FUNC) &r_complex_literal_expression_r_node_set_representation, 2},
+    {"rastr_ast_complex_literal_expression_r_node_create", (DL_FUNC) &r_rastr_ast_complex_literal_expression_r_node_create, 2},
+    {"rastr_ast_complex_literal_expression_r_node_get_value", (DL_FUNC) &r_rastr_ast_complex_literal_expression_r_node_get_value, 1},
 
     /* DoubleLiteralExpressionRNode */
-    {"double_literal_expression_r_node_create", (DL_FUNC) &r_double_literal_expression_r_node_create, 1},
-    {"double_literal_expression_r_node_get_representation", (DL_FUNC) &r_double_literal_expression_r_node_get_representation, 1},
-    {"double_literal_expression_r_node_set_representation", (DL_FUNC) &r_double_literal_expression_r_node_set_representation, 2},
+    {"rastr_ast_double_literal_expression_r_node_create", (DL_FUNC) &r_rastr_ast_double_literal_expression_r_node_create, 2},
+    {"rastr_ast_double_literal_expression_r_node_get_value", (DL_FUNC) &r_rastr_ast_double_literal_expression_r_node_get_value, 1},
 
     /* IntegerLiteralExpressionRNode */
-    {"integer_literal_expression_r_node_create", (DL_FUNC) &r_integer_literal_expression_r_node_create, 1},
-    {"integer_literal_expression_r_node_get_representation", (DL_FUNC) &r_integer_literal_expression_r_node_get_representation, 1},
-    {"integer_literal_expression_r_node_set_representation", (DL_FUNC) &r_integer_literal_expression_r_node_set_representation, 2},
+    {"rastr_ast_integer_literal_expression_r_node_create", (DL_FUNC) &r_rastr_ast_integer_literal_expression_r_node_create, 2},
+    {"rastr_ast_integer_literal_expression_r_node_get_value", (DL_FUNC) &r_rastr_ast_integer_literal_expression_r_node_get_value, 1},
 
     /* LogicalLiteralExpressionRNode */
-    {"logical_literal_expression_r_node_create", (DL_FUNC) &r_logical_literal_expression_r_node_create, 1},
-    {"logical_literal_expression_r_node_get_representation", (DL_FUNC) &r_logical_literal_expression_r_node_get_representation, 1},
-    {"logical_literal_expression_r_node_set_representation", (DL_FUNC) &r_logical_literal_expression_r_node_set_representation, 2},
+    {"rastr_ast_logical_literal_expression_r_node_create", (DL_FUNC) &r_rastr_ast_logical_literal_expression_r_node_create, 2},
+    {"rastr_ast_logical_literal_expression_r_node_get_value", (DL_FUNC) &r_rastr_ast_logical_literal_expression_r_node_get_value, 1},
 
     /* RawLiteralExpressionRNode */
     {"raw_literal_expression_r_node_create", (DL_FUNC) &r_raw_literal_expression_r_node_create, 1},

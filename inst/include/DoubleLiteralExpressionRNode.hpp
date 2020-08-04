@@ -2,23 +2,24 @@
 #define RASTR_AST_DOUBLE_LITERAL_EXPRESSION_RNODE_HPP
 
 #include "LiteralExpressionRNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class DoubleLiteralExpressionRNode: public LiteralExpressionRNode {
+class DoubleLiteralExpressionRNode
+    : public LiteralExpressionRNode
+    , public IRepresentation {
   public:
-    explicit DoubleLiteralExpressionRNode(double representation = 0.0)
+    explicit DoubleLiteralExpressionRNode(double value,
+                                          const std::string& representation)
         : LiteralExpressionRNode(Type::DoubleLiteralExpressionRNode)
-        , representation_(representation) {
+        , IRepresentation(representation)
+        , value_(value) {
     }
 
-    double get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(double representation) {
-        representation_ = representation;
+    double get_value() const {
+        return value_;
     }
 
     static void initialize();
@@ -28,7 +29,7 @@ class DoubleLiteralExpressionRNode: public LiteralExpressionRNode {
     static SEXP get_class();
 
   private:
-    double representation_;
+    double value_;
 
     static SEXP class_;
 };

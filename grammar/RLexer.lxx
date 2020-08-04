@@ -12,24 +12,42 @@
 #include <iostream>
 #include "RLexer.hpp"
 
-RNode* mkInt(const std::string& s) {
-    double value = R_atof(s.c_str()); /* or R_strtol? */
-    int representation = static_cast<int>(value);
-    return new rastr::ast::IntegerLiteralExpressionRNode(representation);
+RNode* mkInt(const std::string& representation) {
+    double double_value = R_atof(representation.c_str()); /* or R_strtol? */
+    int value = static_cast<int>(double_value);
+    return new rastr::ast::IntegerLiteralExpressionRNode(value, representation);
 }
 
-RNode* mkFloat(const std::string& s) {
-    double representation = R_atof(s.c_str()); /* or R_strtol? */
-    return new rastr::ast::DoubleLiteralExpressionRNode(representation);
+RNode* mkFloat(const std::string& representation) {
+    double value = R_atof(representation.c_str()); /* or R_strtol? */
+    return new rastr::ast::DoubleLiteralExpressionRNode(value, representation);
 }
 
-RNode* mkComplex(const std::string& s) {
-    Rcomplex representation;
-    representation.r = 0;
-    representation.i = R_atof(s.c_str()); /* FIXME: make certain the value is legitimate. */
-    return new rastr::ast::ComplexLiteralExpressionRNode(representation);
+RNode* mkComplex(const std::string& representation) {
+    Rcomplex value;
+    value.r = 0;
+    value.i = R_atof(representation.c_str()); /* FIXME: make certain the value is legitimate. */
+    return new rastr::ast::ComplexLiteralExpressionRNode(value, representation);
 }
 
+#define HANDLE_LOGICAL(value, text)                                       \
+    *yylval = new rastr::ast::LogicalLiteralExpressionRNode(value, text); \
+    return rastr::parser::RParser::token::INT_CONST;
+
+#define HANDLE_FLOAT(value, text)                                         \
+    *yylval = new rastr::ast::DoubleLiteralExpressionRNode(value, text);  \
+    return rastr::parser::RParser::token::FLOAT_CONST;
+
+#define HANDLE_INTEGER(value, text)                                       \
+    *yylval = new rastr::ast::IntegerLiteralExpressionRNode(value, text); \
+    return rastr::parser::RParser::token::INT_CONST;
+
+#define HANDLE_COMPLEX_NA(text)                                           \
+    Rcomplex value;                                                       \
+    value.r = NA_REAL;                                                    \
+    value.i = NA_REAL;                                                    \
+    *yylval = new rastr::ast::ComplexLiteralExpressionRNode(value, text); \
+    return rastr::parser::RParser::token::INT_CONST;
 
 #define HANDLE_TOKEN(token_name)                          \
     *yylval = yytext;                                     \
@@ -142,15 +160,15 @@ NUM_BEGIN           [.]?[0-9]
 "@"                             { HANDLE_OPERATOR_TOKEN(AT)                         }
 ","                             { HANDLE_DELIMITER_TOKEN(COMMA)                     }
 "NULL"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(NULL_CONST)         }
-"NA"	                          { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"TRUE"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"FALSE"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"Inf"	                          { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"NaN"	                          { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"NA_integer_"                   { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"NA_real_"                      { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NA"	                          { HANDLE_LOGICAL(NA_LOGICAL, yytext)                }
+"TRUE"	                        { HANDLE_LOGICAL(TRUE, yytext)                      }
+"FALSE"	                        { HANDLE_LOGICAL(FALSE, yytext)                     }
+"Inf"	                          { HANDLE_FLOAT(R_PosInf, yytext)                    }
+"NaN"	                          { HANDLE_FLOAT(R_NaN, yytext)                       }
+"NA_integer_"                   { HANDLE_INTEGER(NA_INTEGER, yytext)                }
+"NA_real_"                      { HANDLE_FLOAT(NA_REAL, yytext)                     }
 "NA_character_"                 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
-"NA_complex_"                   { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
+"NA_complex_"                   { HANDLE_COMPLEX_NA(yytext)                         }
 "function"                      { HANDLE_KEYWORD_TOKEN(FUNCTION);          }
 "while"	                        { HANDLE_KEYWORD_TOKEN(WHILE);             }
 "repeat"	                      { HANDLE_KEYWORD_TOKEN(REPEAT);            }

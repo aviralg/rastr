@@ -2,23 +2,24 @@
 #define RASTR_AST_INTEGER_LITERAL_EXPRESSION_RNODE_HPP
 
 #include "LiteralExpressionRNode.hpp"
+#include "IRepresentation.hpp"
 
 namespace rastr {
 namespace ast {
 
-class IntegerLiteralExpressionRNode: public LiteralExpressionRNode {
+class IntegerLiteralExpressionRNode
+    : public LiteralExpressionRNode
+    , public IRepresentation {
   public:
-    explicit IntegerLiteralExpressionRNode(int representation = 0)
+    explicit IntegerLiteralExpressionRNode(int value,
+                                           const std::string& representation)
         : LiteralExpressionRNode(Type::IntegerLiteralExpressionRNode)
-        , representation_(representation) {
+        , IRepresentation(representation)
+        , value_(value) {
     }
 
-    int get_representation() const {
-        return representation_;
-    }
-
-    void set_representation(int representation) {
-        representation_ = representation;
+    int get_value() const {
+        return value_;
     }
 
     static void initialize();
@@ -28,7 +29,7 @@ class IntegerLiteralExpressionRNode: public LiteralExpressionRNode {
     static SEXP get_class();
 
   private:
-    int representation_;
+    int value_;
 
     static SEXP class_;
 };
