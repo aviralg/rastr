@@ -36,6 +36,8 @@
 #include "r_rastr_ast_expression_sequence_r_node.h"
 
 #include "r_rastr_ast_expression_condition_r_node.h"
+#include "r_rastr_ast_in_condition_r_node.h"
+
 #include "r_rastr_ast_group_expression_r_node.h"
 #include "r_rastr_ast_block_expression_r_node.h"
 
@@ -185,6 +187,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* ExpressionConditionRNode */
     {"rastr_ast_expression_condition_r_node_create", (DL_FUNC) &r_rastr_ast_expression_condition_r_node_create, 3},
+
+    /* InConditionRNode */
+    {"rastr_ast_in_condition_r_node_create", (DL_FUNC) &r_rastr_ast_in_condition_r_node_create, 5},
 
     /* GroupExpressionRNode */
     {"rastr_ast_group_expression_r_node_create", (DL_FUNC) &r_rastr_ast_group_expression_r_node_create, 3},
