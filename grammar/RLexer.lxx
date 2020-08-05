@@ -42,6 +42,10 @@ RNode* mkComplex(const std::string& representation) {
     *yylval = new rastr::ast::IntegerLiteralExpressionRNode(value, text); \
     return rastr::parser::RParser::token::INT_CONST;
 
+#define HANDLE_NULL(text)                                                 \
+    *yylval = new rastr::ast::NullLiteralExpressionRNode(text);           \
+    return rastr::parser::RParser::token::NULL_CONST;
+
 #define HANDLE_COMPLEX_NA(text)                                           \
     Rcomplex value;                                                       \
     value.r = NA_REAL;                                                    \
@@ -159,7 +163,7 @@ NUM_BEGIN           [.]?[0-9]
 "$"                             { HANDLE_OPERATOR_TOKEN(DOLLAR)                     }
 "@"                             { HANDLE_OPERATOR_TOKEN(AT)                         }
 ","                             { HANDLE_DELIMITER_TOKEN(COMMA)                     }
-"NULL"	                        { HANDLE_CONSTANT_LITERAL_TOKEN(NULL_CONST)         }
+"NULL"	                        { HANDLE_NULL(yytext)                               }
 "NA"	                          { HANDLE_LOGICAL(NA_LOGICAL, yytext)                }
 "TRUE"	                        { HANDLE_LOGICAL(TRUE, yytext)                      }
 "FALSE"	                        { HANDLE_LOGICAL(FALSE, yytext)                     }

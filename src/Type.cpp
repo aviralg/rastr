@@ -21,6 +21,8 @@ const std::string type_to_string(const Type type) {
         return "RawStringLiteralExpressionRNode";
     case Type::ConstantLiteralExpressionRNode:
         return "ConstantLiteralExpressionRNode";
+    case Type::NullLiteralExpressionRNode:
+        return "NullLiteralExpressionRNode";
     case Type::NextExpressionRNode:
         return "NextExpressionRNode";
     case Type::BreakExpressionRNode:
@@ -100,6 +102,8 @@ Type string_to_type(const std::string& type) {
         return Type::RawStringLiteralExpressionRNode;
     } else if (type == "ConstantLiteralExpressionRNode") {
         return Type::ConstantLiteralExpressionRNode;
+    } else if (type == "NullLiteralExpressionRNode") {
+        return Type::NullLiteralExpressionRNode;
     } else if (type == "NextExpressionRNode") {
         return Type::NextExpressionRNode;
     } else if (type == "BreakExpressionRNode") {

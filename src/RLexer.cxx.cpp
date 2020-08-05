@@ -578,14 +578,14 @@ static const flex_int16_t yy_chk[253] =
 
 static const flex_int16_t yy_rule_linenum[72] =
     {   0,
-      117,  121,  122,  123,  124,  125,  126,  127,  128,  129,
-      130,  131,  132,  133,  134,  135,  136,  137,  138,  139,
-      140,  141,  142,  143,  144,  145,  146,  147,  148,  149,
-      150,  151,  152,  153,  154,  155,  156,  157,  158,  159,
-      160,  161,  162,  163,  164,  165,  166,  167,  168,  169,
-      170,  171,  172,  173,  174,  175,  176,  177,  178,  179,
-      180,  184,  188,  189,  191,  228,  381,  382,  383,  385,
-      439
+      121,  125,  126,  127,  128,  129,  130,  131,  132,  133,
+      134,  135,  136,  137,  138,  139,  140,  141,  142,  143,
+      144,  145,  146,  147,  148,  149,  150,  151,  152,  153,
+      154,  155,  156,  157,  158,  159,  160,  161,  162,  163,
+      164,  165,  166,  167,  168,  169,  170,  171,  172,  173,
+      174,  175,  176,  177,  178,  179,  180,  181,  182,  183,
+      184,  188,  192,  193,  195,  232,  385,  386,  387,  389,
+      443
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -632,6 +632,10 @@ RNode* mkComplex(const std::string& representation) {
     *yylval = new rastr::ast::IntegerLiteralExpressionRNode(value, text); \
     return rastr::parser::RParser::token::INT_CONST;
 
+#define HANDLE_NULL(text)                                                 \
+    *yylval = new rastr::ast::NullLiteralExpressionRNode(text);           \
+    return rastr::parser::RParser::token::NULL_CONST;
+
 #define HANDLE_COMPLEX_NA(text)                                           \
     Rcomplex value;                                                       \
     value.r = NA_REAL;                                                    \
@@ -673,9 +677,9 @@ RNode* mkComplex(const std::string& representation) {
 /* Code run each time a pattern is matched. */
 #define YY_USER_ACTION  yylloc->columns(yyleng);
 
-#line 676 "RLexer.cxx"
+#line 680 "RLexer.cxx"
 
-#line 678 "RLexer.cxx"
+#line 682 "RLexer.cxx"
 
 #define INITIAL 0
 #define quoted_identifier 1
@@ -871,16 +875,16 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 105 "RLexer.lxx"
-
-
-
 #line 109 "RLexer.lxx"
+
+
+
+#line 113 "RLexer.lxx"
     /* Code run each time yylex is called. */
     yylloc -> step();
 
 
-#line 883 "RLexer.cxx"
+#line 887 "RLexer.cxx"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -964,7 +968,7 @@ case YY_STATE_EOF(quoted_identifier):
 case YY_STATE_EOF(special_value):
 case YY_STATE_EOF(single_quoted_string):
 case YY_STATE_EOF(double_quoted_string):
-#line 113 "RLexer.lxx"
+#line 117 "RLexer.lxx"
 {
                                     *yylval = new rastr::ast::EndNode();
                                     return rastr::parser::RParser::token::END_OF_INPUT;
@@ -973,7 +977,7 @@ case YY_STATE_EOF(double_quoted_string):
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 117 "RLexer.lxx"
+#line 121 "RLexer.lxx"
 {
                                     yylloc -> lines(yyleng);
                                     HANDLE_DELIMITER_TOKEN(NEWLINE);
@@ -981,302 +985,302 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 121 "RLexer.lxx"
+#line 125 "RLexer.lxx"
 { yylloc -> step(); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 122 "RLexer.lxx"
+#line 126 "RLexer.lxx"
 { yylloc -> step();              }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 123 "RLexer.lxx"
+#line 127 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(SEMICOLON)                 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 124 "RLexer.lxx"
+#line 128 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LE)                         }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 125 "RLexer.lxx"
+#line 129 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(GE)                         }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 126 "RLexer.lxx"
+#line 130 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LEFT_ASSIGN)                }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 127 "RLexer.lxx"
+#line 131 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LEFT_ASSIGN)                }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 128 "RLexer.lxx"
+#line 132 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(LT)                         }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 129 "RLexer.lxx"
+#line 133 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(GT)                         }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 130 "RLexer.lxx"
+#line 134 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(RIGHT_ASSIGN)               }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 131 "RLexer.lxx"
+#line 135 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(RIGHT_ASSIGN)               }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 132 "RLexer.lxx"
+#line 136 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(MINUS)                      }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 133 "RLexer.lxx"
+#line 137 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(NE)                         }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 134 "RLexer.lxx"
+#line 138 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(EQ_ASSIGN)                  }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 135 "RLexer.lxx"
+#line 139 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(EXCLAMATION)                }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 136 "RLexer.lxx"
+#line 140 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(DOUBLE_EXCLAMATION)         }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 137 "RLexer.lxx"
+#line 141 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(EQ)                         }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 138 "RLexer.lxx"
+#line 142 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(NS_GET_INT)                 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 139 "RLexer.lxx"
+#line 143 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(NS_GET)                     }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 140 "RLexer.lxx"
+#line 144 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(COLON_ASSIGN)               }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 141 "RLexer.lxx"
+#line 145 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(COLON)                      }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 142 "RLexer.lxx"
+#line 146 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(AND2)                       }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 143 "RLexer.lxx"
+#line 147 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(AND)                        }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 144 "RLexer.lxx"
+#line 148 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(OR2)                        }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 145 "RLexer.lxx"
+#line 149 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(OR)                         }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 146 "RLexer.lxx"
+#line 150 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LBRACE)                    }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 147 "RLexer.lxx"
+#line 151 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(RBRACE)                    }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 148 "RLexer.lxx"
+#line 152 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LPAREN)                    }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 149 "RLexer.lxx"
+#line 153 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(RPAREN)                    }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 150 "RLexer.lxx"
+#line 154 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LBB)                       }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 151 "RLexer.lxx"
+#line 155 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(LSQPAREN)                  }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 152 "RLexer.lxx"
+#line 156 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(RSQPAREN)                  }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 153 "RLexer.lxx"
+#line 157 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(QUESTION)                   }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 154 "RLexer.lxx"
+#line 158 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(ASTERISK)                   }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 155 "RLexer.lxx"
+#line 159 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(PLUS)                       }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 156 "RLexer.lxx"
+#line 160 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(SLASH)                      }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 157 "RLexer.lxx"
+#line 161 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(CARET)                      }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 158 "RLexer.lxx"
+#line 162 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(CARET)                      }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 159 "RLexer.lxx"
+#line 163 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(TILDE)                      }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 160 "RLexer.lxx"
+#line 164 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(DOLLAR)                     }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 161 "RLexer.lxx"
+#line 165 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(AT)                         }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 162 "RLexer.lxx"
+#line 166 "RLexer.lxx"
 { HANDLE_DELIMITER_TOKEN(COMMA)                     }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 163 "RLexer.lxx"
-{ HANDLE_CONSTANT_LITERAL_TOKEN(NULL_CONST)         }
+#line 167 "RLexer.lxx"
+{ HANDLE_NULL(yytext)                               }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 164 "RLexer.lxx"
+#line 168 "RLexer.lxx"
 { HANDLE_LOGICAL(NA_LOGICAL, yytext)                }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 165 "RLexer.lxx"
+#line 169 "RLexer.lxx"
 { HANDLE_LOGICAL(TRUE, yytext)                      }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 166 "RLexer.lxx"
+#line 170 "RLexer.lxx"
 { HANDLE_LOGICAL(FALSE, yytext)                     }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 167 "RLexer.lxx"
+#line 171 "RLexer.lxx"
 { HANDLE_FLOAT(R_PosInf, yytext)                    }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 168 "RLexer.lxx"
+#line 172 "RLexer.lxx"
 { HANDLE_FLOAT(R_NaN, yytext)                       }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 169 "RLexer.lxx"
+#line 173 "RLexer.lxx"
 { HANDLE_INTEGER(NA_INTEGER, yytext)                }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 170 "RLexer.lxx"
+#line 174 "RLexer.lxx"
 { HANDLE_FLOAT(NA_REAL, yytext)                     }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 171 "RLexer.lxx"
+#line 175 "RLexer.lxx"
 { HANDLE_CONSTANT_LITERAL_TOKEN(LITERAL_CONST)      }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 172 "RLexer.lxx"
+#line 176 "RLexer.lxx"
 { HANDLE_COMPLEX_NA(yytext)                         }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 173 "RLexer.lxx"
+#line 177 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(FUNCTION);          }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 174 "RLexer.lxx"
+#line 178 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(WHILE);             }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 175 "RLexer.lxx"
+#line 179 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(REPEAT);            }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 176 "RLexer.lxx"
+#line 180 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(FOR);	             }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 177 "RLexer.lxx"
+#line 181 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(IF);	               }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 178 "RLexer.lxx"
+#line 182 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(IN);                }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 179 "RLexer.lxx"
+#line 183 "RLexer.lxx"
 { HANDLE_KEYWORD_TOKEN(ELSE);              }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 180 "RLexer.lxx"
+#line 184 "RLexer.lxx"
 {
                                     *yylval = new rastr::ast::NextExpressionRNode();
                                     return rastr::parser::RParser::token::NEXT;
@@ -1284,7 +1288,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 184 "RLexer.lxx"
+#line 188 "RLexer.lxx"
 {
                                     *yylval = new rastr::ast::BreakExpressionRNode();
                                     return rastr::parser::RParser::token::BREAK;
@@ -1292,17 +1296,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 188 "RLexer.lxx"
+#line 192 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false)       }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 189 "RLexer.lxx"
+#line 193 "RLexer.lxx"
 { HANDLE_OPERATOR_TOKEN(SPECIAL);          }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 191 "RLexer.lxx"
+#line 195 "RLexer.lxx"
 {
                                     clear_token_buffer();
                                     char current;
@@ -1342,7 +1346,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 228 "RLexer.lxx"
+#line 232 "RLexer.lxx"
 {
                                     if (strlen(yytext) == 2) {
                                         unput_(yytext[1]);
@@ -1495,22 +1499,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 381 "RLexer.lxx"
+#line 385 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false) }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 382 "RLexer.lxx"
+#line 386 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false) }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 383 "RLexer.lxx"
+#line 387 "RLexer.lxx"
 { HANDLE_SYMBOL_TOKEN(yytext, false) }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 385 "RLexer.lxx"
+#line 389 "RLexer.lxx"
 {
                                     token_buffer_.clear();
                                     std::string closing_delimiter;
@@ -1566,7 +1570,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 439 "RLexer.lxx"
+#line 443 "RLexer.lxx"
 {
                  HANDLE_ERROR();
                  /* exit(1); */
@@ -1574,10 +1578,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 443 "RLexer.lxx"
+#line 447 "RLexer.lxx"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1580 "RLexer.cxx"
+#line 1584 "RLexer.cxx"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2693,7 +2697,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 443 "RLexer.lxx"
+#line 447 "RLexer.lxx"
 
 
 /*

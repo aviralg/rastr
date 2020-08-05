@@ -6,6 +6,7 @@
 #include "ConstantLiteralExpressionRNode.hpp"
 #include "CharacterLiteralExpressionRNode.hpp"
 #include "ComplexLiteralExpressionRNode.hpp"
+#include "NullLiteralExpressionRNode.hpp"
 #include "NextExpressionRNode.hpp"
 #include "BreakExpressionRNode.hpp"
 #include "ConditionalExpressionRNode.hpp"
