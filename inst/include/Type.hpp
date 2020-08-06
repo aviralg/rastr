@@ -38,7 +38,6 @@ enum class Type {
     /*              */ IntegerLiteralExpressionRNode,
     /*              */ ComplexLiteralExpressionRNode,
     /*              */ LogicalLiteralExpressionRNode,
-    /*              */ RawLiteralExpressionRNode,
     /*              */ CharacterLiteralExpressionRNode,
     /*              */ RawStringLiteralExpressionRNode,
     /*              */ ConstantLiteralExpressionRNode,

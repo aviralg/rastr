@@ -66,8 +66,6 @@ inline SEXP to_sexp<rastr::ast::ExpressionRNode>(
     using rastr::ast::IntegerLiteralExpressionRNodeSPtr;
     using rastr::ast::LogicalLiteralExpressionRNode;
     using rastr::ast::LogicalLiteralExpressionRNodeSPtr;
-    using rastr::ast::RawLiteralExpressionRNode;
-    using rastr::ast::RawLiteralExpressionRNodeSPtr;
     using rastr::ast::RepeatLoopExpressionRNode;
     using rastr::ast::RepeatLoopExpressionRNodeSPtr;
     using rastr::ast::SymbolExpressionRNode;
@@ -93,10 +91,6 @@ inline SEXP to_sexp<rastr::ast::ExpressionRNode>(
     } else if (type == Type::LogicalLiteralExpressionRNode) {
         auto downcasted_node =
             std::static_pointer_cast<LogicalLiteralExpressionRNode>(node);
-        return to_sexp(downcasted_node);
-    } else if (type == Type::RawLiteralExpressionRNode) {
-        auto downcasted_node =
-            std::static_pointer_cast<RawLiteralExpressionRNode>(node);
         return to_sexp(downcasted_node);
     } else if (type == Type::CharacterLiteralExpressionRNode) {
         auto downcasted_node =

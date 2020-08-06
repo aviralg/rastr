@@ -13,8 +13,6 @@ const std::string type_to_string(const Type type) {
         return "ComplexLiteralExpressionRNode";
     case Type::LogicalLiteralExpressionRNode:
         return "LogicalLiteralExpressionRNode";
-    case Type::RawLiteralExpressionRNode:
-        return "RawLiteralExpressionRNode";
     case Type::CharacterLiteralExpressionRNode:
         return "CharacterLiteralExpressionRNode";
     case Type::RawStringLiteralExpressionRNode:
@@ -94,8 +92,6 @@ Type string_to_type(const std::string& type) {
         return Type::ComplexLiteralExpressionRNode;
     } else if (type == "LogicalLiteralExpressionRNode") {
         return Type::LogicalLiteralExpressionRNode;
-    } else if (type == "RawLiteralExpressionRNode") {
-        return Type::RawLiteralExpressionRNode;
     } else if (type == "CharacterLiteralExpressionRNode") {
         return Type::CharacterLiteralExpressionRNode;
     } else if (type == "RawStringLiteralExpressionRNode") {

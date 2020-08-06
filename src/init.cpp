@@ -5,7 +5,6 @@
 #include "r_rastr_ast_integer_literal_expression_r_node.h"
 #include "r_rastr_ast_logical_literal_expression_r_node.h"
 #include "r_rastr_ast_null_literal_expression_r_node.h"
-#include "r_raw_literal_expression_r_node.h"
 
 #include "r_symbol_expression_r_node.h"
 
@@ -80,11 +79,6 @@ static const R_CallMethodDef CallEntries[] = {
     /* LogicalLiteralExpressionRNode */
     {"rastr_ast_logical_literal_expression_r_node_create", (DL_FUNC) &r_rastr_ast_logical_literal_expression_r_node_create, 2},
     {"rastr_ast_logical_literal_expression_r_node_get_value", (DL_FUNC) &r_rastr_ast_logical_literal_expression_r_node_get_value, 1},
-
-    /* RawLiteralExpressionRNode */
-    {"raw_literal_expression_r_node_create", (DL_FUNC) &r_raw_literal_expression_r_node_create, 1},
-    {"raw_literal_expression_r_node_get_representation", (DL_FUNC) &r_raw_literal_expression_r_node_get_representation, 1},
-    {"raw_literal_expression_r_node_set_representation", (DL_FUNC) &r_raw_literal_expression_r_node_set_representation, 2},
 
     /* NullLiteralExpressionRNode */
     {"rastr_ast_null_literal_expression_r_node_create", (DL_FUNC) &r_rastr_ast_null_literal_expression_r_node_create, 1},

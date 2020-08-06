@@ -109,8 +109,8 @@ class Node {
         return get_type() == Type::LogicalLiteralExpressionRNode;
     }
 
-    bool is_raw_literal_node() const {
-        return get_type() == Type::RawLiteralExpressionRNode;
+    bool is_file_node() const {
+        return get_type() == Type::RFileNode;
     }
 
   private:

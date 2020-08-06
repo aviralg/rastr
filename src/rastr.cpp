@@ -37,7 +37,7 @@ void initialize() {
     ast::IntegerLiteralExpressionRNode::initialize();
     ast::ComplexLiteralExpressionRNode::initialize();
     ast::LogicalLiteralExpressionRNode::initialize();
-    ast::RawLiteralExpressionRNode::initialize();
+    ast::NullLiteralExpressionRNode::initialize();
     ast::CharacterLiteralExpressionRNode::initialize();
     ast::RawStringLiteralExpressionRNode::initialize();
     ast::ConstantLiteralExpressionRNode::initialize();
