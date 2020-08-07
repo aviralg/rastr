@@ -139,4 +139,41 @@ inline SEXP to_sexp<rastr::ast::ExpressionRNode>(
     return R_NilValue;
 }
 
+template <>
+inline SEXP to_sexp<rastr::ast::ParameterRNode>(
+    std::shared_ptr<rastr::ast::ParameterRNode> node) {
+    using rastr::ast::DefaultValueParameterRNode;
+    using rastr::ast::NonDefaultValueParameterRNode;
+    using rastr::ast::TerminatedParameterRNode;
+    using rastr::ast::Type;
+
+    Type type = node->get_type();
+
+    switch (type) {
+    case Type::DefaultValueParameterRNode: {
+        auto downcasted_node =
+            std::static_pointer_cast<DefaultValueParameterRNode>(node);
+        return to_sexp(downcasted_node);
+        break;
+    }
+    case Type::NonDefaultValueParameterRNode: {
+        auto downcasted_node =
+            std::static_pointer_cast<NonDefaultValueParameterRNode>(node);
+        return to_sexp(downcasted_node);
+        break;
+    }
+    case Type::TerminatedParameterRNode: {
+        auto downcasted_node =
+            std::static_pointer_cast<TerminatedParameterRNode>(node);
+        return to_sexp(downcasted_node);
+        break;
+    }
+    default:
+        Rf_error("Type '%s' not handled for conversion by to_sexp",
+                 type_to_string(type).c_str());
+        return R_NilValue;
+        break;
+    }
+}
+
 #endif /* RASTR_R_CAST_HPP */
