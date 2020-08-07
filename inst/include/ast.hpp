@@ -44,6 +44,7 @@
 #include "RFileNode.hpp"
 #include "SymbolRNode.hpp"
 #include "ParameterSequenceRNode.hpp"
+#include "TerminatedParameterRNode.hpp"
 
 template <typename T>
 std::shared_ptr<T> wrap(void* ptr) {
