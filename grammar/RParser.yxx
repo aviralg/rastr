@@ -136,6 +136,27 @@ void add_terminator(ExpressionSequenceRNode* seq_ptr, Node* delimiter_ptr) {
     seq_ptr -> set_element(size - 1, terminated_expr);
 }
 
+NonDefaultValueParameterRNodeSPtr create_non_default_value_parameter(Node* symbol_ptr) {
+    auto sym = wrap<SymbolRNode>(symbol_ptr);
+    return std::make_shared<NonDefaultValueParameterRNode>(sym);
+}
+
+DefaultValueParameterRNodeSPtr create_default_value_parameter(Node* op_ptr, Node* sym_ptr, Node* expr_ptr) {
+    auto op = wrap<OperatorRNode>(op_ptr);
+    auto sym = wrap<SymbolRNode>(sym_ptr);
+    auto expr = wrap<ExpressionRNode>(expr_ptr);
+    return std::make_shared<DefaultValueParameterRNode>(op, sym, expr);
+}
+
+void terminate_parameter(ParameterSequenceRNode* seq_ptr, Node* delimiter_ptr) {
+    auto delimiter = wrap<DelimiterRNode>(delimiter_ptr);
+    int size = seq_ptr -> get_size();
+    if(size == 0) { return; }
+    auto expr = seq_ptr -> get_element(size - 1);
+    auto terminated_expr = std::make_shared<TerminatedParameterRNode>(expr, delimiter);
+    seq_ptr -> set_element(size - 1, terminated_expr);
+}
+
 }
 
 
@@ -360,37 +381,37 @@ sub:                                                                            
    | NULL_CONST EQ_ASSIGN expr_or_help                                          { $$ = create_binary_expression($2, $1, $3); }
    ;
 
-formlist:                                                                       { $$ = new ExpressionSequenceRNode(); }
+formlist:                                                                       { $$ = new ParameterSequenceRNode(); }
         | formlist_inner                                                        { $$ = $1; }
         ;
 
 formlist_inner: SYMBOL                                                          {
-                                                                                  auto seq = new ExpressionSequenceRNode();
-                                                                                  auto element = wrap<SymbolExpressionRNode>($1);
+                                                                                  auto seq = new ParameterSequenceRNode();
+                                                                                  auto element = create_non_default_value_parameter($1);
                                                                                   seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
-        | SYMBOL EQ_ASSIGN expr_or_help                                         {
-                                                                                  auto seq = new ExpressionSequenceRNode();
-                                                                                  auto element = wrap<ExpressionRNode>(create_binary_expression($2, $1, $3));
+              | SYMBOL EQ_ASSIGN expr_or_help                                   {
+                                                                                  auto seq = new ParameterSequenceRNode();
+                                                                                  auto element = create_default_value_parameter($2, $1, $3);
                                                                                   seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
-        | formlist COMMA SYMBOL                                                 {
-                                                                                  auto seq = static_cast<ExpressionSequenceRNode*>($1);
-                                                                                  auto element = wrap<SymbolExpressionRNode>($3);
-                                                                                  add_terminator(seq, $2);
+              | formlist COMMA SYMBOL                                           {
+                                                                                  auto seq = static_cast<ParameterSequenceRNode*>($1);
+                                                                                  auto element = create_non_default_value_parameter($3);
+                                                                                  terminate_parameter(seq, $2);
                                                                                   seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
-        | formlist COMMA SYMBOL EQ_ASSIGN expr_or_help                          {
-                                                                                  auto seq = static_cast<ExpressionSequenceRNode*>($1);
-                                                                                  auto element = wrap<ExpressionRNode>(create_binary_expression($4, $3, $5));
-                                                                                  add_terminator(seq, $2);
+              | formlist COMMA SYMBOL EQ_ASSIGN expr_or_help                    {
+                                                                                  auto seq = static_cast<ParameterSequenceRNode*>($1);
+                                                                                  auto element = create_default_value_parameter($4, $3, $5);
+                                                                                  terminate_parameter(seq, $2);
                                                                                   seq -> push_back(element);
                                                                                   $$ = seq;
                                                                                 }
-        ;
+              ;
 
 cr: { lexer.enable_eat_lines(); }
   ;
