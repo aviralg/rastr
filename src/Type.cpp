@@ -27,6 +27,8 @@ const std::string type_to_string(const Type type) {
         return "BreakExpressionRNode";
     case Type::DelimiterRNode:
         return "DelimiterRNode";
+    case Type::SymbolRNode:
+        return "SymbolRNode";
     case Type::TerminatedExpressionRNode:
         return "TerminatedExpressionRNode";
     case Type::SymbolExpressionRNode:
@@ -106,6 +108,8 @@ Type string_to_type(const std::string& type) {
         return Type::BreakExpressionRNode;
     } else if (type == "DelimiterRNode") {
         return Type::DelimiterRNode;
+    } else if (type == "SymbolRNode") {
+        return Type::SymbolRNode;
     } else if (type == "TerminatedExpressionRNode") {
         return Type::TerminatedExpressionRNode;
     } else if (type == "SymbolExpressionRNode") {

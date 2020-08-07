@@ -32,7 +32,6 @@
 #include "LoopExpressionRNode.hpp"
 #include "MissingExpressionRNode.hpp"
 #include "OperatorRNode.hpp"
-#include "RawLiteralExpressionRNode.hpp"
 #include "RepeatLoopExpressionRNode.hpp"
 #include "SymbolExpressionRNode.hpp"
 #include "UnaryOperationExpressionRNode.hpp"
@@ -43,6 +42,7 @@
 #include "BeginNode.hpp"
 #include "RProgramNode.hpp"
 #include "RFileNode.hpp"
+#include "SymbolRNode.hpp"
 
 template <typename T>
 std::shared_ptr<T> wrap(void* ptr) {
