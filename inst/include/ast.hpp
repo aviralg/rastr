@@ -44,6 +44,7 @@
 #include "RFileNode.hpp"
 #include "SymbolRNode.hpp"
 #include "ParameterSequenceRNode.hpp"
+#include "DefaultValueParameterRNode.hpp"
 #include "TerminatedParameterRNode.hpp"
 
 template <typename T>
