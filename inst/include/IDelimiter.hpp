@@ -8,7 +8,7 @@ namespace ast {
 
 class IDelimiter {
   public:
-    IDelimiter(DelimiterRNodeSPtr delimiter): delimiter_(delimiter) {
+    explicit IDelimiter(DelimiterRNodeSPtr delimiter): delimiter_(delimiter) {
     }
 
     virtual ~IDelimiter() = default;
