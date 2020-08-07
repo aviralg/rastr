@@ -43,6 +43,7 @@
 #include "RProgramNode.hpp"
 #include "RFileNode.hpp"
 #include "SymbolRNode.hpp"
+#include "ParameterSequenceRNode.hpp"
 
 template <typename T>
 std::shared_ptr<T> wrap(void* ptr) {

@@ -19,6 +19,7 @@ enum class Type {
     /*      */ OperatorRNode,
     /*      */ SymbolRNode,
     /*      */ ExpressionSequenceRNode,
+    /*      */ ParameterSequenceRNode,
     /*         ConditionRNode */
     /*          */ ExpressionConditionRNode,
     /*          */ InConditionRNode,
