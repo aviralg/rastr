@@ -47,6 +47,8 @@ const std::string type_to_string(const Type type) {
         return "ParameterSequenceRNode";
     case Type::DefaultValueParameterRNode:
         return "DefaultValueParameterRNode";
+    case Type::NonDefaultValueParameterRNode:
+        return "NonDefaultValueParameterRNode";
     case Type::TerminatedParameterRNode:
         return "TerminatedParameterRNode";
     case Type::FunctionDefinitionExpressionRNode:
@@ -156,6 +158,8 @@ Type string_to_type(const std::string& type) {
         return Type::ParameterSequenceRNode;
     } else if (type == "DefaultValueParameterRNode") {
         return Type::DefaultValueParameterRNode;
+    } else if (type == "NonDefaultValueParameterRNode") {
+        return Type::NonDefaultValueParameterRNode;
     } else if (type == "TerminatedParameterRNode") {
         return Type::TerminatedParameterRNode;
     } else if (type == "BlockExpressionRNode") {

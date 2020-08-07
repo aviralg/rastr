@@ -45,6 +45,7 @@
 #include "SymbolRNode.hpp"
 #include "ParameterSequenceRNode.hpp"
 #include "DefaultValueParameterRNode.hpp"
+#include "NonDefaultValueParameterRNode.hpp"
 #include "TerminatedParameterRNode.hpp"
 
 template <typename T>

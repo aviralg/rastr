@@ -23,6 +23,7 @@ enum class Type {
     /*         ParameterRNode */
     /*          */ TerminatedParameterRNode,
     /*          */ DefaultValueParameterRNode,
+    /*          */ NonDefaultValueParameterRNode,
     /*         ConditionRNode */
     /*          */ ExpressionConditionRNode,
     /*          */ InConditionRNode,
