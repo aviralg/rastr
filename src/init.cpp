@@ -37,6 +37,7 @@
 #include "r_rastr_ast_parameter_sequence_r_node.h"
 #include "r_rastr_ast_default_value_parameter_r_node.h"
 #include "r_rastr_ast_non_default_value_parameter_r_node.h"
+#include "r_rastr_ast_terminated_parameter_r_node.h"
 
 #include "r_rastr_ast_expression_condition_r_node.h"
 #include "r_rastr_ast_in_condition_r_node.h"
@@ -194,6 +195,9 @@ static const R_CallMethodDef CallEntries[] = {
 
     /* NonDefaultValueParameterRNode */
     {"rastr_ast_non_default_value_parameter_r_node_create", (DL_FUNC) &r_rastr_ast_non_default_value_parameter_r_node_create, 1},
+
+    /* TerminatedParameterRNode */
+    {"rastr_ast_terminated_parameter_r_node_create", (DL_FUNC) &r_rastr_ast_terminated_parameter_r_node_create, 2},
 
     /* ExpressionConditionRNode */
     {"rastr_ast_expression_condition_r_node_create", (DL_FUNC) &r_rastr_ast_expression_condition_r_node_create, 3},
