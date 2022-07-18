@@ -42,16 +42,20 @@
 void parse_string(const char* str) {
     Input input(str, std::strlen(str));
 
-    Lexer lexer(input);
+    rastr_ast_t ast = rastr_ast_create(16);
+
+    Lexer lexer(input, ast);
 
     rastr_node_t node;
     rastr_node_type_t type;
 
     do {
         node = lexer.next_token();
-        type = rastr_node_type(node);
-        std::cerr << rastr_node_to_string(node) << std::endl;
+        type = rastr_node_type(ast, node);
+        std::cerr << rastr_node_to_string(ast, node) << std::endl;
     } while (type != End);
+
+    rastr_ast_destroy(ast);
 }
 
 void parse_file(const char* filepath) {
