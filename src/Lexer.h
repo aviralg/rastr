@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "ast.h"
+#include <rastr/api.h>
 #include "internal_api.h"
 #include "logger.h"
 
@@ -244,10 +244,10 @@ class Lexer {
   private:
     Input input_;
     rastr_ast_t ast_;
+    std::string context_;
     rastr_node_t saved_token_;
     bool token_saved_;
     bool eat_lines_;
-    std::string context_;
 
     void enable_eat_lines() {
         eat_lines_ = true;

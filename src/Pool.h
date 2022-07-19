@@ -170,11 +170,11 @@ class Pool {
         std::size_t index = back_;
         std::size_t size = get_size();
 
-        if (size_ == 0) {
+        if (size == 0) {
             fail_with("attempt to remove element from an empty list");
         }
 
-        else if (size_ == 1) {
+        else if (size == 1) {
             front_ = Null;
             back_ = Null;
         }

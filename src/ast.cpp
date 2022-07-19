@@ -15,13 +15,15 @@ struct rastr_node_impl_t {
     union {
         struct {
             char* syntax;
-        } keyword_node;
+        } operator_node;
 
         struct {
             char* syntax;
-        } operator_node;
+        } keyword_node;
 
-        /* null_node has no fields since null is represented only as NULL */
+        struct {
+            char* message;
+        } error_node;
 
         struct {
             char* syntax;
@@ -53,10 +55,7 @@ struct rastr_node_impl_t {
             char* value;
         } symbol_node;
 
-        struct {
-            char* message;
-        } error_node;
-    };
+    } node;
 };
 
 typedef rastr_node_impl_t* rastr_node_ptr_t;
@@ -349,11 +348,11 @@ void rastr_node_destroy(rastr_node_ptr_t ptr) {
     rastr_node_type_t type = ptr->type;
 
     if (rastr_node_type_is_operator(type)) {
-        free(ptr->operator_node.syntax);
+        free(ptr->node.operator_node.syntax);
     }
 
     else if (rastr_node_type_is_keyword(type)) {
-        free(ptr->keyword_node.syntax);
+        free(ptr->node.keyword_node.syntax);
     }
 
     else if (rastr_node_type_is_delimiter(type)) {
@@ -363,33 +362,33 @@ void rastr_node_destroy(rastr_node_ptr_t ptr) {
     }
 
     else if (type == Error) {
-        free(ptr->error_node.message);
+        free(ptr->node.error_node.message);
     }
 
     else if (type == Logical) {
-        free(ptr->logical_node.syntax);
+        free(ptr->node.logical_node.syntax);
     }
 
     else if (type == Integer) {
-        free(ptr->integer_node.syntax);
+        free(ptr->node.integer_node.syntax);
     }
 
     else if (type == Real) {
-        free(ptr->real_node.syntax);
+        free(ptr->node.real_node.syntax);
     }
 
     else if (type == Complex) {
-        free(ptr->complex_node.syntax);
+        free(ptr->node.complex_node.syntax);
     }
 
     else if (type == String) {
-        free(ptr->string_node.syntax);
-        free(ptr->string_node.value);
+        free(ptr->node.string_node.syntax);
+        free(ptr->node.string_node.value);
     }
 
     else if (type == Symbol) {
-        free(ptr->symbol_node.syntax);
-        free(ptr->symbol_node.value);
+        free(ptr->node.symbol_node.syntax);
+        free(ptr->node.symbol_node.value);
     }
 
     free(ptr);
@@ -608,7 +607,7 @@ rastr_node_t rastr_node_operator_from_view(rastr_ast_t ast,
                                            const StringView& syntax_view,
                                            rastr_node_type_t type) {
     rastr_node_pair_t pair = rastr_node_create(ast, type);
-    pair.ptr->operator_node.syntax = syntax_view.materialize();
+    pair.ptr->node.operator_node.syntax = syntax_view.materialize();
     return pair.node;
 }
 
@@ -623,7 +622,7 @@ const char* rastr_node_operator_value(rastr_ast_t ast, rastr_node_t node) {
 }
 
 const char* rastr_node_operator_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->operator_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.operator_node.syntax;
 }
 
 /********************************************************************************
@@ -637,7 +636,7 @@ rastr_node_t rastr_node_keyword(rastr_ast_t ast,
                                 const char* syntax,
                                 rastr_node_type_t type) {
     rastr_node_pair_t pair = rastr_node_create(ast, type);
-    pair.ptr->keyword_node.syntax = StringView::duplicate(syntax);
+    pair.ptr->node.keyword_node.syntax = StringView::duplicate(syntax);
     return pair.node;
 }
 
@@ -646,7 +645,7 @@ const char* rastr_node_keyword_value(rastr_ast_t ast, rastr_node_t node) {
 }
 
 const char* rastr_node_keyword_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->keyword_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.keyword_node.syntax;
 }
 
 /********************************************************************************
@@ -739,14 +738,15 @@ rastr_node_t rastr_node_error(rastr_ast_t ast, const char* fmt, ...) {
 
     std::va_list args;
     va_start(args, fmt);
-    pair.ptr->error_node.message = StringView::duplicate(vbufprintf(fmt, args));
+    pair.ptr->node.error_node.message =
+        StringView::duplicate(vbufprintf(fmt, args));
     va_end(args);
 
     return pair.node;
 }
 
 const char* rastr_node_error_message(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->error_node.message;
+    return rastr_ast_get_impl(ast, node)->node.error_node.message;
 }
 
 /********************************************************************************
@@ -770,68 +770,68 @@ const char* rastr_node_null_syntax(rastr_ast_t ast, rastr_node_t node) {
 rastr_node_t
 rastr_node_logical(rastr_ast_t ast, const char* syntax, int value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Logical);
-    pair.ptr->logical_node.syntax = StringView::duplicate(syntax);
-    pair.ptr->logical_node.value = value;
+    pair.ptr->node.logical_node.syntax = StringView::duplicate(syntax);
+    pair.ptr->node.logical_node.value = value;
     return pair.node;
 }
 
 int rastr_node_logical_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->logical_node.value;
+    return rastr_ast_get_impl(ast, node)->node.logical_node.value;
 }
 
 const char* rastr_node_logical_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->logical_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.logical_node.syntax;
 }
 
 // integer
 rastr_node_t
 rastr_node_integer(rastr_ast_t ast, const char* syntax, int value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Integer);
-    pair.ptr->integer_node.syntax = StringView::duplicate(syntax);
-    pair.ptr->integer_node.value = value;
+    pair.ptr->node.integer_node.syntax = StringView::duplicate(syntax);
+    pair.ptr->node.integer_node.value = value;
     return pair.node;
 }
 
 int rastr_node_integer_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->integer_node.value;
+    return rastr_ast_get_impl(ast, node)->node.integer_node.value;
 }
 
 const char* rastr_node_integer_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->integer_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.integer_node.syntax;
 }
 
 // real
 rastr_node_t
 rastr_node_real(rastr_ast_t ast, const char* syntax, double value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Real);
-    pair.ptr->real_node.syntax = StringView::duplicate(syntax);
-    pair.ptr->real_node.value = value;
+    pair.ptr->node.real_node.syntax = StringView::duplicate(syntax);
+    pair.ptr->node.real_node.value = value;
     return pair.node;
 }
 
 double rastr_node_real_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->real_node.value;
+    return rastr_ast_get_impl(ast, node)->node.real_node.value;
 }
 
 const char* rastr_node_real_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->real_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.real_node.syntax;
 }
 
 // complex
 rastr_node_t
 rastr_node_complex(rastr_ast_t ast, const char* syntax, Rcomplex value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Complex);
-    pair.ptr->complex_node.syntax = StringView::duplicate(syntax);
-    pair.ptr->complex_node.value = value;
+    pair.ptr->node.complex_node.syntax = StringView::duplicate(syntax);
+    pair.ptr->node.complex_node.value = value;
     return pair.node;
 }
 
 Rcomplex rastr_node_complex_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->complex_node.value;
+    return rastr_ast_get_impl(ast, node)->node.complex_node.value;
 }
 
 const char* rastr_node_complex_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->complex_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.complex_node.syntax;
 }
 
 // string
@@ -839,8 +839,8 @@ rastr_node_t rastr_node_string_from_view(rastr_ast_t ast,
                                          const StringView& syntax_view,
                                          const StringView& value_view) {
     rastr_node_pair_t pair = rastr_node_create(ast, String);
-    pair.ptr->string_node.syntax = syntax_view.materialize();
-    pair.ptr->string_node.value = value_view.materialize();
+    pair.ptr->node.string_node.syntax = syntax_view.materialize();
+    pair.ptr->node.string_node.value = value_view.materialize();
     return pair.node;
 }
 
@@ -851,11 +851,11 @@ rastr_node_string(rastr_ast_t ast, const char* syntax, const char* value) {
 }
 
 const char* rastr_node_string_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->string_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.string_node.syntax;
 }
 
 const char* rastr_node_string_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->string_node.value;
+    return rastr_ast_get_impl(ast, node)->node.string_node.value;
 }
 
 bool rastr_node_string_is_raw(rastr_ast_t ast, rastr_node_t node) {
@@ -869,8 +869,8 @@ rastr_node_t rastr_node_symbol_from_view(rastr_ast_t ast,
                                          const StringView& syntax_view,
                                          const StringView& value_view) {
     rastr_node_pair_t pair = rastr_node_create(ast, Symbol);
-    pair.ptr->symbol_node.syntax = syntax_view.materialize();
-    pair.ptr->symbol_node.value = value_view.materialize();
+    pair.ptr->node.symbol_node.syntax = syntax_view.materialize();
+    pair.ptr->node.symbol_node.value = value_view.materialize();
     return pair.node;
 }
 
@@ -881,11 +881,11 @@ rastr_node_symbol(rastr_ast_t ast, const char* syntax, const char* value) {
 }
 
 const char* rastr_node_symbol_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->symbol_node.value;
+    return rastr_ast_get_impl(ast, node)->node.symbol_node.value;
 }
 
 const char* rastr_node_symbol_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->symbol_node.syntax;
+    return rastr_ast_get_impl(ast, node)->node.symbol_node.syntax;
 }
 
 bool rastr_node_symbol_is_quoted(rastr_ast_t ast, rastr_node_t node) {

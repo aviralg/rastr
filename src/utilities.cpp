@@ -71,3 +71,8 @@ const char* vbufprintf(const char* fmt, std::va_list args) {
     vsnprintf(str_buffer, STR_BUFFER_SIZE, fmt, args);
     return str_buffer;
 }
+
+const char* int_to_string(int value) {
+    snprintf(str_buffer, STR_BUFFER_SIZE, "%d", value);
+    return str_buffer;
+}

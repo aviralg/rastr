@@ -1,7 +1,6 @@
-#include "parse.h"
+#include <rastr/api.h>
 #include "Lexer.h"
 #include <iostream>
-#include "ast.h"
 #include "utilities.h"
 
 // void parse_file(const std::string filepath) {
@@ -39,7 +38,7 @@
 //
 // }
 
-void parse_string(const char* str) {
+rastr_ast_t rastr_parse_str(const char* str) {
     Input input(str, std::strlen(str));
 
     rastr_ast_t ast = rastr_ast_create(16);
@@ -55,10 +54,10 @@ void parse_string(const char* str) {
         std::cerr << rastr_node_to_string(ast, node) << std::endl;
     } while (type != End);
 
-    rastr_ast_destroy(ast);
+    return ast;
 }
 
-void parse_file(const char* filepath) {
+rastr_ast_t rastr_parse_file(const char* filepath) {
     std::string content = read_file(filepath);
-    parse_string(content.c_str());
+    return rastr_parse_str(content.c_str());
 }

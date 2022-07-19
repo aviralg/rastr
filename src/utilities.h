@@ -17,5 +17,6 @@ const char* bufprintf(const char* fmt, ...);
 
 const char* vbufprintf(const char* fmt, std::va_list args);
 
+const char* int_to_string(int value);
 
 #endif /* RASTR_UTILITIES_H */

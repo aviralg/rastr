@@ -192,8 +192,8 @@ class Input {
 
   private:
     const char* input_;
-    std::size_t index_;
     const std::size_t length_;
+    std::size_t index_;
 
     int peek_char_at_(std::size_t index) const {
         if (index >= length_) {

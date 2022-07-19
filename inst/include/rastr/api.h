@@ -1,7 +1,7 @@
-#ifndef RASTR_AST_H
-#define RASTR_AST_H
+#ifndef RASTR_API_H
+#define RASTR_API_H
 
-#include "RIncludes.h"
+#include <rastr/RIncludes.h>
 
 enum rastr_node_type_t {
     /********************************************************************************
@@ -163,6 +163,10 @@ struct rastr_node_t {
 
 typedef struct rastr_ast_impl_t* rastr_ast_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /********************************************************************************
  Ast
 ********************************************************************************/
@@ -280,4 +284,23 @@ rastr_node_t rastr_node_placeholder(rastr_ast_t ast);
 const char* rastr_node_placeholder_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_placeholder_syntax(rastr_ast_t ast, rastr_node_t node);
 
-#endif /* RASTR_AST_H */
+/********************************************************************************
+ Parsing
+********************************************************************************/
+rastr_ast_t rastr_parse_str(const char* str);
+rastr_ast_t rastr_parse_file(const char* filepath);
+
+SEXP r_rastr_ast_to_sexp(rastr_ast_t ast);
+rastr_ast_t rastr_ast_from_sexp(SEXP r_ast);
+SEXP r_rastr_parse_file(SEXP r_filepath);
+SEXP r_rastr_parse_str(SEXP r_string);
+SEXP r_rastr_ast_print(SEXP r_ast);
+
+SEXP r_rastr_initialize(SEXP r_pack_env);
+SEXP r_rastr_finalize(SEXP r_pack_env);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* RASTR_API_H */
