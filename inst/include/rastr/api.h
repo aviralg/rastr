@@ -76,7 +76,7 @@ enum rastr_node_type_t {
     PartExtract, // $
 
     /* Function */
-    AnonymousFunction, //                       \
+    AnonymousFunction, /* \ */
 
     /********************************************************************************
       KEYWORDS

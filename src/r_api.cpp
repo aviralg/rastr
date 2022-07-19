@@ -28,6 +28,35 @@ rastr_ast_t r_rastr_ast_from_sexp(SEXP r_ast) {
     return ast;
 }
 
+void r_rastr_node_destroy(SEXP r_node) {
+    rastr_node_t* node_ptr =
+        (rastr_node_t*) rastr_r_externalptr_to_c_pointer(r_node);
+    if (node_ptr == NULL) {
+        rastr_log_error("encountered NULL node reference");
+    }
+    R_ClearExternalPtr(r_node);
+    free(node_ptr);
+}
+
+SEXP r_rastr_node_to_sexp(rastr_node_t node) {
+    rastr_node_t* node_ptr =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t));
+    node_ptr->index = node.index;
+
+    SEXP r_node = rastr_c_pointer_to_r_externalptr(
+                                                   node_ptr, R_NilValue, R_NilValue, r_rastr_node_destroy);
+    PROTECT(r_node);
+    rastr_sexp_set_class(r_node, R_RASTR_NODE_CLASS);
+    UNPROTECT(1);
+    return r_node;
+}
+
+rastr_node_t r_rastr_node_from_sexp(SEXP r_node) {
+    rastr_node_t* node_ptr =
+        (rastr_node_t*) rastr_r_externalptr_to_c_pointer(r_node);
+    return *node_ptr;
+}
+
 SEXP r_rastr_initialize(SEXP r_pack_env) {
     R_RASTR_AST_CLASS = rastr_c_string_to_r_character("rastr_ast");
     rastr_sexp_acquire(R_RASTR_AST_CLASS);
@@ -42,74 +71,6 @@ SEXP r_rastr_finalize(SEXP r_pack_env) {
     return R_NilValue;
 }
 
-SEXP r_rastr_parse_file(SEXP r_filepath) {
-    SEXPTYPE type = TYPEOF(r_filepath);
-
-    if (type != STRSXP) {
-        Rf_error("expected a filepath of type string, received a value of type "
-                 "%s instead",
-                 Rf_type2str(type));
-        return R_NilValue;
-    }
-
-    int length = Rf_length(r_filepath);
-
-    if (length != 1) {
-        Rf_error("expected a filepath string of size 1, received a string of "
-                 "size %d instead",
-                 length);
-        return R_NilValue;
-    }
-
-    SEXP str_elt = STRING_ELT(r_filepath, 0);
-
-    if (str_elt == NA_STRING) {
-        Rf_error("expected a filepath, received NA_character_ instead");
-        return R_NilValue;
-    }
-
-    const char* filepath = CHAR(str_elt);
-
-    if (!file_exists(filepath)) {
-        Rf_error("failed to open file '%s'", filepath);
-        return R_NilValue;
-    }
-
-    rastr_ast_t ast = rastr_parse_file(CHAR(str_elt));
-
-    return r_rastr_ast_to_sexp(ast);
-}
-
-SEXP r_rastr_parse_str(SEXP r_string) {
-    SEXPTYPE type = TYPEOF(r_string);
-
-    if (type != STRSXP) {
-        Rf_error("expected a value of type string, received a value of type "
-                 "%s instead",
-                 Rf_type2str(type));
-        return R_NilValue;
-    }
-
-    int length = Rf_length(r_string);
-
-    if (length != 1) {
-        Rf_error("expected a string vector of size 1, received a string of "
-                 "size %d instead",
-                 length);
-        return R_NilValue;
-    }
-
-    SEXP str_elt = STRING_ELT(r_string, 0);
-
-    if (str_elt == NA_STRING) {
-        Rf_error("expected a filepath, received NA_character_ instead");
-        return R_NilValue;
-    }
-
-    rastr_ast_t ast = rastr_parse_str(CHAR(str_elt));
-
-    return r_rastr_ast_to_sexp(ast);
-}
 
 SEXP r_rastr_ast_print(SEXP r_ast) {
     return R_NilValue;

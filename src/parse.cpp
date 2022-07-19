@@ -3,41 +3,6 @@
 #include <iostream>
 #include "utilities.h"
 
-// void parse_file(const std::string filepath) {
-//     FILE* file = fopen(filepath.c_str(), "r");
-//     if (file == NULL) {
-//         fputs("cannot open file", stderr);
-//         exit(1);
-//     }
-//
-//     // obtain file size:
-//     fseek(file, 0, SEEK_END);
-//     std::size_t length = ftell(file);
-//     rewind(file);
-//
-//     // allocate memory to contain the whole file:
-//     char* buffer = (char*) malloc(sizeof(char) * length);
-//     if (buffer == NULL) {
-//         fputs("Memory error", stderr);
-//         exit(2);
-//     }
-//
-//     // copy the file into the buffer:
-//     std::size_t bytes_read = fread(buffer, sizeof(char), length, file);
-//     if (bytes_read != length) {
-//         fputs("Reading error", stderr);
-//         exit(3);
-//     }
-//
-//     /* the whole file is now loaded in the memory buffer. */
-//
-//     // terminate
-//     fclose(file);
-//
-//
-//
-// }
-
 rastr_ast_t rastr_parse_str(const char* str) {
     Input input(str, std::strlen(str));
 
@@ -57,7 +22,77 @@ rastr_ast_t rastr_parse_str(const char* str) {
     return ast;
 }
 
+SEXP r_rastr_parse_str(SEXP r_string) {
+    SEXPTYPE type = TYPEOF(r_string);
+
+    if (type != STRSXP) {
+        Rf_error("expected a value of type string, received a value of type "
+                 "%s instead",
+                 Rf_type2str(type));
+        return R_NilValue;
+    }
+
+    int length = Rf_length(r_string);
+
+    if (length != 1) {
+        Rf_error("expected a string vector of size 1, received a string of "
+                 "size %d instead",
+                 length);
+        return R_NilValue;
+    }
+
+    SEXP str_elt = STRING_ELT(r_string, 0);
+
+    if (str_elt == NA_STRING) {
+        Rf_error("expected a filepath, received NA_character_ instead");
+        return R_NilValue;
+    }
+
+    rastr_ast_t ast = rastr_parse_str(CHAR(str_elt));
+
+    return r_rastr_ast_to_sexp(ast);
+}
+
+
 rastr_ast_t rastr_parse_file(const char* filepath) {
     std::string content = read_file(filepath);
     return rastr_parse_str(content.c_str());
+}
+
+SEXP r_rastr_parse_file(SEXP r_filepath) {
+    SEXPTYPE type = TYPEOF(r_filepath);
+
+    if (type != STRSXP) {
+        Rf_error("expected a filepath of type string, received a value of type "
+                 "%s instead",
+                 Rf_type2str(type));
+        return R_NilValue;
+    }
+
+    int length = Rf_length(r_filepath);
+
+    if (length != 1) {
+        Rf_error("expected a filepath string of size 1, received a string of "
+                 "size %d instead",
+                 length);
+        return R_NilValue;
+    }
+
+    SEXP str_elt = STRING_ELT(r_filepath, 0);
+
+    if (str_elt == NA_STRING) {
+        Rf_error("expected a filepath, received NA_character_ instead");
+        return R_NilValue;
+    }
+
+    const char* filepath = CHAR(str_elt);
+
+    if (!file_exists(filepath)) {
+        Rf_error("failed to open file '%s'", filepath);
+        return R_NilValue;
+    }
+
+    rastr_ast_t ast = rastr_parse_file(CHAR(str_elt));
+
+    return r_rastr_ast_to_sexp(ast);
 }
