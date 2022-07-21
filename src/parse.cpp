@@ -1,23 +1,24 @@
 #include <rastr/api.h>
-#include "Lexer.h"
 #include <iostream>
 #include "utilities.h"
+#include "Parser.h"
 
 rastr_ast_t rastr_parse_str(const char* str) {
     Input input(str, std::strlen(str));
 
-    rastr_ast_t ast = rastr_ast_create(16);
-
-    Lexer lexer(input, ast);
-
-    rastr_node_t node;
-    rastr_node_type_t type;
-
-    do {
-        node = lexer.next_token();
-        type = rastr_node_type(ast, node);
-        std::cerr << rastr_node_to_string(ast, node) << std::endl;
-    } while (type != End);
+    Parser parser(input, 16);
+    rastr_ast_t ast = parser.parse_prog();
+    std::cerr << "reached here!" << std::endl;
+    std::cerr << rastr_ast_to_string(ast) << std::endl;
+    //
+    //rastr_node_t node;
+    //rastr_node_type_t type;
+    //
+    //do {
+    //    node = lexer.next_token();
+    //    type = rastr_node_type(ast, node);
+    //    std::cerr << rastr_node_to_string(ast, node) << std::endl;
+    //} while (type != End);
 
     return ast;
 }

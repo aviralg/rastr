@@ -3,6 +3,7 @@
 
 #include <rastr/RIncludes.h>
 
+/* WARN: do not change this enum, entries are order sensitive! */
 enum rastr_node_type_t {
     /********************************************************************************
       Operators
@@ -126,8 +127,13 @@ enum rastr_node_type_t {
     Complex,
     String,
     Symbol,
-    Placeholder
+    Placeholder,
 
+    /********************************************************************************
+      Expressions
+    ********************************************************************************/
+    UnaryExpression,
+    BinaryExpression
     // Group,
     // Block,
     // Help,
@@ -173,13 +179,17 @@ extern "C" {
 
 rastr_ast_t rastr_ast_create(std::size_t capacity);
 void rastr_ast_destroy(rastr_ast_t ast);
+rastr_node_t rastr_ast_root(rastr_ast_t ast);
+const char* rastr_ast_to_string(rastr_ast_t ast);
 
 /********************************************************************************
  Node
 ********************************************************************************/
 
 rastr_node_type_t rastr_node_type(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node);
+int rastr_node_id(rastr_ast_t ast, rastr_node_t node);
+const char*
+rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces);
 
 /********************************************************************************
  Node Type
@@ -285,6 +295,31 @@ const char* rastr_node_placeholder_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_placeholder_syntax(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
+Unary Expression
+********************************************************************************/
+rastr_node_t rastr_node_unary_expression(rastr_ast_t ast,
+                                         rastr_node_t op,
+                                         rastr_node_t expr);
+rastr_node_t rastr_node_unary_expression_operator(rastr_ast_t ast,
+                                                  rastr_node_t node);
+rastr_node_t rastr_node_unary_expression_expression(rastr_ast_t ast,
+                                                    rastr_node_t node);
+
+/********************************************************************************
+ Binary Expression
+********************************************************************************/
+rastr_node_t rastr_node_binary_expression(rastr_ast_t ast,
+                                          rastr_node_t left_expr,
+                                          rastr_node_t op,
+                                          rastr_node_t right_expr);
+rastr_node_t rastr_node_binary_expression_operator(rastr_ast_t ast,
+                                                   rastr_node_t node);
+rastr_node_t rastr_node_binary_expression_left_expression(rastr_ast_t ast,
+                                                          rastr_node_t node);
+rastr_node_t rastr_node_binary_expression_right_expression(rastr_ast_t ast,
+                                                           rastr_node_t node);
+
+/********************************************************************************
  Parsing
 ********************************************************************************/
 rastr_ast_t rastr_parse_str(const char* str);
@@ -298,6 +333,13 @@ SEXP r_rastr_ast_print(SEXP r_ast);
 
 SEXP r_rastr_initialize(SEXP r_pack_env);
 SEXP r_rastr_finalize(SEXP r_pack_env);
+
+/********************************************************************************
+Export
+********************************************************************************/
+
+void rastr_export_to_dot(rastr_ast_t ast, const char* filepath);
+SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath);
 
 #ifdef __cplusplus
 }

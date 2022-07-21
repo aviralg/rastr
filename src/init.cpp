@@ -18,6 +18,8 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_parse_str, 1),
     DECLARE_BINDING(rastr_parse_file, 1),
 
+    /* export */
+    DECLARE_BINDING(rastr_export_to_dot, 2),
     {NULL, NULL, 0}};
 
 void R_init_rastr(DllInfo* dll) {
@@ -28,6 +30,8 @@ void R_init_rastr(DllInfo* dll) {
         "rastr", "rastr_parse_str", (DL_FUNC) (rastr_parse_str));
     R_RegisterCCallable(
         "rastr", "rastr_parse_file", (DL_FUNC) (rastr_parse_file));
+    R_RegisterCCallable(
+        "rastr", "rastr_export_to_dot", (DL_FUNC) (rastr_export_to_dot));
 }
 
 void R_unload_rastr(DllInfo* info) {

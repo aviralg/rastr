@@ -23,7 +23,7 @@ SEXP r_rastr_ast_to_sexp(rastr_ast_t ast) {
     return r_ast;
 }
 
-rastr_ast_t r_rastr_ast_from_sexp(SEXP r_ast) {
+rastr_ast_t rastr_ast_from_sexp(SEXP r_ast) {
     rastr_ast_t ast = (rastr_ast_t) rastr_r_externalptr_to_c_pointer(r_ast);
     return ast;
 }

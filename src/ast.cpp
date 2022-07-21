@@ -4,6 +4,8 @@
 #include "logger.h"
 #include "Pool.h"
 
+int id_counter = 0;
+
 #define NODE_TYPE_ERROR(expected, actual)                 \
     fail_with("incorrect node type; expected %s, got %s", \
               expected,                                   \
@@ -11,6 +13,7 @@
 
 struct rastr_node_impl_t {
     rastr_node_type_t type;
+    int id;
 
     union {
         struct {
@@ -55,6 +58,17 @@ struct rastr_node_impl_t {
             char* value;
         } symbol_node;
 
+        struct {
+            rastr_node_t op;
+            rastr_node_t expr;
+        } unary_node;
+
+        struct {
+            rastr_node_t left_expr;
+            rastr_node_t op;
+            rastr_node_t right_expr;
+        } binary_node;
+
     } node;
 };
 
@@ -66,6 +80,8 @@ struct rastr_ast_impl_t {
     Pool<rastr_node_impl_t, rastr_node_destroy>* pool;
     rastr_node_t root;
 };
+
+const int INDENTATION = 4;
 
 /********************************************************************************
  Node Type
@@ -299,6 +315,10 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "End";
     case Error:
         return "Error";
+    case UnaryExpression:
+        return "UnaryExpression";
+    case BinaryExpression:
+        return "BinaryExpression";
     default:
         fail_with("Unhandled node type %d", type);
     }
@@ -321,6 +341,14 @@ void rastr_ast_destroy(rastr_ast_t ast) {
     free(ast);
 }
 
+rastr_node_t rastr_ast_root(rastr_ast_t ast) {
+    return ast->root;
+}
+
+void rastr_ast_set_root(rastr_ast_t ast, rastr_node_t root) {
+    ast->root = root;
+}
+
 rastr_node_ptr_t rastr_ast_get_impl(rastr_ast_t ast, rastr_node_t node) {
     return ast->pool->at(node.index);
 }
@@ -334,6 +362,7 @@ rastr_node_pair_t rastr_node_create(rastr_ast_t ast, rastr_node_type_t type) {
     rastr_node_ptr_t ptr =
         (rastr_node_ptr_t) malloc_or_fail(sizeof(rastr_node_impl_t));
     ptr->type = type;
+    ptr->id = id_counter++;
 
     std::size_t index = ast->pool->push_back(ptr);
 
@@ -394,6 +423,19 @@ void rastr_node_destroy(rastr_node_ptr_t ptr) {
     free(ptr);
 }
 
+const char* rastr_ast_to_string(rastr_ast_t ast) {
+    const char* root_str = StringView::duplicate(
+        rastr_node_to_string(ast, rastr_ast_root(ast), INDENTATION));
+
+    const char* result = bufprintf("ast {\n"
+                                   "%s\n"
+                                   "}\n",
+                                   root_str);
+
+    free((void*) root_str);
+    return result;
+}
+
 /********************************************************************************
  Node
 ********************************************************************************/
@@ -402,23 +444,35 @@ rastr_node_type_t rastr_node_type(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->type;
 }
 
-const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node) {
+int rastr_node_id(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->id;
+}
+
+const char*
+rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces) {
     rastr_node_type_t type = rastr_node_type(ast, node);
     const char* type_str = rastr_node_type_to_string(type);
+    const std::string indent(spaces, ' ');
+    const char* indentation = indent.c_str();
 
     /********************************************************************************
       Operators
     ********************************************************************************/
 
     if (rastr_node_is_operator(ast, node)) {
-        return bufprintf("node {\n"
-                         "    type:   %s;\n"
-                         "    value:  %s;\n"
-                         "    syntax: %s;\n"
-                         "}",
+        return bufprintf("%snode {\n"
+                         "%s    type:   %s;\n"
+                         "%s    value:  %s;\n"
+                         "%s    syntax: %s;\n"
+                         "%s}",
+                         indentation,
+                         indentation,
                          type_str,
+                         indentation,
                          rastr_node_operator_value(ast, node),
-                         rastr_node_operator_syntax(ast, node));
+                         indentation,
+                         rastr_node_operator_syntax(ast, node),
+                         indentation);
     }
 
     /********************************************************************************
@@ -426,14 +480,20 @@ const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node) {
     ********************************************************************************/
 
     else if (rastr_node_is_keyword(ast, node)) {
-        return bufprintf("node {\n"
-                         "    type:   %s;\n"
-                         "    value:  %s;\n"
-                         "    syntax: %s;\n"
-                         "}",
+        return bufprintf("%snode {\n"
+                         "%s    type:   %s;\n"
+                         "%s    value:  %s;\n"
+                         "%s    syntax: %s;\n"
+                         "%s}",
+                         indentation,
+                         indentation,
                          type_str,
+                         indentation,
                          rastr_node_keyword_value(ast, node),
-                         rastr_node_keyword_syntax(ast, node));
+                         indentation,
+                         rastr_node_keyword_syntax(ast, node),
+                         indentation);
+
     }
 
     /********************************************************************************
@@ -441,14 +501,19 @@ const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node) {
     ********************************************************************************/
 
     else if (rastr_node_is_delimiter(ast, node)) {
-        return bufprintf("node {\n"
-                         "    type:   %s;\n"
-                         "    value:  %s;\n"
-                         "    syntax: %s;\n"
-                         "}",
+        return bufprintf("%snode {\n"
+                         "%s    type:   %s;\n"
+                         "%s    value:  %s;\n"
+                         "%s    syntax: %s;\n"
+                         "%s}",
+                         indentation,
+                         indentation,
                          type_str,
+                         indentation,
                          rastr_node_delimiter_value(ast, node),
-                         rastr_node_delimiter_syntax(ast, node));
+                         indentation,
+                         rastr_node_delimiter_syntax(ast, node),
+                         indentation);
     }
 
     /********************************************************************************
@@ -458,90 +523,129 @@ const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node) {
     else if (rastr_node_is_literal(ast, node)) {
         switch (type) {
         case Null:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
-                             rastr_node_null_syntax(ast, node));
+                             indentation,
+                             rastr_node_null_syntax(ast, node),
+                             indentation);
             break;
 
         case Logical:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  %d;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  %d;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_logical_value(ast, node),
-                             rastr_node_logical_syntax(ast, node));
+                             indentation,
+                             rastr_node_logical_syntax(ast, node),
+                             indentation);
             break;
 
         case Integer:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  %d;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  %d;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_integer_value(ast, node),
-                             rastr_node_integer_syntax(ast, node));
+                             indentation,
+                             rastr_node_integer_syntax(ast, node),
+                             indentation);
             break;
 
         case Real:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  %f;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  %f;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_real_value(ast, node),
-                             rastr_node_real_syntax(ast, node));
+                             indentation,
+                             rastr_node_real_syntax(ast, node),
+                             indentation);
             break;
 
         case Complex:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  {r: %f; i: %f};\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  {r: %f; i: %f};\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_complex_value(ast, node).r,
                              rastr_node_complex_value(ast, node).i,
-                             rastr_node_complex_syntax(ast, node));
+                             indentation,
+                             rastr_node_complex_syntax(ast, node),
+                             indentation);
             break;
 
         case String:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  %s;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  %s;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_string_value(ast, node),
-                             rastr_node_string_syntax(ast, node));
+                             indentation,
+                             rastr_node_string_syntax(ast, node),
+                             indentation);
             break;
 
         case Symbol:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  %s;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  %s;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_symbol_value(ast, node),
-                             rastr_node_symbol_syntax(ast, node));
+                             indentation,
+                             rastr_node_symbol_syntax(ast, node),
+                             indentation);
             break;
 
         case Placeholder:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    value:  %s;\n"
-                             "    syntax: %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    value:  %s;\n"
+                             "%s    syntax: %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
+                             indentation,
                              rastr_node_placeholder_value(ast, node),
-                             rastr_node_placeholder_syntax(ast, node));
+                             indentation,
+                             rastr_node_placeholder_syntax(ast, node),
+                             indentation);
             break;
 
         default:
@@ -555,14 +659,90 @@ const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node) {
     ********************************************************************************/
 
     else if (rastr_node_is_terminator(ast, node)) {
-        return bufprintf("node {\n"
-                         "    type:   %s;\n"
-                         "    value:  %s;\n"
-                         "    syntax: %s;\n"
-                         "}",
+        return bufprintf("%snode {\n"
+                         "%s    type:   %s;\n"
+                         "%s    value:  %s;\n"
+                         "%s    syntax: %s;\n"
+                         "%s}",
+                         indentation,
+                         indentation,
                          type_str,
+                         indentation,
                          rastr_node_terminator_value(ast, node),
-                         rastr_node_terminator_syntax(ast, node));
+                         indentation,
+                         rastr_node_terminator_syntax(ast, node),
+                         indentation);
+    }
+
+    /********************************************************************************
+      Expressions
+    ********************************************************************************/
+
+    else if (type == UnaryExpression) {
+        const char* op_str = StringView::duplicate(rastr_node_to_string(
+            ast, rastr_node_unary_expression_operator(ast, node), spaces + 12));
+
+        const char* expr_str = StringView::duplicate(rastr_node_to_string(
+            ast,
+            rastr_node_unary_expression_expression(ast, node),
+            spaces + 12));
+
+        const char* result = bufprintf("%snode {\n"
+                                       "%s    type:   %s;\n"
+                                       "%s    op:     %s;\n"
+                                       "%s    expr:   %s;\n"
+                                       "%s}",
+                                       indentation,
+                                       indentation,
+                                       type_str,
+                                       indentation,
+                                       op_str,
+                                       indentation,
+                                       expr_str,
+                                       indentation);
+        std::free((void*) op_str);
+        std::free((void*) expr_str);
+
+        return result;
+    }
+
+    else if (type == BinaryExpression) {
+        const char* op_str = StringView::duplicate(rastr_node_to_string(
+            ast,
+            rastr_node_binary_expression_operator(ast, node),
+            spaces + 16));
+
+        const char* left_expr_str = StringView::duplicate(rastr_node_to_string(
+            ast,
+            rastr_node_binary_expression_left_expression(ast, node),
+            spaces + 16));
+
+        const char* right_expr_str = StringView::duplicate(rastr_node_to_string(
+            ast,
+            rastr_node_binary_expression_right_expression(ast, node),
+            spaces + 16));
+
+        const char* result = bufprintf("%snode {\n"
+                                       "%s    type:       %s;\n"
+                                       "%s    op:         %s;\n"
+                                       "%s    left_expr:  %s;\n"
+                                       "%s    right_expr: %s;\n"
+                                       "%s}",
+                                       indentation,
+                                       indentation,
+                                       type_str,
+                                       indentation,
+                                       op_str,
+                                       indentation,
+                                       left_expr_str,
+                                       indentation,
+                                       right_expr_str,
+                                       indentation);
+        free((void*) op_str);
+        free((void*) left_expr_str);
+        free((void*) right_expr_str);
+
+        return result;
     }
 
     /********************************************************************************
@@ -572,19 +752,26 @@ const char* rastr_node_to_string(rastr_ast_t ast, rastr_node_t node) {
     else {
         switch (type) {
         case End:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "}",
-                             type_str);
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
+                             type_str,
+                             indentation);
             break;
 
         case Error:
-            return bufprintf("node {\n"
-                             "    type:   %s;\n"
-                             "    msg:    %s;\n"
-                             "}",
+            return bufprintf("%snode {\n"
+                             "%s    type:   %s;\n"
+                             "%s    msg:    %s;\n"
+                             "%s}",
+                             indentation,
+                             indentation,
                              type_str,
-                             rastr_node_error_message(ast, node));
+                             indentation,
+                             rastr_node_error_message(ast, node),
+                             indentation);
             break;
 
         default:
@@ -905,4 +1092,57 @@ const char* rastr_node_placeholder_value(rastr_ast_t ast, rastr_node_t node) {
 
 const char* rastr_node_placeholder_syntax(rastr_ast_t ast, rastr_node_t node) {
     return "_";
+}
+
+/********************************************************************************
+ Unary Expression
+********************************************************************************/
+rastr_node_t rastr_node_unary_expression(rastr_ast_t ast,
+                                         rastr_node_t op,
+                                         rastr_node_t expr) {
+    /* TODO: return error if not delimiter */
+    rastr_node_pair_t pair = rastr_node_create(ast, UnaryExpression);
+    pair.ptr->node.unary_node.op = op;
+    pair.ptr->node.unary_node.expr = expr;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_unary_expression_operator(rastr_ast_t ast,
+                                                  rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.unary_node.op;
+}
+
+rastr_node_t rastr_node_unary_expression_expression(rastr_ast_t ast,
+                                                    rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.unary_node.expr;
+}
+
+/********************************************************************************
+ Binary Expression
+********************************************************************************/
+rastr_node_t rastr_node_binary_expression(rastr_ast_t ast,
+                                          rastr_node_t left_expr,
+                                          rastr_node_t op,
+                                          rastr_node_t right_expr) {
+    /* TODO: return error if not delimiter */
+    rastr_node_pair_t pair = rastr_node_create(ast, BinaryExpression);
+    pair.ptr->node.binary_node.left_expr = left_expr;
+    pair.ptr->node.binary_node.op = op;
+    pair.ptr->node.binary_node.right_expr = right_expr;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_binary_expression_operator(rastr_ast_t ast,
+                                                   rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.binary_node.op;
+}
+
+rastr_node_t rastr_node_binary_expression_left_expression(rastr_ast_t ast,
+                                                          rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.binary_node.left_expr;
+}
+
+rastr_node_t rastr_node_binary_expression_right_expression(rastr_ast_t ast,
+                                                           rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.binary_node.right_expr;
 }
