@@ -19,7 +19,7 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_parse_file, 1),
 
     /* export */
-    DECLARE_BINDING(rastr_export_to_dot, 2),
+    DECLARE_BINDING(rastr_export_to_dot, 3),
     {NULL, NULL, 0}};
 
 void R_init_rastr(DllInfo* dll) {

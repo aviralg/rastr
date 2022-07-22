@@ -100,7 +100,7 @@ bool rastr_node_type_is_operator(rastr_node_type_t type) {
     case PipeBind:
     case PublicNamespace:
     case PrivateNamespace:
-    case Sequence:
+    case Range:
     case Help:
     case SlotExtract:
     case Formula:

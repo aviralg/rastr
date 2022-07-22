@@ -57,9 +57,9 @@ enum rastr_node_type_t {
     PublicNamespace,  // ::
     PrivateNamespace, // :::
 
-    /* Sequence:
+    /* Range:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/Colon.html */
-    Sequence, // :
+    Range, // :
 
     /* Help */
     Help, // ?
@@ -112,12 +112,6 @@ enum rastr_node_type_t {
     Comma,     // ,
 
     /********************************************************************************
-      Meta
-    ********************************************************************************/
-    End,
-    Error,
-
-    /********************************************************************************
       Literals
     ********************************************************************************/
     Null,
@@ -133,18 +127,39 @@ enum rastr_node_type_t {
       Expressions
     ********************************************************************************/
     UnaryExpression,
-    BinaryExpression
-    // Group,
-    // Block,
-    // Help,
-    // Special,
-    // Assignment,
-    // Arithmetic,
-    // Logical,
-    // Formula,
-    // Sequence,
-    // Comparison,
-    // Namespace,
+    BinaryExpression,
+    Block,
+    Group,
+
+    /********************************************************************************
+      Statement
+    ********************************************************************************/
+    Statement,
+
+    /********************************************************************************
+      Program
+    ********************************************************************************/
+    Program,
+
+    /********************************************************************************
+      Sequence
+    ********************************************************************************/
+    Sequence,
+
+    /********************************************************************************
+      End
+    ********************************************************************************/
+    End,
+
+    /********************************************************************************
+      Error
+    ********************************************************************************/
+    Error,
+
+    /********************************************************************************
+      RepeatLoop
+    ********************************************************************************/
+    RepeatLoop
     // Extract,
     // Function,
     // Default,
@@ -158,9 +173,7 @@ enum rastr_node_type_t {
     // File,
     // Directory,
     // Package,
-    // Program,
     // Library,
-    // Expressions
 };
 
 struct rastr_node_t {
@@ -320,6 +333,60 @@ rastr_node_t rastr_node_binary_expression_right_expression(rastr_ast_t ast,
                                                            rastr_node_t node);
 
 /********************************************************************************
+ Sequence
+********************************************************************************/
+rastr_node_t
+rastr_node_sequence(rastr_ast_t ast, rastr_node_t* nodes, int size);
+int rastr_node_sequence_size(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t* rastr_node_sequence_nodes(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ Block
+********************************************************************************/
+rastr_node_t rastr_node_block(rastr_ast_t ast,
+                              rastr_node_t left_brace,
+                              rastr_node_t expr_seq,
+                              rastr_node_t right_brace);
+rastr_node_t rastr_node_block_left_brace(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_block_expressions(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_block_right_brace(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ Group
+********************************************************************************/
+rastr_node_t rastr_node_group(rastr_ast_t ast,
+                              rastr_node_t left_paren,
+                              rastr_node_t expr,
+                              rastr_node_t right_paren);
+rastr_node_t rastr_node_group_left_paren(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_group_expr(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_group_right_paren(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+Statement
+********************************************************************************/
+rastr_node_t rastr_node_statement(rastr_ast_t ast,
+                                  rastr_node_t expr,
+                                  rastr_node_t terminator);
+rastr_node_t rastr_node_statement_expr(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_statement_terminator(rastr_ast_t ast,
+                                             rastr_node_t node);
+
+/********************************************************************************
+ Program
+********************************************************************************/
+rastr_node_t rastr_node_program(rastr_ast_t ast, rastr_node_t statements);
+rastr_node_t rastr_node_program_statements(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+Repeat
+********************************************************************************/
+rastr_node_t
+rastr_node_rloop(rastr_ast_t ast, rastr_node_t kw, rastr_node_t body);
+rastr_node_t rastr_node_rloop_kw(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_rloop_body(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
  Parsing
 ********************************************************************************/
 rastr_ast_t rastr_parse_str(const char* str);
@@ -338,8 +405,8 @@ SEXP r_rastr_finalize(SEXP r_pack_env);
 Export
 ********************************************************************************/
 
-void rastr_export_to_dot(rastr_ast_t ast, const char* filepath);
-SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath);
+void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth);
+SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth);
 
 #ifdef __cplusplus
 }

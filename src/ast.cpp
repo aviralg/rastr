@@ -69,6 +69,37 @@ struct rastr_node_impl_t {
             rastr_node_t right_expr;
         } binary_node;
 
+        struct {
+            int size;
+            rastr_node_t* nodes;
+        } sequence_node;
+
+        struct {
+            rastr_node_t left_brace;
+            rastr_node_t expressions;
+            rastr_node_t right_brace;
+        } block_node;
+
+        struct {
+            rastr_node_t left_paren;
+            rastr_node_t expr;
+            rastr_node_t right_paren;
+        } group_node;
+
+        struct {
+            rastr_node_t expr;
+            rastr_node_t terminator;
+        } statement_node;
+
+        struct {
+            rastr_node_t statements;
+        } program_node;
+
+        struct {
+            rastr_node_t kw;
+            rastr_node_t body;
+        } rloop_node;
+
     } node;
 };
 
@@ -115,7 +146,7 @@ bool rastr_node_type_is_operator(rastr_node_type_t type) {
     case PipeBind:
     case PublicNamespace:
     case PrivateNamespace:
-    case Sequence:
+    case Range:
     case Help:
     case SlotExtract:
     case Formula:
@@ -243,8 +274,8 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "PublicNamespace";
     case PrivateNamespace:
         return "PrivateNamespace";
-    case Sequence:
-        return "Sequence";
+    case Range:
+        return "Range";
     case Help:
         return "Help";
     case SlotExtract:
@@ -315,13 +346,24 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "End";
     case Error:
         return "Error";
+    case Sequence:
+        return "Sequence";
     case UnaryExpression:
         return "UnaryExpression";
     case BinaryExpression:
         return "BinaryExpression";
-    default:
-        fail_with("Unhandled node type %d", type);
+    case Block:
+        return "Block";
+    case Group:
+        return "Group";
+    case Statement:
+        return "Statement";
+    case Program:
+        return "Program";
+    case RepeatLoop:
+        return "RepeatLoop";
     }
+    fail_with("Unhandled node type %d", type);
 }
 
 /********************************************************************************
@@ -1145,4 +1187,132 @@ rastr_node_t rastr_node_binary_expression_left_expression(rastr_ast_t ast,
 rastr_node_t rastr_node_binary_expression_right_expression(rastr_ast_t ast,
                                                            rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.binary_node.right_expr;
+}
+
+/********************************************************************************
+ Sequence
+********************************************************************************/
+rastr_node_t
+rastr_node_sequence(rastr_ast_t ast, rastr_node_t* nodes, int size) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Sequence);
+    pair.ptr->node.sequence_node.size = size;
+
+    std::size_t bytes = size * sizeof(rastr_node_t);
+    pair.ptr->node.sequence_node.nodes = (rastr_node_t*) malloc_or_fail(bytes);
+    std::memcpy(pair.ptr->node.sequence_node.nodes, nodes, bytes);
+
+    return pair.node;
+}
+
+int rastr_node_sequence_size(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.sequence_node.size;
+}
+
+rastr_node_t* rastr_node_sequence_nodes(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.sequence_node.nodes;
+}
+
+/********************************************************************************
+ Block
+********************************************************************************/
+rastr_node_t rastr_node_block(rastr_ast_t ast,
+                              rastr_node_t left_brace,
+                              rastr_node_t expressions,
+                              rastr_node_t right_brace) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Block);
+    pair.ptr->node.block_node.left_brace = left_brace;
+    pair.ptr->node.block_node.expressions = expressions;
+    pair.ptr->node.block_node.right_brace = right_brace;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_block_left_brace(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.block_node.left_brace;
+}
+
+rastr_node_t rastr_node_block_expressions(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.block_node.expressions;
+}
+
+rastr_node_t rastr_node_block_right_brace(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.block_node.right_brace;
+}
+
+/********************************************************************************
+ Group
+********************************************************************************/
+rastr_node_t rastr_node_group(rastr_ast_t ast,
+                              rastr_node_t left_paren,
+                              rastr_node_t expr,
+                              rastr_node_t right_paren) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Group);
+    pair.ptr->node.group_node.left_paren = left_paren;
+    pair.ptr->node.group_node.expr = expr;
+    pair.ptr->node.group_node.right_paren = right_paren;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_group_left_paren(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.group_node.left_paren;
+}
+
+rastr_node_t rastr_node_group_expr(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.group_node.expr;
+}
+
+rastr_node_t rastr_node_group_right_paren(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.group_node.right_paren;
+}
+
+/********************************************************************************
+ Statement
+********************************************************************************/
+rastr_node_t rastr_node_statement(rastr_ast_t ast,
+                                  rastr_node_t expr,
+                                  rastr_node_t terminator) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Statement);
+    pair.ptr->node.statement_node.expr = expr;
+    pair.ptr->node.statement_node.terminator = terminator;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_statement_expr(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.statement_node.expr;
+}
+
+rastr_node_t rastr_node_statement_terminator(rastr_ast_t ast,
+                                             rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.statement_node.terminator;
+}
+
+/********************************************************************************
+ Program
+********************************************************************************/
+rastr_node_t rastr_node_program(rastr_ast_t ast, rastr_node_t statements) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Program);
+    pair.ptr->node.program_node.statements = statements;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_program_statements(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.program_node.statements;
+}
+
+/********************************************************************************
+ Rloop
+********************************************************************************/
+rastr_node_t
+rastr_node_rloop(rastr_ast_t ast, rastr_node_t kw, rastr_node_t body) {
+    rastr_node_pair_t pair = rastr_node_create(ast, RepeatLoop);
+    pair.ptr->node.rloop_node.kw = kw;
+    pair.ptr->node.rloop_node.body = body;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_rloop_kw(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.rloop_node.kw;
+}
+
+rastr_node_t rastr_node_rloop_body(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.rloop_node.body;
 }

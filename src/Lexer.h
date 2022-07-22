@@ -136,7 +136,7 @@ class Lexer {
         case PipeForward:
         case PipeBind:
 
-        case Sequence:
+        case Range:
         case Formula:
         case Help:
 
@@ -439,7 +439,7 @@ class Lexer {
                 return rastr_node_operator(ast_, ":=", ColonAssign);
             }
 
-            return rastr_node_operator(ast_, ":", Sequence);
+            return rastr_node_operator(ast_, ":", Range);
         }
 
         else if (input_.read_char_if('&')) {

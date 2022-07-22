@@ -49,7 +49,7 @@ class Pool {
             return;
         }
 
-        buffer_ = (Node*) realloc_or_fail(buffer_, capacity);
+        buffer_ = (Node*) realloc_or_fail(buffer_, sizeof(Node) * capacity);
 
         for (std::size_t index = capacity_; index < capacity; ++index) {
             deallocate_(index);
@@ -281,16 +281,23 @@ class Pool {
         set_next_(index, Null);
         set_previous_(index, Null);
 
+        log_msg("allocating %d %p\n", index, data);
+
         return index;
     }
 
     T* deallocate_(std::size_t index) {
         T* data = get_data_(index);
+        log_msg("deallocating %d %p\n", index, data);
+
         set_data_(index, nullptr);
         set_free_(index);
         set_next_(index, free_);
         set_previous_(index, Null);
         free_ = index;
+
+        
+
         return data;
     }
 };

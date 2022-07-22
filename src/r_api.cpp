@@ -1,11 +1,13 @@
 #include <rastr/api.h>
 #include "utilities.h"
 #include "interop.h"
+#include "logger.h"
 
 SEXP R_RASTR_AST_CLASS = R_NilValue;
 SEXP R_RASTR_NODE_CLASS = R_NilValue;
 
 void r_rastr_ast_destroy(SEXP r_ast) {
+    log_msg("destroying ast");
     rastr_ast_t ast = (rastr_ast_t) rastr_r_externalptr_to_c_pointer(r_ast);
     if (ast == NULL) {
         rastr_log_error("encountered NULL ast reference");
@@ -29,6 +31,7 @@ rastr_ast_t rastr_ast_from_sexp(SEXP r_ast) {
 }
 
 void r_rastr_node_destroy(SEXP r_node) {
+    log_msg("destroying node");
     rastr_node_t* node_ptr =
         (rastr_node_t*) rastr_r_externalptr_to_c_pointer(r_node);
     if (node_ptr == NULL) {

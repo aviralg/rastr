@@ -6,10 +6,10 @@
 rastr_ast_t rastr_parse_str(const char* str) {
     Input input(str, std::strlen(str));
 
-    Parser parser(input, 16);
+    Parser parser(input, 100);
     rastr_ast_t ast = parser.parse_prog();
-    std::cerr << "reached here!" << std::endl;
-    std::cerr << rastr_ast_to_string(ast) << std::endl;
+    //std::cerr << "reached here!" << std::endl;
+    //std::cerr << rastr_ast_to_string(ast) << std::endl;
     //
     //rastr_node_t node;
     //rastr_node_type_t type;

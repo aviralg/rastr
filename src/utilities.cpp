@@ -76,3 +76,26 @@ const char* int_to_string(int value) {
     snprintf(str_buffer, STR_BUFFER_SIZE, "%d", value);
     return str_buffer;
 }
+
+/* https://stackoverflow.com/a/4643526 */
+void string_replace(std::string& source,
+                    const std::string& pattern,
+                    const std::string& replacement) {
+    size_t index = 0;
+    size_t pat_len = pattern.size();
+    size_t rep_len = replacement.size();
+
+    while (true) {
+        /* Locate the substring to replace. */
+        index = source.find(pattern, index);
+        if (index == std::string::npos)
+            break;
+
+        /* Make the replacement. */
+        source.replace(index, pat_len, replacement);
+
+        /* Advance index forward so the next iteration doesn't pick it up as
+         * well. */
+        index += rep_len;
+    }
+}
