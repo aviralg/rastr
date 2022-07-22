@@ -773,7 +773,7 @@ class Lexer {
         return rastr_node_string_from_view(
             ast_,
             input_.get_view(left_index, right_index),
-            input_.get_view(left_index + 1, right_index + 1));
+            input_.get_view(left_index + 1, right_index - 1));
     }
 
     rastr_node_t parse_quoted_symbol_(char delimiter) {
