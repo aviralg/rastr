@@ -528,6 +528,10 @@ class Lexer {
             return rastr_node_terminator(ast_, Newline);
         }
 
+        else if (input_.read_char_if(';')) {
+            return rastr_node_terminator(ast_, Semicolon);
+        }
+
         else if (input_.read_char_if('\\')) {
             return rastr_node_operator(ast_, "\\", AnonymousFunction);
         }
