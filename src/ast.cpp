@@ -100,6 +100,20 @@ struct rastr_node_impl_t {
             rastr_node_t body;
         } rloop_node;
 
+        struct {
+            rastr_node_t if_kw;
+            rastr_node_t cond;
+            rastr_node_t csq;
+        } ifcond_node;
+
+        struct {
+            rastr_node_t if_kw;
+            rastr_node_t cond;
+            rastr_node_t csq;
+            rastr_node_t else_kw;
+            rastr_node_t alt;
+        } ifelsecond_node;
+
     } node;
 };
 
@@ -362,6 +376,10 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Program";
     case RepeatLoop:
         return "RepeatLoop";
+    case IfCond:
+        return "IfCondition";
+    case IfElseCond:
+        return "IfElseCondition";
     }
     fail_with("Unhandled node type %d", type);
 }
@@ -1315,4 +1333,68 @@ rastr_node_t rastr_node_rloop_kw(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_node_rloop_body(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.rloop_node.body;
+}
+
+/********************************************************************************
+ If
+********************************************************************************/
+rastr_node_t rastr_node_ifcond(rastr_ast_t ast,
+                               rastr_node_t if_kw,
+                               rastr_node_t cond,
+                               rastr_node_t csq) {
+    rastr_node_pair_t pair = rastr_node_create(ast, IfCond);
+    pair.ptr->node.ifcond_node.if_kw = if_kw;
+    pair.ptr->node.ifcond_node.cond = cond;
+    pair.ptr->node.ifcond_node.csq = csq;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_ifcond_if_kw(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifcond_node.if_kw;
+}
+
+rastr_node_t rastr_node_ifcond_cond(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifcond_node.cond;
+}
+
+rastr_node_t rastr_node_ifcond_csq(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifcond_node.csq;
+}
+
+/********************************************************************************
+ IfElse
+********************************************************************************/
+rastr_node_t rastr_node_ifelsecond(rastr_ast_t ast,
+                                   rastr_node_t if_kw,
+                                   rastr_node_t cond,
+                                   rastr_node_t csq,
+                                   rastr_node_t else_kw,
+                                   rastr_node_t alt) {
+    rastr_node_pair_t pair = rastr_node_create(ast, IfElseCond);
+    pair.ptr->node.ifelsecond_node.if_kw = if_kw;
+    pair.ptr->node.ifelsecond_node.cond = cond;
+    pair.ptr->node.ifelsecond_node.csq = csq;
+    pair.ptr->node.ifelsecond_node.else_kw = else_kw;
+    pair.ptr->node.ifelsecond_node.alt = alt;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_ifelsecond_if_kw(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifelsecond_node.if_kw;
+}
+
+rastr_node_t rastr_node_ifelsecond_cond(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifelsecond_node.cond;
+}
+
+rastr_node_t rastr_node_ifelsecond_csq(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifelsecond_node.csq;
+}
+
+rastr_node_t rastr_node_ifelsecond_else_kw(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifelsecond_node.else_kw;
+}
+
+rastr_node_t rastr_node_ifelsecond_alt(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ifelsecond_node.alt;
 }

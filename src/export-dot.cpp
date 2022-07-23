@@ -122,6 +122,14 @@ void rastr_export_to_dot_rloop(FILE* file,
                                rastr_ast_t ast,
                                rastr_node_t node,
                                int depth);
+void rastr_export_to_dot_ifcond(FILE* file,
+                                rastr_ast_t ast,
+                                rastr_node_t node,
+                                int depth);
+void rastr_export_to_dot_ifelsecond(FILE* file,
+                                    rastr_ast_t ast,
+                                    rastr_node_t node,
+                                    int depth);
 
 void write_dot_node(FILE* file,
                     rastr_ast_t ast,
@@ -409,6 +417,14 @@ void rastr_export_to_dot_node(FILE* file,
         ********************************************************************************/
     case RepeatLoop:
         rastr_export_to_dot_rloop(file, ast, node, depth);
+        return;
+
+    case IfCond:
+        rastr_export_to_dot_ifcond(file, ast, node, depth);
+        return;
+
+    case IfElseCond:
+        rastr_export_to_dot_ifelsecond(file, ast, node, depth);
         return;
     }
 
@@ -737,7 +753,7 @@ void rastr_export_to_dot_end(FILE* file,
                              rastr_ast_t ast,
                              rastr_node_t node,
                              int depth) {
-    write_dot_node(file, ast, node, ColorAmber);
+    write_dot_node(file, ast, node, ColorBlack);
 }
 
 void rastr_export_to_dot_error(FILE* file,
@@ -747,7 +763,7 @@ void rastr_export_to_dot_error(FILE* file,
     write_dot_node(file,
                    ast,
                    node,
-                   ColorYellow,
+                   ColorBlack,
                    "MESSAGE",
                    rastr_node_error_message(ast, node));
 }
@@ -756,7 +772,7 @@ void rastr_export_to_dot_rloop(FILE* file,
                                rastr_ast_t ast,
                                rastr_node_t node,
                                int depth) {
-    write_dot_node(file, ast, node, ColorOrange);
+    write_dot_node(file, ast, node, ColorYellow);
 
     --depth;
 
@@ -771,6 +787,64 @@ void rastr_export_to_dot_rloop(FILE* file,
     rastr_node_t body = rastr_node_rloop_body(ast, node);
     rastr_export_to_dot_node(file, ast, body, depth);
     write_edge(file, ast, node, body, "body");
+}
+
+void rastr_export_to_dot_ifcond(FILE* file,
+                                rastr_ast_t ast,
+                                rastr_node_t node,
+                                int depth) {
+    write_dot_node(file, ast, node, ColorAmber);
+
+    --depth;
+
+    if (depth == 0) {
+        return;
+    }
+
+    rastr_node_t if_kw = rastr_node_ifcond_if_kw(ast, node);
+    rastr_export_to_dot_node(file, ast, if_kw, depth);
+    write_edge(file, ast, node, if_kw, "if_kw");
+
+    rastr_node_t cond = rastr_node_ifcond_cond(ast, node);
+    rastr_export_to_dot_node(file, ast, cond, depth);
+    write_edge(file, ast, node, cond, "cond");
+
+    rastr_node_t csq = rastr_node_ifcond_csq(ast, node);
+    rastr_export_to_dot_node(file, ast, csq, depth);
+    write_edge(file, ast, node, csq, "csq");
+}
+
+void rastr_export_to_dot_ifelsecond(FILE* file,
+                                    rastr_ast_t ast,
+                                    rastr_node_t node,
+                                    int depth) {
+    write_dot_node(file, ast, node, ColorOrange);
+
+    --depth;
+
+    if (depth == 0) {
+        return;
+    }
+
+    rastr_node_t if_kw = rastr_node_ifelsecond_if_kw(ast, node);
+    rastr_export_to_dot_node(file, ast, if_kw, depth);
+    write_edge(file, ast, node, if_kw, "if_kw");
+
+    rastr_node_t cond = rastr_node_ifelsecond_cond(ast, node);
+    rastr_export_to_dot_node(file, ast, cond, depth);
+    write_edge(file, ast, node, cond, "cond");
+
+    rastr_node_t csq = rastr_node_ifelsecond_csq(ast, node);
+    rastr_export_to_dot_node(file, ast, csq, depth);
+    write_edge(file, ast, node, csq, "csq");
+
+    rastr_node_t else_kw = rastr_node_ifelsecond_else_kw(ast, node);
+    rastr_export_to_dot_node(file, ast, else_kw, depth);
+    write_edge(file, ast, node, else_kw, "else_kw");
+
+    rastr_node_t alt = rastr_node_ifelsecond_alt(ast, node);
+    rastr_export_to_dot_node(file, ast, alt, depth);
+    write_edge(file, ast, node, alt, "alt");
 }
 
 std::string escape_dot_label(const char* label) {

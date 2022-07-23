@@ -159,7 +159,17 @@ enum rastr_node_type_t {
     /********************************************************************************
       RepeatLoop
     ********************************************************************************/
-    RepeatLoop
+    RepeatLoop,
+
+    /********************************************************************************
+      If
+    ********************************************************************************/
+    IfCond,
+
+    /********************************************************************************
+      IfElse
+    ********************************************************************************/
+    IfElseCond
     // Extract,
     // Function,
     // Default,
@@ -385,6 +395,32 @@ rastr_node_t
 rastr_node_rloop(rastr_ast_t ast, rastr_node_t kw, rastr_node_t body);
 rastr_node_t rastr_node_rloop_kw(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_rloop_body(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ If
+********************************************************************************/
+rastr_node_t rastr_node_ifcond(rastr_ast_t ast,
+                               rastr_node_t if_kw,
+                               rastr_node_t cond,
+                               rastr_node_t csq);
+rastr_node_t rastr_node_ifcond_if_kw(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_ifcond_cond(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_ifcond_csq(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ IfElse
+********************************************************************************/
+rastr_node_t rastr_node_ifelsecond(rastr_ast_t ast,
+                                   rastr_node_t if_kw,
+                                   rastr_node_t cond,
+                                   rastr_node_t csq,
+                                   rastr_node_t else_kw,
+                                   rastr_node_t alt);
+rastr_node_t rastr_node_ifelsecond_if_kw(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_ifelsecond_cond(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_ifelsecond_csq(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_ifelsecond_else_kw(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_ifelsecond_alt(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Parsing

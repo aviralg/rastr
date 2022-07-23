@@ -14,7 +14,10 @@ const int INVALID_PRECEDENCE = -1;
 
 void rastr_ast_set_root(rastr_ast_t ast, rastr_node_t root);
 
-//#define RETURN_IF_ERROR(node)
+#define RETURN_IF_UNDEFINED(node)        \
+    if (rastr_node_is_undefined(node)) { \
+        return node;                     \
+    }
 
 rastr_node_t UNDEFINED_NODE{(std::size_t)(-1)};
 
@@ -54,15 +57,15 @@ class Parser {
 
             rastr_node_t stmt = parse_stmt_permissive(End);
 
-            std::cerr << "here\n";
-            std::cerr << "type is "
-                      << rastr_node_type_to_string(rastr_node_type(ast_, stmt))
-                      << "\n";
-
             if (rastr_node_is_undefined(stmt)) {
                 rastr_log_error("error encountered!");
                 return ast_;
             }
+
+            std::cerr << "here\n";
+            std::cerr << "type is "
+                      << rastr_node_type_to_string(rastr_node_type(ast_, stmt))
+                      << "\n";
 
             stmts.push_back(stmt);
         }
@@ -192,7 +195,7 @@ class Parser {
             rastr_node_type_t cur_type = rastr_node_type(ast_, node);
 
             /* terminator is encountered, return; */
-            if (rastr_node_is_terminator(ast_, node)) {
+            if (rastr_node_is_terminator(ast_, node) || cur_type == End) {
                 break;
             }
 
@@ -269,6 +272,10 @@ class Parser {
             return parse_repeat(op);
         }
 
+        else if (type == If) {
+            return parse_if_else(op);
+        }
+
         int precedence = get_precedence(type, true);
 
         if (precedence == INVALID_PRECEDENCE) {
@@ -298,14 +305,34 @@ class Parser {
 
         return rastr_node_binary_expression(ast_, left, op, right);
     }
+    //        #8
+    // if (x) if(y) z else x+1
+    rastr_node_t parse_if_else(rastr_node_t if_kw) {
+        rastr_node_t lparen = next_token_();
 
-    // rastr_node_t parse_if_expr(rastr_node_t left) {
-    //     rastr_node_t lparen = next_token_();
-    //
-    //     rastr_node_t cond = parse_group_expr(lparen);
-    //
-    //     rastr_node_t consequent = parse_expr()
-    // }
+        if (rastr_node_type(ast_, lparen) != LeftParen) {
+            return UNDEFINED_NODE;
+        }
+
+        rastr_node_t cond = parse_group(lparen);
+        RETURN_IF_UNDEFINED(cond);
+
+        rastr_node_t csq = parse_expr(LOWEST_PRECEDENCE);
+        RETURN_IF_UNDEFINED(csq);
+
+        rastr_node_t else_kw = peek_token_();
+
+        if (rastr_node_type(ast_, else_kw) != Else) {
+            return rastr_node_ifcond(ast_, if_kw, cond, csq);
+        }
+
+        consume_();
+
+        rastr_node_t alt = parse_expr(LOWEST_PRECEDENCE);
+        RETURN_IF_UNDEFINED(alt);
+
+        return rastr_node_ifelsecond(ast_, if_kw, cond, csq, else_kw, alt);
+    }
 
     rastr_node_t parse_group(rastr_node_t left_paren) {
         rastr_node_t expr = parse_expr(LOWEST_PRECEDENCE);
@@ -406,14 +433,14 @@ class Parser {
             switch (type) {
             case Help:
                 return 1;
-            case While:
-            case For:
-            case Repeat:
-                return 2;
-            case If:
-                return 3;
-            case Else:
-                return 4;
+            //case While:
+            //case For:
+            //case Repeat:
+            //    return 2;
+            //case If:
+            //    return 3;
+            //case Else:
+            //    return 4;
             case LeftAssign:
             case LeftSuperAssign:
             case ColonAssign:
