@@ -206,18 +206,21 @@ void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth) {
             "          shape     = \"Mrecord\"]\n"
             "\n"
             "    edge [fontname  = \"Courier New\"\n"
-            "          penwidth  = 1\n"
-            "          fontsize  = 10\n"
+            "          penwidth  = 2\n"
+            "          fontsize  = 12\n"
             "          fontcolor = \"black\"]\n"
             "\n"
             "    graph [fontsize = 10\n"
             "           labelloc = \"t\"\n"
             "           label    = \"\"\n"
-            "           splines  = true\n"
+            "           splines  = false\n"
             "           overlap  = false\n"
+            "           forcelabels = true\n"
+            "           center = true\n"
             "           rankdir  = \"TD\"]\n"
             "\n"
-            "    ratio = auto;\n");
+            "    ratio = auto;\n"
+            "    charset=\"UTF-8\"");
 
     rastr_export_to_dot_node(file, ast, rastr_ast_root(ast), depth);
 
@@ -787,12 +790,13 @@ void write_dot_node_header(FILE* file,
 
     const char* header_tmpl = R"-(
     "node-%d"[
-         fillcolor="%s"
+         fillcolor ="%s"
+         tooltip = "%s#%d"
          label = <<table border='0' cellborder='0'>
                       <tr><td align="center" colspan="3"><B>%s</B></td></tr>
                       <tr><td align="left">ID</td><td>-&gt;</td><td align="left">%d</td></tr>)-";
 
-    fprintf(file, header_tmpl, id, fillcolor, type_str, id);
+    fprintf(file, header_tmpl, id, fillcolor, type_str, id, type_str, id);
 }
 
 void write_dot_node_footer(FILE* file) {
@@ -854,9 +858,48 @@ void write_edge(FILE* file,
                 rastr_node_t parent,
                 rastr_node_t child,
                 const char* label) {
+    int par_id = rastr_node_id(ast, parent);
+    rastr_node_type_t par_type = rastr_node_type(ast, parent);
+    const char* par_type_str = rastr_node_type_to_string(par_type);
+
+    int chd_id = rastr_node_id(ast, child);
+    rastr_node_type_t chd_type = rastr_node_type(ast, child);
+    const char* chd_type_str = rastr_node_type_to_string(chd_type);
+
+    const char* edge_tmpl = R"-(
+    "node-%d" -> "node-%d" [
+        label = "%s"
+        tooltip = "%s#%d -> %s#%d"
+        edgetooltip = "%s#%d -> %s#%d"
+        labeltooltip = "%s#%d -> %s#%d"
+        headtooltip = "%s#%d -> %s#%d"
+        tailtooltip = "%s#%d -> %s#%d"
+    ]
+)-";
+
     fprintf(file,
-            "\n    \"node-%d\" -> \"node-%d\" [label = \"%s\"]\n",
-            rastr_node_id(ast, parent),
-            rastr_node_id(ast, child),
-            label);
+            edge_tmpl,
+            par_id,
+            chd_id,
+            label,
+            par_type_str,
+            par_id,
+            chd_type_str,
+            chd_id,
+            par_type_str,
+            par_id,
+            chd_type_str,
+            chd_id,
+            par_type_str,
+            par_id,
+            chd_type_str,
+            chd_id,
+            par_type_str,
+            par_id,
+            chd_type_str,
+            chd_id,
+            par_type_str,
+            par_id,
+            chd_type_str,
+            chd_id);
 }
