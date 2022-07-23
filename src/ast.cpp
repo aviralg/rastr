@@ -101,6 +101,12 @@ struct rastr_node_impl_t {
         } rloop_node;
 
         struct {
+            rastr_node_t kw;
+            rastr_node_t cond;
+            rastr_node_t body;
+        } wloop_node;
+
+        struct {
             rastr_node_t if_kw;
             rastr_node_t cond;
             rastr_node_t csq;
@@ -376,6 +382,8 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Program";
     case RepeatLoop:
         return "RepeatLoop";
+    case WhileLoop:
+        return "WhileLoop";
     case IfCond:
         return "IfCondition";
     case IfElseCond:
@@ -1317,7 +1325,7 @@ rastr_node_t rastr_node_program_statements(rastr_ast_t ast, rastr_node_t node) {
 }
 
 /********************************************************************************
- Rloop
+ RepeatLoop
 ********************************************************************************/
 rastr_node_t
 rastr_node_rloop(rastr_ast_t ast, rastr_node_t kw, rastr_node_t body) {
@@ -1333,6 +1341,32 @@ rastr_node_t rastr_node_rloop_kw(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_node_rloop_body(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.rloop_node.body;
+}
+
+/********************************************************************************
+ WhileLoop
+********************************************************************************/
+rastr_node_t rastr_node_wloop(rastr_ast_t ast,
+                              rastr_node_t kw,
+                              rastr_node_t cond,
+                              rastr_node_t body) {
+    rastr_node_pair_t pair = rastr_node_create(ast, WhileLoop);
+    pair.ptr->node.wloop_node.kw = kw;
+    pair.ptr->node.wloop_node.cond = cond;
+    pair.ptr->node.wloop_node.body = body;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_wloop_kw(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.wloop_node.kw;
+}
+
+rastr_node_t rastr_node_wloop_cond(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.wloop_node.cond;
+}
+
+rastr_node_t rastr_node_wloop_body(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.wloop_node.body;
 }
 
 /********************************************************************************

@@ -122,6 +122,10 @@ void rastr_export_to_dot_rloop(FILE* file,
                                rastr_ast_t ast,
                                rastr_node_t node,
                                int depth);
+void rastr_export_to_dot_wloop(FILE* file,
+                               rastr_ast_t ast,
+                               rastr_node_t node,
+                               int depth);
 void rastr_export_to_dot_ifcond(FILE* file,
                                 rastr_ast_t ast,
                                 rastr_node_t node,
@@ -417,6 +421,13 @@ void rastr_export_to_dot_node(FILE* file,
         ********************************************************************************/
     case RepeatLoop:
         rastr_export_to_dot_rloop(file, ast, node, depth);
+        return;
+
+        /********************************************************************************
+         While
+        ********************************************************************************/
+    case WhileLoop:
+        rastr_export_to_dot_wloop(file, ast, node, depth);
         return;
 
     case IfCond:
@@ -785,6 +796,31 @@ void rastr_export_to_dot_rloop(FILE* file,
     write_edge(file, ast, node, kw, "kw");
 
     rastr_node_t body = rastr_node_rloop_body(ast, node);
+    rastr_export_to_dot_node(file, ast, body, depth);
+    write_edge(file, ast, node, body, "body");
+}
+
+void rastr_export_to_dot_wloop(FILE* file,
+                               rastr_ast_t ast,
+                               rastr_node_t node,
+                               int depth) {
+    write_dot_node(file, ast, node, ColorBrown);
+
+    --depth;
+
+    if (depth == 0) {
+        return;
+    }
+
+    rastr_node_t kw = rastr_node_wloop_kw(ast, node);
+    rastr_export_to_dot_node(file, ast, kw, depth);
+    write_edge(file, ast, node, kw, "kw");
+
+    rastr_node_t cond = rastr_node_wloop_cond(ast, node);
+    rastr_export_to_dot_node(file, ast, cond, depth);
+    write_edge(file, ast, node, cond, "cond");
+
+    rastr_node_t body = rastr_node_wloop_body(ast, node);
     rastr_export_to_dot_node(file, ast, body, depth);
     write_edge(file, ast, node, body, "body");
 }

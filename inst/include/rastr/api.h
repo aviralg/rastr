@@ -162,6 +162,11 @@ enum rastr_node_type_t {
     RepeatLoop,
 
     /********************************************************************************
+      WhileLoop
+    ********************************************************************************/
+    WhileLoop,
+
+    /********************************************************************************
       If
     ********************************************************************************/
     IfCond,
@@ -389,12 +394,23 @@ rastr_node_t rastr_node_program(rastr_ast_t ast, rastr_node_t statements);
 rastr_node_t rastr_node_program_statements(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
-Repeat
+ RepeatLoop
 ********************************************************************************/
 rastr_node_t
 rastr_node_rloop(rastr_ast_t ast, rastr_node_t kw, rastr_node_t body);
 rastr_node_t rastr_node_rloop_kw(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_rloop_body(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ WhileLoop
+********************************************************************************/
+rastr_node_t rastr_node_wloop(rastr_ast_t ast,
+                              rastr_node_t kw,
+                              rastr_node_t cond,
+                              rastr_node_t body);
+rastr_node_t rastr_node_wloop_kw(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_wloop_cond(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_wloop_body(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  If

@@ -272,6 +272,10 @@ class Parser {
             return parse_repeat(op);
         }
 
+        else if (type == While) {
+            return parse_while(op);
+        }
+
         else if (type == If) {
             return parse_if_else(op);
         }
@@ -305,8 +309,7 @@ class Parser {
 
         return rastr_node_binary_expression(ast_, left, op, right);
     }
-    //        #8
-    // if (x) if(y) z else x+1
+
     rastr_node_t parse_if_else(rastr_node_t if_kw) {
         rastr_node_t lparen = next_token_();
 
@@ -386,6 +389,22 @@ class Parser {
         return rastr_node_rloop(ast_, kw, expr);
     }
 
+    rastr_node_t parse_while(rastr_node_t kw) {
+        rastr_node_t lparen = next_token_();
+
+        if (rastr_node_type(ast_, lparen) != LeftParen) {
+            return UNDEFINED_NODE;
+        }
+
+        rastr_node_t cond = parse_group(lparen);
+        RETURN_IF_UNDEFINED(cond);
+
+        rastr_node_t body = parse_expr(LOWEST_PRECEDENCE);
+        RETURN_IF_UNDEFINED(body);
+
+        return rastr_node_wloop(ast_, kw, cond, body);
+    }
+
   private:
     rastr_ast_t ast_;
     Lexer lexer_;
@@ -433,14 +452,14 @@ class Parser {
             switch (type) {
             case Help:
                 return 1;
-            //case While:
-            //case For:
-            //case Repeat:
-            //    return 2;
-            //case If:
-            //    return 3;
-            //case Else:
-            //    return 4;
+            // case While:
+            // case For:
+            // case Repeat:
+            //     return 2;
+            // case If:
+            //     return 3;
+            // case Else:
+            //     return 4;
             case LeftAssign:
             case LeftSuperAssign:
             case ColonAssign:
