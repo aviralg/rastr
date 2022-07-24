@@ -67,6 +67,7 @@ const char* ColorWhite = "#FFFFFF";
 
 std::string escape_dot_label(const char* label) {
     std::string label_str(label);
+    string_replace(label_str, "\\", "\\\\");
     string_replace(label_str, "{", "\\{");
     string_replace(label_str, "}", "\\}");
     string_replace(label_str, "<", "&lt;");
@@ -612,6 +613,16 @@ void rastr_export_to_dot_node(FILE* file,
     case Indexing:
         write_dot_node(file, ast, node, ColorTeal);
         EXPORT_CHILDREN_2(indexing, obj, indices);
+        return;
+
+    case Parameters:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_3(parameters, ldelim, seq, rdelim);
+        return;
+
+    case FunctionDefinition:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_3(fndef, kw, params, body);
         return;
     }
 

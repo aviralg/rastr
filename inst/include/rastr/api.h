@@ -204,7 +204,10 @@ enum rastr_node_type_t {
     /********************************************************************************
      Indexing
     ********************************************************************************/
-    Indexing
+    Indexing,
+
+    Parameters,
+    FunctionDefinition
 
     // Extract,
     // Function,
@@ -521,6 +524,28 @@ rastr_node_t
 rastr_node_indexing(rastr_ast_t ast, rastr_node_t obj, rastr_node_t indices);
 rastr_node_t rastr_node_indexing_obj(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_indexing_indices(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+Parameters
+********************************************************************************/
+rastr_node_t rastr_node_parameters(rastr_ast_t ast,
+                                   rastr_node_t ldelim,
+                                   rastr_node_t seq,
+                                   rastr_node_t rdelim);
+rastr_node_t rastr_node_parameters_ldelim(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_parameters_seq(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_parameters_rdelim(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ FunctionDefinition
+********************************************************************************/
+rastr_node_t rastr_node_fndef(rastr_ast_t ast,
+                              rastr_node_t kw,
+                              rastr_node_t params,
+                              rastr_node_t body);
+rastr_node_t rastr_node_fndef_kw(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_fndef_params(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_fndef_body(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Parsing

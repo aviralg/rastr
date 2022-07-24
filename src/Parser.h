@@ -257,17 +257,14 @@ class Parser {
         /* null, logical, real, integer, complex, string, symbol, and
          * placeholder don't need extra parsing for completion*/
         if (rastr_node_is_literal(ast_, op)) {
-            log_msg("end");
             return op;
         }
 
         else if (type == LeftParen) {
-            log_msg("end");
             return parse_group(op);
         }
 
         else if (type == LeftBrace) {
-            log_msg("end");
             return parse_block(op);
         }
 
@@ -281,6 +278,10 @@ class Parser {
 
         else if (type == If) {
             return parse_if_else(op);
+        }
+
+        else if (type == Function || type == AnonymousFunction) {
+            return parse_definition(op);
         }
 
         else if (type == Next) {
@@ -330,6 +331,35 @@ class Parser {
 
             return rastr_node_binary_expression(ast_, left, op, right);
         }
+    }
+
+    rastr_node_t parse_definition(rastr_node_t kw) {
+        rastr_node_t lparen = next_token_();
+
+        if (rastr_node_type(ast_, lparen) != LeftParen) {
+            return UNDEFINED_NODE;
+        }
+
+        rastr_node_t formals = parse_formlist();
+        RETURN_IF_UNDEFINED(formals);
+
+        rastr_node_t rparen = next_token_();
+
+        if (rastr_node_type(ast_, rparen) != RightParen) {
+            return UNDEFINED_NODE;
+        }
+
+        lexer_.enable_eat_lines();
+
+        rastr_node_t body = parse_expr(LOWEST_PRECEDENCE);
+
+        RETURN_IF_UNDEFINED(body);
+
+        return rastr_node_fndef(
+            ast_,
+            kw,
+            rastr_node_parameters(ast_, lparen, formals, rparen),
+            body);
     }
 
     rastr_node_t parse_call(rastr_node_t fun, rastr_node_t lparen) {
@@ -560,7 +590,15 @@ class Parser {
                 return UNDEFINED_NODE;
             }
 
-            exprs.push_back(parse_expr(LOWEST_PRECEDENCE));
+            rastr_node_t param = parse_expr(LOWEST_PRECEDENCE);
+
+            node = peek_token_();
+            if (rastr_node_type(ast_, node) == Comma) {
+                consume_();
+                param = rastr_node_statement(ast_, param, node);
+            }
+
+            exprs.push_back(param);
         }
 
         return rastr_node_sequence(ast_, exprs.data(), exprs.size());

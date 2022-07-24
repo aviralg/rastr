@@ -148,6 +148,18 @@ struct rastr_node_impl_t {
             rastr_node_t indices;
         } indexing_node;
 
+        struct {
+            rastr_node_t ldelim;
+            rastr_node_t seq;
+            rastr_node_t rdelim;
+        } parameters_node;
+
+        struct {
+            rastr_node_t kw;
+            rastr_node_t params;
+            rastr_node_t body;
+        } fndef_node;
+
     } node;
 };
 
@@ -428,6 +440,10 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Indices";
     case Indexing:
         return "Indexing";
+    case Parameters:
+        return "Parameters";
+    case FunctionDefinition:
+        return "FunctionDefinition";
     }
     fail_with("Unhandled node type %d", type);
 }
@@ -1591,4 +1607,56 @@ rastr_node_t rastr_node_indexing_obj(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_node_indexing_indices(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.indexing_node.indices;
+}
+
+/********************************************************************************
+ Parameters
+********************************************************************************/
+rastr_node_t rastr_node_parameters(rastr_ast_t ast,
+                                   rastr_node_t ldelim,
+                                   rastr_node_t seq,
+                                   rastr_node_t rdelim) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Parameters);
+    pair.ptr->node.parameters_node.ldelim = ldelim;
+    pair.ptr->node.parameters_node.seq = seq;
+    pair.ptr->node.parameters_node.rdelim = rdelim;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_parameters_ldelim(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.parameters_node.ldelim;
+}
+
+rastr_node_t rastr_node_parameters_seq(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.parameters_node.seq;
+}
+
+rastr_node_t rastr_node_parameters_rdelim(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.parameters_node.rdelim;
+}
+
+/********************************************************************************
+ FunctionDefinition
+********************************************************************************/
+rastr_node_t rastr_node_fndef(rastr_ast_t ast,
+                              rastr_node_t kw,
+                              rastr_node_t params,
+                              rastr_node_t body) {
+    rastr_node_pair_t pair = rastr_node_create(ast, FunctionDefinition);
+    pair.ptr->node.fndef_node.kw = kw;
+    pair.ptr->node.fndef_node.params = params;
+    pair.ptr->node.fndef_node.body = body;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_fndef_kw(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.fndef_node.kw;
+}
+
+rastr_node_t rastr_node_fndef_params(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.fndef_node.params;
+}
+
+rastr_node_t rastr_node_fndef_body(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.fndef_node.body;
 }
