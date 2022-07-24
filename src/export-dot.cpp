@@ -254,31 +254,35 @@ void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth) {
 }
 
 void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth) {
-    fprintf(file,
-            "digraph ast {\n"
-            "    node [fontname  = \"Courier New\"\n"
-            "          fontsize  = 12\n"
-            "          style     = \"filled, bold\"\n"
-            "          penwidth  = 2\n"
-            "          fontcolor = \"white\"\n"
-            "          shape     = \"Mrecord\"]\n"
-            "\n"
-            "    edge [fontname  = \"Courier New\"\n"
-            "          penwidth  = 2\n"
-            "          fontsize  = 12\n"
-            "          fontcolor = \"black\"]\n"
-            "\n"
-            "    graph [fontsize = 10\n"
-            "           labelloc = \"t\"\n"
-            "           label    = \"\"\n"
-            "           splines  = true\n"
-            "           overlap  = false\n"
-            "           forcelabels = true\n"
-            "           center = true\n"
-            "           rankdir  = \"TD\"]\n"
-            "\n"
-            "    ratio = auto;\n"
-            "    charset=\"UTF-8\"");
+    const char* graph_tmpl = R"-(
+digraph ast {
+
+    graph [fontsize = 10
+           labelloc = "t"
+           label    = ""
+           splines  = true
+           overlap  = false
+           forcelabels = true
+           center = true
+           rankdir  = "TD"]
+
+    node [fontname  = "Courier New"
+          fontsize  = 12
+          style     = "filled, bold"
+          penwidth  = 2
+          fontcolor = "white"
+          shape     = "Mrecord"]
+
+    edge [fontname  = "Courier New"
+          penwidth  = 2
+          fontsize  = 12
+          fontcolor = "black"]
+
+    ratio = auto;
+    charset="UTF-8"
+)-";
+
+    fprintf(file, "%s", graph_tmpl);
 
     rastr_export_to_dot_node(file, ast, rastr_ast_root(ast), depth);
 
@@ -527,7 +531,12 @@ void rastr_export_to_dot_node(FILE* file,
          Sequence
         ********************************************************************************/
     case Sequence:
-        write_dot_node(file, ast, node, ColorLightGreen);
+        write_dot_node(file,
+                       ast,
+                       node,
+                       ColorLightGreen,
+                       "SIZE",
+                       bufprintf("%d", rastr_node_sequence_size(ast, node)));
         --depth;
 
         if (depth != 0) {
