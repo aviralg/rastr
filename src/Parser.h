@@ -28,9 +28,7 @@ bool rastr_node_is_undefined(rastr_node_t node) {
 class Parser {
   public:
     Parser(Input& input, std::size_t capacity)
-        : ast_(rastr_ast_create(capacity))
-        , lexer_(input, ast_)
-        , saved_tok_(UNDEFINED_NODE) {
+        : ast_(rastr_ast_create(capacity)), lexer_(input, ast_), saved_tok_() {
     }
 
     /*
@@ -53,6 +51,11 @@ class Parser {
             if (rastr_node_type(ast_, node) == End) {
                 consume_();
                 break;
+            }
+
+            if (rastr_node_type(ast_, node) == Newline) {
+                consume_();
+                continue;
             }
 
             rastr_node_t stmt = parse_stmt_permissive(End);
@@ -181,7 +184,7 @@ class Parser {
     //        |	<expr> '@' STR_CONST
     //        |	NEXT
     //        |	BREAK
-    rastr_node_t parse_expr(int precedence) {
+    rastr_node_t parse_expr(int precedence, bool missing = false) {
         rastr_node_t left = parse_prefix_expr();
 
         if (rastr_node_is_undefined(left)) {
@@ -280,6 +283,14 @@ class Parser {
             return parse_if_else(op);
         }
 
+        else if (type == Next) {
+            return op;
+        }
+
+        else if (type == Break) {
+            return op;
+        }
+
         int precedence = get_precedence(type, true);
 
         if (precedence == INVALID_PRECEDENCE) {
@@ -301,13 +312,72 @@ class Parser {
 
     rastr_node_t parse_infix_expr(int precedence, rastr_node_t left) {
         rastr_node_t op = next_token_();
+        rastr_node_type_t type = rastr_node_type(ast_, op);
 
-        rastr_node_t right = parse_expr(precedence);
-        if (rastr_node_is_undefined(right)) {
+        if (type == LeftParen) {
+            return parse_call(left, op);
+        }
+
+        else if (type == LeftBracket || type == DoubleLeftBracket) {
+            return parse_indexing(left, op);
+        }
+
+        else {
+            rastr_node_t right = parse_expr(precedence);
+            if (rastr_node_is_undefined(right)) {
+                return UNDEFINED_NODE;
+            }
+
+            return rastr_node_binary_expression(ast_, left, op, right);
+        }
+    }
+
+    rastr_node_t parse_call(rastr_node_t fun, rastr_node_t lparen) {
+        rastr_node_t args = parse_sublist();
+        RETURN_IF_UNDEFINED(args);
+
+        rastr_node_t rparen = next_token_();
+
+        if (rastr_node_type(ast_, rparen) != RightParen) {
             return UNDEFINED_NODE;
         }
 
-        return rastr_node_binary_expression(ast_, left, op, right);
+        return rastr_node_call(
+            ast_, fun, rastr_node_arguments(ast_, lparen, args, rparen));
+    }
+
+    rastr_node_t parse_indexing(rastr_node_t obj, rastr_node_t lbrack) {
+        rastr_node_t indices = parse_sublist();
+        RETURN_IF_UNDEFINED(indices);
+
+        rastr_node_t rbrack = next_token_();
+        bool parsed = false;
+
+        if (rastr_node_type(ast_, lbrack) == LeftBracket &&
+            rastr_node_type(ast_, rbrack) == RightBracket) {
+            parsed = true;
+        }
+
+        else if (rastr_node_type(ast_, lbrack) == DoubleLeftBracket &&
+                 rastr_node_type(ast_, rbrack) == RightBracket) {
+            rastr_node_t next_rbrack = next_token_();
+
+            if (rastr_node_type(ast_, next_rbrack) == RightBracket) {
+                // TODO: destroy these nodes
+                // rastr_node_destroy(ast_, rbrack);
+                // rastr_node_destroy(ast_, next_rbrack);
+                rbrack = rastr_node_delimiter(ast_, DoubleRightBracket);
+
+                parsed = true;
+            }
+        }
+
+        if (parsed) {
+            return rastr_node_indexing(
+                ast_, obj, rastr_node_indices(ast_, lbrack, indices, rbrack));
+        }
+
+        return UNDEFINED_NODE;
     }
 
     rastr_node_t parse_if_else(rastr_node_t if_kw) {
@@ -384,6 +454,118 @@ class Parser {
             right_brace);
     }
 
+    // sublist:	sub				{ $$ = xxsublist1($1);	  }
+    //        |	sublist cr ',' sub		{ $$ = xxsublist2($1,$4); }
+    //        ;
+    //
+    // sub:
+    //    |	expr_or_help
+    //    |	SYMBOL EQ_ASSIGN
+    //    |	SYMBOL EQ_ASSIGN expr_or_help
+    //    |	STR_CONST EQ_ASSIGN
+    //    |	STR_CONST EQ_ASSIGN expr_or_help
+    //    |	NULL_CONST EQ_ASSIGN
+    //    |	NULL_CONST EQ_ASSIGN expr_or_help
+    //     ;
+    rastr_node_t parse_sub() {
+        rastr_node_t name = peek_token_();
+        rastr_node_type_t name_type = rastr_node_type(ast_, name);
+
+        if (name_type != Symbol && name_type != String && name_type != Null) {
+            return parse_sub_expr();
+        }
+
+        consume_();
+        rastr_node_t eq_asgn = peek_token_();
+
+        if (rastr_node_type(ast_, eq_asgn) != EqualAssign) {
+            push_token_(name);
+            return parse_sub_expr();
+        }
+
+        consume_();
+        rastr_node_t expr = parse_sub_expr();
+
+        return rastr_node_binary_expression(ast_, name, eq_asgn, expr);
+    }
+
+    /* parses <missing> or <expr_or_help> */
+    rastr_node_t parse_sub_expr() {
+        rastr_node_t node = peek_token_();
+        rastr_node_type_t type = rastr_node_type(ast_, node);
+
+        if (type == Comma || type == RightParen || type == RightBracket) {
+            return rastr_node_missing(ast_);
+        }
+
+        else {
+            return parse_expr(LOWEST_PRECEDENCE);
+        }
+    }
+
+    rastr_node_t parse_sublist() {
+        std::vector<rastr_node_t> exprs;
+
+        while (true) {
+            rastr_node_t node = peek_token_();
+            rastr_node_type_t type = rastr_node_type(ast_, node);
+
+            if (type == RightParen || type == RightBracket) {
+                break;
+            }
+
+            if (type == End) {
+                consume_();
+                return UNDEFINED_NODE;
+            }
+
+            rastr_node_t sub = parse_sub();
+            lexer_.enable_eat_lines();
+
+            node = peek_token_();
+            if (rastr_node_type(ast_, node) == Comma) {
+                consume_();
+                sub = rastr_node_statement(ast_, sub, node);
+            }
+
+            exprs.push_back(sub);
+        }
+
+        return rastr_node_sequence(ast_, exprs.data(), exprs.size());
+    }
+
+    // formlist:					{ $$ = xxnullformal(); }
+    //     |	SYMBOL				{ $$ = xxfirstformal0($1);
+    //     modif_token( &@1, SYMBOL_FORMALS ) ; } |	SYMBOL EQ_ASSIGN
+    //     expr_or_help	{ $$ = xxfirstformal1($1,$3); 	modif_token( &@1,
+    //     SYMBOL_FORMALS ) ; modif_token( &@2, EQ_FORMALS ) ; } |
+    //     formlist ',' SYMBOL		{ $$ = xxaddformal0($1,$3, &@3);
+    //     modif_token( &@3, SYMBOL_FORMALS ) ; } |	formlist ',' SYMBOL
+    //     EQ_ASSIGN expr_or_help { $$ = xxaddformal1($1,$3,$5,&@3);
+    //     modif_token( &@3, SYMBOL_FORMALS ) ; modif_token( &@4, EQ_FORMALS )
+    //     ;}
+    rastr_node_t parse_formlist() {
+        std::vector<rastr_node_t> exprs;
+
+        while (true) {
+            rastr_node_t node = peek_token_();
+            rastr_node_type_t type = rastr_node_type(ast_, node);
+
+            if (type == RightParen) {
+                break;
+            }
+
+            if (type == End) {
+                consume_();
+                return UNDEFINED_NODE;
+            }
+
+            exprs.push_back(parse_expr(LOWEST_PRECEDENCE));
+        }
+
+        return rastr_node_sequence(ast_, exprs.data(), exprs.size());
+    }
+
     rastr_node_t parse_repeat(rastr_node_t kw) {
         rastr_node_t expr = parse_expr(LOWEST_PRECEDENCE);
         return rastr_node_rloop(ast_, kw, expr);
@@ -408,7 +590,7 @@ class Parser {
   private:
     rastr_ast_t ast_;
     Lexer lexer_;
-    rastr_node_t saved_tok_;
+    std::vector<rastr_node_t> saved_tok_;
     // %left    '?'
     // %left    LOW WHILE FOR REPEAT
     // %right   IF
@@ -517,21 +699,17 @@ class Parser {
         }
     }
 
-    void save_token_(rastr_node_t node) {
-        saved_tok_ = node;
-    }
-
     rastr_node_t peek_token_() {
-        if (rastr_node_is_undefined(saved_tok_)) {
-            saved_tok_ = lexer_.next_token();
+        if (saved_tok_.empty()) {
+            saved_tok_.push_back(lexer_.next_token());
         }
-        return saved_tok_;
+        return saved_tok_.back();
     }
 
     rastr_node_t next_token_() {
-        if (!rastr_node_is_undefined(saved_tok_)) {
-            rastr_node_t tok = saved_tok_;
-            saved_tok_ = UNDEFINED_NODE;
+        if (!saved_tok_.empty()) {
+            rastr_node_t tok = saved_tok_.back();
+            saved_tok_.pop_back();
             return tok;
         }
 
@@ -539,7 +717,11 @@ class Parser {
     }
 
     void consume_() {
-        saved_tok_ = UNDEFINED_NODE;
+        saved_tok_.pop_back();
+    }
+
+    void push_token_(rastr_node_t node) {
+        saved_tok_.push_back(node);
     }
 };
 

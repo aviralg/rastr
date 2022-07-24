@@ -120,6 +120,34 @@ struct rastr_node_impl_t {
             rastr_node_t alt;
         } ifelsecond_node;
 
+        struct {
+            rastr_node_t name;
+            rastr_node_t op;
+            rastr_node_t expr;
+        } named_node;
+
+        struct {
+            rastr_node_t ldelim;
+            rastr_node_t args;
+            rastr_node_t rdelim;
+        } arguments_node;
+
+        struct {
+            rastr_node_t fun;
+            rastr_node_t args;
+        } call_node;
+
+        struct {
+            rastr_node_t ldelim;
+            rastr_node_t nodes;
+            rastr_node_t rdelim;
+        } indices_node;
+
+        struct {
+            rastr_node_t obj;
+            rastr_node_t indices;
+        } indexing_node;
+
     } node;
 };
 
@@ -388,6 +416,18 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "IfCondition";
     case IfElseCond:
         return "IfElseCondition";
+    case Named:
+        return "Named";
+    case Missing:
+        return "Missing";
+    case Call:
+        return "Call";
+    case Arguments:
+        return "Arguments";
+    case Indices:
+        return "Indices";
+    case Indexing:
+        return "Indexing";
     }
     fail_with("Unhandled node type %d", type);
 }
@@ -748,12 +788,10 @@ rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces) {
 
     else if (type == UnaryExpression) {
         const char* op_str = StringView::duplicate(rastr_node_to_string(
-            ast, rastr_node_unary_expression_operator(ast, node), spaces + 12));
+            ast, rastr_node_unary_expression_op(ast, node), spaces + 12));
 
         const char* expr_str = StringView::duplicate(rastr_node_to_string(
-            ast,
-            rastr_node_unary_expression_expression(ast, node),
-            spaces + 12));
+            ast, rastr_node_unary_expression_expr(ast, node), spaces + 12));
 
         const char* result = bufprintf("%snode {\n"
                                        "%s    type:   %s;\n"
@@ -776,18 +814,16 @@ rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces) {
 
     else if (type == BinaryExpression) {
         const char* op_str = StringView::duplicate(rastr_node_to_string(
-            ast,
-            rastr_node_binary_expression_operator(ast, node),
-            spaces + 16));
+            ast, rastr_node_binary_expression_op(ast, node), spaces + 16));
 
         const char* left_expr_str = StringView::duplicate(rastr_node_to_string(
             ast,
-            rastr_node_binary_expression_left_expression(ast, node),
+            rastr_node_binary_expression_left_expr(ast, node),
             spaces + 16));
 
         const char* right_expr_str = StringView::duplicate(rastr_node_to_string(
             ast,
-            rastr_node_binary_expression_right_expression(ast, node),
+            rastr_node_binary_expression_right_expr(ast, node),
             spaces + 16));
 
         const char* result = bufprintf("%snode {\n"
@@ -1175,13 +1211,13 @@ rastr_node_t rastr_node_unary_expression(rastr_ast_t ast,
     return pair.node;
 }
 
-rastr_node_t rastr_node_unary_expression_operator(rastr_ast_t ast,
-                                                  rastr_node_t node) {
+rastr_node_t rastr_node_unary_expression_op(rastr_ast_t ast,
+                                            rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.unary_node.op;
 }
 
-rastr_node_t rastr_node_unary_expression_expression(rastr_ast_t ast,
-                                                    rastr_node_t node) {
+rastr_node_t rastr_node_unary_expression_expr(rastr_ast_t ast,
+                                              rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.unary_node.expr;
 }
 
@@ -1200,18 +1236,18 @@ rastr_node_t rastr_node_binary_expression(rastr_ast_t ast,
     return pair.node;
 }
 
-rastr_node_t rastr_node_binary_expression_operator(rastr_ast_t ast,
-                                                   rastr_node_t node) {
+rastr_node_t rastr_node_binary_expression_op(rastr_ast_t ast,
+                                             rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.binary_node.op;
 }
 
-rastr_node_t rastr_node_binary_expression_left_expression(rastr_ast_t ast,
-                                                          rastr_node_t node) {
+rastr_node_t rastr_node_binary_expression_left_expr(rastr_ast_t ast,
+                                                    rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.binary_node.left_expr;
 }
 
-rastr_node_t rastr_node_binary_expression_right_expression(rastr_ast_t ast,
-                                                           rastr_node_t node) {
+rastr_node_t rastr_node_binary_expression_right_expr(rastr_ast_t ast,
+                                                     rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.binary_node.right_expr;
 }
 
@@ -1431,4 +1467,128 @@ rastr_node_t rastr_node_ifelsecond_else_kw(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_node_ifelsecond_alt(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.ifelsecond_node.alt;
+}
+
+/********************************************************************************
+ Named
+********************************************************************************/
+rastr_node_t rastr_node_named(rastr_ast_t ast,
+                              rastr_node_t name,
+                              rastr_node_t op,
+                              rastr_node_t expr) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Named);
+    pair.ptr->node.named_node.name = name;
+    pair.ptr->node.named_node.op = op;
+    pair.ptr->node.named_node.expr = expr;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_named_name(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.named_node.name;
+}
+
+rastr_node_t rastr_node_named_op(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.named_node.op;
+}
+
+rastr_node_t rastr_node_named_expr(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.named_node.expr;
+}
+
+/********************************************************************************
+ Missing
+********************************************************************************/
+rastr_node_t rastr_node_missing(rastr_ast_t ast) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Missing);
+    return pair.node;
+}
+
+/********************************************************************************
+ Arguments
+********************************************************************************/
+rastr_node_t rastr_node_arguments(rastr_ast_t ast,
+                                  rastr_node_t ldelim,
+                                  rastr_node_t args,
+                                  rastr_node_t rdelim) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Arguments);
+    pair.ptr->node.arguments_node.ldelim = ldelim;
+    pair.ptr->node.arguments_node.args = args;
+    pair.ptr->node.arguments_node.rdelim = rdelim;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_arguments_ldelim(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.arguments_node.ldelim;
+}
+
+rastr_node_t rastr_node_arguments_args(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.arguments_node.args;
+}
+
+rastr_node_t rastr_node_arguments_rdelim(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.arguments_node.rdelim;
+}
+
+/********************************************************************************
+ Call
+********************************************************************************/
+rastr_node_t
+rastr_node_call(rastr_ast_t ast, rastr_node_t fun, rastr_node_t args) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Call);
+    pair.ptr->node.call_node.fun = fun;
+    pair.ptr->node.call_node.args = args;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_call_fun(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.call_node.fun;
+}
+
+rastr_node_t rastr_node_call_args(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.call_node.args;
+}
+
+/********************************************************************************
+ Indices
+********************************************************************************/
+rastr_node_t rastr_node_indices(rastr_ast_t ast,
+                                rastr_node_t ldelim,
+                                rastr_node_t nodes,
+                                rastr_node_t rdelim) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Indices);
+    pair.ptr->node.indices_node.ldelim = ldelim;
+    pair.ptr->node.indices_node.nodes = nodes;
+    pair.ptr->node.indices_node.rdelim = rdelim;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_indices_ldelim(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.indices_node.ldelim;
+}
+
+rastr_node_t rastr_node_indices_nodes(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.indices_node.nodes;
+}
+
+rastr_node_t rastr_node_indices_rdelim(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.indices_node.rdelim;
+}
+
+/********************************************************************************
+ Indexing
+********************************************************************************/
+rastr_node_t
+rastr_node_indexing(rastr_ast_t ast, rastr_node_t obj, rastr_node_t indices) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Indexing);
+    pair.ptr->node.indexing_node.obj = obj;
+    pair.ptr->node.indexing_node.indices = indices;
+    return pair.node;
+}
+
+rastr_node_t rastr_node_indexing_obj(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.indexing_node.obj;
+}
+
+rastr_node_t rastr_node_indexing_indices(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.indexing_node.indices;
 }

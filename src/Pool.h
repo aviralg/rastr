@@ -281,14 +281,11 @@ class Pool {
         set_next_(index, Null);
         set_previous_(index, Null);
 
-        log_msg("allocating %d %p\n", index, data);
-
         return index;
     }
 
     T* deallocate_(std::size_t index) {
         T* data = get_data_(index);
-        log_msg("deallocating %d %p\n", index, data);
 
         set_data_(index, nullptr);
         set_free_(index);

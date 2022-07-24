@@ -174,7 +174,38 @@ enum rastr_node_type_t {
     /********************************************************************************
       IfElse
     ********************************************************************************/
-    IfElseCond
+    IfElseCond,
+
+    /********************************************************************************
+     Named
+    ********************************************************************************/
+    Named,
+
+    /********************************************************************************
+     Missing
+    ********************************************************************************/
+    Missing,
+
+    /********************************************************************************
+     Call
+    ********************************************************************************/
+    Call,
+
+    /********************************************************************************
+     Arguments
+    ********************************************************************************/
+    Arguments,
+
+    /********************************************************************************
+     Indices
+    ********************************************************************************/
+    Indices,
+
+    /********************************************************************************
+     Indexing
+    ********************************************************************************/
+    Indexing
+
     // Extract,
     // Function,
     // Default,
@@ -328,10 +359,9 @@ Unary Expression
 rastr_node_t rastr_node_unary_expression(rastr_ast_t ast,
                                          rastr_node_t op,
                                          rastr_node_t expr);
-rastr_node_t rastr_node_unary_expression_operator(rastr_ast_t ast,
-                                                  rastr_node_t node);
-rastr_node_t rastr_node_unary_expression_expression(rastr_ast_t ast,
-                                                    rastr_node_t node);
+rastr_node_t rastr_node_unary_expression_op(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_unary_expression_expr(rastr_ast_t ast,
+                                              rastr_node_t node);
 
 /********************************************************************************
  Binary Expression
@@ -340,12 +370,12 @@ rastr_node_t rastr_node_binary_expression(rastr_ast_t ast,
                                           rastr_node_t left_expr,
                                           rastr_node_t op,
                                           rastr_node_t right_expr);
-rastr_node_t rastr_node_binary_expression_operator(rastr_ast_t ast,
-                                                   rastr_node_t node);
-rastr_node_t rastr_node_binary_expression_left_expression(rastr_ast_t ast,
-                                                          rastr_node_t node);
-rastr_node_t rastr_node_binary_expression_right_expression(rastr_ast_t ast,
-                                                           rastr_node_t node);
+rastr_node_t rastr_node_binary_expression_op(rastr_ast_t ast,
+                                             rastr_node_t node);
+rastr_node_t rastr_node_binary_expression_left_expr(rastr_ast_t ast,
+                                                    rastr_node_t node);
+rastr_node_t rastr_node_binary_expression_right_expr(rastr_ast_t ast,
+                                                     rastr_node_t node);
 
 /********************************************************************************
  Sequence
@@ -437,6 +467,60 @@ rastr_node_t rastr_node_ifelsecond_cond(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_ifelsecond_csq(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_ifelsecond_else_kw(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_ifelsecond_alt(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ Named
+********************************************************************************/
+rastr_node_t rastr_node_named(rastr_ast_t ast,
+                              rastr_node_t name,
+                              rastr_node_t op,
+                              rastr_node_t expr);
+rastr_node_t rastr_node_named_name(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_named_op(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_named_expr(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ Missing
+********************************************************************************/
+rastr_node_t rastr_node_missing(rastr_ast_t ast);
+
+/********************************************************************************
+ Arguments
+********************************************************************************/
+rastr_node_t rastr_node_arguments(rastr_ast_t ast,
+                                  rastr_node_t ldelim,
+                                  rastr_node_t args,
+                                  rastr_node_t rdelim);
+rastr_node_t rastr_node_arguments_ldelim(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_arguments_args(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_arguments_rdelim(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+Call
+********************************************************************************/
+rastr_node_t
+rastr_node_call(rastr_ast_t ast, rastr_node_t fun, rastr_node_t args);
+rastr_node_t rastr_node_call_fun(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_call_args(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ Indices
+********************************************************************************/
+rastr_node_t rastr_node_indices(rastr_ast_t ast,
+                                rastr_node_t ldelim,
+                                rastr_node_t nodes,
+                                rastr_node_t rdelim);
+rastr_node_t rastr_node_indices_ldelim(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_indices_nodes(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_indices_rdelim(rastr_ast_t ast, rastr_node_t node);
+
+/********************************************************************************
+ Indexing
+********************************************************************************/
+rastr_node_t
+rastr_node_indexing(rastr_ast_t ast, rastr_node_t obj, rastr_node_t indices);
+rastr_node_t rastr_node_indexing_obj(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_node_indexing_indices(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Parsing

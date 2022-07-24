@@ -241,6 +241,10 @@ class Lexer {
         return token;
     }
 
+    void enable_eat_lines() {
+        eat_lines_ = true;
+    }
+
   private:
     Input input_;
     rastr_ast_t ast_;
@@ -248,10 +252,6 @@ class Lexer {
     rastr_node_t saved_token_;
     bool token_saved_;
     bool eat_lines_;
-
-    void enable_eat_lines() {
-        eat_lines_ = true;
-    }
 
     void disable_eat_lines() {
         eat_lines_ = false;
