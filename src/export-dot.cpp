@@ -29,41 +29,71 @@ const char* ColorBlueGray = "#607D8B";
 const char* ColorBlack = "#000000";
 const char* ColorWhite = "#FFFFFF";
 
-#define EXPORT_CHILD(NODE_TYPE, CHILD)                                \
-    rastr_node_t CHILD = rastr_node_##NODE_TYPE##_##CHILD(ast, node); \
-    rastr_export_to_dot_node(file, ast, CHILD, depth);                \
+#define EXPORT_CHILD(KIND, CHILD)                           \
+    rastr_node_t CHILD = rastr_##KIND##_##CHILD(ast, node); \
+    rastr_export_to_dot_node(file, ast, CHILD, depth);      \
     write_edge(file, ast, node, CHILD, #CHILD);
 
-#define EXPORT_CHILDREN_1(NODE_TYPE, CHILD1) \
-    --depth;                                 \
-    if (depth != 0) {                        \
-        EXPORT_CHILD(NODE_TYPE, CHILD1)      \
+#define EXPORT_CHILDREN_1(KIND, CHILD1) \
+    --depth;                            \
+    if (depth != 0) {                   \
+        EXPORT_CHILD(KIND, CHILD1)      \
     };
 
-#define EXPORT_CHILDREN_2(NODE_TYPE, CHILD1, CHILD2) \
-    --depth;                                         \
-    if (depth != 0) {                                \
-        EXPORT_CHILD(NODE_TYPE, CHILD1)              \
-        EXPORT_CHILD(NODE_TYPE, CHILD2)              \
+#define EXPORT_CHILDREN_2(KIND, CHILD1, CHILD2) \
+    --depth;                                    \
+    if (depth != 0) {                           \
+        EXPORT_CHILD(KIND, CHILD1)              \
+        EXPORT_CHILD(KIND, CHILD2)              \
     };
 
-#define EXPORT_CHILDREN_3(NODE_TYPE, CHILD1, CHILD2, CHILD3) \
-    --depth;                                                 \
-    if (depth != 0) {                                        \
-        EXPORT_CHILD(NODE_TYPE, CHILD1)                      \
-        EXPORT_CHILD(NODE_TYPE, CHILD2)                      \
-        EXPORT_CHILD(NODE_TYPE, CHILD3)                      \
+#define EXPORT_CHILDREN_3(KIND, CHILD1, CHILD2, CHILD3) \
+    --depth;                                            \
+    if (depth != 0) {                                   \
+        EXPORT_CHILD(KIND, CHILD1)                      \
+        EXPORT_CHILD(KIND, CHILD2)                      \
+        EXPORT_CHILD(KIND, CHILD3)                      \
     };
 
-#define EXPORT_CHILDREN_5(NODE_TYPE, CHILD1, CHILD2, CHILD3, CHILD4, CHILD5) \
-    --depth;                                                                 \
-    if (depth != 0) {                                                        \
-        EXPORT_CHILD(NODE_TYPE, CHILD1)                                      \
-        EXPORT_CHILD(NODE_TYPE, CHILD2)                                      \
-        EXPORT_CHILD(NODE_TYPE, CHILD3)                                      \
-        EXPORT_CHILD(NODE_TYPE, CHILD4)                                      \
-        EXPORT_CHILD(NODE_TYPE, CHILD5)                                      \
+#define EXPORT_CHILDREN_5(KIND, CHILD1, CHILD2, CHILD3, CHILD4, CHILD5) \
+    --depth;                                                            \
+    if (depth != 0) {                                                   \
+        EXPORT_CHILD(KIND, CHILD1)                                      \
+        EXPORT_CHILD(KIND, CHILD2)                                      \
+        EXPORT_CHILD(KIND, CHILD3)                                      \
+        EXPORT_CHILD(KIND, CHILD4)                                      \
+        EXPORT_CHILD(KIND, CHILD5)                                      \
     };
+
+#define EXPORT_BRACKETED_SEQ(KIND, LBRACK, LEN, SEQ, RBRACK)             \
+    --depth;                                                             \
+    if (depth != 0) {                                                    \
+        EXPORT_CHILD(KIND, LBRACK)                                       \
+                                                                         \
+        const rastr_node_t* seq = rastr_##KIND##_##SEQ(ast, node);       \
+        int len = rastr_##KIND##_##LEN(ast, node);                       \
+                                                                         \
+        for (int i = 0; i < len; ++i) {                                  \
+            rastr_node_t child = seq[i];                                 \
+            rastr_export_to_dot_node(file, ast, child, depth);           \
+            write_edge(file, ast, node, child, bufprintf("seq[%d]", i)); \
+        }                                                                \
+                                                                         \
+        EXPORT_CHILD(KIND, RBRACK)                                       \
+    }
+
+#define EXPORT_SEQ(KIND, LEN, SEQ)                                       \
+    --depth;                                                             \
+    if (depth != 0) {                                                    \
+        const rastr_node_t* seq = rastr_##KIND##_##SEQ(ast, node);       \
+        int len = rastr_##KIND##_##LEN(ast, node);                       \
+                                                                         \
+        for (int i = 0; i < len; ++i) {                                  \
+            rastr_node_t child = seq[i];                                 \
+            rastr_export_to_dot_node(file, ast, child, depth);           \
+            write_edge(file, ast, node, child, bufprintf("seq[%d]", i)); \
+        }                                                                \
+    }
 
 std::string escape_dot_label(const char* label) {
     std::string label_str(label);
@@ -100,8 +130,8 @@ void write_dot_node_footer(FILE* file) {
     ]
 )-";
 
-    /* note: the indirection of substituting footer in %s is to avoid
-       format-security error on Ubuntu
+    /* note: the indirection of substituting footer in %s is to
+       avoid format-security error on Ubuntu
        https://stackoverflow.com/questions/17260409/fprintf-error-format-not-a-string-literal-and-no-format-arguments-werror-for*/
     fprintf(file, "%s", footer_tmpl);
 }
@@ -209,7 +239,8 @@ SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth) {
     SEXPTYPE type = TYPEOF(r_filepath);
 
     if (type != STRSXP) {
-        Rf_error("expected a filepath of type string, received a value of type "
+        Rf_error("expected a filepath of type string, received "
+                 "a value of type "
                  "%s instead",
                  Rf_type2str(type));
         return R_NilValue;
@@ -218,7 +249,8 @@ SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth) {
     int length = Rf_length(r_filepath);
 
     if (length != 1) {
-        Rf_error("expected a filepath string of size 1, received a string of "
+        Rf_error("expected a filepath string of size 1, "
+                 "received a string of "
                  "size %d instead",
                  length);
         return R_NilValue;
@@ -227,13 +259,14 @@ SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth) {
     SEXP str_elt = STRING_ELT(r_filepath, 0);
 
     if (str_elt == NA_STRING) {
-        Rf_error("expected a filepath, received NA_character_ instead");
+        Rf_error("expected a filepath, received NA_character_ "
+                 "instead");
         return R_NilValue;
     }
 
     const char* filepath = CHAR(str_elt);
 
-    rastr_ast_t ast = rastr_ast_from_sexp(r_ast);
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
 
     int depth = INTEGER(r_depth)[0];
 
@@ -477,161 +510,156 @@ void rastr_export_to_dot_node(FILE* file,
                        rastr_node_symbol_value(ast, node));
         return;
 
-    case Placeholder:
+        /********************************************************************************
+          Expressions
+        ********************************************************************************/
+
+    case Block:
         write_dot_node(file,
                        ast,
                        node,
-                       ColorIndigo,
-                       "CODE",
-                       rastr_node_placeholder_syntax(ast, node),
-                       "VALUE",
-                       rastr_node_placeholder_value(ast, node));
-        return;
-
-        /********************************************************************************
-         Expressions
-        ********************************************************************************/
-    case UnaryExpression:
-        write_dot_node(file, ast, node, ColorBlue);
-        EXPORT_CHILDREN_2(unary_expression, op, expr);
-        return;
-
-    case BinaryExpression:
-        write_dot_node(file, ast, node, ColorLightBlue);
-        EXPORT_CHILDREN_3(binary_expression, left_expr, op, right_expr);
-        return;
-
-    case Block:
-        write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_3(block, left_brace, expressions, right_brace);
+                       ColorTeal,
+                       "len",
+                       bufprintf("%d", rastr_blk_len(ast, node)));
+        EXPORT_BRACKETED_SEQ(blk, lbrack, len, seq, rbrack);
         return;
 
     case Group:
         write_dot_node(file, ast, node, ColorCyan);
-        EXPORT_CHILDREN_3(group, left_paren, expr, right_paren);
+        EXPORT_CHILDREN_3(grp, lbrack, expr, rbrack);
         return;
 
-        /********************************************************************************
-         Statement
-        ********************************************************************************/
-    case Statement:
-        write_dot_node(file, ast, node, ColorLime);
-        EXPORT_CHILDREN_2(statement, expr, terminator);
+    case UnaryOperation:
+        write_dot_node(file, ast, node, ColorBlue);
+        EXPORT_CHILDREN_2(unop, op, expr);
         return;
 
-        /********************************************************************************
-         Program
-        ********************************************************************************/
-    case Program:
-        write_dot_node(file, ast, node, ColorGreen);
-        EXPORT_CHILDREN_1(program, statements);
+    case BinaryOperation:
+        write_dot_node(file, ast, node, ColorLightBlue);
+        EXPORT_CHILDREN_3(binop, lexpr, op, rexpr);
         return;
 
-        /********************************************************************************
-         Sequence
-        ********************************************************************************/
-    case Sequence:
-        write_dot_node(file,
-                       ast,
-                       node,
-                       ColorLightGreen,
-                       "SIZE",
-                       bufprintf("%d", rastr_node_sequence_size(ast, node)));
-        --depth;
-
-        if (depth != 0) {
-            rastr_node_t* nodes = rastr_node_sequence_nodes(ast, node);
-            int size = rastr_node_sequence_size(ast, node);
-
-            for (int i = 0; i < size; ++i) {
-                rastr_node_t child = nodes[i];
-                rastr_export_to_dot_node(file, ast, child, depth);
-                write_edge(file, ast, node, child, bufprintf("nodes[%d]", i));
-            }
-        }
-
-        return;
-
-        /********************************************************************************
-         End
-        ********************************************************************************/
-    case End:
-        write_dot_node(file, ast, node, ColorBlack);
-        return;
-
-        /********************************************************************************
-         Error
-        ********************************************************************************/
-    case Error:
-        write_dot_node(file,
-                       ast,
-                       node,
-                       ColorBlack,
-                       "MESSAGE",
-                       rastr_node_error_message(ast, node));
-        return;
-
-        /********************************************************************************
-         Repeat
-        ********************************************************************************/
     case RepeatLoop:
         write_dot_node(file, ast, node, ColorYellow);
-        EXPORT_CHILDREN_2(rloop, kw, body);
+        EXPORT_CHILDREN_2(rlp, kw, body);
         return;
 
-        /********************************************************************************
-         While
-        ********************************************************************************/
     case WhileLoop:
         write_dot_node(file, ast, node, ColorBrown);
-        EXPORT_CHILDREN_3(wloop, kw, cond, body);
+        EXPORT_CHILDREN_3(wlp, kw, cond, body);
         return;
 
-    case IfCond:
+    case ForLoop:
+        write_dot_node(file, ast, node, ColorBrown);
+        EXPORT_CHILDREN_3(flp, kw, iter, body);
+        return;
+
+    case IfConditional:
         write_dot_node(file, ast, node, ColorAmber);
-        EXPORT_CHILDREN_3(ifcond, if_kw, cond, csq);
+        EXPORT_CHILDREN_3(icnd, ikw, cond, ibody);
         return;
 
-    case IfElseCond:
+    case IfElseConditional:
         write_dot_node(file, ast, node, ColorOrange);
-        EXPORT_CHILDREN_5(ifelsecond, if_kw, cond, csq, else_kw, alt);
-        return;
-
-        /********************************************************************************
-         Error
-        ********************************************************************************/
-    case Missing:
-        write_dot_node(file, ast, node, ColorBlack);
-        return;
-
-    case Arguments:
-        write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_3(arguments, ldelim, args, rdelim);
-        return;
-
-    case Call:
-        write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_2(call, fun, args);
-        return;
-
-    case Indices:
-        write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_3(indices, ldelim, nodes, rdelim);
-        return;
-
-    case Indexing:
-        write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_2(indexing, obj, indices);
-        return;
-
-    case Parameters:
-        write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_3(parameters, ldelim, seq, rdelim);
+        EXPORT_CHILDREN_5(iecnd, ikw, cond, ibody, ekw, ebody);
         return;
 
     case FunctionDefinition:
         write_dot_node(file, ast, node, ColorTeal);
-        EXPORT_CHILDREN_3(fndef, kw, params, body);
+        EXPORT_CHILDREN_3(fndefn, hd, params, body);
+        return;
+
+    case FunctionCall:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_2(fncall, fun, args);
+        return;
+
+    case Subset:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_2(sub, obj, inds);
+        return;
+
+    case Index:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_2(idx, obj, inds);
+        return;
+
+    case Parameters:
+        write_dot_node(file,
+                       ast,
+                       node,
+                       ColorTeal,
+                       "len",
+                       bufprintf("%d", rastr_params_len(ast, node)));
+        EXPORT_BRACKETED_SEQ(params, lbrack, len, seq, rbrack);
+        return;
+
+    case DefaultParameter:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_3(dparam, name, op, expr);
+        return;
+
+    case NonDefaultParameter:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_1(ndparam, name);
+        return;
+
+    case Arguments:
+        write_dot_node(file,
+                       ast,
+                       node,
+                       ColorTeal,
+                       "len",
+                       bufprintf("%d", rastr_args_len(ast, node)));
+        EXPORT_BRACKETED_SEQ(args, lbrack, len, seq, rbrack);
+        return;
+
+    case NamedArgument:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_3(narg, name, op, expr);
+        return;
+
+    case PositionalArgument:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_1(parg, expr);
+        return;
+
+    case Condition:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_3(cnd, lbrack, expr, rbrack);
+        return;
+
+    case Iteration:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_5(iter, lbrack, var, kw, expr, rbrack);
+        return;
+
+    case Program:
+        write_dot_node(file,
+                       ast,
+                       node,
+                       ColorTeal,
+                       "len",
+                       bufprintf("%d", rastr_pgm_len(ast, node)));
+        EXPORT_SEQ(pgm, len, seq);
+        return;
+
+    case Delimited:
+        write_dot_node(file, ast, node, ColorTeal);
+        EXPORT_CHILDREN_2(dlmtd, expr, dlmtr);
+        return;
+
+    case Missing:
+        write_dot_node(file, ast, node, ColorBlack);
+        return;
+
+    case Error:
+        write_dot_node(
+            file, ast, node, ColorBlack, "msg", rastr_err_msg(ast, node));
+        return;
+
+    case End:
+        write_dot_node(file, ast, node, ColorBlack);
         return;
     }
 

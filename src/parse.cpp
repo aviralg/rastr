@@ -51,7 +51,7 @@ SEXP r_rastr_parse_str(SEXP r_string) {
 
     rastr_ast_t ast = rastr_parse_str(CHAR(str_elt));
 
-    return r_rastr_ast_to_sexp(ast);
+    return rastr_ast_wrap(ast);
 }
 
 
@@ -95,5 +95,5 @@ SEXP r_rastr_parse_file(SEXP r_filepath) {
 
     rastr_ast_t ast = rastr_parse_file(CHAR(str_elt));
 
-    return r_rastr_ast_to_sexp(ast);
+    return rastr_ast_wrap(ast);
 }

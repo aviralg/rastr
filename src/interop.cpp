@@ -56,27 +56,27 @@ SEXP rastr_sexp_set_row_names(SEXP r_object, SEXP r_row_names) {
     return r_object;
 }
 
-SEXP rastr_c_int_to_r_logical(int value) {
+SEXP rastr_lgl_wrap(int value) {
     return ScalarLogical(value);
 }
 
-int rastr_r_logical_to_c_int(SEXP r_value) {
+int rastr_lgl_unwrap(SEXP r_value) {
     return asLogical(r_value);
 }
 
-SEXP rastr_c_int_to_r_integer(int value) {
+SEXP rastr_int_wrap(int value) {
     return ScalarInteger(value);
 }
 
-int rastr_r_integer_to_c_int(SEXP r_value) {
+int rastr_int_unwrap(SEXP r_value) {
     return asInteger(r_value);
 }
 
-SEXP rastr_c_double_to_r_double(double value) {
+SEXP rastr_dbl_wrap(double value) {
     return ScalarReal(value);
 }
 
-double rastr_r_double_to_c_double(SEXP r_value) {
+double rastr_dbl_unwrap(SEXP r_value) {
     return asReal(r_value);
 }
 
@@ -91,11 +91,11 @@ SEXP rastr_c_pointer_to_r_externalptr(void* pointer,
     return r_value;
 }
 
-SEXP rastr_c_string_to_r_character(const char* string) {
+SEXP rastr_str_wrap(const char* string) {
     return mkString(string);
 }
 
-const char* rastr_r_character_to_c_string(SEXP r_character) {
+const char* rastr_str_unwrap(SEXP r_character) {
     return CHAR(STRING_ELT(r_character, 0));
 }
 

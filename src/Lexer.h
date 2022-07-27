@@ -183,7 +183,6 @@ class Lexer {
             /* indicate the end of an expression. */
 
         case Symbol:
-        case Placeholder:
         case String:
         case Integer:
         case Real:
@@ -334,7 +333,7 @@ class Lexer {
         }
 
         else if (input_.read_char_if('_')) {
-            return rastr_node_placeholder(ast_);
+            return rastr_node_symbol(ast_, "_", "_");
         }
 
         /* raw string literal */

@@ -22,6 +22,12 @@ void* realloc_or_fail(void* ptr, std::size_t size) {
     return new_ptr;
 }
 
+void* memclone_or_fail(const void* ptr, std::size_t size) {
+    void* new_ptr = malloc_or_fail(size);
+    std::memcpy(new_ptr, ptr, size);
+    return new_ptr;
+}
+
 bool file_exists(const char* filepath) {
     std::ifstream file(filepath);
     return file.good();

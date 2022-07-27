@@ -16,17 +16,17 @@ void rastr_sexp_release(SEXP r_object);
 
 SEXP rastr_sexp_set_class(SEXP r_object, SEXP r_class);
 
-SEXP rastr_c_int_to_r_logical(int value);
-int rastr_r_logical_to_c_int(SEXP r_value);
+SEXP rastr_lgl_wrap(int value);
+int rastr_lgl_unwrap(SEXP r_value);
 
-SEXP rastr_c_int_to_r_integer(int value);
-int rastr_r_integer_to_c_int(SEXP r_value);
+SEXP rastr_int_wrap(int value);
+int rastr_int_unwrap(SEXP r_value);
 
-SEXP rastr_c_double_to_r_double(double value);
-double rastr_r_double_to_c_double(SEXP r_value);
+SEXP rastr_dbl_wrap(double value);
+double rastr_dbl_unwrap(SEXP r_value);
 
-SEXP rastr_c_string_to_r_character(const char* string);
-const char* rastr_r_character_to_c_string(SEXP r_character);
+SEXP rastr_str_wrap(const char* string);
+const char* rastr_str_unwrap(SEXP r_character);
 
 SEXP rastr_c_pointer_to_r_externalptr(void* pointer,
                                       SEXP r_tag,
