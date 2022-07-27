@@ -327,6 +327,13 @@ class Parser {
         }
 
         else {
+            /* to correctly parse right-associative operators, reduce precedence
+             * by 1 */
+            if (type == Power || type == LeftAssign ||
+                type == LeftSuperAssign || type == EqualAssign) {
+                precedence = precedence - 1;
+            }
+
             rastr_node_t right = parse_expr(precedence);
             if (rastr_node_is_undefined(right)) {
                 return UNDEFINED_NODE;
@@ -685,11 +692,11 @@ class Parser {
             //     return 3;
             // case Else:
             //     return 4;
+            case EqualAssign:
+                return 5;
             case LeftAssign:
             case LeftSuperAssign:
             case ColonAssign:
-                return 5;
-            case EqualAssign:
                 return 6;
             case RightAssign:
             case RightSuperAssign:
