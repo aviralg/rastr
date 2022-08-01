@@ -593,6 +593,14 @@ rastr_ast_t rastr_ast_create(std::size_t capacity) {
     return ast;
 }
 
+int rastr_is_empty(rastr_ast_t ast) {
+    return ast->pool->get_size() == 0;
+}
+
+int rastr_ast_size(rastr_ast_t ast) {
+    return ast->pool->get_size();
+}
+
 void rastr_ast_destroy(rastr_ast_t ast) {
     ast->pool->clear();
     delete ast->pool;

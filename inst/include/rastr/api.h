@@ -194,6 +194,8 @@ rastr_ast_t rastr_ast_create(std::size_t capacity);
 void rastr_ast_destroy(rastr_ast_t ast);
 rastr_node_t rastr_ast_root(rastr_ast_t ast);
 const char* rastr_ast_to_string(rastr_ast_t ast);
+int rastr_is_empty(rastr_ast_t ast);
+int rastr_ast_size(rastr_ast_t ast);
 
 /********************************************************************************
  Node
@@ -285,7 +287,7 @@ const char* rastr_node_real_syntax(rastr_ast_t ast, rastr_node_t node);
 
 // complex
 rastr_node_t
-rastr_node_complex(rastr_ast_t ast, const char* syntax, Rcomplex value);
+rastr_node_complex(rastr_ast_t ast, const char* syntax, const Rcomplex& value);
 Rcomplex rastr_node_complex_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_complex_syntax(rastr_ast_t ast, rastr_node_t node);
 
@@ -491,11 +493,24 @@ SEXP r_rastr_initialize(SEXP r_pack_env);
 SEXP r_rastr_finalize(SEXP r_pack_env);
 
 /********************************************************************************
-Export
+ Export
 ********************************************************************************/
 
 void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth);
 SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth);
+
+/********************************************************************************
+ SEXP
+********************************************************************************/
+
+SEXP rastr_to_sexp(rastr_ast_t ast);
+SEXP rastr_node_to_sexp(rastr_ast_t ast, rastr_node_t node);
+
+SEXP rastr_ast_wrap(rastr_ast_t ast);
+SEXP rastr_node_wrap(rastr_node_t node);
+
+rastr_ast_t rastr_ast_unwrap(SEXP r_ast);
+rastr_node_t rastr_node_unwrap(SEXP r_node);
 
 #ifdef __cplusplus
 }
