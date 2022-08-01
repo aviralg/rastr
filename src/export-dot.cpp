@@ -96,12 +96,14 @@ const char* ColorWhite = "#FFFFFF";
     }
 
 std::string escape_dot_label(const char* label) {
-    std::string label_str(label);
+    std::string label_str(label == nullptr ? "" : label);
     string_replace(label_str, "\\", "\\\\");
+    string_replace(label_str, "|", "\\|");
     string_replace(label_str, "{", "\\{");
     string_replace(label_str, "}", "\\}");
     string_replace(label_str, "<", "&lt;");
     string_replace(label_str, ">", "&gt;");
+    string_replace(label_str, "&", "&amp;");
     return label_str;
 }
 
