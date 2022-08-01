@@ -190,6 +190,16 @@ class Input {
         return StringView(input_, length);
     }
 
+    StringView view_at(std::size_t left_index) const {
+        return StringView(input_, left_index, index_);
+    }
+
+    void rewind() {
+        if (index_ > 0) {
+            --index_;
+        }
+    }
+
   private:
     const char* input_;
     const std::size_t length_;

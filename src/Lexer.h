@@ -2,6 +2,7 @@
 #include <rastr/api.h>
 #include "internal_api.h"
 #include "logger.h"
+#include "interop.h"
 
 class Lexer {
   public:
@@ -244,6 +245,10 @@ class Lexer {
         eat_lines_ = true;
     }
 
+    void disable_eat_lines() {
+        eat_lines_ = false;
+    }
+
   private:
     Input input_;
     rastr_ast_t ast_;
@@ -251,10 +256,6 @@ class Lexer {
     rastr_node_t saved_token_;
     bool token_saved_;
     bool eat_lines_;
-
-    void disable_eat_lines() {
-        eat_lines_ = false;
-    }
 
     bool should_eat_lines() {
         return eat_lines_;
@@ -298,15 +299,22 @@ class Lexer {
             return saved_token_;
         }
 
-        /* parse whitespace; newline is excluded because it can be an
-           expression terminator or a whitespace depending on the context */
-        if (input_.peek_char_any(' ', '\t', '\f')) {
-            parse_space_();
-        }
+        bool skip = true;
+        while (skip) {
+            skip = false;
 
-        /* parse comment */
-        if (input_.read_char_if('#')) {
-            parse_comment_('#');
+            /* parse whitespace; newline is excluded because it can be an
+               expression terminator or a whitespace depending on the context */
+            if (input_.peek_char_any(' ', '\t', '\f')) {
+                skip = true;
+                parse_space_();
+            }
+
+            /* parse comment */
+            else if (input_.read_char_if('#')) {
+                skip = true;
+                parse_comment_('#');
+            }
         }
 
         /* return end token if end of input is reached */
@@ -549,9 +557,6 @@ class Lexer {
 
     void parse_comment_(char initial) {
         input_.read_char_while_not('\n');
-        if (!input_.end()) {
-            input_.read_char();
-        }
     }
 
     rastr_node_t parse_symbol_or_keyword_(char initial) {
@@ -582,7 +587,7 @@ class Lexer {
         }
 
         else if (length == 2 && input_.equal("NA", left_index, length)) {
-            return rastr_node_logical(ast_, "NA", 0 /*TODO: NA_LOGICAL */);
+            return rastr_node_logical(ast_, "NA", NA_LOGICAL);
         }
 
         else if (length == 4 && input_.equal("TRUE", left_index, length)) {
@@ -594,22 +599,20 @@ class Lexer {
         }
 
         else if (length == 3 && input_.equal("Inf", left_index, length)) {
-            return rastr_node_real(ast_, "Inf", 23.0 /* TODO: R_PosInf */);
+            return rastr_node_real(ast_, "Inf", R_PosInf);
         }
 
         else if (length == 3 && input_.equal("NaN", left_index, length)) {
-            return rastr_node_real(ast_, "NaN", 23.0 /* TODO: R_NaN */);
+            return rastr_node_real(ast_, "NaN", R_NaN);
         }
 
         else if (length == 11 &&
                  input_.equal("NA_integer_", left_index, length)) {
-            return rastr_node_integer(
-                ast_, "NA_integer_", 0 /* TODO: NA_INTEGER */);
+            return rastr_node_integer(ast_, "NA_integer_", NA_INTEGER);
         }
 
         else if (length == 8 && input_.equal("NA_real_", left_index, length)) {
-            return rastr_node_integer(
-                ast_, "NA_real_", 0.0 /* TODO: NA_REAL */);
+            return rastr_node_integer(ast_, "NA_real_", NA_REAL);
         }
 
         else if (length == 13 &&
@@ -620,9 +623,7 @@ class Lexer {
         else if (length == 11 &&
                  input_.equal("NA_complex_", left_index, length)) {
             return rastr_node_complex(
-                ast_,
-                "NA_complex_",
-                Rcomplex{0 /* TODO: NA_REAL */, 0 /* NA_REAL */});
+                ast_, "NA_complex_", Rcomplex{NA_REAL, NA_REAL});
         }
 
         else if (length == 8 && input_.equal("function", left_index, length)) {
@@ -808,347 +809,184 @@ class Lexer {
             ast_, input_.get_view(left_index, right_index), Special);
     }
 
-    rastr_node_t parse_number_(char c) {
-        return rastr_node_error(ast_, "TODO: handle numbers");
-    }
+    rastr_node_t parse_number_(int c) {
+        int seendot = (c == '.');
+        int seenexp = 0;
+        int last = c;
+        int nd = 0;
+        int asNumeric = 0;
+        int count = 1; /* The number of characters seen */
 
-    //     rastr_node_t parse_number_(char c) {
-    //         int seendot = (c == '.');
-    //         int seenexp = 0;
-    //         int last = c;
-    //         int nd = 0;
-    //         int asNumeric = 0;
-    //         int count = 1; /* The number of characters seen */
-    //
-    //         int left_index = input_.get_index() - 1;
-    //
-    //         /* We don't care about other than ASCII digits */
-    //         while (!input_.end() &&
-    //                (input_.is_digit() || input_.peek_char_any('e', 'E')
-    //                ||
-    //                 input_.peek_char_any('x', 'X') ||
-    //                 input_.peek_char_any('.', 'L'))) {
-    //             c = input_.next_char();
-    //             count++;
-    //
-    //             if (c ==
-    //                 'L') /* must be at the end.  Won't allow 1Le3 (at
-    //                 present). */
-    //             {
-    //                 break;
-    //             }
-    //
-    //             if (c == 'x' || c == 'X') {
-    //                 if (count > 2 || last != '0') {
-    //                     /* "push back" 'x' or 'X' into the input as this
-    //                     marks the
-    //                        end of the number. */
-    //                     input_.rewind(1);
-    //                     break; /* 0x must be first */
-    //                 }
-    //
-    //                 while (!input_.end() &&
-    //                        (input_.is_hex_digit() ||
-    //                        input_.peek_char('.')))
-    //                        {
-    //                     c = input_.next_char();
-    //                     if (c == '.') {
-    //                         if (seendot)
-    //                             return rastr_node_error(
-    //                                 "encountered two decimal points in a
-    //                                 number");
-    //                         seendot = 1;
-    //                     }
-    //                     nd++;
-    //                 }
-    //                 if (nd == 0)
-    //                     return ERROR;
-    //                 if (c == 'p' || c == 'P') {
-    //                     seenexp = 1;
-    //                     if (input_.peek_char_any('+', '-')) {
-    //                         input_.read_char();
-    //                         c = input_.read_char();
-    //                     }
-    //                     /* if neither digit, nor + and - follow p, it is
-    //                     an error */ else if (!input_.is_digit()) {
-    //                         return rastr_node_error(
-    //                             "encountered invalid character after p");
-    //                     }
-    //
-    //                     /* read consecutive sequence of digits */
-    //                     for (nd = 0; !input_.end() && input_.is_digit();
-    //                          c = input_.read_char(), nd++)
-    //                         ;
-    //
-    //                     if (nd == 0) {
-    //                         return rastr_node_error(
-    //                             "invalid number: no digits after p");
-    //                     }
-    //                 }
-    //                 if (seendot && !seenexp)
-    //                     return rastr_node_error("invalid hex number: has
-    //                     decimal "
-    //                                             "point but no exponent
-    //                                             provided");
-    //
-    //                 if (c == 'L') /* for getParseData */
-    //                 {
-    //                     // seenexp will be checked later
-    //                     break;
-    //                 }
-    //                 break;
-    //             }
-    //             if (c == 'E' || c == 'e') {
-    //                 if (seenexp)
-    //                     break;
-    //                 seenexp = 1;
-    //                 seendot = seendot == 1 ? seendot : 2;
-    //                 YYTEXT_PUSH(c, yyp);
-    //                 c = xxgetc();
-    //                 if (!isdigit(c) && c != '+' && c != '-')
-    //                     return ERROR;
-    //                 if (c == '+' || c == '-') {
-    //                     YYTEXT_PUSH(c, yyp);
-    //                     c = xxgetc();
-    //                     if (!isdigit(c))
-    //                         return ERROR;
-    //                 }
-    //             }
-    //             if (c == '.') {
-    //                 if (seendot)
-    //                     break;
-    //                 seendot = 1;
-    //             }
-    //             YYTEXT_PUSH(c, yyp);
-    //             last = c;
-    //         }
-    //
-    //         if (c == 'i')
-    //             YYTEXT_PUSH(c, yyp); /* for getParseData */
-    //
-    //         YYTEXT_PUSH('\0', yyp);
-    //         /* Make certain that things are okay. */
-    //         if (c == 'L') {
-    //             double a = R_atof(yytext);
-    //             int b = (int) a;
-    //             /* We are asked to create an integer via the L, so we
-    //             check that the
-    //                double and int values are the same. If not, this is a
-    //                problem and we will not lose information and so use
-    //                the numeric value.
-    //             */
-    //             if (a != (double) b) {
-    //                 if (GenerateCode) {
-    //                     if (seendot == 1 && seenexp == 0)
-    //                         warning(_("integer literal %s contains
-    //                         decimal; using "
-    //                                   "numeric value"),
-    //                                 yytext);
-    //                     else {
-    //                         /* hide the L for the warning message */
-    //                         warning(_("non-integer value %s qualified
-    //                         with L;
-    //                         "
-    //                                   "using numeric value"),
-    //                                 yytext);
-    //                     }
-    //                 }
-    //                 asNumeric = 1;
-    //                 seenexp = 1;
-    //             }
-    //         }
-    //
-    //         if (c == 'i') {
-    //             yylval = GenerateCode ? mkComplex(yytext) : R_NilValue;
-    //         } else if (c == 'L' && asNumeric == 0) {
-    //             if (GenerateCode && seendot == 1 && seenexp == 0)
-    //                 warning(
-    //                     _("integer literal %s contains unnecessary
-    //                     decimal point"), yytext);
-    //             yylval = GenerateCode ? mkInt(yytext) : R_NilValue;
-    // #if 0 /* do this to make 123 integer not double */
-    //     } else if(!(seendot || seenexp)) {
-    // 	if(c != 'L') xxungetc(c);
-    // 	if (GenerateCode) {
-    // 	    double a = R_atof(yytext);
-    // 	    int b = (int) a;
-    // 	    yylval = (a != (double) b) ? mkFloat(yytext) :
-    // mkInt(yytext); 	} else yylval = R_NilValue; #endif
-    //         } else {
-    //             if (c != 'L')
-    //                 xxungetc(c);
-    //             yylval = GenerateCode ? mkFloat(yytext) : R_NilValue;
-    //         }
-    //
-    //         PRESERVE_SV(yylval);
-    //         return NUM_CONST;
-    //     }
-    //
-    //     rastr_node_t parse_number_(char initial) {
-    //         char c = initial;
-    //
-    //         int seendot = (c == '.');
-    //         int seenexp = 0;
-    //         int last = c;
-    //         int nd = 0;
-    //         int asNumeric = 0;
-    //         int count = 1; /* The number of characters seen */
-    //
-    //         push_token_buffer(c);
-    //         /* We don't care about other than ASCII digits */
-    //         while (isdigit(c = yyinput()) ||           //
-    //                c == '.' || c == 'e' || c == 'E' || //
-    //                c == 'x' || c == 'X' || c == 'L') {
-    //             count++;
-    //
-    //             /* must be at the end.  Won't allow 1Le3 (at present). */
-    //             if (c == 'L') {
-    //                 push_token_buffer(c);
-    //                 break;
-    //             }
-    //
-    //             if (c == 'x' || c == 'X') {
-    //                 if (count > 2 || last != '0')
-    //                     break; /* 0x must be first */
-    //                 push_token_buffer(c);
-    //                 while (isdigit(c = yyinput()) || ('a' <= c && c <=
-    //                 'f')
-    //                 ||
-    //                        ('A' <= c && c <= 'F') || c == '.') {
-    //                     if (c == '.') {
-    //                         if (seendot)
-    //                             HANDLE_ERROR();
-    //                         seendot = 1;
-    //                     }
-    //                     push_token_buffer(c);
-    //                     nd++;
-    //                 }
-    //                 if (nd == 0)
-    //                     HANDLE_ERROR();
-    //                 if (c == 'p' || c == 'P') {
-    //                     seenexp = 1;
-    //                     push_token_buffer(c);
-    //                     c = yyinput();
-    //                     if (!isdigit(c) && c != '+' && c != '-')
-    //                         HANDLE_ERROR();
-    //                     if (c == '+' || c == '-') {
-    //                         push_token_buffer(c);
-    //                         c = yyinput();
-    //                     }
-    //                     for (nd = 0; isdigit(c); c = yyinput(), nd++)
-    //                         push_token_buffer(c);
-    //                     if (nd == 0)
-    //                         HANDLE_ERROR();
-    //                 }
-    //                 if (seendot && !seenexp)
-    //                     HANDLE_ERROR();
-    //                 break;
-    //             }
-    //             if (c == 'E' || c == 'e') {
-    //                 if (seenexp)
-    //                     break;
-    //                 seenexp = 1;
-    //                 seendot = seendot == 1 ? seendot : 2;
-    //                 push_token_buffer(c);
-    //                 c = yyinput();
-    //                 if (!isdigit(c) && c != '+' && c != '-')
-    //                     HANDLE_ERROR();
-    //                 if (c == '+' || c == '-') {
-    //                     push_token_buffer(c);
-    //                     c = yyinput();
-    //                     if (!isdigit(c))
-    //                         HANDLE_ERROR();
-    //                 }
-    //             }
-    //             if (c == '.') {
-    //                 if (seendot)
-    //                     break;
-    //                 seendot = 1;
-    //             }
-    //             push_token_buffer(c);
-    //             last = c;
-    //         }
-    //
-    //         if (c == 'i')
-    //             push_token_buffer(c); /* for getParseData */
-    //
-    //         /*NOTE: representation finished at this point:
-    //         YYTEXT_PUSH('\0', yyp);
-    //          */
-    //         /* Make certain that things are okay. */
-    //         if (c == 'L') {
-    //             double a = R_atof(get_token_buffer().c_str());
-    //             int b = (int) a;
-    //             /* We are asked to create an integer via the L, so we
-    //             check that the
-    //                double and int values are the same. If not, this is a
-    //                problem and we will not lose information and so use
-    //                the numeric value.
-    //             */
-    //             if (a != (double) b) {
-    //                 if (seendot == 1 && seenexp == 0)
-    //                     fprintf(stderr,
-    //                             "integer literal %s contains decimal;
-    //                             using " "numeric value",
-    //                             get_token_buffer().c_str());
-    //                 else {
-    //                     /* hide the L for the warning message */
-    //                     fprintf(stderr,
-    //                             "non-integer value %s qualified with L;
-    //                             using " "numeric value",
-    //                             get_token_buffer().c_str());
-    //                 }
-    //                 asNumeric = 1;
-    //                 seenexp = 1;
-    //             }
-    //         }
-    //
-    //         if (c == 'i') {
-    //             *yylval = mkComplex(ast_, get_token_buffer());
-    //             return rastr::RParser::token::COMPLEX_CONST;
-    //         } else if (c == 'L' && asNumeric == 0) {
-    //             if (seendot == 1 && seenexp == 0)
-    //                 fprintf(stderr,
-    //                         "integer literal %s contains unnecessary
-    //                         decimal point", get_token_buffer().c_str());
-    //             *yylval = mkInt(ast_, get_token_buffer());
-    //             return rastr::RParser::token::INT_CONST;
-    // #if 0 /* do this to make 123 integer not double */
-    //                                                                     }
-    //                                                                     else
-    //                                                                     if(!(seendot
-    //                                                                     ||
-    //                                                                     seenexp))
-    //                                                                     {
-    //                                                                 	if(c
-    //                                                                 !=
-    //                                                                 'L')
-    //                                                                 unput_(c);
-    //                                                                 	    double
-    //                                                                 a =
-    //                                                                 R_atof(get_token_buffer().c_str());
-    //                                                                 	    int
-    //                                                                 b =
-    //                                                                 (int)
-    //                                                                 a;
-    //                                                                 if(a
-    //                                                                 !=
-    //                                                                 (double)
-    //                                                                 b) {
-    //                                                                           *yylval = mkFloat(ast_, get_token_buffer());
-    //                                                                           return rastr::RParser::token::FLOAT_CONST;
-    //                                                                       }
-    //                                                                       else
-    //                                                                       {
-    //                                                                           *yylval = mkInt(ast_, get_token_buffer());
-    //                                                                           return rastr::RParser::token::INT_CONST;
-    //                                                                       }
-    // #endif
-    //         } else {
-    //             if (c != 'L')
-    //                 unput_(c);
-    //             *yylval = mkFloat(ast_, get_token_buffer());
-    //             return rastr::RParser::token::FLOAT_CONST;
-    //         }
-    //     }
+        int left_index = input_.get_index() - 1;
+
+        /* We don't care about other than ASCII digits */
+        while (isdigit(c = input_.read_char()) || c == '.' || c == 'e' ||
+               c == 'E' || c == 'x' || c == 'X' || c == 'L') {
+            count++;
+
+            /* must be at the end.  Won't allow 1Le3 (at present). */
+            if (c == 'L') {
+                break;
+            }
+
+            /* hexadecimal numbers */
+            if (c == 'x' || c == 'X') {
+                if (count > 2 || last != '0') {
+                    break; /* 0x must be first */
+                }
+
+                while (isdigit(c = input_.read_char()) ||
+                       ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F') ||
+                       c == '.') {
+                    if (c == '.') {
+                        if (seendot) {
+                            return rastr_node_error(
+                                ast_,
+                                "two decimal points in hexadecimal number");
+                        }
+                        seendot = 1;
+                    }
+                    nd++;
+                }
+
+                if (nd == 0) {
+                    return rastr_node_error(ast_,
+                                            "no hexadecimal digits follow 0x");
+                }
+
+                if (c == 'p' || c == 'P') {
+                    seenexp = 1;
+
+                    c = input_.read_char();
+
+                    if (!isdigit(c) && c != '+' && c != '-') {
+                        return rastr_node_error(ast_,
+                                                "expected a digit, +, or - to "
+                                                "follow the exponent sign of "
+                                                "hexadecimal number");
+                    }
+
+                    if (c == '+' || c == '-') {
+                        c = input_.read_char();
+                    }
+
+                    for (nd = 0; isdigit(c); c = input_.read_char(), nd++)
+                        ;
+
+                    if (nd == 0) {
+                        return rastr_node_error(
+                            ast_,
+                            "no digits present in the exponent of "
+                            "hexadecimal number");
+                    }
+                }
+
+                if (seendot && !seenexp) {
+                    return rastr_node_error(ast_,
+                                            "missing exponent in hexadecimal "
+                                            "number with a decimal point");
+                }
+
+                /* for getParseData */
+                if (c == 'L') {
+                    // seenexp will be checked later
+                    break;
+                }
+
+                break;
+            }
+
+            if (c == 'E' || c == 'e') {
+                if (seenexp) {
+                    break;
+                }
+
+                seenexp = 1;
+                seendot = seendot == 1 ? seendot : 2;
+                c = input_.read_char();
+
+                if (!isdigit(c) && c != '+' && c != '-') {
+                    return rastr_node_error(
+                        ast_, "expected digit, +, or - after exponent");
+                }
+
+                if (c == '+' || c == '-') {
+                    c = input_.read_char();
+
+                    if (!isdigit(c)) {
+                        return rastr_node_error(
+                            ast_, "expected digit after +/- sign in exponent");
+                    }
+                }
+            }
+
+            if (c == '.') {
+                if (seendot) {
+                    break;
+                }
+
+                seendot = 1;
+            }
+
+            last = c;
+        }
+
+        /* Make certain that things are okay. */
+        if (c == 'L') {
+            const char* syntax = input_.view_at(left_index).materialize();
+
+            double a = R_atof(syntax);
+            int b = (int) a;
+            /* We are asked to create an integer via the L, so we check that the
+               double and int values are the same. If not, this is a problem and
+               we will not lose information and so use the numeric value.
+            */
+            if (a != (double) b) {
+                if (seendot == 1 && seenexp == 0) {
+                    rastr_log_warning(
+                        "integer literal %s contains decimal; using "
+                        "numeric value",
+                        syntax);
+                } else {
+                    /* hide the L for the warning message */
+                    rastr_log_warning("non-integer value %s qualified with L; "
+                                      "using numeric value",
+                                      syntax);
+                }
+
+                asNumeric = 1;
+                seenexp = 1;
+            }
+
+            free((void*) syntax);
+        }
+
+        if (c == 'i') {
+            return rastr_node_complex_from_view(ast_,
+                                                input_.view_at(left_index));
+        }
+
+        else if (c == 'L' && asNumeric == 0) {
+            if (seendot == 1 && seenexp == 0) {
+                const char* syntax = input_.view_at(left_index).materialize();
+                rastr_log_warning(
+                    "integer literal %s contains unnecessary decimal point",
+                    syntax);
+                free((void*) syntax);
+            }
+
+            return rastr_node_integer_from_view(ast_,
+                                                input_.view_at(left_index));
+
+        } else {
+            if (c != 'L') {
+                input_.rewind();
+            }
+
+            return rastr_node_double_from_view(ast_,
+                                               input_.view_at(left_index));
+        }
+
+        return rastr_node_error(ast_, "should not reach here!");
+    }
 };

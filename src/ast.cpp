@@ -894,6 +894,15 @@ const char* rastr_node_logical_syntax(rastr_ast_t ast, rastr_node_t node) {
 }
 
 // integer
+rastr_node_t rastr_node_integer_from_view(rastr_ast_t ast,
+                                          const StringView& syntax_view) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Integer);
+    char* syntax = syntax_view.materialize();
+    pair.ptr->node.integer_node.syntax = syntax;
+    pair.ptr->node.integer_node.value = (int) R_atof(syntax);
+    return pair.node;
+}
+
 rastr_node_t
 rastr_node_integer(rastr_ast_t ast, const char* syntax, int value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Integer);
@@ -911,6 +920,15 @@ const char* rastr_node_integer_syntax(rastr_ast_t ast, rastr_node_t node) {
 }
 
 // real
+rastr_node_t rastr_node_double_from_view(rastr_ast_t ast,
+                                         const StringView& syntax_view) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Real);
+    char* syntax = syntax_view.materialize();
+    pair.ptr->node.real_node.syntax = syntax;
+    pair.ptr->node.real_node.value = (int) R_atof(syntax);
+    return pair.node;
+}
+
 rastr_node_t
 rastr_node_real(rastr_ast_t ast, const char* syntax, double value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Real);
@@ -928,8 +946,18 @@ const char* rastr_node_real_syntax(rastr_ast_t ast, rastr_node_t node) {
 }
 
 // complex
+rastr_node_t rastr_node_complex_from_view(rastr_ast_t ast,
+                                          const StringView& syntax_view) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Complex);
+    char* syntax = syntax_view.materialize();
+    pair.ptr->node.complex_node.syntax = syntax;
+    pair.ptr->node.complex_node.value.r = 0;
+    pair.ptr->node.complex_node.value.i = R_atof(syntax);
+    return pair.node;
+}
+
 rastr_node_t
-rastr_node_complex(rastr_ast_t ast, const char* syntax, Rcomplex value) {
+rastr_node_complex(rastr_ast_t ast, const char* syntax, const Rcomplex& value) {
     rastr_node_pair_t pair = rastr_node_create(ast, Complex);
     pair.ptr->node.complex_node.syntax = StringView::duplicate(syntax);
     pair.ptr->node.complex_node.value = value;
