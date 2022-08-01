@@ -9,7 +9,8 @@ class StringView {
         : StringView(str, 0, length) {
     }
 
-    StringView(const char* str): StringView(str, std::strlen(str)) {
+    StringView(const char* str)
+        : StringView(str, str == nullptr ? 0 : std::strlen(str)) {
     }
 
     StringView(const char* str,
@@ -36,7 +37,7 @@ class StringView {
     }
 
     static char* duplicate(const char* str) {
-        return StringView(str).materialize();
+        return str == nullptr ? nullptr : StringView(str).materialize();
     }
 
   private:
