@@ -88,6 +88,9 @@ const R_CallMethodDef CallEntries[] = {
 
     /* export */
     DECLARE_BINDING(rastr_export_to_dot, 3),
+
+    DECLARE_BINDING(rastr_to_sexp, 1),
+    DECLARE_BINDING(rastr_node_to_sexp, 2),
     {NULL, NULL, 0}};
 
 void R_init_rastr(DllInfo* dll) {

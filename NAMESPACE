@@ -3,4 +3,5 @@
 export(export_to_dot)
 export(parse_file)
 export(parse_str)
+export(to_sexp)
 useDynLib(rastr, .registration = TRUE, .fixes = "C_")

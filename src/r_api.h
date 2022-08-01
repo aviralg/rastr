@@ -66,5 +66,6 @@ SEXP r_rastr_pgm_seq(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_dlmtd_expr(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_dlmtd_dlmtr(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_err_msg(SEXP r_ast, SEXP r_node);
-
+SEXP r_rastr_to_sexp(SEXP r_ast);
+SEXP r_rastr_node_to_sexp(SEXP r_ast, SEXP r_node);
 }
