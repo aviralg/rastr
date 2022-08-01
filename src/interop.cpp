@@ -80,10 +80,18 @@ double rastr_dbl_unwrap(SEXP r_value) {
     return asReal(r_value);
 }
 
+SEXP rastr_cplx_wrap(Rcomplex value) {
+    return ScalarComplex(value);
+}
+
+Rcomplex rastr_cplx_unwrap(SEXP r_cplx) {
+    return asComplex(r_cplx);
+}
+
 SEXP rastr_c_pointer_to_r_externalptr(void* pointer,
-                                            SEXP r_tag,
-                                            SEXP r_prot,
-                                            R_CFinalizer_t finalizer) {
+                                      SEXP r_tag,
+                                      SEXP r_prot,
+                                      R_CFinalizer_t finalizer) {
     SEXP r_value = R_MakeExternalPtr(pointer, r_tag, r_prot);
     if (finalizer != NULL) {
         R_RegisterCFinalizerEx(r_value, finalizer, TRUE);
@@ -92,11 +100,22 @@ SEXP rastr_c_pointer_to_r_externalptr(void* pointer,
 }
 
 SEXP rastr_str_wrap(const char* string) {
-    return mkString(string);
+    SEXP r_str = Rf_allocVector(STRSXP, 1);
+    SET_STRING_ELT(r_str, 0, string == nullptr ? NA_STRING : mkChar(string));
+    return r_str;
 }
 
 const char* rastr_str_unwrap(SEXP r_character) {
-    return CHAR(STRING_ELT(r_character, 0));
+    SEXP r_chr = STRING_ELT(r_character, 0);
+    return r_chr == NA_STRING ? nullptr : CHAR(r_chr);
+}
+
+SEXP rastr_sym_wrap(const char* sym) {
+    return Rf_install(sym);
+}
+
+const char* rastr_sym_unwrap(SEXP r_sym) {
+    return CHAR(PRINTNAME(r_sym));
 }
 
 void* rastr_r_externalptr_to_c_pointer(SEXP r_pointer) {
@@ -108,7 +127,6 @@ void rastr_r_externalptr_clear(SEXP r_externalptr) {
 }
 
 SEXP create_list(int column_count, va_list columns) {
-
     va_list protection;
 
     va_copy(protection, columns);
@@ -191,9 +209,9 @@ SEXP rastr_create_data_frame(int column_count, ...) {
 }
 
 SEXP r_rastr_get_object_details(SEXP r_value,
-                                      SEXP r_variable,
-                                      SEXP r_environment,
-                                      SEXP r_peek) {
+                                SEXP r_variable,
+                                SEXP r_environment,
+                                SEXP r_peek) {
     SEXP r_actual_value = r_value;
 
     if (r_variable != R_NilValue) {

@@ -25,8 +25,14 @@ int rastr_int_unwrap(SEXP r_value);
 SEXP rastr_dbl_wrap(double value);
 double rastr_dbl_unwrap(SEXP r_value);
 
+SEXP rastr_cplx_wrap(Rcomplex value);
+Rcomplex rastr_cplx_unwrap(SEXP r_cplx);
+
 SEXP rastr_str_wrap(const char* string);
 const char* rastr_str_unwrap(SEXP r_character);
+
+SEXP rastr_sym_wrap(const char* sym);
+const char* rastr_sym_unwrap(SEXP r_sym);
 
 SEXP rastr_c_pointer_to_r_externalptr(void* pointer,
                                       SEXP r_tag,
