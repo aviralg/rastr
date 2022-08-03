@@ -5,20 +5,18 @@
 
 rastr_ast_t rastr_parse_str(const char* str) {
     Input input(str, std::strlen(str));
+    rastr_ast_t ast = rastr_ast_create(100);
 
-    Parser parser(input, 100);
-    rastr_ast_t ast = parser.parse_prog();
-    //std::cerr << "reached here!" << std::endl;
-    //std::cerr << rastr_ast_to_string(ast) << std::endl;
-    //
-    //rastr_node_t node;
-    //rastr_node_type_t type;
-    //
-    //do {
-    //    node = lexer.next_token();
-    //    type = rastr_node_type(ast, node);
-    //    std::cerr << rastr_node_to_string(ast, node) << std::endl;
-    //} while (type != End);
+    Parser parser(input, ast);
+    rastr_node_t root = parser.parse_prog();
+
+    if (rastr_node_type(ast, root) == End) {
+        /* TODO: delete ast object after copying msg as it is owned by node */
+        const char* msg = rastr_err_msg(ast, root);
+        rastr_log_error("%s", msg);
+    } else {
+        rastr_ast_set_root(ast, root);
+    }
 
     return ast;
 }
@@ -53,7 +51,6 @@ SEXP r_rastr_parse_str(SEXP r_string) {
 
     return rastr_ast_wrap(ast);
 }
-
 
 rastr_ast_t rastr_parse_file(const char* filepath) {
     std::string content = read_file(filepath);
