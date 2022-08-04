@@ -10,7 +10,7 @@ rastr_ast_t rastr_parse_str(const char* str) {
     Parser parser(input, ast);
     rastr_node_t root = parser.parse_prog();
 
-    if (rastr_node_type(ast, root) == End) {
+    if (rastr_node_type(ast, root) == Error) {
         /* TODO: delete ast object after copying msg as it is owned by node */
         const char* msg = rastr_err_msg(ast, root);
         rastr_log_error("%s", msg);

@@ -100,7 +100,7 @@ class Parser {
         rastr_node_t terminator;
         rastr_node_type_t term_type;
 
-        pcont_push("<expr> ; <expr> \n | <expr>");
+        pcont_push("<stmt> ▸ <expr> ; | <expr> \\n | <expr> <eof>");
 
         rastr_node_t expr = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(expr);
@@ -804,7 +804,7 @@ class Parser {
     rastr_node_t pcont_error(const char* msg) {
         std::ostringstream sstr;
 
-        sstr << "parsing error: " << msg << std::endl;
+        sstr << "\nparsing error: " << msg << std::endl;
 
         for (int i = pcont_.size() - 1; i >= 1; --i) {
             sstr << "               ├╴ " << pcont_[i] << std::endl;

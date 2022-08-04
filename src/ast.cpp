@@ -1845,7 +1845,7 @@ SEXP r_rastr_dlmtd_dlmtr(SEXP r_ast, SEXP r_node) {
 
 rastr_node_t rastr_err_node(rastr_ast_t ast, const char* msg) {
     rastr_node_pair_t pair = rastr_node_create(ast, Error);
-    pair.ptr->node.err_node.msg = msg;
+    pair.ptr->node.err_node.msg = StringView::duplicate(msg);
     return pair.node;
 }
 
