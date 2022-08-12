@@ -23,6 +23,9 @@ void* realloc_or_fail(void* ptr, std::size_t size) {
 }
 
 void* memclone_or_fail(const void* ptr, std::size_t size) {
+    if (ptr == nullptr || size == 0) {
+        return nullptr;
+    }
     void* new_ptr = malloc_or_fail(size);
     std::memcpy(new_ptr, ptr, size);
     return new_ptr;

@@ -3,6 +3,7 @@
 #include "internal_api.h"
 #include "logger.h"
 #include "interop.h"
+#include <vector>
 
 class Lexer {
   public:
@@ -11,7 +12,11 @@ class Lexer {
         , ast_(ast)
         , context_("")
         , token_saved_(false)
-        , eat_lines_(false) {
+        , eat_lines_(false)
+        , gap_nl_last_(false)
+        , gaps_()
+        , beg_(true) {
+        gaps_.reserve(20);
     }
 
     rastr_node_t next_token() {
@@ -30,6 +35,7 @@ class Lexer {
             /* eat newlines while inside a ( or [ context */
             if (should_eat_lines() || peek_context() == '[' ||
                 peek_context() == '(') {
+                rastr_node_destroy(ast_, token);
                 goto again;
             }
 
@@ -44,6 +50,7 @@ class Lexer {
                 /* Find the next non-newline token */
                 /* ignore all newlines until the if body is encountered */
                 while (token_type == Newline) {
+                    rastr_node_destroy(ast_, token);
                     token = next_token_helper_();
                     token_type = rastr_node_type(ast_, token);
                 }
@@ -92,10 +99,10 @@ class Lexer {
                     pop_context_if('i');
                     saved_token_ = token;
                     token_saved_ = true;
-                    return rastr_node_terminator(ast_, Newline);
+                    return rastr_node_terminator(ast_, Newline, empty_gap_());
                 }
             } else {
-                return rastr_node_terminator(ast_, Newline);
+                return token;
             }
         }
 
@@ -256,6 +263,9 @@ class Lexer {
     rastr_node_t saved_token_;
     bool token_saved_;
     bool eat_lines_;
+    bool gap_nl_last_;
+    std::vector<rastr_node_t> gaps_;
+    bool beg_;
 
     bool should_eat_lines() {
         return eat_lines_;
@@ -293,11 +303,18 @@ class Lexer {
        of the ladder, the next character in the input stream is checked to
        parse the appropriate token. */
     rastr_node_t parse_token_() {
+
         /* if token is cached, return it and clear the cache. */
         if (token_saved_) {
             token_saved_ = false;
             return saved_token_;
         }
+
+        if (beg_) {
+            beg_ = false;
+            return rastr_beg_node(ast_);
+        }
+
 
         bool skip = true;
         while (skip) {
@@ -307,19 +324,19 @@ class Lexer {
                expression terminator or a whitespace depending on the context */
             if (input_.peek_char_any(' ', '\t', '\f')) {
                 skip = true;
-                parse_space_();
+                parse_ws_();
             }
 
             /* parse comment */
             else if (input_.read_char_if('#')) {
                 skip = true;
-                parse_comment_('#');
+                parse_cmnt_('#');
             }
         }
 
         /* return end token if end of input is reached */
         if (input_.end()) {
-            return rastr_node_end(ast_);
+            return rastr_node_end(ast_, get_gap_());
         }
 
         /* since the previous check failed there is at least one character
@@ -341,7 +358,7 @@ class Lexer {
         }
 
         else if (input_.read_char_if('_')) {
-            return rastr_node_symbol(ast_, "_", "_");
+            return rastr_node_symbol(ast_, "_", "_", get_gap_());
         }
 
         /* raw string literal */
@@ -382,181 +399,216 @@ class Lexer {
 
         else if (input_.read_char_if('<')) {
             if (input_.read_char_if('=')) {
-                return rastr_node_operator(ast_, "<=", LessThanEqual);
+                return rastr_node_operator(
+                    ast_, "<=", LessThanEqual, get_gap_());
             }
 
             else if (input_.read_char_if('-')) {
-                return rastr_node_operator(ast_, "<-", LeftAssign);
+                return rastr_node_operator(ast_, "<-", LeftAssign, get_gap_());
             }
 
             else if (input_.read_char_if('<')) {
                 if (input_.read_char_if('-')) {
-                    return rastr_node_operator(ast_, "<<-", LeftSuperAssign);
+                    return rastr_node_operator(
+                        ast_, "<<-", LeftSuperAssign, get_gap_());
                 }
-                return rastr_node_error(ast_, "invalid character sequence: <<");
+                return rastr_node_error(
+                    ast_, "invalid character sequence: <<", get_gap_());
             }
-            return rastr_node_operator(ast_, "<", LessThan);
+            return rastr_node_operator(ast_, "<", LessThan, get_gap_());
         }
 
         else if (input_.read_char_if('-')) {
             if (input_.read_char_if('>')) {
                 if (input_.read_char_if('>')) {
-                    return rastr_node_operator(ast_, "->>", RightSuperAssign);
+                    return rastr_node_operator(
+                        ast_, "->>", RightSuperAssign, get_gap_());
                 }
-                return rastr_node_operator(ast_, "->", RightAssign);
+                return rastr_node_operator(ast_, "->", RightAssign, get_gap_());
             }
-            return rastr_node_operator(ast_, "-", Minus);
+            return rastr_node_operator(ast_, "-", Minus, get_gap_());
         }
 
         else if (input_.read_char_if('>')) {
             if (input_.read_char_if('=')) {
-                return rastr_node_operator(ast_, ">=", GreaterThanEqual);
+                return rastr_node_operator(
+                    ast_, ">=", GreaterThanEqual, get_gap_());
             }
-            return rastr_node_operator(ast_, ">", GreaterThan);
+            return rastr_node_operator(ast_, ">", GreaterThan, get_gap_());
         }
 
         else if (input_.read_char_if('!')) {
             if (input_.read_char_if('=')) {
-                return rastr_node_operator(ast_, "!=", NotEqual);
+                return rastr_node_operator(ast_, "!=", NotEqual, get_gap_());
             }
-            return rastr_node_operator(ast_, "!", Not);
+            return rastr_node_operator(ast_, "!", Not, get_gap_());
         }
 
         else if (input_.read_char_if('=')) {
             if (input_.read_char_if('=')) {
-                return rastr_node_operator(ast_, "==", Equal);
+                return rastr_node_operator(ast_, "==", Equal, get_gap_());
             }
 
             else if (input_.read_char_if('>')) {
-                return rastr_node_operator(ast_, "=>", PipeBind);
+                return rastr_node_operator(ast_, "=>", PipeBind, get_gap_());
             }
 
-            return rastr_node_operator(ast_, "=", EqualAssign);
+            return rastr_node_operator(ast_, "=", EqualAssign, get_gap_());
         }
 
         else if (input_.read_char_if(':')) {
             if (input_.read_char_if(':')) {
                 if (input_.read_char_if(':')) {
-                    return rastr_node_operator(ast_, ":::", PrivateNamespace);
+                    return rastr_node_operator(
+                        ast_, ":::", PrivateNamespace, get_gap_());
                 }
-                return rastr_node_operator(ast_, "::", PublicNamespace);
+                return rastr_node_operator(
+                    ast_, "::", PublicNamespace, get_gap_());
             }
 
             else if (input_.read_char_if('=')) {
-                return rastr_node_operator(ast_, ":=", ColonAssign);
+                return rastr_node_operator(ast_, ":=", ColonAssign, get_gap_());
             }
 
-            return rastr_node_operator(ast_, ":", Range);
+            return rastr_node_operator(ast_, ":", Range, get_gap_());
         }
 
         else if (input_.read_char_if('&')) {
             if (input_.read_char_if('&')) {
-                return rastr_node_operator(ast_, "&&", And);
+                return rastr_node_operator(ast_, "&&", And, get_gap_());
             }
-            return rastr_node_operator(ast_, "&", VectorizedAnd);
+            return rastr_node_operator(ast_, "&", VectorizedAnd, get_gap_());
         }
 
         else if (input_.read_char_if('|')) {
             if (input_.read_char_if('|')) {
-                return rastr_node_operator(ast_, "||", Or);
+                return rastr_node_operator(ast_, "||", Or, get_gap_());
             } else if (input_.read_char_if('>')) {
-                return rastr_node_operator(ast_, "|>", PipeForward);
+                return rastr_node_operator(ast_, "|>", PipeForward, get_gap_());
             }
-            return rastr_node_operator(ast_, "|", VectorizedOr);
+            return rastr_node_operator(ast_, "|", VectorizedOr, get_gap_());
         }
 
         else if (input_.read_char_if('{')) {
-            return rastr_node_delimiter(ast_, LeftBrace);
+            return rastr_node_delimiter(ast_, LeftBrace, get_gap_());
         }
 
         else if (input_.read_char_if('}')) {
-            return rastr_node_delimiter(ast_, RightBrace);
+            return rastr_node_delimiter(ast_, RightBrace, get_gap_());
         }
 
         else if (input_.read_char_if('(')) {
-            return rastr_node_delimiter(ast_, LeftParen);
+            return rastr_node_delimiter(ast_, LeftParen, get_gap_());
         }
 
         else if (input_.read_char_if(')')) {
-            return rastr_node_delimiter(ast_, RightParen);
+            return rastr_node_delimiter(ast_, RightParen, get_gap_());
         }
 
         else if (input_.read_char_if('[')) {
             if (input_.read_char_if('[')) {
-                return rastr_node_delimiter(ast_, DoubleLeftBracket);
+                return rastr_node_delimiter(
+                    ast_, DoubleLeftBracket, get_gap_());
             }
-            return rastr_node_delimiter(ast_, LeftBracket);
+            return rastr_node_delimiter(ast_, LeftBracket, get_gap_());
         }
 
         else if (input_.read_char_if(']')) {
-            return rastr_node_delimiter(ast_, RightBracket);
+            return rastr_node_delimiter(ast_, RightBracket, get_gap_());
         }
 
         else if (input_.read_char_if('?')) {
-            return rastr_node_operator(ast_, "?", Help);
+            return rastr_node_operator(ast_, "?", Help, get_gap_());
         }
 
         else if (input_.read_char_if('*')) {
             if (input_.read_char_if('*')) {
-                return rastr_node_operator(ast_, "**", Power);
+                return rastr_node_operator(ast_, "**", Power, get_gap_());
             }
-            return rastr_node_operator(ast_, "*", Multiplication);
+            return rastr_node_operator(ast_, "*", Multiplication, get_gap_());
         }
 
         else if (input_.read_char_if('+')) {
-            return rastr_node_operator(ast_, "+", Plus);
+            return rastr_node_operator(ast_, "+", Plus, get_gap_());
         }
 
         else if (input_.read_char_if('/')) {
-            return rastr_node_operator(ast_, "/", Division);
+            return rastr_node_operator(ast_, "/", Division, get_gap_());
         }
 
         else if (input_.read_char_if('^')) {
-            return rastr_node_operator(ast_, "^", Power);
+            return rastr_node_operator(ast_, "^", Power, get_gap_());
         }
 
         else if (input_.read_char_if('~')) {
-            return rastr_node_operator(ast_, "~", Formula);
+            return rastr_node_operator(ast_, "~", Formula, get_gap_());
         }
 
         else if (input_.read_char_if('$')) {
-            return rastr_node_operator(ast_, "$", PartExtract);
+            return rastr_node_operator(ast_, "$", PartExtract, get_gap_());
         }
 
         else if (input_.read_char_if('@')) {
-            return rastr_node_operator(ast_, "@", SlotExtract);
+            return rastr_node_operator(ast_, "@", SlotExtract, get_gap_());
         }
 
         else if (input_.read_char_if(',')) {
-            return rastr_node_terminator(ast_, Comma);
+            return rastr_node_terminator(ast_, Comma, get_gap_());
         }
 
         else if (input_.read_char_if('\n')) {
-            return rastr_node_terminator(ast_, Newline);
+            /* increment counter if consecutive newline characters encountered
+             */
+            if (gap_nl_last_) {
+                rastr_ws_inc(ast_, gaps_.back());
+            }
+            /* if not, create a new ws node*/
+            else {
+                gaps_.push_back(rastr_ws_node(ast_, '\n', 1));
+                gap_nl_last_ = true;
+            }
+            return rastr_node_terminator(ast_, Newline, empty_gap_());
         }
 
         else if (input_.read_char_if(';')) {
-            return rastr_node_terminator(ast_, Semicolon);
+            return rastr_node_terminator(ast_, Semicolon, get_gap_());
         }
 
         else if (input_.read_char_if('\\')) {
-            return rastr_node_operator(ast_, "\\", AnonymousFunction);
+            return rastr_node_operator(
+                ast_, "\\", AnonymousFunction, get_gap_());
         }
 
         else {
             fail_with("Unhandled character encountered '%d'",
                       input_.read_char());
-            // return rastr_node_operator(ast_, input_.read_char());
+            // return rastr_node_operator(ast_, input_.read_char(), get_gap_());
         }
     }
 
-    void parse_space_() {
-        while (!input_.end() && input_.read_char_if_any(' ', '\t', '\f'))
-            ;
+    int parse_ws_inner_(char chr) {
+        int count = input_.read_char_while(chr);
+
+        if (count != 0) {
+            gaps_.push_back(rastr_ws_node(ast_, chr, count));
+        }
+
+        return count;
     }
 
-    void parse_comment_(char initial) {
-        input_.read_char_while_not('\n');
+    void parse_ws_() {
+        while (parse_ws_inner_(' ') || parse_ws_inner_('\t') ||
+               parse_ws_inner_('\f'))
+            ;
+        gap_nl_last_ = false;
+    }
+
+    void parse_cmnt_(char initial) {
+        int left_index = input_.get_index() - 1;
+        int size = input_.read_char_while_not('\n');
+        gaps_.push_back(rastr_cmnt_node_from_view(
+            ast_, input_.get_view(left_index, left_index + size + 1)));
+        gap_nl_last_ = false;
     }
 
     rastr_node_t parse_symbol_or_keyword_(char initial) {
@@ -579,94 +631,98 @@ class Lexer {
             return rastr_node_symbol_from_view(
                 ast_,
                 input_.get_view(left_index, right_index),
-                input_.get_view(left_index, right_index));
+                input_.get_view(left_index, right_index),
+                get_gap_());
         }
 
         else if (length == 4 && input_.equal("NULL", left_index, length)) {
-            return rastr_node_null(ast_);
+            return rastr_node_null(ast_, get_gap_());
         }
 
         else if (length == 2 && input_.equal("NA", left_index, length)) {
-            return rastr_node_logical(ast_, "NA", NA_LOGICAL);
+            return rastr_node_logical(ast_, "NA", NA_LOGICAL, get_gap_());
         }
 
         else if (length == 4 && input_.equal("TRUE", left_index, length)) {
-            return rastr_node_logical(ast_, "TRUE", TRUE);
+            return rastr_node_logical(ast_, "TRUE", TRUE, get_gap_());
         }
 
         else if (length == 5 && input_.equal("FALSE", left_index, length)) {
-            return rastr_node_logical(ast_, "FALSE", FALSE);
+            return rastr_node_logical(ast_, "FALSE", FALSE, get_gap_());
         }
 
         else if (length == 3 && input_.equal("Inf", left_index, length)) {
-            return rastr_node_real(ast_, "Inf", R_PosInf);
+            return rastr_node_real(ast_, "Inf", R_PosInf, get_gap_());
         }
 
         else if (length == 3 && input_.equal("NaN", left_index, length)) {
-            return rastr_node_real(ast_, "NaN", R_NaN);
+            return rastr_node_real(ast_, "NaN", R_NaN, get_gap_());
         }
 
         else if (length == 11 &&
                  input_.equal("NA_integer_", left_index, length)) {
-            return rastr_node_integer(ast_, "NA_integer_", NA_INTEGER);
+            return rastr_node_integer(
+                ast_, "NA_integer_", NA_INTEGER, get_gap_());
         }
 
         else if (length == 8 && input_.equal("NA_real_", left_index, length)) {
-            return rastr_node_integer(ast_, "NA_real_", NA_REAL);
+            return rastr_node_integer(ast_, "NA_real_", NA_REAL, get_gap_());
         }
 
         else if (length == 13 &&
                  input_.equal("NA_character_", left_index, length)) {
-            return rastr_node_string(ast_, "NA_character_", nullptr);
+            return rastr_node_string(
+                ast_, "NA_character_", nullptr, get_gap_());
         }
 
         else if (length == 11 &&
                  input_.equal("NA_complex_", left_index, length)) {
             return rastr_node_complex(
-                ast_, "NA_complex_", Rcomplex{NA_REAL, NA_REAL});
+                ast_, "NA_complex_", Rcomplex{NA_REAL, NA_REAL}, get_gap_());
         }
 
         else if (length == 8 && input_.equal("function", left_index, length)) {
-            return rastr_node_keyword(ast_, "function", Function);
+            return rastr_node_keyword(ast_, "function", Function, get_gap_());
         }
 
         else if (length == 5 && input_.equal("while", left_index, length)) {
-            return rastr_node_keyword(ast_, "while", While);
+            return rastr_node_keyword(ast_, "while", While, get_gap_());
         }
 
         else if (length == 6 && input_.equal("repeat", left_index, length)) {
-            return rastr_node_keyword(ast_, "repeat", Repeat);
+            return rastr_node_keyword(ast_, "repeat", Repeat, get_gap_());
         }
 
         else if (length == 3 && input_.equal("for", left_index, length)) {
-            return rastr_node_keyword(ast_, "for", For);
+            return rastr_node_keyword(ast_, "for", For, get_gap_());
         }
 
         else if (length == 2 && input_.equal("if", left_index, length)) {
-            return rastr_node_keyword(ast_, "if", If);
+            return rastr_node_keyword(ast_, "if", If, get_gap_());
         }
 
         else if (length == 2 && input_.equal("in", left_index, length)) {
-            return rastr_node_keyword(ast_, "in", In);
+            return rastr_node_keyword(ast_, "in", In, get_gap_());
         }
 
         else if (length == 4 && input_.equal("else", left_index, length)) {
-            return rastr_node_keyword(ast_, "else", Else);
+            return rastr_node_keyword(ast_, "else", Else, get_gap_());
         }
 
         else if (length == 4 && input_.equal("next", left_index, length)) {
-            return rastr_node_keyword(ast_, "next", Next);
+            return rastr_node_keyword(ast_, "next", Next, get_gap_());
         }
 
         else if (length == 5 && input_.equal("break", left_index, length)) {
-            return rastr_node_keyword(ast_, "break", Break);
+            return rastr_node_keyword(ast_, "break", Break, get_gap_());
         }
 
         else {
             return rastr_node_symbol_from_view(
                 ast_,
                 input_.get_view(left_index, right_index),
-                input_.get_view(left_index, right_index));
+                input_.get_view(left_index, right_index),
+                get_gap_());
         }
     }
 
@@ -725,7 +781,8 @@ class Lexer {
                     return rastr_node_string_from_view(
                         ast_,
                         input_.get_view(left_quote_index, right_quote_index),
-                        input_.get_view(left_string_index, right_string_index));
+                        input_.get_view(left_string_index, right_string_index),
+                        get_gap_());
                 }
             }
         }
@@ -777,7 +834,8 @@ class Lexer {
         return rastr_node_string_from_view(
             ast_,
             input_.get_view(left_index, right_index),
-            input_.get_view(left_index + 1, right_index - 1));
+            input_.get_view(left_index + 1, right_index - 1),
+            get_gap_());
     }
 
     rastr_node_t parse_quoted_symbol_(char delimiter) {
@@ -788,7 +846,8 @@ class Lexer {
         return rastr_node_symbol_from_view(
             ast_,
             input_.get_view(left_index, right_index),
-            input_.get_view(left_index + 1, right_index - 1));
+            input_.get_view(left_index + 1, right_index - 1),
+            get_gap_());
     }
 
     rastr_node_t parse_special_(char delimiter) {
@@ -806,7 +865,10 @@ class Lexer {
         std::size_t right_index = input_.get_index();
 
         return rastr_node_operator_from_view(
-            ast_, input_.get_view(left_index, right_index), Special);
+            ast_,
+            input_.get_view(left_index, right_index),
+            Special,
+            get_gap_());
     }
 
     rastr_node_t parse_number_(int c) {
@@ -962,8 +1024,8 @@ class Lexer {
         }
 
         if (c == 'i') {
-            return rastr_node_complex_from_view(ast_,
-                                                input_.view_at(left_index));
+            return rastr_node_complex_from_view(
+                ast_, input_.view_at(left_index), get_gap_());
         }
 
         else if (c == 'L' && asNumeric == 0) {
@@ -975,18 +1037,29 @@ class Lexer {
                 free((void*) syntax);
             }
 
-            return rastr_node_integer_from_view(ast_,
-                                                input_.view_at(left_index));
+            return rastr_node_integer_from_view(
+                ast_, input_.view_at(left_index), get_gap_());
 
         } else {
             if (c != 'L') {
                 input_.rewind();
             }
 
-            return rastr_node_double_from_view(ast_,
-                                               input_.view_at(left_index));
+            return rastr_node_double_from_view(
+                ast_, input_.view_at(left_index), get_gap_());
         }
 
         return rastr_node_error(ast_, "should not reach here!");
+    }
+
+    rastr_node_t get_gap_() {
+        rastr_node_t gap = rastr_gap_node(ast_, gaps_.size(), gaps_.data());
+        gaps_.clear();
+        gap_nl_last_ = false;
+        return gap;
+    }
+
+    rastr_node_t empty_gap_() {
+        return rastr_gap_node(ast_, 0, nullptr);
     }
 };

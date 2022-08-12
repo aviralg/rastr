@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 void rastr_log_error(const char* fmt, ...);
-
+void rastr_log_errorcall(SEXP call, const char* fmt, ...);
 void rastr_log_warning(const char* fmt, ...);
 
 void rastr_sexp_acquire(SEXP r_object);
@@ -50,6 +50,31 @@ SEXP r_rastr_get_object_details(SEXP r_value,
                                 SEXP r_variable,
                                 SEXP r_environment,
                                 SEXP r_peek);
+
+SEXP str_scl(const char* val);
+SEXP str_vec(int size, const char* val);
+const char* str_get(SEXP r_vec, int index);
+void str_set(SEXP r_vec, int index, const char* val);
+
+SEXP lgl_scl(int val);
+SEXP lgl_vec(int size, int val);
+int lgl_get(SEXP r_vec, int index);
+void lgl_set(SEXP r_vec, int index, int val);
+
+SEXP int_scl(int val);
+SEXP int_vec(int size, int val);
+int int_get(SEXP r_vec, int index);
+void int_set(SEXP r_vec, int index, int val);
+
+SEXP dbl_scl(double val);
+SEXP dbl_vec(int size, double val);
+double dbl_get(SEXP r_vec, int index);
+void dbl_set(SEXP r_vec, int index, double val);
+
+SEXP cplx_scl(const Rcomplex& val);
+SEXP cplx_vec(int size, const Rcomplex& val);
+const Rcomplex& cplx_get(SEXP r_vec, int index);
+void cplx_set(SEXP r_vec, int index, const Rcomplex& val);
 
 #ifdef __cplusplus
 }

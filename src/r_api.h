@@ -7,6 +7,7 @@ SEXP r_rastr_blk_rbrack(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_grp_lbrack(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_grp_expr(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_grp_rbrack(SEXP r_ast, SEXP r_node);
+SEXP r_rastr_nuop_op(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_unop_op(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_unop_expr(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_binop_lexpr(SEXP r_ast, SEXP r_node);
@@ -68,4 +69,15 @@ SEXP r_rastr_dlmtd_dlmtr(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_err_msg(SEXP r_ast, SEXP r_node);
 SEXP r_rastr_to_sexp(SEXP r_ast);
 SEXP r_rastr_node_to_sexp(SEXP r_ast, SEXP r_node);
+
+SEXP r_rastr_ast_unparse_str(SEXP r_ast);
+SEXP r_rastr_node_unparse_str(SEXP r_ast, SEXP r_node);
+
+/* as_sexp */
+SEXP r_rastr_ast_as_sexp(SEXP r_ast);
+SEXP r_rastr_node_as_sexp(SEXP r_ast, SEXP r_node);
+
+/* as_df */
+SEXP r_rastr_ast_as_df(SEXP r_ast);
+SEXP r_rastr_node_as_df(SEXP r_ast, SEXP r_node);
 }

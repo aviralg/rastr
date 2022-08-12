@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include "internal_api.h"
 
 const int LOWEST_PRECEDENCE = 0;
 const int INVALID_PRECEDENCE = -1;
@@ -34,10 +35,6 @@ void rastr_ast_set_root(rastr_ast_t ast, rastr_node_t root);
         goto end;                              \
     }
 
-//#define POP_AND_RETURN(node) \
-//    context.pop_back();      \
-//    return node;
-
 #define RETURN_IF_UNDEFINED(node)        \
     if (rastr_node_is_undefined(node)) { \
         return node;                     \
@@ -57,10 +54,14 @@ class Parser {
 
     rastr_node_t parse_prog() {
         rastr_node_t res;
+        rastr_node_t end;
 
         pcont_push("<pgm> ▸ <stmt>* <expr>? <eof>");
 
         std::vector<rastr_node_t> stmts;
+
+        rastr_node_t beg = next_token_();
+        PROPAGATE_ERROR_IF_NOT(beg, Beg, "expected '<beg>'")
 
         while (true) {
             rastr_node_t node = peek_token_();
@@ -68,13 +69,17 @@ class Parser {
             /* if <eof> is encountered, program has been parsed */
             if (rastr_node_type(ast_, node) == End) {
                 consume_();
-                stmts.push_back(node);
+                end = node;
                 break;
             }
 
-            /* TODO: is this needed? */
+            /* this case happens if there are comments or spaces at the
+               beginning of the file. since we have not yet read a stmt (which
+               would have eaten up subsequent newlines), we have to eat and
+               destroy this newlines until we encounter a non-newline token */
             else if (rastr_node_type(ast_, node) == Newline) {
                 consume_();
+                rastr_node_destroy(ast_, node);
                 continue;
             }
 
@@ -86,7 +91,7 @@ class Parser {
             }
         }
 
-        res = rastr_pgm_node(ast_, stmts.size(), stmts.data());
+        res = rastr_pgm_node(ast_, beg, stmts.size(), stmts.data(), end);
 
     end:
         pcont_pop();
@@ -116,7 +121,15 @@ class Parser {
         else if (rastr_node_is_terminator(ast_, terminator)) {
             while (rastr_node_is_terminator(ast_, terminator)) {
                 consume_();
-                expr = rastr_dlmtd_node(ast_, expr, terminator);
+                /* attach delimiter if ; or , */
+                if (term_type != Newline) {
+                    expr = rastr_dlmtd_node(ast_, expr, terminator);
+                }
+                /* delete node if Newline */
+                else {
+                    rastr_node_destroy(ast_, terminator);
+                }
+
                 terminator = peek_token_();
                 term_type = rastr_node_type(ast_, terminator);
             }
@@ -227,7 +240,7 @@ class Parser {
         }
 
         else if (type == Next || type == Break) {
-            res = op; /* TODO: parse_nuop(op); */
+            res = parse_nuop(op);
             PROPAGATE_ERROR(res);
         }
 
@@ -323,7 +336,7 @@ class Parser {
             }
 
             // TODO: consume_();
-            PROPAGATE_ERROR_IF(res, End, "unexpected <eof>");
+            PROPAGATE_ERROR_IF(node, End, "unexpected <eof>");
 
             stmt = parse_stmt(RightBrace);
             PROPAGATE_ERROR(stmt);
@@ -452,6 +465,18 @@ class Parser {
         PROPAGATE_ERROR(body);
 
         res = rastr_fndefn_node(ast_, kw, params, body);
+
+    end:
+        pcont_pop();
+        return res;
+    }
+
+    rastr_node_t parse_nuop(rastr_node_t op) {
+        rastr_node_t res;
+
+        pcont_push("<nuop> ▸ <op>");
+
+        res = rastr_nuop_node(ast_, op);
 
     end:
         pcont_pop();
@@ -683,10 +708,12 @@ class Parser {
 
                 PROPAGATE_ERROR_IF_NOT(next_rbrack, RightBracket, "expected ]");
 
-                // TODO: destroy these nodes
-                // rastr_node_destroy(ast_, rbrack);
-                // rastr_node_destroy(ast_, next_rbrack);
-                rbrack = rastr_node_delimiter(ast_, DoubleRightBracket);
+                /* to retain the gap, it is easier to change type of rbrack */
+                /* TODO: read gap from next_rbrack */
+                rastr_dlmtr_set_type(ast_, rbrack, DoubleRightBracket);
+
+                /* destroy these nodes as they are not needed */
+                rastr_node_destroy(ast_, next_rbrack);
 
                 break;
             }
@@ -780,7 +807,7 @@ class Parser {
         rastr_node_type_t type = rastr_node_type(ast_, node);
 
         if (type == Comma || type == RightParen || type == RightBracket) {
-            res = rastr_msng_node(ast_);
+            res = rastr_msng_node(ast_, rastr_gap_node(ast_, 0, nullptr));
         }
 
         else {

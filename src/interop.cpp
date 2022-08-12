@@ -17,7 +17,16 @@ void rastr_log_error(const char* fmt, ...) {
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
     va_end(args);
-    Rf_error(buffer);
+    Rf_error("%s", buffer);
+}
+
+void rastr_log_errorcall(SEXP call, const char* fmt, ...) {
+    char* buffer = get_message_buffer();
+    va_list args;
+    va_start(args, fmt);
+    vsprintf(buffer, fmt, args);
+    va_end(args);
+    Rf_errorcall(call, "%s", buffer);
 }
 
 void rastr_log_warning(const char* fmt, ...) {
@@ -246,4 +255,120 @@ SEXP r_rastr_get_object_details(SEXP r_value,
     UNPROTECT(2);
 
     return r_result;
+}
+
+SEXP str_scl(const char* val) {
+    SEXP r_str = Rf_allocVector(STRSXP, 1);
+    SET_STRING_ELT(r_str, 0, val == nullptr ? NA_STRING : mkChar(val));
+    return r_str;
+}
+
+SEXP str_vec(int size, const char* val) {
+    SEXP r_str = PROTECT(allocVector(STRSXP, size));
+    SEXP r_val = PROTECT(val == nullptr ? NA_STRING : mkChar(val));
+
+    for (int i = 0; i < size; ++i) {
+        SET_STRING_ELT(r_str, i, r_val);
+    }
+
+    UNPROTECT(2);
+    return r_str;
+}
+
+const char* str_get(SEXP r_vec, int index) {
+    SEXP r_char = STRING_ELT(r_vec, index);
+    return r_char == NA_STRING ? nullptr : CHAR(r_char);
+}
+
+void str_set(SEXP r_vec, int index, const char* val) {
+    SEXP r_val = PROTECT(val == nullptr ? NA_STRING : mkChar(val));
+    SET_STRING_ELT(r_vec, index, r_val);
+    UNPROTECT(1);
+}
+
+SEXP lgl_scl(int value) {
+    return ScalarLogical(value);
+}
+
+SEXP lgl_vec(int size, int val) {
+    SEXP r_lgl = allocVector(LGLSXP, size);
+
+    for (int i = 0; i < size; ++i) {
+        lgl_set(r_lgl, i, val);
+    }
+
+    return r_lgl;
+}
+
+int lgl_get(SEXP r_vec, int index) {
+    return LOGICAL(r_vec)[index];
+}
+
+void lgl_set(SEXP r_vec, int index, int val) {
+    LOGICAL(r_vec)[index] = val;
+}
+
+SEXP int_scl(int value) {
+    return ScalarInteger(value);
+}
+
+SEXP int_vec(int size, int val) {
+    SEXP r_int = allocVector(INTSXP, size);
+
+    for (int i = 0; i < size; ++i) {
+        INTEGER(r_int)[i] = val;
+    }
+    return r_int;
+}
+
+int int_get(SEXP r_vec, int index) {
+    return INTEGER(r_vec)[index];
+}
+
+void int_set(SEXP r_vec, int index, int val) {
+    INTEGER(r_vec)[index] = val;
+}
+
+SEXP dbl_scl(double value) {
+    return ScalarReal(value);
+}
+
+SEXP dbl_vec(int size, double val) {
+    SEXP r_dbl = allocVector(REALSXP, size);
+
+    for (int i = 0; i < size; ++i) {
+        REAL(r_dbl)[i] = val;
+    }
+
+    return r_dbl;
+}
+
+double dbl_get(SEXP r_vec, int index) {
+    return REAL(r_vec)[index];
+}
+
+void dbl_set(SEXP r_vec, int index, double val) {
+    REAL(r_vec)[index] = val;
+}
+
+SEXP cplx_scl(const Rcomplex& value) {
+    return ScalarComplex(value);
+}
+
+SEXP cplx_vec(int size, const Rcomplex& val) {
+    SEXP r_cplx = allocVector(CPLXSXP, size);
+
+    for (int i = 0; i < size; ++i) {
+        COMPLEX(r_cplx)[i] = val;
+    }
+
+    return r_cplx;
+}
+
+const Rcomplex& cplx_get(SEXP r_vec, int index) {
+    return COMPLEX(r_vec)[index];
+}
+
+void cplx_set(SEXP r_vec, int index, const Rcomplex& val) {
+    COMPLEX(r_vec)[index] = val;
 }
