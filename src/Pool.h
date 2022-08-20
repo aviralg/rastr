@@ -293,9 +293,18 @@ class Pool {
         set_previous_(index, Null);
         free_ = index;
 
-        
-
         return data;
+    }
+
+public:
+    void debug(void (*handler)(T*)) {
+        for (std::size_t index = front_;; index = buffer_[index].next) {
+            handler(buffer_[index].data);
+
+            if (index == back_) {
+                break;
+            }
+        }
     }
 };
 

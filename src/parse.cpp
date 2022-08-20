@@ -17,7 +17,7 @@ rastr_ast_t rastr_parse_str(const char* str) {
     } else {
         rastr_ast_set_root(ast, root);
     }
-    std::cout << "AST size: " << rastr_ast_size(ast) << std::endl;
+    //std::cout << "AST size: " << rastr_ast_size(ast) << std::endl;
 
     return ast;
 }

@@ -234,7 +234,7 @@ class Parser {
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == Function || type == AnonymousFunction) {
+        else if (type == Function || type == Function2) {
             res = parse_fndefn(op);
             PROPAGATE_ERROR(res);
         }
@@ -807,7 +807,8 @@ class Parser {
         rastr_node_type_t type = rastr_node_type(ast_, node);
 
         if (type == Comma || type == RightParen || type == RightBracket) {
-            res = rastr_msng_node(ast_, rastr_gap_node(ast_, 0, nullptr));
+            /* TODO: fix position */
+            res = rastr_msng_node(ast_, rastr_gap_node(ast_, 0, nullptr), empty_loc_());
         }
 
         else {
@@ -818,6 +819,13 @@ class Parser {
     end:
         pcont_pop();
         return res;
+    }
+    
+    /* TODO: delete */
+    rastr_node_t empty_loc_() {
+        return rastr_loc_node(ast_,
+                              rastr_pos_node(ast_, 0, 0, 0, 0),
+                              rastr_pos_node(ast_, 0, 0, 0, 0));
     }
 
     void pcont_push(const char* prod) {
@@ -911,10 +919,10 @@ class Parser {
             case Formula:
                 return 8;
             case Or:
-            case VectorizedOr:
+            case VecOr:
                 return 9;
             case And:
-            case VectorizedAnd:
+            case VecAnd:
                 return 10;
             case Not:
                 return 11;

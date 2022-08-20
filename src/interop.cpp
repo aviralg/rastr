@@ -257,7 +257,7 @@ SEXP r_rastr_get_object_details(SEXP r_value,
     return r_result;
 }
 
-SEXP str_scl(const char* val) {
+SEXP str_vec1(const char* val) {
     SEXP r_str = Rf_allocVector(STRSXP, 1);
     SET_STRING_ELT(r_str, 0, val == nullptr ? NA_STRING : mkChar(val));
     return r_str;
@@ -286,7 +286,7 @@ void str_set(SEXP r_vec, int index, const char* val) {
     UNPROTECT(1);
 }
 
-SEXP lgl_scl(int value) {
+SEXP lgl_vec1(int value) {
     return ScalarLogical(value);
 }
 
@@ -308,7 +308,7 @@ void lgl_set(SEXP r_vec, int index, int val) {
     LOGICAL(r_vec)[index] = val;
 }
 
-SEXP int_scl(int value) {
+SEXP int_vec1(int value) {
     return ScalarInteger(value);
 }
 
@@ -329,7 +329,7 @@ void int_set(SEXP r_vec, int index, int val) {
     INTEGER(r_vec)[index] = val;
 }
 
-SEXP dbl_scl(double value) {
+SEXP dbl_vec1(double value) {
     return ScalarReal(value);
 }
 
@@ -351,7 +351,7 @@ void dbl_set(SEXP r_vec, int index, double val) {
     REAL(r_vec)[index] = val;
 }
 
-SEXP cplx_scl(const Rcomplex& value) {
+SEXP cplx_vec1(const Rcomplex& value) {
     return ScalarComplex(value);
 }
 

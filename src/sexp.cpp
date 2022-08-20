@@ -156,22 +156,10 @@ class SexpTransformer: public AstWalker {
         const char* val = NULL;
 
         switch (rastr_node_type(ast, node)) {
-        case AnonymousFunction:
+        case Function2:
             val = "function";
             break;
-        default:
-            val = rastr_node_operator_value(ast, node);
-            break;
-        }
 
-        push_sym_(val);
-        return false;
-    }
-
-    virtual bool pre_kw(rastr_ast_t ast, rastr_node_t node) {
-        const char* val = NULL;
-
-        switch (rastr_node_type(ast, node)) {
             /* binop has to reverse the order of lexpr and rexpr since R SEXP
              * does not have right assign operators */
 
@@ -189,7 +177,7 @@ class SexpTransformer: public AstWalker {
             break;
 
         default:
-            val = rastr_node_keyword_value(ast, node);
+            val = rastr_op_val(ast, node);
             break;
         }
 

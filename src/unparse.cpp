@@ -12,11 +12,7 @@ class AstSerializer: public AstWalker {
     }
 
     virtual void post_op(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_operator_syntax(ast, node);
-    }
-
-    virtual void post_kw(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_keyword_syntax(ast, node);
+        (*stream_) << rastr_op_syn(ast, node);
     }
 
     virtual void post_dlmtr(rastr_ast_t ast, rastr_node_t node) {

@@ -20,14 +20,10 @@ struct rastr_node_impl_t {
 
     union {
         struct {
-            char* syntax;
+            char* syn;
             rastr_node_t gap;
-        } operator_node;
-
-        struct {
-            char* syntax;
-            rastr_node_t gap;
-        } keyword_node;
+            rastr_node_t loc;
+        } op_node;
 
         struct {
             char* message;
@@ -35,50 +31,59 @@ struct rastr_node_impl_t {
 
         struct {
             rastr_node_t gap;
+            rastr_node_t loc;
         } null_node;
 
         struct {
             rastr_node_t gap;
+            rastr_node_t loc;
         } dlmtr_node;
 
         struct {
             rastr_node_t gap;
+            rastr_node_t loc;
         } terminator_node;
 
         struct {
             char* syntax;
             int value;
             rastr_node_t gap;
+            rastr_node_t loc;
         } logical_node;
 
         struct {
             char* syntax;
             int value;
             rastr_node_t gap;
+            rastr_node_t loc;
         } integer_node;
 
         struct {
             char* syntax;
             double value;
             rastr_node_t gap;
+            rastr_node_t loc;
         } real_node;
 
         struct {
             char* syntax;
             Rcomplex value;
             rastr_node_t gap;
+            rastr_node_t loc;
         } complex_node;
 
         struct {
             char* syntax;
             char* value;
             rastr_node_t gap;
+            rastr_node_t loc;
         } string_node;
 
         struct {
             char* syntax;
             char* value;
             rastr_node_t gap;
+            rastr_node_t loc;
         } symbol_node;
 
         struct {
@@ -228,10 +233,12 @@ struct rastr_node_impl_t {
         struct {
             char chr;
             int count;
+            rastr_node_t loc;
         } ws_node;
 
         struct {
             char* value;
+            rastr_node_t loc;
         } cmnt_node;
 
         struct {
@@ -241,11 +248,29 @@ struct rastr_node_impl_t {
 
         struct {
             rastr_node_t gap;
+            rastr_node_t loc;
         } end_node;
 
         struct {
+            rastr_node_t loc;
+        } beg_node;
+
+        struct {
             rastr_node_t gap;
+            rastr_node_t loc;
         } msng_node;
+
+        struct {
+            int row;
+            int col;
+            int chr;
+            int byte;
+        } pos_node;
+
+        struct {
+            rastr_node_t beg;
+            rastr_node_t end;
+        } loc_node;
 
     } node;
 };
@@ -348,67 +373,6 @@ struct rastr_ast_impl_t {
 
 const int INDENTATION = 4;
 
-/********************************************************************************
- Node Type
-********************************************************************************/
-bool rastr_node_type_is_operator(rastr_node_type_t type) {
-    switch (type) {
-    case Special:
-    case Plus:
-    case Minus:
-    case Multiplication:
-    case Division:
-    case Power:
-    case LessThan:
-    case LessThanEqual:
-    case GreaterThan:
-    case GreaterThanEqual:
-    case Equal:
-    case NotEqual:
-    case Not:
-    case And:
-    case VectorizedAnd:
-    case Or:
-    case VectorizedOr:
-    case EqualAssign:
-    case LeftAssign:
-    case RightAssign:
-    case LeftSuperAssign:
-    case RightSuperAssign:
-    case ColonAssign:
-    case PipeForward:
-    case PipeBind:
-    case PublicNamespace:
-    case PrivateNamespace:
-    case Range:
-    case Help:
-    case SlotExtract:
-    case Formula:
-    case PartExtract:
-    case AnonymousFunction:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool rastr_node_type_is_keyword(rastr_node_type_t type) {
-    switch (type) {
-    case Function:
-    case While:
-    case Repeat:
-    case For:
-    case In:
-    case If:
-    case Else:
-    case Next:
-    case Break:
-        return true;
-    default:
-        return false;
-    }
-}
-
 bool rastr_node_type_is_delimiter(rastr_node_type_t type) {
     switch (type) {
     case LeftParen:
@@ -465,6 +429,8 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Division";
     case Power:
         return "Power";
+    case Power2:
+        return "Power2";
     case LessThan:
         return "LessThan";
     case LessThanEqual:
@@ -481,11 +447,11 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Not";
     case And:
         return "And";
-    case VectorizedAnd:
+    case VecAnd:
         return "VectorizedAnd";
     case Or:
         return "Or";
-    case VectorizedOr:
+    case VecOr:
         return "VectorizedOr";
     case EqualAssign:
         return "EqualAssign";
@@ -517,10 +483,10 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Formula";
     case PartExtract:
         return "PartExtract";
-    case AnonymousFunction:
-        return "AnonymousFunction";
     case Function:
         return "Function";
+    case Function2:
+        return "Function2";
     case While:
         return "While";
     case Repeat:
@@ -635,6 +601,10 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Beg";
     case End:
         return "End";
+    case Location:
+        return "Location";
+    case Position:
+        return "Position";
     }
     fail_with("Unhandled node type %d", type);
 }
@@ -708,6 +678,7 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
     case Multiplication:
     case Division:
     case Power:
+    case Power2:
     case LessThan:
     case LessThanEqual:
     case GreaterThan:
@@ -716,9 +687,9 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
     case NotEqual:
     case Not:
     case And:
-    case VectorizedAnd:
+    case VecAnd:
     case Or:
-    case VectorizedOr:
+    case VecOr:
     case EqualAssign:
     case LeftAssign:
     case RightAssign:
@@ -734,13 +705,8 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
     case SlotExtract:
     case Formula:
     case PartExtract:
-    case AnonymousFunction:
-        free(ptr->node.operator_node.syntax);
-        break;
-        /********************************************************************************
-         KEYWORDS
-        ********************************************************************************/
     case Function:
+    case Function2:
     case While:
     case Repeat:
     case For:
@@ -749,7 +715,7 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
     case Else:
     case Next:
     case Break:
-        free(ptr->node.keyword_node.syntax);
+        free(ptr->node.op_node.syn);
         break;
 
         /********************************************************************************
@@ -931,6 +897,7 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
     case Multiplication:
     case Division:
     case Power:
+    case Power2:
     case LessThan:
     case LessThanEqual:
     case GreaterThan:
@@ -939,9 +906,9 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
     case NotEqual:
     case Not:
     case And:
-    case VectorizedAnd:
+    case VecAnd:
     case Or:
-    case VectorizedOr:
+    case VecOr:
     case EqualAssign:
     case LeftAssign:
     case RightAssign:
@@ -957,13 +924,8 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
     case SlotExtract:
     case Formula:
     case PartExtract:
-    case AnonymousFunction:
-        DESTROY_0(op);
-        break;
-        /********************************************************************************
-         KEYWORDS
-        ********************************************************************************/
     case Function:
+    case Function2:
     case While:
     case Repeat:
     case For:
@@ -972,7 +934,7 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
     case Else:
     case Next:
     case Break:
-        DESTROY_0(kw);
+        DESTROY_0(op);
         break;
 
         /********************************************************************************
@@ -1180,68 +1142,162 @@ int rastr_node_id(rastr_ast_t ast, rastr_node_t node) {
 }
 
 /********************************************************************************
- Operators
+ Operator
 ********************************************************************************/
-bool rastr_node_is_operator(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_node_type_is_operator(rastr_node_type(ast, node));
-}
 
-rastr_node_t rastr_node_operator_from_view(rastr_ast_t ast,
-                                           const StringView& syntax_view,
-                                           rastr_node_type_t type,
-                                           rastr_node_t gap) {
+rastr_node_t rastr_op_node(rastr_ast_t ast,
+                           rastr_node_type_t type,
+                           rastr_node_t gap,
+                           rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, type);
-    pair.ptr->node.operator_node.syntax = syntax_view.materialize();
-    pair.ptr->node.operator_node.gap = gap;
+    pair.ptr->node.op_node.syn = nullptr;
+    pair.ptr->node.op_node.gap = gap;
+    pair.ptr->node.op_node.loc = loc;
+    pair.ptr->node.op_node.loc = loc;
     return pair.node;
 }
 
-rastr_node_t rastr_node_operator(rastr_ast_t ast,
-                                 const char* syntax,
-                                 rastr_node_type_t type,
-                                 rastr_node_t gap) {
-    return rastr_node_operator_from_view(ast, StringView(syntax), type, gap);
+rastr_node_t rastr_special_op_node(rastr_ast_t ast,
+                                   const StringView& syn,
+                                   rastr_node_t gap,
+                                   rastr_node_t loc) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Special);
+    pair.ptr->node.op_node.syn = syn.materialize();
+    pair.ptr->node.op_node.gap = gap;
+    pair.ptr->node.op_node.loc = loc;
+    return pair.node;
 }
 
-const char* rastr_node_operator_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_node_operator_syntax(ast, node);
+const char* rastr_op_val(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_op_syn(ast, node);
 }
 
-const char* rastr_node_operator_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.operator_node.syntax;
+SEXP r_rastr_op_val(SEXP r_ast, SEXP r_node) {
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+    rastr_node_t node = rastr_node_unwrap(r_node);
+    const char* result = rastr_op_val(ast, node);
+    return str_vec1(result);
+}
+
+const char* rastr_op_syn(rastr_ast_t ast, rastr_node_t node) {
+    rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
+
+    rastr_node_type_t type = ptr->type;
+
+    switch (type) {
+    case Special:
+        return ptr->node.op_node.syn;
+    case Plus:
+        return "+";
+    case Minus:
+        return "-";
+    case Multiplication:
+        return "*";
+    case Division:
+        return "/";
+    case Power:
+        return "^";
+    case Power2:
+        return "**";
+    case LessThan:
+        return "<";
+    case LessThanEqual:
+        return "<=";
+    case GreaterThan:
+        return ">";
+    case GreaterThanEqual:
+        return ">=";
+    case Equal:
+        return "==";
+    case NotEqual:
+        return "!=";
+    case Not:
+        return "!";
+    case And:
+        return "&&";
+    case VecAnd:
+        return "&";
+    case Or:
+        return "||";
+    case VecOr:
+        return "|";
+    case EqualAssign:
+        return "=";
+    case LeftAssign:
+        return "<-";
+    case RightAssign:
+        return "->";
+    case LeftSuperAssign:
+        return "<<-";
+    case RightSuperAssign:
+        return "->>";
+    case ColonAssign:
+        return ":=";
+    case PipeForward:
+        return "|>";
+    case PipeBind:
+        return "=>";
+    case PublicNamespace:
+        return "::";
+    case PrivateNamespace:
+        return ":::";
+    case Range:
+        return ":";
+    case Help:
+        return "?";
+    case SlotExtract:
+        return "@";
+    case Formula:
+        return "~";
+    case PartExtract:
+        return "$";
+    case Function2:
+        return "\\";
+    case Function:
+        return "function";
+    case While:
+        return "while";
+    case Repeat:
+        return "repeat";
+    case For:
+        return "for";
+    case In:
+        return "in";
+    case If:
+        return "if";
+    case Else:
+        return "else";
+    case Next:
+        return "next";
+    case Break:
+        return "break";
+    default:
+        rastr_log_error("node '%s' is not an operator",
+                        rastr_node_type_to_string(type));
+        return "error!";
+    }
+}
+
+SEXP r_rastr_op_syn(SEXP r_ast, SEXP r_node) {
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+    rastr_node_t node = rastr_node_unwrap(r_node);
+    const char* result = rastr_op_syn(ast, node);
+    return str_vec1(result);
 }
 
 rastr_node_t rastr_op_gap(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.operator_node.gap;
+    return rastr_ast_get_impl(ast, node)->node.op_node.gap;
 }
 
-/********************************************************************************
- KEYWORDS
-********************************************************************************/
-bool rastr_node_is_keyword(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_node_type_is_keyword(rastr_node_type(ast, node));
+rastr_node_t rastr_op_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.op_node.loc;
 }
 
-rastr_node_t rastr_node_keyword(rastr_ast_t ast,
-                                const char* syntax,
-                                rastr_node_type_t type,
-                                rastr_node_t gap) {
-    rastr_node_pair_t pair = rastr_node_create(ast, type);
-    pair.ptr->node.keyword_node.syntax = StringView::duplicate(syntax);
-    pair.ptr->node.keyword_node.gap = gap;
-    return pair.node;
-}
-
-const char* rastr_node_keyword_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_node_keyword_syntax(ast, node);
-}
-
-const char* rastr_node_keyword_syntax(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.keyword_node.syntax;
-}
-
-rastr_node_t rastr_kw_gap(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.keyword_node.gap;
+SEXP r_rastr_op_gap(SEXP r_ast, SEXP r_node) {
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+    rastr_node_t node = rastr_node_unwrap(r_node);
+    rastr_node_t gap = rastr_op_gap(ast, node);
+    return rastr_node_wrap(gap);
 }
 
 /********************************************************************************
@@ -1253,13 +1309,15 @@ bool rastr_node_is_delimiter(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_node_delimiter(rastr_ast_t ast,
                                   rastr_node_type_t type,
-                                  rastr_node_t gap) {
-    /* TODO: return error if not delimiter */
+                                  rastr_node_t gap,
+                                  rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, type);
     pair.ptr->node.dlmtr_node.gap = gap;
+    pair.ptr->node.dlmtr_node.loc = loc;
     return pair.node;
 }
 
+/* TODO: remove */
 void rastr_dlmtr_set_type(rastr_ast_t ast,
                           rastr_node_t node,
                           rastr_node_type_t type) {
@@ -1272,6 +1330,10 @@ const char* rastr_node_delimiter_value(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_dlmtr_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.dlmtr_node.gap;
+}
+
+rastr_node_t rastr_dlmtr_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.dlmtr_node.loc;
 }
 
 const char* rastr_node_delimiter_syntax(rastr_ast_t ast, rastr_node_t node) {
@@ -1308,10 +1370,12 @@ bool rastr_node_is_terminator(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_node_terminator(rastr_ast_t ast,
                                    rastr_node_type_t type,
-                                   rastr_node_t gap) {
+                                   rastr_node_t gap,
+                                   rastr_node_t loc) {
     /* TODO: return error if not delimiter */
     rastr_node_pair_t pair = rastr_node_create(ast, type);
     pair.ptr->node.terminator_node.gap = gap;
+    pair.ptr->node.terminator_node.loc = loc;
     return pair.node;
 }
 
@@ -1338,15 +1402,29 @@ rastr_node_t rastr_term_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.terminator_node.gap;
 }
 
+rastr_node_t rastr_term_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.terminator_node.loc;
+}
+
 /*******************************************************************************
  Meta
 *******************************************************************************/
 
 // End
-rastr_node_t rastr_node_end(rastr_ast_t ast, rastr_node_t gap) {
+rastr_node_t
+rastr_node_end(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, End);
     pair.ptr->node.end_node.gap = gap;
+    pair.ptr->node.end_node.loc = loc;
     return pair.node;
+}
+
+rastr_node_t rastr_end_gap(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.end_node.gap;
+}
+
+rastr_node_t rastr_end_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.end_node.loc;
 }
 
 // Error
@@ -1374,9 +1452,11 @@ bool rastr_node_is_literal(rastr_ast_t ast, rastr_node_t node) {
 }
 
 // null
-rastr_node_t rastr_node_null(rastr_ast_t ast, rastr_node_t gap) {
+rastr_node_t
+rastr_node_null(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Null);
     pair.ptr->node.null_node.gap = gap;
+    pair.ptr->node.null_node.loc = loc;
     return pair.node;
 }
 
@@ -1388,15 +1468,21 @@ rastr_node_t rastr_null_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.null_node.gap;
 }
 
+rastr_node_t rastr_null_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.null_node.loc;
+}
+
 // logical
 rastr_node_t rastr_node_logical(rastr_ast_t ast,
                                 const char* syntax,
                                 int value,
-                                rastr_node_t gap) {
+                                rastr_node_t gap,
+                                rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Logical);
     pair.ptr->node.logical_node.syntax = StringView::duplicate(syntax);
     pair.ptr->node.logical_node.value = value;
     pair.ptr->node.logical_node.gap = gap;
+    pair.ptr->node.logical_node.loc = loc;
     return pair.node;
 }
 
@@ -1412,26 +1498,34 @@ rastr_node_t rastr_logical_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.logical_node.gap;
 }
 
+rastr_node_t rastr_logical_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.logical_node.loc;
+}
+
 // integer
 rastr_node_t rastr_node_integer_from_view(rastr_ast_t ast,
                                           const StringView& syntax_view,
-                                          rastr_node_t gap) {
+                                          rastr_node_t gap,
+                                          rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Integer);
     char* syntax = syntax_view.materialize();
     pair.ptr->node.integer_node.syntax = syntax;
     pair.ptr->node.integer_node.value = (int) R_atof(syntax);
     pair.ptr->node.integer_node.gap = gap;
+    pair.ptr->node.integer_node.loc = loc;
     return pair.node;
 }
 
 rastr_node_t rastr_node_integer(rastr_ast_t ast,
                                 const char* syntax,
                                 int value,
-                                rastr_node_t gap) {
+                                rastr_node_t gap,
+                                rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Integer);
     pair.ptr->node.integer_node.syntax = StringView::duplicate(syntax);
     pair.ptr->node.integer_node.value = value;
     pair.ptr->node.integer_node.gap = gap;
+    pair.ptr->node.integer_node.loc = loc;
     return pair.node;
 }
 
@@ -1447,26 +1541,34 @@ rastr_node_t rastr_integer_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.integer_node.gap;
 }
 
+rastr_node_t rastr_integer_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.integer_node.loc;
+}
+
 // real
 rastr_node_t rastr_node_double_from_view(rastr_ast_t ast,
                                          const StringView& syntax_view,
-                                         rastr_node_t gap) {
+                                         rastr_node_t gap,
+                                         rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Real);
     char* syntax = syntax_view.materialize();
     pair.ptr->node.real_node.syntax = syntax;
     pair.ptr->node.real_node.value = R_atof(syntax);
     pair.ptr->node.real_node.gap = gap;
+    pair.ptr->node.real_node.loc = loc;
     return pair.node;
 }
 
 rastr_node_t rastr_node_real(rastr_ast_t ast,
                              const char* syntax,
                              double value,
-                             rastr_node_t gap) {
+                             rastr_node_t gap,
+                             rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Real);
     pair.ptr->node.real_node.syntax = StringView::duplicate(syntax);
     pair.ptr->node.real_node.value = value;
     pair.ptr->node.real_node.gap = gap;
+    pair.ptr->node.real_node.loc = loc;
     return pair.node;
 }
 
@@ -1482,27 +1584,35 @@ rastr_node_t rastr_real_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.real_node.gap;
 }
 
+rastr_node_t rastr_real_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.real_node.loc;
+}
+
 // complex
 rastr_node_t rastr_node_complex_from_view(rastr_ast_t ast,
                                           const StringView& syntax_view,
-                                          rastr_node_t gap) {
+                                          rastr_node_t gap,
+                                          rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Complex);
     char* syntax = syntax_view.materialize();
     pair.ptr->node.complex_node.syntax = syntax;
     pair.ptr->node.complex_node.value.r = 0;
     pair.ptr->node.complex_node.value.i = R_atof(syntax);
     pair.ptr->node.complex_node.gap = gap;
+    pair.ptr->node.complex_node.loc = loc;
     return pair.node;
 }
 
 rastr_node_t rastr_node_complex(rastr_ast_t ast,
                                 const char* syntax,
                                 const Rcomplex& value,
-                                rastr_node_t gap) {
+                                rastr_node_t gap,
+                                rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Complex);
     pair.ptr->node.complex_node.syntax = StringView::duplicate(syntax);
     pair.ptr->node.complex_node.value = value;
     pair.ptr->node.complex_node.gap = gap;
+    pair.ptr->node.complex_node.loc = loc;
     return pair.node;
 }
 
@@ -1518,24 +1628,31 @@ rastr_node_t rastr_complex_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.complex_node.gap;
 }
 
+rastr_node_t rastr_complex_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.complex_node.loc;
+}
+
 // string
 rastr_node_t rastr_node_string_from_view(rastr_ast_t ast,
                                          const StringView& syntax_view,
                                          const StringView& value_view,
-                                         rastr_node_t gap) {
+                                         rastr_node_t gap,
+                                         rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, String);
     pair.ptr->node.string_node.syntax = syntax_view.materialize();
     pair.ptr->node.string_node.value = value_view.materialize();
     pair.ptr->node.string_node.gap = gap;
+    pair.ptr->node.string_node.loc = loc;
     return pair.node;
 }
 
 rastr_node_t rastr_node_string(rastr_ast_t ast,
                                const char* syntax,
                                const char* value,
-                               rastr_node_t gap) {
+                               rastr_node_t gap,
+                               rastr_node_t loc) {
     return rastr_node_string_from_view(
-        ast, StringView(syntax), StringView(value), gap);
+        ast, StringView(syntax), StringView(value), gap, loc);
 }
 
 const char* rastr_node_string_syntax(rastr_ast_t ast, rastr_node_t node) {
@@ -1556,24 +1673,31 @@ rastr_node_t rastr_string_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.string_node.gap;
 }
 
+rastr_node_t rastr_string_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.string_node.loc;
+}
+
 // symbol
 rastr_node_t rastr_node_symbol_from_view(rastr_ast_t ast,
                                          const StringView& syntax_view,
                                          const StringView& value_view,
-                                         rastr_node_t gap) {
+                                         rastr_node_t gap,
+                                         rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Symbol);
     pair.ptr->node.symbol_node.syntax = syntax_view.materialize();
     pair.ptr->node.symbol_node.value = value_view.materialize();
     pair.ptr->node.symbol_node.gap = gap;
+    pair.ptr->node.symbol_node.loc = loc;
     return pair.node;
 }
 
 rastr_node_t rastr_node_symbol(rastr_ast_t ast,
                                const char* syntax,
                                const char* value,
-                               rastr_node_t gap) {
+                               rastr_node_t gap,
+                               rastr_node_t loc) {
     return rastr_node_symbol_from_view(
-        ast, StringView(syntax), StringView(value), gap);
+        ast, StringView(syntax), StringView(value), gap, loc);
 }
 
 const char* rastr_node_symbol_value(rastr_ast_t ast, rastr_node_t node) {
@@ -1591,6 +1715,10 @@ bool rastr_node_symbol_is_quoted(rastr_ast_t ast, rastr_node_t node) {
 
 rastr_node_t rastr_symbol_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.symbol_node.gap;
+}
+
+rastr_node_t rastr_symbol_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.symbol_node.loc;
 }
 
 rastr_node_t rastr_blk_node(rastr_ast_t ast,
@@ -2442,9 +2570,11 @@ SEXP r_rastr_err_msg(SEXP r_ast, SEXP r_node) {
     return rastr_str_wrap(result);
 }
 
-rastr_node_t rastr_msng_node(rastr_ast_t ast, rastr_node_t gap) {
+rastr_node_t
+rastr_msng_node(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Missing);
     pair.ptr->node.msng_node.gap = gap;
+    pair.ptr->node.msng_node.loc = loc;
     return pair.node;
 }
 
@@ -2452,24 +2582,26 @@ rastr_node_t rastr_msng_gap(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.msng_node.gap;
 }
 
-rastr_node_t rastr_beg_node(rastr_ast_t ast) {
+rastr_node_t rastr_msng_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.msng_node.loc;
+}
+
+rastr_node_t rastr_beg_node(rastr_ast_t ast, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Beg);
+    pair.ptr->node.beg_node.loc = loc;
     return pair.node;
 }
 
-rastr_node_t rastr_end_node(rastr_ast_t ast) {
-    rastr_node_pair_t pair = rastr_node_create(ast, End);
-    return pair.node;
+rastr_node_t rastr_beg_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.beg_node.loc;
 }
 
-rastr_node_t rastr_end_gap(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.end_node.gap;
-}
-
-rastr_node_t rastr_ws_node(rastr_ast_t ast, char chr, int count) {
+rastr_node_t
+rastr_ws_node(rastr_ast_t ast, char chr, int count, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Whitespace);
     pair.ptr->node.ws_node.chr = chr;
     pair.ptr->node.ws_node.count = count;
+    pair.ptr->node.ws_node.loc = loc;
     return pair.node;
 }
 
@@ -2485,15 +2617,25 @@ void rastr_ws_inc(rastr_ast_t ast, rastr_node_t node) {
     ++rastr_ast_get_impl(ast, node)->node.ws_node.count;
 }
 
+rastr_node_t rastr_ws_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.ws_node.loc;
+}
+
 rastr_node_t rastr_cmnt_node_from_view(rastr_ast_t ast,
-                                       const StringView& value_view) {
+                                       const StringView& value_view,
+                                       rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Comment);
     pair.ptr->node.cmnt_node.value = value_view.materialize();
+    pair.ptr->node.cmnt_node.loc = loc;
     return pair.node;
 }
 
 const char* rastr_cmnt_value(rastr_ast_t ast, rastr_node_t node) {
     return rastr_ast_get_impl(ast, node)->node.cmnt_node.value;
+}
+
+rastr_node_t rastr_cmnt_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.cmnt_node.loc;
 }
 
 rastr_node_t rastr_gap_node(rastr_ast_t ast, int len, const rastr_node_t* seq) {
@@ -2525,3 +2667,44 @@ SEXP r_rastr_gap_seq(SEXP r_ast, SEXP r_node) {
     return rastr_node_seq_wrap(result, rastr_gap_len(ast, node));
 }
 
+rastr_node_t
+rastr_loc_node(rastr_ast_t ast, rastr_node_t beg, rastr_node_t end) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Location);
+    pair.ptr->node.loc_node.beg = beg;
+    pair.ptr->node.loc_node.end = end;
+    return pair.node;
+}
+
+rastr_node_t rastr_loc_beg(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.beg;
+}
+
+rastr_node_t rastr_loc_end(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.end;
+}
+
+rastr_node_t
+rastr_pos_node(rastr_ast_t ast, int row, int col, int chr, int byte) {
+    rastr_node_pair_t pair = rastr_node_create(ast, Position);
+    pair.ptr->node.pos_node.row = row;
+    pair.ptr->node.pos_node.col = col;
+    pair.ptr->node.pos_node.chr = chr;
+    pair.ptr->node.pos_node.byte = byte;
+    return pair.node;
+}
+
+int rastr_pos_row(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.pos_node.row;
+}
+
+int rastr_pos_col(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.pos_node.col;
+}
+
+int rastr_pos_chr(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.pos_node.chr;
+}
+
+int rastr_pos_byte(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.pos_node.byte;
+}

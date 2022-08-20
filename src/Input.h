@@ -13,7 +13,13 @@ class Input {
 
     /* input is a non-owning pointer to a character sequence */
     Input(const char* input, std::size_t length)
-        : input_(input), length_(length), index_(0) {
+        : input_(input)
+        , length_(length)
+        , index_(0)
+        , row_(0)
+        , col_(0)
+        , chr_(0)
+        , byte_(0) {
     }
 
     /* start reading characters from the beginning */
@@ -101,7 +107,7 @@ class Input {
         }
 
         char c = input_[index_];
-        ++index_;
+        inc_index_();
         return c;
     }
 
@@ -109,7 +115,7 @@ class Input {
     bool read_char_if(int ch) {
         if (ch == peek_char_next_()) {
             if (ch != Eof)
-                ++index_;
+                inc_index_();
             return true;
         }
         return false;
@@ -120,7 +126,7 @@ class Input {
 
         if (c == c1 || c == c2 || c == c3) {
             if (c != Eof)
-                ++index_;
+                inc_index_();
             return true;
         }
 
@@ -133,7 +139,7 @@ class Input {
 
         if (c != ch) {
             if (c != Eof)
-                ++index_;
+                inc_index_();
             return true;
         }
 
@@ -145,7 +151,7 @@ class Input {
         std::size_t count = 0;
 
         while (!end() && input_[index_] == ch) {
-            ++index_;
+            inc_index_();
             ++count;
         }
 
@@ -157,7 +163,7 @@ class Input {
         std::size_t count = 0;
 
         while (!end() && input_[index_] != ch) {
-            ++index_;
+            inc_index_();
             ++count;
         }
 
@@ -196,14 +202,34 @@ class Input {
 
     void rewind() {
         if (index_ > 0) {
-            --index_;
+            dec_index_();
         }
+    }
+
+    void next_line(int count = 1) {
+        row_ += count;
+        col_ = 0;
+    }
+
+    void get_pos(int* row, int* col, int* chr, int* byte) {
+        *row = row_;
+        *col = col_;
+        *chr = chr_;
+        *byte = byte_;
     }
 
   private:
     const char* input_;
     const std::size_t length_;
     std::size_t index_;
+
+    int row_;
+    int col_;
+    int chr_;
+    int byte_;
+    /* size in bytes of the last char read from the input stream, used by
+       rewind */
+    int last_chr_size_;
 
     int peek_char_at_(std::size_t index) const {
         if (index >= length_) {
@@ -215,6 +241,20 @@ class Input {
 
     int peek_char_next_() const {
         return peek_char_at_(index_);
+    }
+
+    void inc_index_() {
+        ++col_;
+        ++chr_;
+        ++byte_;
+        ++index_;
+    }
+
+    void dec_index_() {
+        --col_;
+        --chr_;
+        --byte_;
+        --index_;
     }
 };
 

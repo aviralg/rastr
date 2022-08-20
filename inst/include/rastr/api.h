@@ -5,9 +5,6 @@
 
 /* WARN: do not change this enum, entries are order sensitive! */
 enum rastr_node_type_t {
-    /********************************************************************************
-      Operators
-    ********************************************************************************/
     Special = 0,
 
     /* Arithmetic:
@@ -17,7 +14,8 @@ enum rastr_node_type_t {
     Minus,          // unary or binary -
     Multiplication, // *
     Division,       // /
-    Power,          // ^ or **
+    Power,          // ^
+    Power2,         // **
 
     /* Comparison:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/Comparison.html
@@ -31,11 +29,11 @@ enum rastr_node_type_t {
 
     /* Logic: https://stat.ethz.ch/R-manual/R-devel/library/base/html/Logic.html
      */
-    Not,           // !
-    And,           // &&
-    VectorizedAnd, // &
-    Or,            // ||
-    VectorizedOr,  // |
+    Not,    // !
+    And,    // &&
+    VecAnd, // &
+    Or,     // ||
+    VecOr,  // |
 
     /* Assignments:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/assignOps.html */
@@ -77,20 +75,17 @@ enum rastr_node_type_t {
     PartExtract, // $
 
     /* Function */
-    AnonymousFunction, /* \ */
+    Function2, /* \ */
 
-    /********************************************************************************
-      KEYWORDS
-    ********************************************************************************/
-    Function,
-    While,
-    Repeat,
-    For,
-    In,
-    If,
-    Else,
-    Next,
-    Break,
+    Function, // function
+    While,    // while
+    Repeat,   // repeat
+    For,      // for
+    In,       // in
+    If,       // if
+    Else,     // else
+    Next,     // next
+    Break,    // break
 
     /********************************************************************************
       Delimiters
@@ -159,6 +154,8 @@ enum rastr_node_type_t {
     Whitespace,
     Comment,
     Gap,
+    Position,
+    Location,
     Error
 
     // Extract,
@@ -217,41 +214,39 @@ rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces);
 const char* rastr_node_type_to_string(rastr_node_type_t type);
 
 /********************************************************************************
- Operators
+Operator
 ********************************************************************************/
+rastr_node_t rastr_op_node(rastr_ast_t ast,
+                           rastr_node_type_t type,
+                           rastr_node_t gap,
+                           rastr_node_t loc);
 
-bool rastr_node_is_operator(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_node_operator(rastr_ast_t ast,
-                                 const char* syntax,
-                                 rastr_node_type_t type,
-                                 rastr_node_t gap);
-const char* rastr_node_operator_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_operator_syntax(rastr_ast_t ast, rastr_node_t node);
+// val
+const char* rastr_op_val(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_op_val(SEXP r_ast, SEXP r_node);
+
+// syn
+const char* rastr_op_syn(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_op_syn(SEXP r_ast, SEXP r_node);
+
+// gap
 rastr_node_t rastr_op_gap(rastr_ast_t ast, rastr_node_t node);
-
-/********************************************************************************
- Keywords
-********************************************************************************/
-
-bool rastr_node_is_keyword(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_node_keyword(rastr_ast_t ast,
-                                const char* syntax,
-                                rastr_node_type_t type,
-                                rastr_node_t gap);
-const char* rastr_node_keyword_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_keyword_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_kw_gap(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_op_gap(SEXP r_ast, SEXP r_node);
+rastr_node_t rastr_op_loc(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Delimiters
 ********************************************************************************/
 
 bool rastr_node_is_delimiter(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t
-rastr_node_delimiter(rastr_ast_t ast, rastr_node_type_t type, rastr_node_t gap);
+rastr_node_t rastr_node_delimiter(rastr_ast_t ast,
+                                  rastr_node_type_t type,
+                                  rastr_node_t gap,
+                                  rastr_node_t loc);
 const char* rastr_node_delimiter_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_delimiter_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_dlmtr_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_dlmtr_loc(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Terminators
@@ -260,17 +255,20 @@ rastr_node_t rastr_dlmtr_gap(rastr_ast_t ast, rastr_node_t node);
 bool rastr_node_is_terminator(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_terminator(rastr_ast_t ast,
                                    rastr_node_type_t type,
-                                   rastr_node_t gap);
+                                   rastr_node_t gap,
+                                   rastr_node_t loc);
 const char* rastr_node_terminator_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_terminator_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_term_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_term_loc(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Meta
 ********************************************************************************/
 
 // End
-rastr_node_t rastr_node_end(rastr_ast_t ast, rastr_node_t gap);
+rastr_node_t
+rastr_node_end(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc);
 
 // Error
 rastr_node_t rastr_node_error(rastr_ast_t ast, const char* fmt, ...);
@@ -282,65 +280,79 @@ const char* rastr_node_error_message(rastr_ast_t ast, rastr_node_t node);
 bool rastr_node_is_literal(rastr_ast_t ast, rastr_node_t node);
 
 // null
-rastr_node_t rastr_node_null(rastr_ast_t ast, rastr_node_t gap);
+rastr_node_t
+rastr_node_null(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc);
 const char* rastr_node_null_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_null_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_null_loc(rastr_ast_t ast, rastr_node_t node);
 
 // logical
 rastr_node_t rastr_node_logical(rastr_ast_t ast,
                                 const char* syntax,
                                 int value,
-                                rastr_node_t gap);
+                                rastr_node_t gap,
+                                rastr_node_t loc);
 int rastr_node_logical_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_logical_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_logical_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_logical_loc(rastr_ast_t ast, rastr_node_t node);
 
 // integer
 rastr_node_t rastr_node_integer(rastr_ast_t ast,
                                 const char* syntax,
                                 int value,
-                                rastr_node_t gap);
+                                rastr_node_t gap,
+                                rastr_node_t loc);
 int rastr_node_integer_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_integer_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_integer_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_integer_loc(rastr_ast_t ast, rastr_node_t node);
 
 // real
 rastr_node_t rastr_node_real(rastr_ast_t ast,
                              const char* syntax,
                              double value,
-                             rastr_node_t gap);
+                             rastr_node_t gap,
+                             rastr_node_t loc);
 double rastr_node_real_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_real_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_real_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_real_loc(rastr_ast_t ast, rastr_node_t node);
 
 // complex
 rastr_node_t rastr_node_complex(rastr_ast_t ast,
                                 const char* syntax,
                                 const Rcomplex& value,
-                                rastr_node_t gap);
+                                rastr_node_t gap,
+                                rastr_node_t loc);
 Rcomplex rastr_node_complex_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_complex_syntax(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_complex_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_complex_loc(rastr_ast_t ast, rastr_node_t node);
 
 // string
 rastr_node_t rastr_node_string(rastr_ast_t ast,
                                const char* syntax,
                                const char* value,
-                               rastr_node_t gap);
+                               rastr_node_t gap,
+                               rastr_node_t loc);
 const char* rastr_node_string_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_string_syntax(rastr_ast_t ast, rastr_node_t node);
 bool rastr_node_string_is_raw(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_string_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_string_loc(rastr_ast_t ast, rastr_node_t node);
 
 // symbol
 rastr_node_t rastr_node_symbol(rastr_ast_t ast,
                                const char* syntax,
                                const char* value,
-                               rastr_node_t gap);
+                               rastr_node_t gap,
+                               rastr_node_t loc);
 const char* rastr_node_symbol_value(rastr_ast_t ast, rastr_node_t node);
 const char* rastr_node_symbol_syntax(rastr_ast_t ast, rastr_node_t node);
 bool rastr_node_symbol_is_quoted(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_symbol_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_symbol_loc(rastr_ast_t ast, rastr_node_t node);
 
 rastr_node_t rastr_blk_node(rastr_ast_t ast,
                             rastr_node_t lbrack,
@@ -519,24 +531,45 @@ rastr_node_t rastr_dlmtd_dlmtr(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_err_node(rastr_ast_t ast, const char* msg);
 const char* rastr_err_msg(rastr_ast_t ast, rastr_node_t node);
 
-rastr_node_t rastr_msng_node(rastr_ast_t ast, rastr_node_t gap);
+rastr_node_t
+rastr_msng_node(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc);
 rastr_node_t rastr_msng_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_msng_loc(rastr_ast_t ast, rastr_node_t node);
 
-rastr_node_t rastr_beg_node(rastr_ast_t ast);
+rastr_node_t rastr_beg_node(rastr_ast_t ast, rastr_node_t loc);
+rastr_node_t rastr_beg_loc(rastr_ast_t ast, rastr_node_t node);
 
 rastr_node_t rastr_end_node(rastr_ast_t ast);
 rastr_node_t rastr_end_gap(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_end_loc(rastr_ast_t ast, rastr_node_t node);
 
+rastr_node_t
+rastr_cmnt_node(rastr_ast_t ast, rastr_node_t node, rastr_node_t loc);
 const char* rastr_cmnt_value(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_cmnt_loc(rastr_ast_t ast, rastr_node_t node);
 
-rastr_node_t rastr_ws_node(rastr_ast_t ast, char chr, int count);
+rastr_node_t
+rastr_ws_node(rastr_ast_t ast, char chr, int count, rastr_node_t loc);
 char rastr_ws_chr(rastr_ast_t ast, rastr_node_t node);
 int rastr_ws_count(rastr_ast_t ast, rastr_node_t node);
 void rastr_ws_inc(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_ws_loc(rastr_ast_t ast, rastr_node_t node);
 
 rastr_node_t rastr_gap_node(rastr_ast_t ast, int len, const rastr_node_t* seq);
 int rastr_gap_len(rastr_ast_t ast, rastr_node_t node);
 const rastr_node_t* rastr_gap_seq(rastr_ast_t ast, rastr_node_t node);
+
+rastr_node_t
+rastr_loc_node(rastr_ast_t ast, rastr_node_t beg, rastr_node_t end);
+rastr_node_t rastr_loc_beg(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_loc_end(rastr_ast_t ast, rastr_node_t node);
+
+rastr_node_t
+rastr_pos_node(rastr_ast_t ast, int row, int col, int chr, int byte);
+int rastr_pos_row(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_col(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_chr(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_byte(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Parsing
@@ -592,13 +625,6 @@ class AstWalker {
     }
 
     virtual void post_op(rastr_ast_t ast, rastr_node_t node) {
-    }
-
-    virtual bool pre_kw(rastr_ast_t ast, rastr_node_t node) {
-        return true;
-    }
-
-    virtual void post_kw(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) {
@@ -839,7 +865,11 @@ class AstWalker {
     virtual void post_msng(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual void beg(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_beg(rastr_ast_t ast, rastr_node_t node) {
+        return true;
+    }
+
+    virtual void post_beg(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_end(rastr_ast_t ast, rastr_node_t node) {
@@ -849,10 +879,18 @@ class AstWalker {
     virtual void post_end(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual void ws(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_ws(rastr_ast_t ast, rastr_node_t node) {
+        return true;
     }
 
-    virtual void cmnt(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_ws(rastr_ast_t ast, rastr_node_t node) {
+    }
+
+    virtual bool pre_cmnt(rastr_ast_t ast, rastr_node_t node) {
+        return true;
+    }
+
+    virtual void post_cmnt(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_gap(rastr_ast_t ast, rastr_node_t node) {
@@ -862,12 +900,23 @@ class AstWalker {
     virtual void post_gap(rastr_ast_t ast, rastr_node_t node) {
     }
 
-#define CALL_WALKER(NODE) this->NODE(ast, node);
+    virtual bool pre_loc(rastr_ast_t ast, rastr_node_t node) {
+        return true;
+    }
 
-#define CALL_WALKER_0(NODE)                             \
-    if (this->pre_##NODE(ast, node)) {                  \
-        this->walk(ast, rastr_##NODE##_gap(ast, node)); \
-        this->post_##NODE(ast, node);                   \
+    virtual void post_loc(rastr_ast_t ast, rastr_node_t node) {
+    }
+
+    virtual bool pre_pos(rastr_ast_t ast, rastr_node_t node) {
+        return true;
+    }
+
+    virtual void post_pos(rastr_ast_t ast, rastr_node_t node) {
+    }
+
+#define CALL_WALKER_0(NODE)            \
+    if (this->pre_##NODE(ast, node)) { \
+        this->post_##NODE(ast, node);  \
     }
 
 #define CALL_WALKER_1(NODE, CHILD1)                          \
@@ -945,6 +994,7 @@ class AstWalker {
         case Multiplication:
         case Division:
         case Power:
+        case Power2:
         case LessThan:
         case LessThanEqual:
         case GreaterThan:
@@ -953,9 +1003,9 @@ class AstWalker {
         case NotEqual:
         case Not:
         case And:
-        case VectorizedAnd:
+        case VecAnd:
         case Or:
-        case VectorizedOr:
+        case VecOr:
         case EqualAssign:
         case LeftAssign:
         case RightAssign:
@@ -971,13 +1021,8 @@ class AstWalker {
         case SlotExtract:
         case Formula:
         case PartExtract:
-        case AnonymousFunction:
-            CALL_WALKER_0(op);
-            break;
-            /********************************************************************************
-             KEYWORDS
-            ********************************************************************************/
         case Function:
+        case Function2:
         case While:
         case Repeat:
         case For:
@@ -986,7 +1031,7 @@ class AstWalker {
         case Else:
         case Next:
         case Break:
-            CALL_WALKER_0(kw);
+            CALL_WALKER_2(op, gap, loc);
             break;
 
             /********************************************************************************
@@ -1000,7 +1045,7 @@ class AstWalker {
         case RightBracket:
         case DoubleLeftBracket:
         case DoubleRightBracket:
-            CALL_WALKER_0(dlmtr);
+            CALL_WALKER_2(dlmtr, gap, loc);
             break;
 
             /********************************************************************************
@@ -1009,38 +1054,38 @@ class AstWalker {
         case Semicolon:
         case Newline:
         case Comma:
-            CALL_WALKER_0(term);
+            CALL_WALKER_2(term, gap, loc);
             break;
 
             /********************************************************************************
               Literals
             ********************************************************************************/
         case Null:
-            CALL_WALKER_0(null);
+            CALL_WALKER_2(null, gap, loc);
             break;
 
         case Logical:
-            CALL_WALKER_0(logical);
+            CALL_WALKER_2(logical, gap, loc);
             break;
 
         case Integer:
-            CALL_WALKER_0(integer);
+            CALL_WALKER_2(integer, gap, loc);
             break;
 
         case Real:
-            CALL_WALKER_0(real);
+            CALL_WALKER_2(real, gap, loc);
             break;
 
         case Complex:
-            CALL_WALKER_0(complex);
+            CALL_WALKER_2(complex, gap, loc);
             break;
 
         case String:
-            CALL_WALKER_0(string);
+            CALL_WALKER_2(string, gap, loc);
             break;
 
         case Symbol:
-            CALL_WALKER_0(symbol);
+            CALL_WALKER_2(symbol, gap, loc);
             break;
 
         /********************************************************************************
@@ -1146,28 +1191,35 @@ class AstWalker {
             break;
 
         case Missing:
-            CALL_WALKER_0(msng)
+            CALL_WALKER_2(msng, gap, loc)
             break;
 
         case Beg:
-            /* TODO: remove CALL_WALKER and CALL_WALKER_0 */
-            CALL_WALKER(beg)
+            CALL_WALKER_1(beg, loc)
             break;
 
         case End:
-            CALL_WALKER_0(end)
+            CALL_WALKER_2(end, gap, loc)
             break;
 
         case Whitespace:
-            CALL_WALKER(ws)
+            CALL_WALKER_1(ws, loc)
             break;
 
         case Comment:
-            CALL_WALKER(cmnt)
+            CALL_WALKER_1(cmnt, loc)
             break;
 
         case Gap:
             CALL_WALKER_SEQ(gap, len, seq)
+            break;
+
+        case Location:
+            CALL_WALKER_2(loc, beg, end)
+            break;
+
+        case Position:
+            CALL_WALKER_0(pos)
             break;
 
         case Error:
@@ -1175,6 +1227,15 @@ class AstWalker {
             break;
         }
     }
+#undef CALL_WALKER_0
+#undef CALL_WALKER_1
+#undef CALL_WALKER_2
+#undef CALL_WALKER_3
+#undef CALL_WALKER_4
+#undef CALL_WALKER_5
+#undef HANDLE_SEQ
+#undef CALL_WALKER_BRACK_SEQ
+#undef CALL_WALKER_SEQ
 };
 
 #ifdef __cplusplus

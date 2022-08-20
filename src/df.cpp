@@ -37,14 +37,18 @@ class AstDf {
         r_val_int_ = PROTECT(int_vec(size, NA_INTEGER));
         r_val_dbl_ = PROTECT(dbl_vec(size, NA_REAL));
         r_val_cplx_ = PROTECT(cplx_vec(size, NA_COMPLEX));
+        r_row_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_col_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_chr_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_byte_ = PROTECT(int_vec(size, NA_INTEGER));
     }
 
     ~AstDf() {
-        UNPROTECT(10);
+        UNPROTECT(14);
     }
 
     SEXP materialize() {
-        return rastr_create_data_frame(10,
+        return rastr_create_data_frame(14,
                                        "id",
                                        r_id_,
                                        "parent_id",
@@ -64,11 +68,26 @@ class AstDf {
                                        "val_dbl",
                                        r_val_dbl_,
                                        "val_cplx",
-                                       r_val_cplx_);
+                                       r_val_cplx_,
+                                       "row",
+                                       r_row_,
+                                       "col",
+                                       r_col_,
+                                       "chr",
+                                       r_chr_,
+                                       "byte",
+                                       r_byte_);
     }
 
     void inc_index() {
         ++index_;
+    }
+
+    void set_pos(int row, int col, int chr, int byte) {
+        int_set(r_row_, index_, row);
+        int_set(r_col_, index_, col);
+        int_set(r_chr_, index_, chr);
+        int_set(r_byte_, index_, byte);
     }
 
     void set_id(int id) {
@@ -123,6 +142,10 @@ class AstDf {
     SEXP r_val_int_;
     SEXP r_val_dbl_;
     SEXP r_val_cplx_;
+    SEXP r_row_;
+    SEXP r_col_;
+    SEXP r_chr_;
+    SEXP r_byte_;
 };
 
 class DFTransformer: AstWalker {
@@ -140,38 +163,25 @@ class DFTransformer: AstWalker {
         return df->materialize();
     }
 
-    virtual void walk(rastr_ast_t ast, rastr_node_t node) {
+    void walk(rastr_ast_t ast, rastr_node_t node) override {
         df_->inc_index();
         AstWalker::walk(ast, node);
     }
 
-    virtual bool pre_op(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_op(rastr_ast_t ast, rastr_node_t node) override {
         PRE(op)
 
-        df_->set_syn(rastr_node_operator_syntax(ast, node));
-        df_->set_str(rastr_node_operator_value(ast, node));
+        df_->set_syn(rastr_op_syn(ast, node));
+        df_->set_str(rastr_op_val(ast, node));
 
         return true;
     }
 
-    virtual void post_op(rastr_ast_t ast, rastr_node_t node) {
+    void post_op(rastr_ast_t ast, rastr_node_t node) override {
         POST(op)
     }
 
-    virtual bool pre_kw(rastr_ast_t ast, rastr_node_t node) {
-        PRE(kw)
-
-        df_->set_syn(rastr_node_keyword_syntax(ast, node));
-        df_->set_str(rastr_node_keyword_value(ast, node));
-
-        return true;
-    }
-
-    virtual void post_kw(rastr_ast_t ast, rastr_node_t node) {
-        POST(kw)
-    }
-
-    virtual bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) override {
         PRE(dlmtr)
 
         df_->set_syn(rastr_node_delimiter_syntax(ast, node));
@@ -180,11 +190,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_dlmtr(rastr_ast_t ast, rastr_node_t node) {
+    void post_dlmtr(rastr_ast_t ast, rastr_node_t node) override {
         POST(dlmtr)
     }
 
-    virtual bool pre_term(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_term(rastr_ast_t ast, rastr_node_t node) override {
         PRE(term)
 
         df_->set_syn(rastr_node_terminator_syntax(ast, node));
@@ -193,11 +203,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_term(rastr_ast_t ast, rastr_node_t node) {
+    void post_term(rastr_ast_t ast, rastr_node_t node) override {
         POST(term)
     }
 
-    virtual bool pre_null(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_null(rastr_ast_t ast, rastr_node_t node) override {
         PRE(null)
 
         df_->set_syn(rastr_node_null_syntax(ast, node));
@@ -205,11 +215,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_null(rastr_ast_t ast, rastr_node_t node) {
+    void post_null(rastr_ast_t ast, rastr_node_t node) override {
         POST(null)
     }
 
-    virtual bool pre_logical(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_logical(rastr_ast_t ast, rastr_node_t node) override {
         PRE(logical)
 
         df_->set_syn(rastr_node_logical_syntax(ast, node));
@@ -218,11 +228,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_logical(rastr_ast_t ast, rastr_node_t node) {
+    void post_logical(rastr_ast_t ast, rastr_node_t node) override {
         POST(logical)
     }
 
-    virtual bool pre_integer(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_integer(rastr_ast_t ast, rastr_node_t node) override {
         PRE(integer)
 
         df_->set_syn(rastr_node_integer_syntax(ast, node));
@@ -231,11 +241,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_integer(rastr_ast_t ast, rastr_node_t node) {
+    void post_integer(rastr_ast_t ast, rastr_node_t node) override {
         POST(integer)
     }
 
-    virtual bool pre_real(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_real(rastr_ast_t ast, rastr_node_t node) override {
         PRE(real)
 
         df_->set_syn(rastr_node_real_syntax(ast, node));
@@ -244,11 +254,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_real(rastr_ast_t ast, rastr_node_t node) {
+    void post_real(rastr_ast_t ast, rastr_node_t node) override {
         POST(real)
     }
 
-    virtual bool pre_complex(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_complex(rastr_ast_t ast, rastr_node_t node) override {
         PRE(complex)
 
         df_->set_syn(rastr_node_complex_syntax(ast, node));
@@ -257,11 +267,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_complex(rastr_ast_t ast, rastr_node_t node) {
+    void post_complex(rastr_ast_t ast, rastr_node_t node) override {
         POST(complex)
     }
 
-    virtual bool pre_string(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_string(rastr_ast_t ast, rastr_node_t node) override {
         PRE(string)
 
         df_->set_syn(rastr_node_string_syntax(ast, node));
@@ -270,11 +280,11 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_string(rastr_ast_t ast, rastr_node_t node) {
+    void post_string(rastr_ast_t ast, rastr_node_t node) override {
         POST(string)
     }
 
-    virtual bool pre_symbol(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_symbol(rastr_ast_t ast, rastr_node_t node) override {
         PRE(symbol)
 
         df_->set_syn(rastr_node_symbol_syntax(ast, node));
@@ -283,250 +293,255 @@ class DFTransformer: AstWalker {
         return true;
     }
 
-    virtual void post_symbol(rastr_ast_t ast, rastr_node_t node) {
+    void post_symbol(rastr_ast_t ast, rastr_node_t node) override {
         POST(symbol)
     }
 
-    virtual bool pre_blk(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_blk(rastr_ast_t ast, rastr_node_t node) override {
         PRE(blk)
         return true;
     }
 
-    virtual void post_blk(rastr_ast_t ast, rastr_node_t node) {
+    void post_blk(rastr_ast_t ast, rastr_node_t node) override {
         POST(blk)
     }
 
-    virtual bool pre_grp(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_grp(rastr_ast_t ast, rastr_node_t node) override {
         PRE(grp)
         return true;
     }
 
-    virtual void post_grp(rastr_ast_t ast, rastr_node_t node) {
+    void post_grp(rastr_ast_t ast, rastr_node_t node) override {
         POST(grp)
     }
 
-    virtual bool pre_nuop(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_nuop(rastr_ast_t ast, rastr_node_t node) override {
         PRE(nuop)
         return true;
     }
 
-    virtual void post_nuop(rastr_ast_t ast, rastr_node_t node) {
+    void post_nuop(rastr_ast_t ast, rastr_node_t node) override {
         POST(nuop)
     }
 
-    virtual bool pre_unop(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_unop(rastr_ast_t ast, rastr_node_t node) override {
         PRE(unop)
         return true;
     }
 
-    virtual void post_unop(rastr_ast_t ast, rastr_node_t node) {
+    void post_unop(rastr_ast_t ast, rastr_node_t node) override {
         POST(unop)
     }
 
-    virtual bool pre_binop(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_binop(rastr_ast_t ast, rastr_node_t node) override {
         PRE(binop)
         return true;
     }
 
-    virtual void post_binop(rastr_ast_t ast, rastr_node_t node) {
+    void post_binop(rastr_ast_t ast, rastr_node_t node) override {
         POST(binop)
     }
 
-    virtual bool pre_rlp(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_rlp(rastr_ast_t ast, rastr_node_t node) override {
         PRE(rlp)
         return true;
     }
 
-    virtual void post_rlp(rastr_ast_t ast, rastr_node_t node) {
+    void post_rlp(rastr_ast_t ast, rastr_node_t node) override {
         POST(rlp)
     }
 
-    virtual bool pre_wlp(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_wlp(rastr_ast_t ast, rastr_node_t node) override {
         PRE(wlp)
         return true;
     }
 
-    virtual void post_wlp(rastr_ast_t ast, rastr_node_t node) {
+    void post_wlp(rastr_ast_t ast, rastr_node_t node) override {
         POST(wlp)
     }
 
-    virtual bool pre_flp(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_flp(rastr_ast_t ast, rastr_node_t node) override {
         PRE(flp)
         return true;
     }
 
-    virtual void post_flp(rastr_ast_t ast, rastr_node_t node) {
+    void post_flp(rastr_ast_t ast, rastr_node_t node) override {
         POST(flp)
     }
 
-    virtual bool pre_icnd(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_icnd(rastr_ast_t ast, rastr_node_t node) override {
         PRE(icnd)
         return true;
     }
 
-    virtual void post_icnd(rastr_ast_t ast, rastr_node_t node) {
+    void post_icnd(rastr_ast_t ast, rastr_node_t node) override {
         POST(icnd)
     }
 
-    virtual bool pre_iecnd(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_iecnd(rastr_ast_t ast, rastr_node_t node) override {
         PRE(iecnd)
         return true;
     }
 
-    virtual void post_iecnd(rastr_ast_t ast, rastr_node_t node) {
+    void post_iecnd(rastr_ast_t ast, rastr_node_t node) override {
         POST(iecnd)
     }
 
-    virtual bool pre_fndefn(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_fndefn(rastr_ast_t ast, rastr_node_t node) override {
+        ;
         PRE(fndefn)
         return true;
     }
 
-    virtual void post_fndefn(rastr_ast_t ast, rastr_node_t node) {
+    void post_fndefn(rastr_ast_t ast, rastr_node_t node) override {
         POST(fndefn)
     }
 
-    virtual bool pre_fncall(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_fncall(rastr_ast_t ast, rastr_node_t node) override {
         PRE(fncall)
         return true;
     }
 
-    virtual void post_fncall(rastr_ast_t ast, rastr_node_t node) {
+    void post_fncall(rastr_ast_t ast, rastr_node_t node) override {
         POST(fncall)
     }
 
-    virtual bool pre_sub(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_sub(rastr_ast_t ast, rastr_node_t node) override {
         PRE(sub)
         return true;
     }
 
-    virtual void post_sub(rastr_ast_t ast, rastr_node_t node) {
+    void post_sub(rastr_ast_t ast, rastr_node_t node) override {
         POST(sub)
     }
 
-    virtual bool pre_idx(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_idx(rastr_ast_t ast, rastr_node_t node) override {
         PRE(idx)
         return true;
     }
 
-    virtual void post_idx(rastr_ast_t ast, rastr_node_t node) {
+    void post_idx(rastr_ast_t ast, rastr_node_t node) override {
         POST(idx)
     }
 
-    virtual bool pre_params(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_params(rastr_ast_t ast, rastr_node_t node) override {
         PRE(params)
         return true;
     }
 
-    virtual void post_params(rastr_ast_t ast, rastr_node_t node) {
+    void post_params(rastr_ast_t ast, rastr_node_t node) override {
         POST(params)
     }
 
-    virtual bool pre_dparam(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_dparam(rastr_ast_t ast, rastr_node_t node) override {
         PRE(dparam)
         return true;
     }
 
-    virtual void post_dparam(rastr_ast_t ast, rastr_node_t node) {
+    void post_dparam(rastr_ast_t ast, rastr_node_t node) override {
         POST(dparam)
     }
 
-    virtual bool pre_ndparam(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_ndparam(rastr_ast_t ast, rastr_node_t node) override {
         PRE(ndparam)
         return true;
     }
 
-    virtual void post_ndparam(rastr_ast_t ast, rastr_node_t node) {
+    void post_ndparam(rastr_ast_t ast, rastr_node_t node) override {
         POST(ndparam)
     }
 
-    virtual bool pre_args(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_args(rastr_ast_t ast, rastr_node_t node) override {
         PRE(args)
         return true;
     }
 
-    virtual void post_args(rastr_ast_t ast, rastr_node_t node) {
+    void post_args(rastr_ast_t ast, rastr_node_t node) override {
         POST(args)
     }
 
-    virtual bool pre_narg(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_narg(rastr_ast_t ast, rastr_node_t node) override {
         PRE(narg)
         return true;
     }
 
-    virtual void post_narg(rastr_ast_t ast, rastr_node_t node) {
+    void post_narg(rastr_ast_t ast, rastr_node_t node) override {
         POST(narg)
     }
 
-    virtual bool pre_parg(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_parg(rastr_ast_t ast, rastr_node_t node) override {
         PRE(parg)
         return true;
     }
 
-    virtual void post_parg(rastr_ast_t ast, rastr_node_t node) {
+    void post_parg(rastr_ast_t ast, rastr_node_t node) override {
         POST(parg)
     }
 
-    virtual bool pre_cnd(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_cnd(rastr_ast_t ast, rastr_node_t node) override {
         PRE(cnd)
         return true;
     }
 
-    virtual void post_cnd(rastr_ast_t ast, rastr_node_t node) {
+    void post_cnd(rastr_ast_t ast, rastr_node_t node) override {
         POST(cnd)
     }
 
-    virtual bool pre_iter(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_iter(rastr_ast_t ast, rastr_node_t node) override {
         PRE(iter)
         return true;
     }
 
-    virtual void post_iter(rastr_ast_t ast, rastr_node_t node) {
+    void post_iter(rastr_ast_t ast, rastr_node_t node) override {
         POST(iter)
     }
 
-    virtual bool pre_pgm(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_pgm(rastr_ast_t ast, rastr_node_t node) override {
         PRE(pgm)
         return true;
     }
 
-    virtual void post_pgm(rastr_ast_t ast, rastr_node_t node) {
+    void post_pgm(rastr_ast_t ast, rastr_node_t node) override {
         POST(pgm)
     }
 
-    virtual bool pre_dlmtd(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_dlmtd(rastr_ast_t ast, rastr_node_t node) override {
         PRE(dlmtd)
         return true;
     }
 
-    virtual void post_dlmtd(rastr_ast_t ast, rastr_node_t node) {
+    void post_dlmtd(rastr_ast_t ast, rastr_node_t node) override {
         POST(dlmtd)
     }
 
-    virtual bool pre_msng(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_msng(rastr_ast_t ast, rastr_node_t node) override {
         PRE(msng)
         return true;
     }
 
-    virtual void post_msng(rastr_ast_t ast, rastr_node_t node) {
+    void post_msng(rastr_ast_t ast, rastr_node_t node) override {
         POST(msng)
     }
 
-    virtual void beg(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_beg(rastr_ast_t ast, rastr_node_t node) override {
         PRE(beg)
+        return true;
+    }
+
+    void post_beg(rastr_ast_t ast, rastr_node_t node) override {
         POST(beg)
     }
 
-    virtual bool pre_end(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_end(rastr_ast_t ast, rastr_node_t node) override {
         PRE(end)
         return true;
     }
 
-    virtual void post_end(rastr_ast_t ast, rastr_node_t node) {
+    void post_end(rastr_ast_t ast, rastr_node_t node) override {
         POST(end)
     }
 
-    virtual void ws(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_ws(rastr_ast_t ast, rastr_node_t node) override {
         PRE(ws)
 
         int count = rastr_ws_count(ast, node);
@@ -536,10 +551,14 @@ class DFTransformer: AstWalker {
         df_->set_syn(syntax.c_str());
         df_->set_str(syntax.c_str());
 
+        return true;
+    }
+
+    void post_ws(rastr_ast_t ast, rastr_node_t node) override {
         POST(ws)
     }
 
-    virtual void cmnt(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_cmnt(rastr_ast_t ast, rastr_node_t node) override {
         PRE(cmnt)
 
         const char* value = rastr_cmnt_value(ast, node);
@@ -547,16 +566,46 @@ class DFTransformer: AstWalker {
         df_->set_syn(value);
         df_->set_str(value);
 
+        return true;
+    }
+
+    void post_cmnt(rastr_ast_t ast, rastr_node_t node) override {
         POST(cmnt)
     }
 
-    virtual bool pre_gap(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
         PRE(gap)
         return true;
     }
 
-    virtual void post_gap(rastr_ast_t ast, rastr_node_t node) {
+    void post_gap(rastr_ast_t ast, rastr_node_t node) override {
         POST(gap)
+    }
+
+    bool pre_loc(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(loc)
+        return true;
+    }
+
+    void post_loc(rastr_ast_t ast, rastr_node_t node) override {
+        POST(loc)
+    }
+
+    bool pre_pos(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(pos)
+
+        int row = rastr_pos_row(ast, node);
+        int col = rastr_pos_col(ast, node);
+        int chr = rastr_pos_chr(ast, node);
+        int byte = rastr_pos_byte(ast, node);
+
+        df_->set_pos(row, col, chr, byte);
+
+        return true;
+    }
+
+    void post_pos(rastr_ast_t ast, rastr_node_t node) override {
+        POST(pos)
     }
 
   private:

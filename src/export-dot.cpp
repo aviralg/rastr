@@ -344,6 +344,7 @@ void rastr_export_to_dot_node(FILE* file,
     case Multiplication:
     case Division:
     case Power:
+    case Power2:
     case LessThan:
     case LessThanEqual:
     case GreaterThan:
@@ -352,9 +353,9 @@ void rastr_export_to_dot_node(FILE* file,
     case NotEqual:
     case Not:
     case And:
-    case VectorizedAnd:
+    case VecAnd:
     case Or:
-    case VectorizedOr:
+    case VecOr:
     case EqualAssign:
     case LeftAssign:
     case RightAssign:
@@ -370,19 +371,8 @@ void rastr_export_to_dot_node(FILE* file,
     case SlotExtract:
     case Formula:
     case PartExtract:
-    case AnonymousFunction:
-        write_dot_node(file,
-                       ast,
-                       node,
-                       ColorRed,
-                       "CODE",
-                       rastr_node_operator_syntax(ast, node));
-        return;
-
-        /********************************************************************************
-         KEYWORDS
-        ********************************************************************************/
     case Function:
+    case Function2:
     case While:
     case Repeat:
     case For:
@@ -394,9 +384,9 @@ void rastr_export_to_dot_node(FILE* file,
         write_dot_node(file,
                        ast,
                        node,
-                       ColorPink,
+                       ColorRed,
                        "CODE",
-                       rastr_node_keyword_syntax(ast, node));
+                       rastr_op_syn(ast, node));
         return;
 
         /********************************************************************************
