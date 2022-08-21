@@ -16,7 +16,10 @@ class Lexer {
         , gap_nl_last_(false)
         , gaps_()
         , beg_(true)
-        , pos_beg_({(std::size_t) -1}) {
+        , lrow_(-1)
+        , lcol_(-1)
+        , lchr_(-1)
+        , lbyte_(-1) {
         gaps_.reserve(20);
     }
 
@@ -268,7 +271,10 @@ class Lexer {
     bool gap_nl_last_;
     std::vector<rastr_node_t> gaps_;
     bool beg_;
-    rastr_node_t pos_beg_;
+    int lrow_;
+    int lcol_;
+    int lchr_;
+    int lbyte_;
 
     bool should_eat_lines() {
         return eat_lines_;
@@ -312,7 +318,7 @@ class Lexer {
             return saved_token_;
         }
 
-        save_pos_();
+        save_lloc_();
 
         if (beg_) {
             beg_ = false;
@@ -566,16 +572,18 @@ class Lexer {
         }
 
         else if (input_.peek_char('\n')) {
-            //   /* increment counter if consecutive newline characters encountered
+            //   /* increment counter if consecutive newline characters
+            //   encountered
             //    */
             //   if (gap_nl_last_) {
             //       rastr_ws_inc(ast_, gaps_.back());
-            //       rastr_pos_inc(ast_, rastr_loc_end(rastr_ws_loc(gaps_.back())));
+            //       rastr_pos_inc(ast_,
+            //       rastr_loc_end(rastr_ws_loc(gaps_.back())));
             //   }
             //   /* if not, create a new ws node*/
             //   else {
             //       gaps_.push_back(rastr_ws_node(ast_, '\n', 1, get_loc_()));
-            //       save_pos_();
+            //       save_lloc_();
             //       gap_nl_last_ = true;
             //   }
 
@@ -608,7 +616,7 @@ class Lexer {
 
         if (count != 0) {
             gaps_.push_back(rastr_ws_node(ast_, chr, count, get_loc_()));
-            save_pos_();
+            save_lloc_();
         }
 
         return count;
@@ -628,7 +636,7 @@ class Lexer {
             ast_,
             input_.get_view(left_index, left_index + size + 1),
             get_loc_()));
-        save_pos_();
+        save_lloc_();
         gap_nl_last_ = false;
     }
 
@@ -1104,33 +1112,26 @@ class Lexer {
     }
 
     rastr_node_t get_loc_() {
-        rastr_node_t pos_end = get_pos_();
+        int rrow;
+        int rcol;
+        int rchr;
+        int rbyte;
 
-        rastr_node_t loc = rastr_loc_node(ast_, pos_beg_, pos_end);
+        input_.get_pos(&rrow, &rcol, &rchr, &rbyte);
+
+        rastr_node_t loc = rastr_loc_node(
+            ast_, lrow_, lcol_, lchr_, lbyte_, rrow, rcol, rchr, rbyte);
 
         return loc;
     }
 
-    void save_pos_() {
-        pos_beg_ = get_pos_();
-    }
-
-    rastr_node_t get_pos_() {
-        int row;
-        int col;
-        int chr;
-        int byte;
-
-        input_.get_pos(&row, &col, &chr, &byte);
-
-        return rastr_pos_node(ast_, row, col, chr, byte);
+    void save_lloc_() {
+        input_.get_pos(&lrow_, &lcol_, &lchr_, &lbyte_);
     }
 
     /* TODO: delete */
     rastr_node_t empty_loc_() {
-        return rastr_loc_node(ast_,
-                              rastr_pos_node(ast_, 0, 0, 0, 0),
-                              rastr_pos_node(ast_, 0, 0, 0, 0));
+        return rastr_loc_node(ast_, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     /* TODO: delete */

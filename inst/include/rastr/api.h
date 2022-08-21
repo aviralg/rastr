@@ -154,7 +154,6 @@ enum rastr_node_type_t {
     Whitespace,
     Comment,
     Gap,
-    Position,
     Location,
     Error
 
@@ -559,17 +558,23 @@ rastr_node_t rastr_gap_node(rastr_ast_t ast, int len, const rastr_node_t* seq);
 int rastr_gap_len(rastr_ast_t ast, rastr_node_t node);
 const rastr_node_t* rastr_gap_seq(rastr_ast_t ast, rastr_node_t node);
 
-rastr_node_t
-rastr_loc_node(rastr_ast_t ast, rastr_node_t beg, rastr_node_t end);
-rastr_node_t rastr_loc_beg(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_loc_end(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_pos_node(rastr_ast_t ast, int row, int col, int chr, int byte);
-int rastr_pos_row(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_col(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_chr(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_byte(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_loc_node(rastr_ast_t ast,
+                            int lrow,
+                            int lcol,
+                            int lchr,
+                            int lbyte,
+                            int rrow,
+                            int rcol,
+                            int rchr,
+                            int rbyte);
+int rastr_pos_lrow(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_lcol(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_lchr(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_lbyte(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_rrow(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_rcol(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_rchr(rastr_ast_t ast, rastr_node_t node);
+int rastr_pos_rbyte(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Parsing
@@ -907,13 +912,6 @@ class AstWalker {
     virtual void post_loc(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_pos(rastr_ast_t ast, rastr_node_t node) {
-        return true;
-    }
-
-    virtual void post_pos(rastr_ast_t ast, rastr_node_t node) {
-    }
-
 #define CALL_WALKER_0(NODE)            \
     if (this->pre_##NODE(ast, node)) { \
         this->post_##NODE(ast, node);  \
@@ -1215,11 +1213,7 @@ class AstWalker {
             break;
 
         case Location:
-            CALL_WALKER_2(loc, beg, end)
-            break;
-
-        case Position:
-            CALL_WALKER_0(pos)
+            CALL_WALKER_0(loc)
             break;
 
         case Error:

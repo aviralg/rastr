@@ -129,53 +129,61 @@ class DotSerializer: public AstWalker {
     }
 
     bool pre_logical(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast,
-            node,
-            "syn", rastr_node_logical_syntax(ast, node),
-             "val", bufprintf("%d", rastr_node_logical_value(ast, node)), NULL);
+        write_node_(ast,
+                    node,
+                    "syn",
+                    rastr_node_logical_syntax(ast, node),
+                    "val",
+                    bufprintf("%d", rastr_node_logical_value(ast, node)),
+                    NULL);
 
-    EXPORT_EDGES_2(logical, gap, loc);
+        EXPORT_EDGES_2(logical, gap, loc);
 
-    return true;
+        return true;
     }
 
     bool pre_integer(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast,
-            node,
-            "syn", rastr_node_integer_syntax(ast, node),
-             "val", bufprintf("%d", rastr_node_integer_value(ast, node)), NULL);
+        write_node_(ast,
+                    node,
+                    "syn",
+                    rastr_node_integer_syntax(ast, node),
+                    "val",
+                    bufprintf("%d", rastr_node_integer_value(ast, node)),
+                    NULL);
 
-    EXPORT_EDGES_2(integer, gap, loc);
+        EXPORT_EDGES_2(integer, gap, loc);
 
-    return true;
+        return true;
     }
 
     bool pre_real(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast,
-            node,
-            "syn", rastr_node_real_syntax(ast, node),
-             "val", bufprintf("%f", rastr_node_real_value(ast, node)), NULL);
+        write_node_(ast,
+                    node,
+                    "syn",
+                    rastr_node_real_syntax(ast, node),
+                    "val",
+                    bufprintf("%f", rastr_node_real_value(ast, node)),
+                    NULL);
 
-    EXPORT_EDGES_2(real, gap, loc);
+        EXPORT_EDGES_2(real, gap, loc);
 
-    return true;
+        return true;
     }
 
     bool pre_complex(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
-                    "syn", rastr_node_complex_syntax(ast, node),
-                     "val",
-                      bufprintf("{r: %d, i: %d}",
-                                rastr_node_complex_value(ast, node).r,
-                                rastr_node_complex_value(ast, node).i), NULL);
+                    "syn",
+                    rastr_node_complex_syntax(ast, node),
+                    "val",
+                    bufprintf("{r: %d, i: %d}",
+                              rastr_node_complex_value(ast, node).r,
+                              rastr_node_complex_value(ast, node).i),
+                    NULL);
 
-    EXPORT_EDGES_2(complex, gap, loc);
+        EXPORT_EDGES_2(complex, gap, loc);
 
-    return true;
+        return true;
     }
 
     bool pre_string(rastr_ast_t ast, rastr_node_t node) override {
@@ -462,26 +470,43 @@ class DotSerializer: public AstWalker {
     }
 
     bool pre_loc(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(ast, node, NULL);
+        char lrow[10];
+        char lcol[10];
+        char lchr[10];
+        char lbyte[10];
+        char rrow[10];
+        char rcol[10];
+        char rchr[10];
+        char rbyte[10];
 
-        EXPORT_EDGES_2(loc, beg, end)
+        sprintf(lrow, "%d", rastr_pos_lrow(ast, node));
+        sprintf(lcol, "%d", rastr_pos_lcol(ast, node));
+        sprintf(lchr, "%d", rastr_pos_lchr(ast, node));
+        sprintf(lbyte, "%d", rastr_pos_lbyte(ast, node));
+        sprintf(rrow, "%d", rastr_pos_rrow(ast, node));
+        sprintf(rcol, "%d", rastr_pos_rcol(ast, node));
+        sprintf(rchr, "%d", rastr_pos_rchr(ast, node));
+        sprintf(rbyte, "%d", rastr_pos_rbyte(ast, node));
 
-        return true;
-    }
-
-    bool pre_pos(rastr_ast_t ast, rastr_node_t node) override {
-        char row[10];
-        char col[10];
-        char chr[10];
-        char byte[10];
-
-        sprintf(row, "%d", rastr_pos_row(ast, node));
-        sprintf(col, "%d", rastr_pos_col(ast, node));
-        sprintf(chr, "%d", rastr_pos_chr(ast, node));
-        sprintf(byte, "%d", rastr_pos_byte(ast, node));
-
-        write_node_(
-            ast, node, "row", row, "col", col, "chr", chr, "byte", byte, NULL);
+        write_node_(ast,
+                    node,
+                    "lrow",
+                    lrow,
+                    "lcol",
+                    lcol,
+                    "lchr",
+                    lchr,
+                    "lbyte",
+                    lbyte,
+                    "rrow",
+                    rrow,
+                    "rcol",
+                    rcol,
+                    "rchr",
+                    rchr,
+                    "rbyte",
+                    rbyte,
+                    NULL);
 
         return true;
     }
@@ -858,9 +883,6 @@ digraph ast {
         case Gap:
             return ColorBlack;
             break;
-        case Position:
-            return ColorBlack;
-            break;
         case Location:
             return ColorBlack;
             break;
@@ -871,75 +893,74 @@ digraph ast {
 
         return ColorBlack;
     }
-    }
-    ;
+};
 
-    void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth);
-    void rastr_export_to_dot_node(FILE* file,
-                                  rastr_ast_t ast,
-                                  rastr_node_t node,
-                                  int depth);
+void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth);
+void rastr_export_to_dot_node(FILE* file,
+                              rastr_ast_t ast,
+                              rastr_node_t node,
+                              int depth);
 
-    SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth) {
-        SEXPTYPE type = TYPEOF(r_filepath);
+SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth) {
+    SEXPTYPE type = TYPEOF(r_filepath);
 
-        if (type != STRSXP) {
-            Rf_error("expected a filepath of type string, received "
-                     "a value of type "
-                     "%s instead",
-                     Rf_type2str(type));
-            return R_NilValue;
-        }
-
-        int length = Rf_length(r_filepath);
-
-        if (length != 1) {
-            Rf_error("expected a filepath string of size 1, "
-                     "received a string of "
-                     "size %d instead",
-                     length);
-            return R_NilValue;
-        }
-
-        SEXP str_elt = STRING_ELT(r_filepath, 0);
-
-        if (str_elt == NA_STRING) {
-            Rf_error("expected a filepath, received NA_character_ "
-                     "instead");
-            return R_NilValue;
-        }
-
-        const char* filepath = CHAR(str_elt);
-
-        rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
-        int depth = INTEGER(r_depth)[0];
-
-        rastr_export_to_dot(ast, filepath, depth);
-
+    if (type != STRSXP) {
+        Rf_error("expected a filepath of type string, received "
+                 "a value of type "
+                 "%s instead",
+                 Rf_type2str(type));
         return R_NilValue;
     }
 
-    void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth) {
-        FILE* file = fopen(filepath, "w");
+    int length = Rf_length(r_filepath);
 
-        if (file == nullptr) {
-            rastr_log_error("cannot open file '%s'", filepath);
-        }
-
-        rastr_export_to_dot_ast(file, ast, depth);
-        fclose(file);
+    if (length != 1) {
+        Rf_error("expected a filepath string of size 1, "
+                 "received a string of "
+                 "size %d instead",
+                 length);
+        return R_NilValue;
     }
 
-    void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth) {
-        return rastr_export_to_dot_node(file, ast, rastr_ast_root(ast), depth);
+    SEXP str_elt = STRING_ELT(r_filepath, 0);
+
+    if (str_elt == NA_STRING) {
+        Rf_error("expected a filepath, received NA_character_ "
+                 "instead");
+        return R_NilValue;
     }
 
-    void rastr_export_to_dot_node(FILE* file,
-                                  rastr_ast_t ast,
-                                  rastr_node_t node,
-                                  int depth) {
-        DotSerializer* dot_ser = new DotSerializer(file);
-        dot_ser->write(ast, node, depth);
-        delete dot_ser;
+    const char* filepath = CHAR(str_elt);
+
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+
+    int depth = INTEGER(r_depth)[0];
+
+    rastr_export_to_dot(ast, filepath, depth);
+
+    return R_NilValue;
+}
+
+void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth) {
+    FILE* file = fopen(filepath, "w");
+
+    if (file == nullptr) {
+        rastr_log_error("cannot open file '%s'", filepath);
     }
+
+    rastr_export_to_dot_ast(file, ast, depth);
+    fclose(file);
+}
+
+void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth) {
+    return rastr_export_to_dot_node(file, ast, rastr_ast_root(ast), depth);
+}
+
+void rastr_export_to_dot_node(FILE* file,
+                              rastr_ast_t ast,
+                              rastr_node_t node,
+                              int depth) {
+    DotSerializer* dot_ser = new DotSerializer(file);
+    dot_ser->write(ast, node, depth);
+    delete dot_ser;
+}

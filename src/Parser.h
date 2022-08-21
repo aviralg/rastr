@@ -808,7 +808,8 @@ class Parser {
 
         if (type == Comma || type == RightParen || type == RightBracket) {
             /* TODO: fix position */
-            res = rastr_msng_node(ast_, rastr_gap_node(ast_, 0, nullptr), empty_loc_());
+            res = rastr_msng_node(
+                ast_, rastr_gap_node(ast_, 0, nullptr), empty_loc_());
         }
 
         else {
@@ -820,12 +821,10 @@ class Parser {
         pcont_pop();
         return res;
     }
-    
+
     /* TODO: delete */
     rastr_node_t empty_loc_() {
-        return rastr_loc_node(ast_,
-                              rastr_pos_node(ast_, 0, 0, 0, 0),
-                              rastr_pos_node(ast_, 0, 0, 0, 0));
+        return rastr_loc_node(ast_, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     void pcont_push(const char* prod) {

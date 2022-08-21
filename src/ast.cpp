@@ -261,15 +261,14 @@ struct rastr_node_impl_t {
         } msng_node;
 
         struct {
-            int row;
-            int col;
-            int chr;
-            int byte;
-        } pos_node;
-
-        struct {
-            rastr_node_t beg;
-            rastr_node_t end;
+            int lrow;
+            int lcol;
+            int lchr;
+            int lbyte;
+            int rrow;
+            int rcol;
+            int rchr;
+            int rbyte;
         } loc_node;
 
     } node;
@@ -603,8 +602,6 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "End";
     case Location:
         return "Location";
-    case Position:
-        return "Position";
     }
     fail_with("Unhandled node type %d", type);
 }
@@ -2667,44 +2664,55 @@ SEXP r_rastr_gap_seq(SEXP r_ast, SEXP r_node) {
     return rastr_node_seq_wrap(result, rastr_gap_len(ast, node));
 }
 
-rastr_node_t
-rastr_loc_node(rastr_ast_t ast, rastr_node_t beg, rastr_node_t end) {
+rastr_node_t rastr_loc_node(rastr_ast_t ast,
+                            int lrow,
+                            int lcol,
+                            int lchr,
+                            int lbyte,
+                            int rrow,
+                            int rcol,
+                            int rchr,
+                            int rbyte) {
     rastr_node_pair_t pair = rastr_node_create(ast, Location);
-    pair.ptr->node.loc_node.beg = beg;
-    pair.ptr->node.loc_node.end = end;
+    pair.ptr->node.loc_node.lrow = lrow;
+    pair.ptr->node.loc_node.lcol = lcol;
+    pair.ptr->node.loc_node.lchr = lchr;
+    pair.ptr->node.loc_node.lbyte = lbyte;
+    pair.ptr->node.loc_node.rrow = rrow;
+    pair.ptr->node.loc_node.rcol = rcol;
+    pair.ptr->node.loc_node.rchr = rchr;
+    pair.ptr->node.loc_node.rbyte = rbyte;
     return pair.node;
 }
 
-rastr_node_t rastr_loc_beg(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.loc_node.beg;
+int rastr_pos_lrow(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.lrow;
 }
 
-rastr_node_t rastr_loc_end(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.loc_node.end;
+int rastr_pos_lcol(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.lcol;
 }
 
-rastr_node_t
-rastr_pos_node(rastr_ast_t ast, int row, int col, int chr, int byte) {
-    rastr_node_pair_t pair = rastr_node_create(ast, Position);
-    pair.ptr->node.pos_node.row = row;
-    pair.ptr->node.pos_node.col = col;
-    pair.ptr->node.pos_node.chr = chr;
-    pair.ptr->node.pos_node.byte = byte;
-    return pair.node;
+int rastr_pos_lchr(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.lchr;
 }
 
-int rastr_pos_row(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.pos_node.row;
+int rastr_pos_lbyte(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.lbyte;
 }
 
-int rastr_pos_col(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.pos_node.col;
+int rastr_pos_rrow(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.rrow;
 }
 
-int rastr_pos_chr(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.pos_node.chr;
+int rastr_pos_rcol(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.rcol;
 }
 
-int rastr_pos_byte(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.pos_node.byte;
+int rastr_pos_rchr(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.rchr;
+}
+
+int rastr_pos_rbyte(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.loc_node.rbyte;
 }

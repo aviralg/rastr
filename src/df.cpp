@@ -37,18 +37,22 @@ class AstDf {
         r_val_int_ = PROTECT(int_vec(size, NA_INTEGER));
         r_val_dbl_ = PROTECT(dbl_vec(size, NA_REAL));
         r_val_cplx_ = PROTECT(cplx_vec(size, NA_COMPLEX));
-        r_row_ = PROTECT(int_vec(size, NA_INTEGER));
-        r_col_ = PROTECT(int_vec(size, NA_INTEGER));
-        r_chr_ = PROTECT(int_vec(size, NA_INTEGER));
-        r_byte_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_lrow_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_lcol_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_lchr_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_lbyte_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_rrow_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_rcol_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_rchr_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_rbyte_ = PROTECT(int_vec(size, NA_INTEGER));
     }
 
     ~AstDf() {
-        UNPROTECT(14);
+        UNPROTECT(18);
     }
 
     SEXP materialize() {
-        return rastr_create_data_frame(14,
+        return rastr_create_data_frame(18,
                                        "id",
                                        r_id_,
                                        "parent_id",
@@ -69,25 +73,44 @@ class AstDf {
                                        r_val_dbl_,
                                        "val_cplx",
                                        r_val_cplx_,
-                                       "row",
-                                       r_row_,
-                                       "col",
-                                       r_col_,
-                                       "chr",
-                                       r_chr_,
-                                       "byte",
-                                       r_byte_);
+                                       "lrow",
+                                       r_lrow_,
+                                       "lcol",
+                                       r_lcol_,
+                                       "lchr",
+                                       r_lchr_,
+                                       "lbyte",
+                                       r_lbyte_,
+                                       "rrow",
+                                       r_rrow_,
+                                       "rcol",
+                                       r_rcol_,
+                                       "rchr",
+                                       r_rchr_,
+                                       "rbyte",
+                                       r_rbyte_);
     }
 
     void inc_index() {
         ++index_;
     }
 
-    void set_pos(int row, int col, int chr, int byte) {
-        int_set(r_row_, index_, row);
-        int_set(r_col_, index_, col);
-        int_set(r_chr_, index_, chr);
-        int_set(r_byte_, index_, byte);
+    void set_pos(int lrow,
+                 int lcol,
+                 int lchr,
+                 int lbyte,
+                 int rrow,
+                 int rcol,
+                 int rchr,
+                 int rbyte) {
+        int_set(r_lrow_, index_, lrow);
+        int_set(r_lcol_, index_, lcol);
+        int_set(r_lchr_, index_, lchr);
+        int_set(r_lbyte_, index_, lbyte);
+        int_set(r_rrow_, index_, rrow);
+        int_set(r_rcol_, index_, rcol);
+        int_set(r_rchr_, index_, rchr);
+        int_set(r_rbyte_, index_, rbyte);
     }
 
     void set_id(int id) {
@@ -142,10 +165,14 @@ class AstDf {
     SEXP r_val_int_;
     SEXP r_val_dbl_;
     SEXP r_val_cplx_;
-    SEXP r_row_;
-    SEXP r_col_;
-    SEXP r_chr_;
-    SEXP r_byte_;
+    SEXP r_lrow_;
+    SEXP r_lcol_;
+    SEXP r_lchr_;
+    SEXP r_lbyte_;
+    SEXP r_rrow_;
+    SEXP r_rcol_;
+    SEXP r_rchr_;
+    SEXP r_rbyte_;
 };
 
 class DFTransformer: AstWalker {
@@ -584,28 +611,23 @@ class DFTransformer: AstWalker {
 
     bool pre_loc(rastr_ast_t ast, rastr_node_t node) override {
         PRE(loc)
+
+        int lrow = rastr_pos_lrow(ast, node);
+        int lcol = rastr_pos_lcol(ast, node);
+        int lchr = rastr_pos_lchr(ast, node);
+        int lbyte = rastr_pos_lbyte(ast, node);
+        int rrow = rastr_pos_rrow(ast, node);
+        int rcol = rastr_pos_rcol(ast, node);
+        int rchr = rastr_pos_rchr(ast, node);
+        int rbyte = rastr_pos_rbyte(ast, node);
+
+        df_->set_pos(lrow, lcol, lchr, lbyte, rrow, rcol, rchr, rbyte);
+
         return true;
     }
 
     void post_loc(rastr_ast_t ast, rastr_node_t node) override {
         POST(loc)
-    }
-
-    bool pre_pos(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(pos)
-
-        int row = rastr_pos_row(ast, node);
-        int col = rastr_pos_col(ast, node);
-        int chr = rastr_pos_chr(ast, node);
-        int byte = rastr_pos_byte(ast, node);
-
-        df_->set_pos(row, col, chr, byte);
-
-        return true;
-    }
-
-    void post_pos(rastr_ast_t ast, rastr_node_t node) override {
-        POST(pos)
     }
 
   private:
