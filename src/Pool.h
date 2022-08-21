@@ -5,10 +5,15 @@
 #include "utilities.h"
 #include "logger.h"
 
-/* take a type and a function to clone a value of that type */
+/* take a type and a function to destroy a value of that type */
 template <typename T, void (*destroy)(T*)> // T* (*clone)(T*)>
 class Pool {
   public:
+    struct slot_t {
+        std::size_t index;
+        T* data;
+    };
+
     // gives the largest possible index
     const std::size_t Null = (std::size_t) -1;
 
@@ -26,7 +31,6 @@ class Pool {
             node->previous = i == 0 ? Null : (i - 1);
             node->next = i == (capacity_ - 1) ? Null : (i + 1);
             node->free = true;
-            node->data = nullptr;
             ++node;
         }
     }
@@ -52,7 +56,7 @@ class Pool {
         buffer_ = (Node*) realloc_or_fail(buffer_, sizeof(Node) * capacity);
 
         for (std::size_t index = capacity_; index < capacity; ++index) {
-            deallocate_(index);
+            move_to_free_list_(index);
         }
 
         capacity_ = capacity;
@@ -62,7 +66,7 @@ class Pool {
         std::size_t index = front_;
         while (index != Null) {
             std::size_t next = get_next_(index);
-            destroy(deallocate_(index));
+            deallocate_(index);
             index = next;
         }
 
@@ -79,24 +83,12 @@ class Pool {
         return back_;
     }
 
-    T* get_front() const {
-        if (get_size() == 0) {
-            fail_with("attempt to access the first element of an empty list");
-        }
-
-        return get_data_(front_);
+    T* at(std::size_t index) {
+        return get_data_(index);
     }
 
-    T* get_back() const {
-        if (get_size() == 0) {
-            fail_with("attempt to access the last element of an empty list");
-        }
-
-        return get_data_(back_);
-    }
-
-    std::size_t push_back(T* data) {
-        std::size_t index = allocate_(data);
+    slot_t allocate() {
+        std::size_t index = allocate_();
 
         if (front_ == Null) {
             front_ = index;
@@ -107,107 +99,48 @@ class Pool {
         back_ = index;
         ++size_;
 
-        return index;
+        return {index, get_data_(index)};
     }
 
-    std::size_t push_front(T* data) {
-        std::size_t index = allocate_(data);
-
-        if (front_ == Null) {
-            back_ = index;
-        } else {
-            link_(index, front_);
-        }
-
-        front_ = index;
-        ++size_;
-
-        return index;
-    }
-
-    std::size_t insert(T* data, std::size_t before) {
-        if (before == Null) {
-            return push_back(data);
-        } else if (before == front_) {
-            return push_front(data);
-        } else {
-            int index = allocate_(data);
-            int previous = get_previous_(before);
-
-            link_(previous, index);
-            link_(index, before);
-
-            ++size_;
-
-            return index;
-        }
-    }
-
-    T* at(std::size_t index) {
-        return get_data_(index);
-    }
-
-    T* pop_front() {
-        std::size_t index = front_;
-        std::size_t size = get_size();
-
-        if (size == 0) {
+    void deallocate(std::size_t index) {
+        if (size_ == 0) {
             fail_with("attempt to remove element from an empty list");
-        } else if (size == 1) {
+        }
+
+        else if (size_ == 1) {
             front_ = Null;
             back_ = Null;
-        } else {
+        }
+
+        else if (index == front_) {
             std::size_t next = get_next_(front_);
             set_previous_(next, Null);
             front_ = next;
         }
 
-        --size_;
-        return deallocate_(index);
-    }
-
-    T* pop_back() {
-        std::size_t index = back_;
-        std::size_t size = get_size();
-
-        if (size == 0) {
-            fail_with("attempt to remove element from an empty list");
-        }
-
-        else if (size == 1) {
-            front_ = Null;
-            back_ = Null;
-        }
-
-        else {
+        else if (index == back_) {
             std::size_t previous = get_previous_(back_);
             set_next_(previous, Null);
             back_ = previous;
-        }
-
-        --size_;
-        return deallocate_(index);
-    }
-
-    T* remove(std::size_t index) {
-        if (size_ == 0) {
-            fail_with("attempt to remove element from an empty list");
-        }
-
-        else if (index == front_) {
-            return pop_front();
-        }
-
-        else if (index == back_) {
-            return pop_back();
         }
 
         else {
             std::size_t previous = get_previous_(index);
             std::size_t next = get_next_(index);
             link_(previous, next);
-            --size_;
-            return deallocate_(index);
+        }
+
+        --size_;
+        deallocate_(index);
+    }
+
+    void map(void (*handler)(T*)) {
+        for (std::size_t index = front_;; index = buffer_[index].next) {
+            handler(&buffer_[index].data);
+
+            if (index == back_) {
+                break;
+            }
         }
     }
 
@@ -216,7 +149,7 @@ class Pool {
         bool free;
         int previous;
         int next;
-        T* data;
+        T data;
     };
 
     Node* buffer_;
@@ -256,18 +189,14 @@ class Pool {
     }
 
     T* get_data_(std::size_t index) {
-        return buffer_[index].data;
-    }
-
-    void set_data_(std::size_t index, T* data) {
-        buffer_[index].data = data;
+        return &buffer_[index].data;
     }
 
     bool full_() {
         return size_ == capacity_;
     }
 
-    std::size_t allocate_(T* data) {
+    std::size_t allocate_() {
         if (full_()) {
             resize(get_capacity() * 2 + 1);
         }
@@ -277,34 +206,22 @@ class Pool {
         free_ = next_free;
 
         set_used_(index);
-        set_data_(index, data);
         set_next_(index, Null);
         set_previous_(index, Null);
 
         return index;
     }
 
-    T* deallocate_(std::size_t index) {
-        T* data = get_data_(index);
+    void deallocate_(std::size_t index) {
+        destroy(get_data_(index));
+        move_to_free_list_(index);
+    }
 
-        set_data_(index, nullptr);
+    void move_to_free_list_(std::size_t index) {
         set_free_(index);
         set_next_(index, free_);
         set_previous_(index, Null);
         free_ = index;
-
-        return data;
-    }
-
-public:
-    void debug(void (*handler)(T*)) {
-        for (std::size_t index = front_;; index = buffer_[index].next) {
-            handler(buffer_[index].data);
-
-            if (index == back_) {
-                break;
-            }
-        }
     }
 };
 

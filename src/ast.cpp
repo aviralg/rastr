@@ -365,8 +365,10 @@ typedef rastr_node_impl_t* rastr_node_ptr_t;
 
 void rastr_node_destroy_shallow(rastr_node_ptr_t ptr);
 
+typedef Pool<rastr_node_impl_t, rastr_node_destroy_shallow> AstPool;
+
 struct rastr_ast_impl_t {
-    Pool<rastr_node_impl_t, rastr_node_destroy_shallow>* pool;
+    AstPool* pool;
     rastr_node_t root;
 };
 
@@ -650,16 +652,14 @@ struct rastr_node_pair_t {
 };
 
 rastr_node_pair_t rastr_node_create(rastr_ast_t ast, rastr_node_type_t type) {
-    rastr_node_ptr_t ptr =
-        (rastr_node_ptr_t) malloc_or_fail(sizeof(rastr_node_impl_t));
-    ptr->type = type;
-    ptr->id = id_counter++;
-
-    std::size_t index = ast->pool->push_back(ptr);
+    AstPool::slot_t slot = ast->pool->allocate();
 
     rastr_node_pair_t pair;
-    pair.ptr = ptr;
-    pair.node = rastr_node_t{index};
+    pair.ptr = slot.data;
+    pair.node = rastr_node_t{slot.index};
+
+    pair.ptr->type = type;
+    pair.ptr->id = id_counter++;
 
     return pair;
 }
@@ -763,10 +763,17 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
         free(ptr->node.string_node.value);
         break;
 
-    case Symbol:
-        free(ptr->node.symbol_node.syntax);
-        free(ptr->node.symbol_node.value);
-        break;
+    case Symbol: {
+        char* syn = ptr->node.symbol_node.syntax;
+        char* val = ptr->node.symbol_node.value;
+
+        free(syn);
+        if (syn != val) {
+            free(val);
+        }
+    }
+
+    break;
 
     /********************************************************************************
       Expressions
@@ -834,8 +841,6 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
         free(ptr->node.err_node.msg);
         break;
     }
-
-    free(ptr);
 }
 
 #define DESTROY_0(NODE) rastr_node_destroy(ast, rastr_##NODE##_gap(ast, node));
@@ -1110,7 +1115,7 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
         break;
     }
 
-    rastr_node_destroy_shallow(ast->pool->remove(node.index));
+    ast->pool->deallocate(node.index);
 }
 
 const char* rastr_ast_to_string(rastr_ast_t ast) {
