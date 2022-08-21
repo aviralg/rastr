@@ -1680,14 +1680,14 @@ rastr_node_t rastr_string_loc(rastr_ast_t ast, rastr_node_t node) {
 }
 
 // symbol
-rastr_node_t rastr_node_symbol_from_view(rastr_ast_t ast,
-                                         const StringView& syntax_view,
-                                         const StringView& value_view,
-                                         rastr_node_t gap,
-                                         rastr_node_t loc) {
+rastr_node_t rastr_node_symbol_unsafe(rastr_ast_t ast,
+                                      char* syntax,
+                                      char* value,
+                                      rastr_node_t gap,
+                                      rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Symbol);
-    pair.ptr->node.symbol_node.syntax = syntax_view.materialize();
-    pair.ptr->node.symbol_node.value = value_view.materialize();
+    pair.ptr->node.symbol_node.syntax = syntax;
+    pair.ptr->node.symbol_node.value = value;
     pair.ptr->node.symbol_node.gap = gap;
     pair.ptr->node.symbol_node.loc = loc;
     return pair.node;
@@ -1698,8 +1698,11 @@ rastr_node_t rastr_node_symbol(rastr_ast_t ast,
                                const char* value,
                                rastr_node_t gap,
                                rastr_node_t loc) {
-    return rastr_node_symbol_from_view(
-        ast, StringView(syntax), StringView(value), gap, loc);
+    return rastr_node_symbol_unsafe(ast,
+                                    StringView(syntax).materialize(),
+                                    StringView(value).materialize(),
+                                    gap,
+                                    loc);
 }
 
 const char* rastr_node_symbol_value(rastr_ast_t ast, rastr_node_t node) {

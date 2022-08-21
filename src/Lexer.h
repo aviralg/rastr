@@ -367,7 +367,8 @@ class Lexer {
         }
 
         else if (input_.read_char_if('_')) {
-            return rastr_node_symbol(ast_, "_", "_", get_gap_(), get_loc_());
+            char* temp = StringView("_").materialize();
+            return rastr_node_symbol(ast_, temp, temp, get_gap_(), get_loc_());
         }
 
         /* raw string literal */
@@ -657,12 +658,9 @@ class Lexer {
            optimization to avoid the long if-else ladder below if the symbol
            starts with a . */
         if (initial == '.') {
-            return rastr_node_symbol_from_view(
-                ast_,
-                input_.get_view(left_index, right_index),
-                input_.get_view(left_index, right_index),
-                get_gap_(),
-                get_loc_());
+            char* temp = input_.get_view(left_index, right_index).materialize();
+            return rastr_node_symbol_unsafe(
+                ast_, temp, temp, get_gap_(), get_loc_());
         }
 
         else if (length == 4 && input_.equal("NULL", left_index, length)) {
@@ -756,12 +754,9 @@ class Lexer {
         }
 
         else {
-            return rastr_node_symbol_from_view(
-                ast_,
-                input_.get_view(left_index, right_index),
-                input_.get_view(left_index, right_index),
-                get_gap_(),
-                get_loc_());
+            char* temp = input_.get_view(left_index, right_index).materialize();
+            return rastr_node_symbol_unsafe(
+                ast_, temp, temp, get_gap_(), get_loc_());
         }
     }
 
@@ -895,10 +890,10 @@ class Lexer {
         std::size_t right_index = 0;
         parse_string_helper_(delimiter, left_index, right_index);
 
-        return rastr_node_symbol_from_view(
+        return rastr_node_symbol_unsafe(
             ast_,
-            input_.get_view(left_index, right_index),
-            input_.get_view(left_index + 1, right_index - 1),
+            input_.get_view(left_index, right_index).materialize(),
+            input_.get_view(left_index + 1, right_index - 1).materialize(),
             get_gap_(),
             get_loc_());
     }

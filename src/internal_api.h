@@ -14,11 +14,11 @@ rastr_node_t rastr_node_string_from_view(rastr_ast_t ast,
                                          rastr_node_t gap,
                                          rastr_node_t loc);
 
-rastr_node_t rastr_node_symbol_from_view(rastr_ast_t ast,
-                                         const StringView& syntax_view,
-                                         const StringView& value_view,
-                                         rastr_node_t gap,
-                                         rastr_node_t loc);
+rastr_node_t rastr_node_symbol_unsafe(rastr_ast_t ast,
+                                      char* syntax,
+                                      char* value,
+                                      rastr_node_t gap,
+                                      rastr_node_t loc);
 
 rastr_node_t rastr_node_integer_from_view(rastr_ast_t ast,
                                           const StringView& syntax_view,
