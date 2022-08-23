@@ -13,14 +13,11 @@ class Lexer {
         , context_("")
         , token_saved_(false)
         , eat_lines_(false)
-        , gap_nl_last_(false)
-        , gaps_()
         , beg_(true)
         , lrow_(-1)
         , lcol_(-1)
         , lchr_(-1)
         , lbyte_(-1) {
-        gaps_.reserve(20);
     }
 
     rastr_node_t next_token() {
@@ -268,13 +265,12 @@ class Lexer {
     rastr_node_t saved_token_;
     bool token_saved_;
     bool eat_lines_;
-    bool gap_nl_last_;
-    std::vector<rastr_node_t> gaps_;
     bool beg_;
     int lrow_;
     int lcol_;
     int lchr_;
     int lbyte_;
+    rastr_node_t gap_;
 
     bool should_eat_lines() {
         return eat_lines_;
@@ -325,22 +321,13 @@ class Lexer {
             return rastr_beg_node(ast_, empty_loc_());
         }
 
-        bool skip = true;
-        while (skip) {
-            skip = false;
+        bool nl = parse_gap_();
 
-            /* parse whitespace; newline is excluded because it can be an
-               expression terminator or a whitespace depending on the context */
-            if (input_.peek_char_any(' ', '\t', '\f')) {
-                skip = true;
-                parse_ws_();
-            }
-
-            /* parse comment */
-            else if (input_.read_char_if('#')) {
-                skip = true;
-                parse_cmnt_('#');
-            }
+        if (nl) {
+            return rastr_node_terminator(
+                ast_, Newline, empty_gap_(), empty_loc_());
+        } else {
+            save_lloc_();
         }
 
         /* return end token if end of input is reached */
@@ -401,7 +388,7 @@ class Lexer {
         }
 
         /* symbols and operators */
-        else if (input_.is_alphabet()) {
+        else if (input_.is_walpha()) {
             return parse_sym_or_op_(input_.read_char());
         }
 
@@ -572,29 +559,30 @@ class Lexer {
             return rastr_node_terminator(ast_, Comma, get_gap_(), get_loc_());
         }
 
-        else if (input_.peek_char('\n')) {
-            //   /* increment counter if consecutive newline characters
-            //   encountered
-            //    */
-            //   if (gap_nl_last_) {
-            //       rastr_ws_inc(ast_, gaps_.back());
-            //       rastr_pos_inc(ast_,
-            //       rastr_loc_end(rastr_ws_loc(gaps_.back())));
-            //   }
-            //   /* if not, create a new ws node*/
-            //   else {
-            //       gaps_.push_back(rastr_ws_node(ast_, '\n', 1, get_loc_()));
-            //       save_lloc_();
-            //       gap_nl_last_ = true;
-            //   }
-
-            int count = parse_ws_inner_('\n');
-
-            input_.next_line(count);
-
-            return rastr_node_terminator(
-                ast_, Newline, empty_gap_(), empty_loc_());
-        }
+        // else if (input_.peek_char('\n')) {
+        //     //   /* increment counter if consecutive newline characters
+        //     //   encountered
+        //     //    */
+        //     //   if (gap_nl_last_) {
+        //     //       rastr_ws_inc(ast_, gaps_.back());
+        //     //       rastr_pos_inc(ast_,
+        //     //       rastr_loc_end(rastr_ws_loc(gaps_.back())));
+        //     //   }
+        //     //   /* if not, create a new ws node*/
+        //     //   else {
+        //     //       gaps_.push_back(rastr_ws_node(ast_, '\n', 1,
+        //     get_loc_()));
+        //     //       save_lloc_();
+        //     //       gap_nl_last_ = true;
+        //     //   }
+        //
+        //     int count = parse_ws_inner_('\n');
+        //
+        //     input_.next_line(count);
+        //
+        //     return rastr_node_terminator(
+        //         ast_, Newline, empty_gap_(), empty_loc_());
+        // }
 
         else if (input_.read_char_if(';')) {
             return rastr_node_terminator(
@@ -612,44 +600,79 @@ class Lexer {
         }
     }
 
-    int parse_ws_inner_(char chr) {
-        int count = input_.read_char_while(chr);
+    bool parse_gap_() {
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        int d = 0;
+        int e = 0;
+        bool nl = false;
+        bool process = true;
 
-        if (count != 0) {
-            gaps_.push_back(rastr_ws_node(ast_, chr, count, get_loc_()));
-            save_lloc_();
+        while (process) {
+            /* whitespace */
+            a = input_.read_char_while(' ');
+            b = input_.read_char_while('\t');
+            c = input_.read_char_while('\f');
+
+            /* newline */
+            d = input_.read_char_while('\n');
+
+            if (d) {
+                nl = true;
+                input_.next_line(d);
+            }
+
+            /* comment */
+            e = 0;
+            if (input_.read_char_if('#')) {
+                e = 1 + input_.read_char_while_not('\n');
+            }
+
+            process = a || b || c || d || e;
         }
 
-        return count;
+        gap_ = rastr_gap_node_owner(
+            ast_, input_.view_at(lbyte_).materialize(), get_loc_());
+
+        return nl;
     }
 
-    void parse_ws_() {
-        while (parse_ws_inner_(' ') || parse_ws_inner_('\t') ||
-               parse_ws_inner_('\f'))
-            ;
-        gap_nl_last_ = false;
-    }
-
-    void parse_cmnt_(char initial) {
-        int left_index = input_.get_index() - 1;
-        int size = input_.read_char_while_not('\n');
-        gaps_.push_back(rastr_cmnt_node_from_view(
-            ast_,
-            input_.get_view(left_index, left_index + size + 1),
-            get_loc_()));
-        save_lloc_();
-        gap_nl_last_ = false;
-    }
+    // int parse_ws_inner_(char chr) {
+    //     int count = input_.read_char_while(chr);
+    //
+    //     if (count != 0) {
+    //         gaps_.push_back(rastr_ws_node(ast_, chr, count, get_loc_()));
+    //         save_lloc_();
+    //     }
+    //
+    //     return count;
+    // }
+    //
+    // void parse_ws_() {
+    //     while (parse_ws_inner_(' ') || parse_ws_inner_('\t') ||
+    //            parse_ws_inner_('\f'))
+    //         ;
+    //     gap_nl_last_ = false;
+    // }
+    //
+    // void parse_cmnt_(char initial) {
+    //     int left_index = input_.get_index() - 1;
+    //     int size = input_.read_char_while_not('\n');
+    //     gaps_.push_back(rastr_cmnt_node_from_view(
+    //         ast_,
+    //         input_.get_view(left_index, left_index + size + 1),
+    //         get_loc_()));
+    //     save_lloc_();
+    //     gap_nl_last_ = false;
+    // }
 
     rastr_node_t parse_sym_or_op_(char initial) {
         std::size_t left_index = input_.get_index() - 1;
 
         /* keep reading until the end is reached or a non symbol character
          * is encountered */
-        while (!input_.end() &&
-               (input_.is_alpha_numeric() || input_.peek_char_any('.', '_'))) {
-            input_.read_char();
-        }
+        input_.read_identifier();
 
         std::size_t right_index = input_.get_index();
         std::size_t length = right_index - left_index;
@@ -760,7 +783,7 @@ class Lexer {
         }
     }
 
-    rastr_node_t parse_raw_string_(char r, char quote) {
+    rastr_node_t parse_raw_string_(std::uint32_t r, std::uint32_t quote) {
         std::size_t left_quote_index = input_.get_index() - 2;
         std::size_t left_string_index = 0;
         std::size_t right_string_index = 0;
@@ -769,7 +792,7 @@ class Lexer {
         std::size_t opening_dash_count = 0;
         std::size_t closing_dash_count = 0;
 
-        char close = '\0';
+        std::uint32_t close = '\0';
 
         /* read a possibly empty, consecutive sequence of -'s */
         opening_dash_count = input_.read_char_while('-');
@@ -784,18 +807,25 @@ class Lexer {
         } else if (input_.read_char_if('|')) {
             close = '|';
         } else {
+            /* TODO: add location */
             return rastr_node_error(ast_, "malformed raw string literal");
         }
 
         /* the actual string content starts at this index */
         left_string_index = input_.get_index();
 
+        std::uint32_t chr;
+        int bytes = 0;
+
         while (!input_.end()) {
-            char chr = input_.read_char();
+
+            chr = input_.read_utf8_char(&bytes);
 
             if (chr == '\n') {
                 input_.next_line();
             }
+
+            input_.inc_loc(bytes);
 
             /* if we reach a closing quote, the string might be ending
              */
@@ -830,23 +860,28 @@ class Lexer {
         return rastr_node_error(ast_, "unterminated raw string");
     }
 
-    void parse_string_helper_(char delimiter,
+    void parse_string_helper_(std::uint32_t delimiter,
                               std::size_t& left_index,
                               std::size_t& right_index) {
-        char previous = delimiter;
+        std::uint32_t previous = delimiter;
         char current;
         left_index = input_.get_index() - 1;
         bool escaped = false;
 
+        std::uint32_t chr;
+        int bytes;
+
         while (!input_.end()) {
-            char current = input_.read_char();
+            chr = input_.read_utf8_char(&bytes);
 
             /* quoted symbols can span multiple lines! since this function is
                called from parse_quoted_symbol_, we need to check for
                occurrences of \n and increment row.*/
-            if (current == '\n') {
+            if (chr == '\n') {
                 input_.next_line();
             }
+
+            input_.inc_loc(bytes);
 
             /* if current char is escaped by a previous \, then toggle
                escaped. an even number of \ cancel out the escaping
@@ -857,13 +892,13 @@ class Lexer {
 
             // if delimiter encountered and not escaped, then parsing is
             // complete
-            if (current == delimiter && !escaped) {
+            if (chr == delimiter && !escaped) {
                 // left_index is inclusive and right_index is exclusive
                 right_index = input_.get_index();
                 return;
             }
 
-            previous = current;
+            previous = chr;
         }
 
         // return rastr_node_error(ast_, "unterminated special value");
@@ -1100,10 +1135,7 @@ class Lexer {
     }
 
     rastr_node_t get_gap_() {
-        rastr_node_t gap = rastr_gap_node(ast_, gaps_.size(), gaps_.data());
-        gaps_.clear();
-        gap_nl_last_ = false;
-        return gap;
+        return gap_;
     }
 
     rastr_node_t get_loc_() {
@@ -1131,6 +1163,6 @@ class Lexer {
 
     /* TODO: delete */
     rastr_node_t empty_gap_() {
-        return rastr_gap_node(ast_, 0, nullptr);
+        return rastr_gap_node_owner(ast_, nullptr, empty_loc_());
     }
 };

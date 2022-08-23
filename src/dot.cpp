@@ -437,34 +437,10 @@ class DotSerializer: public AstWalker {
         return true;
     }
 
-    bool pre_ws(rastr_ast_t ast, rastr_node_t node) override {
-        char count[10];
-        char chr[10];
-
-        sprintf(count, "%d", rastr_ws_count(ast, node));
-        sprintf(chr, "%c", rastr_ws_chr(ast, node));
-
-        write_node_(ast, node, "count", count, "chr", chr, NULL);
-
-        EXPORT_EDGES_1(ws, loc)
-
-        return true;
-    }
-
-    bool pre_cmnt(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(ast, node, "val", rastr_cmnt_value(ast, node), NULL);
-
-        EXPORT_EDGES_1(cmnt, loc)
-
-        return true;
-    }
-
     bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
-        int len = rastr_gap_len(ast, node);
+        write_node_(ast, node, "val", rastr_gap_val(ast, node), NULL);
 
-        write_node_(ast, node, "len", bufprintf("%d", len), NULL);
-
-        EXPORT_EDGES_SEQ(gap, len, seq)
+        EXPORT_EDGES_1(gap, loc)
 
         return true;
     }
@@ -873,12 +849,6 @@ digraph ast {
             break;
         case End:
             return ColorGray;
-            break;
-        case Whitespace:
-            return ColorBlack;
-            break;
-        case Comment:
-            return ColorBlack;
             break;
         case Gap:
             return ColorBlack;

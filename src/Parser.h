@@ -809,7 +809,9 @@ class Parser {
         if (type == Comma || type == RightParen || type == RightBracket) {
             /* TODO: fix position */
             res = rastr_msng_node(
-                ast_, rastr_gap_node(ast_, 0, nullptr), empty_loc_());
+                ast_,
+                rastr_gap_node_owner(ast_, nullptr, empty_loc_()),
+                empty_loc_());
         }
 
         else {
@@ -946,6 +948,7 @@ class Parser {
             case Range:
                 return 17;
             case Power:
+            case Power2:
                 return 19;
             case PartExtract:
             case SlotExtract:

@@ -231,19 +231,8 @@ struct rastr_node_impl_t {
         } err_node;
 
         struct {
-            char chr;
-            int count;
+            char* val;
             rastr_node_t loc;
-        } ws_node;
-
-        struct {
-            char* value;
-            rastr_node_t loc;
-        } cmnt_node;
-
-        struct {
-            rastr_node_t* seq;
-            int len;
         } gap_node;
 
         struct {
@@ -592,10 +581,6 @@ const char* rastr_node_type_to_string(rastr_node_type_t type) {
         return "Missing";
     case Error:
         return "Error";
-    case Whitespace:
-        return "Whitespace";
-    case Comment:
-        return "Comment";
     case Gap:
         return "Gap";
     case Beg:
@@ -826,15 +811,10 @@ void rastr_node_destroy_shallow(rastr_node_ptr_t ptr) {
     case Missing:
     case Beg:
     case End:
-    case Whitespace:
-        break;
-
-    case Comment:
-        free(ptr->node.cmnt_node.value);
         break;
 
     case Gap:
-        free(ptr->node.gap_node.seq);
+        free(ptr->node.gap_node.val);
         break;
 
     case Error:
@@ -1103,12 +1083,7 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
         DESTROY_0(end)
         break;
 
-    case Whitespace:
-    case Comment:
-        break;
-
     case Gap:
-        DESTROY_SEQ(gap, len, seq)
         break;
 
     case Error:
@@ -2602,74 +2577,20 @@ rastr_node_t rastr_beg_loc(rastr_ast_t ast, rastr_node_t node) {
 }
 
 rastr_node_t
-rastr_ws_node(rastr_ast_t ast, char chr, int count, rastr_node_t loc) {
-    rastr_node_pair_t pair = rastr_node_create(ast, Whitespace);
-    pair.ptr->node.ws_node.chr = chr;
-    pair.ptr->node.ws_node.count = count;
-    pair.ptr->node.ws_node.loc = loc;
-    return pair.node;
-}
-
-char rastr_ws_chr(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.ws_node.chr;
-}
-
-int rastr_ws_count(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.ws_node.count;
-}
-
-void rastr_ws_inc(rastr_ast_t ast, rastr_node_t node) {
-    ++rastr_ast_get_impl(ast, node)->node.ws_node.count;
-}
-
-rastr_node_t rastr_ws_loc(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.ws_node.loc;
-}
-
-rastr_node_t rastr_cmnt_node_from_view(rastr_ast_t ast,
-                                       const StringView& value_view,
-                                       rastr_node_t loc) {
-    rastr_node_pair_t pair = rastr_node_create(ast, Comment);
-    pair.ptr->node.cmnt_node.value = value_view.materialize();
-    pair.ptr->node.cmnt_node.loc = loc;
-    return pair.node;
-}
-
-const char* rastr_cmnt_value(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.cmnt_node.value;
-}
-
-rastr_node_t rastr_cmnt_loc(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.cmnt_node.loc;
-}
-
-rastr_node_t rastr_gap_node(rastr_ast_t ast, int len, const rastr_node_t* seq) {
+rastr_gap_node_owner(rastr_ast_t ast, char* val, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, Gap);
-    pair.ptr->node.gap_node.len = len;
-    pair.ptr->node.gap_node.seq =
-        (rastr_node_t*) memclone_or_fail(seq, len * sizeof(rastr_node_t));
+    pair.ptr->node.gap_node.val = val;
+    pair.ptr->node.gap_node.loc = loc;
     return pair.node;
 }
-int rastr_gap_len(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.gap_node.len;
+
+const char* rastr_gap_val(rastr_ast_t ast, rastr_node_t node) {
+    const char* res = rastr_ast_get_impl(ast, node)->node.gap_node.val;
+    return res == nullptr ? "" : res;
 }
 
-SEXP r_rastr_gap_len(SEXP r_ast, SEXP r_node) {
-    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-    rastr_node_t node = rastr_node_unwrap(r_node);
-    int result = rastr_gap_len(ast, node);
-    return rastr_int_wrap(result);
-}
-
-const rastr_node_t* rastr_gap_seq(rastr_ast_t ast, rastr_node_t node) {
-    return rastr_ast_get_impl(ast, node)->node.gap_node.seq;
-}
-
-SEXP r_rastr_gap_seq(SEXP r_ast, SEXP r_node) {
-    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-    rastr_node_t node = rastr_node_unwrap(r_node);
-    const rastr_node_t* result = rastr_gap_seq(ast, node);
-    return rastr_node_seq_wrap(result, rastr_gap_len(ast, node));
+rastr_node_t rastr_gap_loc(rastr_ast_t ast, rastr_node_t node) {
+    return rastr_ast_get_impl(ast, node)->node.gap_node.loc;
 }
 
 rastr_node_t rastr_loc_node(rastr_ast_t ast,

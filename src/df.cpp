@@ -568,40 +568,14 @@ class DFTransformer: AstWalker {
         POST(end)
     }
 
-    bool pre_ws(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(ws)
+    bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(gap)
 
-        int count = rastr_ws_count(ast, node);
-        char chr = rastr_ws_chr(ast, node);
-        std::string syntax(count, chr);
-
-        df_->set_syn(syntax.c_str());
-        df_->set_str(syntax.c_str());
-
-        return true;
-    }
-
-    void post_ws(rastr_ast_t ast, rastr_node_t node) override {
-        POST(ws)
-    }
-
-    bool pre_cmnt(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(cmnt)
-
-        const char* value = rastr_cmnt_value(ast, node);
+        const char* value = rastr_gap_val(ast, node);
 
         df_->set_syn(value);
         df_->set_str(value);
 
-        return true;
-    }
-
-    void post_cmnt(rastr_ast_t ast, rastr_node_t node) override {
-        POST(cmnt)
-    }
-
-    bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(gap)
         return true;
     }
 

@@ -3,7 +3,62 @@
 
 #include <cstring>
 #include <string>
+#include <cstdint>
+#include <cwctype>
 #include "StringView.h"
+
+// Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
+// See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
+
+#define UTF8_ACCEPT 0
+#define UTF8_REJECT 1
+
+static const std::uint8_t utf8d[] = {
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 00..1f
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 20..3f
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 40..5f
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 60..7f
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9, // 80..9f
+  7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7, // a0..bf
+  8,8,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, // c0..df
+  0xa,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x4,0x3,0x3, // e0..ef
+  0xb,0x6,0x6,0x6,0x5,0x8,0x8,0x8,0x8,0x8,0x8,0x8,0x8,0x8,0x8,0x8, // f0..ff
+  0x0,0x1,0x2,0x3,0x5,0x8,0x7,0x1,0x1,0x1,0x4,0x6,0x1,0x1,0x1,0x1, // s0..s0
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,1,1,1, // s1..s2
+  1,2,1,1,1,1,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1, // s3..s4
+  1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,3,1,1,1,1,1,1, // s5..s6
+  1,3,1,1,1,1,1,3,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1, // s7..s8
+};
+
+/*
+UTF-8 is a variable length character encoding. To decode a character one or more
+bytes have to be read from a string. The decode function implements a single
+step in this process. It takes two parameters maintaining state and a byte, and
+returns the state achieved after processing the byte. Specifically, it returns
+the value UTF8_ACCEPT (0) if enough bytes have been read for a character,
+UTF8_REJECT (12) if the byte is not allowed to occur at its position, and some
+other positive value if more bytes have to be read.
+
+When decoding the first byte of a string, the caller must set the state variable
+to UTF8_ACCEPT. If, after decoding one or more bytes the state UTF8_ACCEPT is
+reached again, then the decoded Unicode character value is available through the
+codep parameter. If the state UTF8_REJECT is entered, that state will never be
+exited unless the caller intervenes. See the examples below for more information
+on usage and error handling, and the section on implementation details for how
+the decoder is constructed.
+*/
+
+std::uint32_t inline
+decode(std::uint32_t* state, std::uint32_t* codep, std::uint32_t byte) {
+    std::uint32_t type = utf8d[byte];
+
+  *codep = (*state != UTF8_ACCEPT) ?
+    (byte & 0x3fu) | (*codep << 6) :
+    (0xff >> type) & (byte);
+
+  *state = utf8d[256 + *state*16 + type];
+  return *state;
+}
 
 /* treats a string as a sequence of characters followed by infinitely many EOFs
  */
@@ -12,7 +67,7 @@ class Input {
     int Eof = INT_MAX;
 
     /* input is a non-owning pointer to a character sequence */
-    Input(const char* input, std::size_t length)
+    Input(const std::uint8_t* input, std::size_t length)
         : input_(input)
         , length_(length)
         , index_(0)
@@ -133,20 +188,8 @@ class Input {
         return false;
     }
 
-    /* true if input does not have 'ch' as the next character */
-    bool read_char_if_not(int ch) {
-        int c = peek_char_next_();
-
-        if (c != ch) {
-            if (c != Eof)
-                inc_index_();
-            return true;
-        }
-
-        return false;
-    }
-
-    /* read consecutive occurrences of ch */
+    /* Read consecutive occurrences of ch. No need to deal with utf8 here since
+       we are only checking for consecutive occurrences of ascii ch. */
     std::size_t read_char_while(char ch) {
         std::size_t count = 0;
 
@@ -158,12 +201,89 @@ class Input {
         return count;
     }
 
-    /* stop reading when ch is found */
-    std::size_t read_char_while_not(int ch) {
+    /* stop reading when ch is found, check for utf8 characters */
+    std::size_t read_identifier() {
         std::size_t count = 0;
+        std::uint32_t codepoint;
+        int bytes;
 
-        while (!end() && input_[index_] != ch) {
-            inc_index_();
+        while (!end()) {
+            codepoint = read_utf8_char(&bytes);
+
+            if (codepoint != '.' && codepoint != '_' &&
+                !std::iswalnum((std::wint_t) codepoint)) {
+                index_ -= bytes;
+                break;
+            }
+
+            /* each utf8 char contributes one col_, one chr_, and bytes worth of
+             * byte_ */
+            ++col_;
+            ++chr_;
+            byte_ += bytes;
+            ++count;
+        }
+        return count;
+    }
+
+    bool is_walpha() {
+        int bytes;
+        std::uint32_t codepoint = read_utf8_char(&bytes);
+        index_ -= bytes;
+        return std::iswalpha((std::wint_t) codepoint);
+    }
+
+    std::uint32_t read_utf8_char(int* bytes) {
+        uint32_t codepoint = 0;
+        uint32_t state = UTF8_ACCEPT;
+
+        *bytes = index_;
+
+        while (true) {
+            decode(&state, &codepoint, input_[index_]);
+            index_++;
+
+            switch (state) {
+            case UTF8_ACCEPT:
+                *bytes = index_ - *bytes;
+                return codepoint;
+                break;
+
+            case UTF8_REJECT:
+                /* TODO: improve error message */
+                Rf_error("invalid UTF-8 character encountered");
+                break;
+
+            default:
+                continue;
+                break;
+            }
+        }
+    }
+
+    void inc_loc(int bytes) {
+        ++col_;
+        ++chr_;
+        byte_ += bytes;
+    }
+
+    /* stop reading when ch is found, check for utf8 characters */
+    std::size_t read_char_while_not(char ch) {
+        std::size_t count = 0;
+        int bytes;
+        std::uint32_t chr = (std::uint32_t) ch;
+
+        while (!end()) {
+            if (read_utf8_char(&bytes) == chr) {
+                /* unread ch which is 1 byte by design and exit loop */
+                index_ -= 1;
+                break;
+            }
+            /* each utf8 char contributes one col_, one chr_, and bytes worth of
+             * byte_ */
+            ++col_;
+            ++chr_;
+            byte_ += bytes;
             ++count;
         }
 
@@ -174,7 +294,7 @@ class Input {
        undefined behavior on reading past input */
     int equal(const char* str, std::size_t index, std::size_t length) const {
         if (index + length <= length_) {
-            return strncmp(input_ + index, str, length) == 0;
+            return strncmp((const char*)input_ + index, str, length) == 0;
         }
 
         else {
@@ -189,15 +309,15 @@ class Input {
     // }
 
     StringView get_view(std::size_t left_index, std::size_t right_index) const {
-        return StringView(input_, left_index, right_index);
+        return StringView((const char*)input_, left_index, right_index);
     }
 
     StringView get_view(std::size_t length) const {
-        return StringView(input_, length);
+        return StringView((const char*)input_, length);
     }
 
     StringView view_at(std::size_t left_index) const {
-        return StringView(input_, left_index, index_);
+        return StringView((const char*)input_, left_index, index_);
     }
 
     void rewind() {
@@ -219,7 +339,7 @@ class Input {
     }
 
   private:
-    const char* input_;
+    const std::uint8_t* input_;
     const std::size_t length_;
     std::size_t index_;
 

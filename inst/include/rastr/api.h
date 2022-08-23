@@ -151,8 +151,6 @@ enum rastr_node_type_t {
     Missing,
     Beg,
     End,
-    Whitespace,
-    Comment,
     Gap,
     Location,
     Error
@@ -542,21 +540,9 @@ rastr_node_t rastr_end_node(rastr_ast_t ast);
 rastr_node_t rastr_end_gap(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_end_loc(rastr_ast_t ast, rastr_node_t node);
 
-rastr_node_t
-rastr_cmnt_node(rastr_ast_t ast, rastr_node_t node, rastr_node_t loc);
-const char* rastr_cmnt_value(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_cmnt_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_ws_node(rastr_ast_t ast, char chr, int count, rastr_node_t loc);
-char rastr_ws_chr(rastr_ast_t ast, rastr_node_t node);
-int rastr_ws_count(rastr_ast_t ast, rastr_node_t node);
-void rastr_ws_inc(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_ws_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_gap_node(rastr_ast_t ast, int len, const rastr_node_t* seq);
-int rastr_gap_len(rastr_ast_t ast, rastr_node_t node);
-const rastr_node_t* rastr_gap_seq(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_gap_node_owner(rastr_ast_t ast, char* val, rastr_node_t loc);
+const char* rastr_gap_val(rastr_ast_t ast, rastr_node_t node);
+rastr_node_t rastr_gap_loc(rastr_ast_t ast, rastr_node_t node);
 
 rastr_node_t rastr_loc_node(rastr_ast_t ast,
                             int lrow,
@@ -884,20 +870,6 @@ class AstWalker {
     virtual void post_end(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_ws(rastr_ast_t ast, rastr_node_t node) {
-        return true;
-    }
-
-    virtual void post_ws(rastr_ast_t ast, rastr_node_t node) {
-    }
-
-    virtual bool pre_cmnt(rastr_ast_t ast, rastr_node_t node) {
-        return true;
-    }
-
-    virtual void post_cmnt(rastr_ast_t ast, rastr_node_t node) {
-    }
-
     virtual bool pre_gap(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
@@ -1200,16 +1172,8 @@ class AstWalker {
             CALL_WALKER_2(end, gap, loc)
             break;
 
-        case Whitespace:
-            CALL_WALKER_1(ws, loc)
-            break;
-
-        case Comment:
-            CALL_WALKER_1(cmnt, loc)
-            break;
-
         case Gap:
-            CALL_WALKER_SEQ(gap, len, seq)
+            CALL_WALKER_1(gap, loc)
             break;
 
         case Location:

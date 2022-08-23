@@ -51,16 +51,8 @@ class AstSerializer: public AstWalker {
         (*stream_) << rastr_node_symbol_syntax(ast, node);
     }
 
-    virtual void ws(rastr_ast_t ast, rastr_node_t node) {
-        char chr = rastr_ws_chr(ast, node);
-        int count = rastr_ws_count(ast, node);
-        for (int i = 0; i < count; ++i) {
-            stream_->put(chr);
-        }
-    }
-
-    virtual void cmnt(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_cmnt_value(ast, node);
+    virtual void post_gap(rastr_ast_t ast, rastr_node_t node) {
+        (*stream_) << rastr_gap_val(ast, node);
     }
 
   private:

@@ -2,9 +2,10 @@
 #include <iostream>
 #include "utilities.h"
 #include "Parser.h"
+#include <cstdint>
 
 rastr_ast_t rastr_parse_str(const char* str) {
-    Input input(str, std::strlen(str));
+    Input input((const std::uint8_t*) str, std::strlen(str));
     rastr_ast_t ast = rastr_ast_create(100);
 
     Parser parser(input, ast);
