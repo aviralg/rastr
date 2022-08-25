@@ -349,7 +349,8 @@ class Lexer {
                    function bypasses operator checks if the symbol starts
                    with a
                    . */
-                return parse_sym_or_op_('.');
+                input_.rewind();
+                return parse_sym_or_op_(true);
             }
         }
 
@@ -389,7 +390,7 @@ class Lexer {
 
         /* symbols and operators */
         else if (input_.is_walpha()) {
-            return parse_sym_or_op_(input_.read_char());
+            return parse_sym_or_op_(false);
         }
 
         /* operators */
@@ -667,8 +668,8 @@ class Lexer {
     //     gap_nl_last_ = false;
     // }
 
-    rastr_node_t parse_sym_or_op_(char initial) {
-        std::size_t left_index = input_.get_index() - 1;
+    rastr_node_t parse_sym_or_op_(bool dot) {
+        std::size_t left_index = input_.get_index();
 
         /* keep reading until the end is reached or a non symbol character
          * is encountered */
@@ -680,7 +681,7 @@ class Lexer {
         /* if it starts with a . it cannot be an operator. This check is an
            optimization to avoid the long if-else ladder below if the symbol
            starts with a . */
-        if (initial == '.') {
+        if (dot) {
             char* temp = input_.get_view(left_index, right_index).materialize();
             return rastr_node_symbol_unsafe(
                 ast_, temp, temp, get_gap_(), get_loc_());
