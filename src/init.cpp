@@ -19,73 +19,79 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_parse_str, 1),
     DECLARE_BINDING(rastr_parse_file, 1),
 
-    DECLARE_BINDING(rastr_blk_lbrack, 2),
-    DECLARE_BINDING(rastr_blk_len, 2),
-    DECLARE_BINDING(rastr_blk_seq, 2),
-    DECLARE_BINDING(rastr_blk_rbrack, 2),
-    DECLARE_BINDING(rastr_grp_lbrack, 2),
-    DECLARE_BINDING(rastr_grp_expr, 2),
-    DECLARE_BINDING(rastr_grp_rbrack, 2),
-    DECLARE_BINDING(rastr_nuop_op, 2),
-    DECLARE_BINDING(rastr_unop_op, 2),
-    DECLARE_BINDING(rastr_unop_expr, 2),
-    DECLARE_BINDING(rastr_binop_lexpr, 2),
-    DECLARE_BINDING(rastr_binop_op, 2),
-    DECLARE_BINDING(rastr_binop_rexpr, 2),
-    DECLARE_BINDING(rastr_rlp_kw, 2),
-    DECLARE_BINDING(rastr_rlp_body, 2),
-    DECLARE_BINDING(rastr_wlp_kw, 2),
-    DECLARE_BINDING(rastr_wlp_cond, 2),
-    DECLARE_BINDING(rastr_wlp_body, 2),
-    DECLARE_BINDING(rastr_flp_kw, 2),
-    DECLARE_BINDING(rastr_flp_iter, 2),
-    DECLARE_BINDING(rastr_flp_body, 2),
-    DECLARE_BINDING(rastr_icnd_ikw, 2),
-    DECLARE_BINDING(rastr_icnd_cond, 2),
-    DECLARE_BINDING(rastr_icnd_ibody, 2),
-    DECLARE_BINDING(rastr_iecnd_ikw, 2),
-    DECLARE_BINDING(rastr_iecnd_cond, 2),
-    DECLARE_BINDING(rastr_iecnd_ibody, 2),
-    DECLARE_BINDING(rastr_iecnd_ekw, 2),
-    DECLARE_BINDING(rastr_iecnd_ebody, 2),
-    DECLARE_BINDING(rastr_fndefn_hd, 2),
-    DECLARE_BINDING(rastr_fndefn_params, 2),
-    DECLARE_BINDING(rastr_fndefn_body, 2),
-    DECLARE_BINDING(rastr_fncall_fun, 2),
-    DECLARE_BINDING(rastr_fncall_args, 2),
-    DECLARE_BINDING(rastr_sub_obj, 2),
-    DECLARE_BINDING(rastr_sub_inds, 2),
-    DECLARE_BINDING(rastr_idx_obj, 2),
-    DECLARE_BINDING(rastr_idx_inds, 2),
-    DECLARE_BINDING(rastr_params_lbrack, 2),
-    DECLARE_BINDING(rastr_params_len, 2),
-    DECLARE_BINDING(rastr_params_seq, 2),
-    DECLARE_BINDING(rastr_params_rbrack, 2),
-    DECLARE_BINDING(rastr_dparam_name, 2),
-    DECLARE_BINDING(rastr_dparam_op, 2),
-    DECLARE_BINDING(rastr_dparam_expr, 2),
-    DECLARE_BINDING(rastr_ndparam_name, 2),
-    DECLARE_BINDING(rastr_args_lbrack, 2),
-    DECLARE_BINDING(rastr_args_len, 2),
-    DECLARE_BINDING(rastr_args_seq, 2),
-    DECLARE_BINDING(rastr_args_rbrack, 2),
-    DECLARE_BINDING(rastr_narg_name, 2),
-    DECLARE_BINDING(rastr_narg_op, 2),
-    DECLARE_BINDING(rastr_narg_expr, 2),
-    DECLARE_BINDING(rastr_parg_expr, 2),
-    DECLARE_BINDING(rastr_cnd_lbrack, 2),
-    DECLARE_BINDING(rastr_cnd_expr, 2),
-    DECLARE_BINDING(rastr_cnd_rbrack, 2),
-    DECLARE_BINDING(rastr_iter_lbrack, 2),
-    DECLARE_BINDING(rastr_iter_var, 2),
-    DECLARE_BINDING(rastr_iter_kw, 2),
-    DECLARE_BINDING(rastr_iter_expr, 2),
-    DECLARE_BINDING(rastr_iter_rbrack, 2),
-    DECLARE_BINDING(rastr_pgm_len, 2),
-    DECLARE_BINDING(rastr_pgm_seq, 2),
-    DECLARE_BINDING(rastr_dlmtd_expr, 2),
-    DECLARE_BINDING(rastr_dlmtd_dlmtr, 2),
-    DECLARE_BINDING(rastr_err_msg, 2),
+    /*******************************************************************************
+     * op
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_op_new, 4),
+    DECLARE_BINDING(rastr_op_syn_get, 2),
+
+    /*******************************************************************************
+     * bkt
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_bkt_new, 4),
+    DECLARE_BINDING(rastr_bkt_syn_get, 2),
+
+    /*******************************************************************************
+     * dlmtr
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_dlmtr_new, 4),
+    DECLARE_BINDING(rastr_dlmtr_syn_get, 2),
+
+    /*******************************************************************************
+     * lgl
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_lgl_new, 4),
+    DECLARE_BINDING(rastr_lgl_syn_get, 2),
+
+    /*******************************************************************************
+     * int
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_int_new, 4),
+
+    /*******************************************************************************
+     * dbl
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_dbl_new, 4),
+
+    /*******************************************************************************
+     * cpx
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_cpx_new, 4),
+
+    /*******************************************************************************
+     * chr
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_chr_new, 4),
+
+    /*******************************************************************************
+     * sym
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_sym_new, 5),
+
+    // pred
+    DECLARE_BINDING(rastr_lit_type, 2),
+
+    /*******************************************************************************
+     * gap
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_gap_new, 3),
+
+    /*******************************************************************************
+     * beg
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_beg_new, 3),
+#include "autogen_init.h"
 
     /* export */
     DECLARE_BINDING(rastr_export_to_dot, 3),

@@ -152,32 +152,32 @@ class SexpTransformer: public AstWalker {
         return pop_();
     }
 
-    virtual bool pre_op(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_op(rastr_ast_t ast, rastr_node_t node) override {
         const char* val = NULL;
 
         switch (rastr_node_type(ast, node)) {
-        case Function2:
+        case RASTR_OP_FN2:
             val = "function";
             break;
 
             /* binop has to reverse the order of lexpr and rexpr since R SEXP
              * does not have right assign operators */
 
-        case RightSuperAssign:
+        case RASTR_OP_RT_SUP_ASGN:
             val = "<<-";
             break;
 
-        case RightAssign:
+        case RASTR_OP_RT_ASGN:
             val = "<-";
             break;
 
             /* TODO: handle pipe bind */
-        case PipeBind:
+        case RASTR_OP_PIPE_BIND:
             val = "=>";
             break;
 
         default:
-            val = rastr_op_val(ast, node);
+            val = rastr_op_syn_get(ast, node);
             break;
         }
 
@@ -185,20 +185,19 @@ class SexpTransformer: public AstWalker {
         return false;
     }
 
-    virtual bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_bkt(rastr_ast_t ast, rastr_node_t node) override {
         rastr_node_type_t type = rastr_node_type(ast, node);
 
         switch (type) {
-        case LeftParen:
-        case LeftBrace:
-        case LeftBracket:
-        case DoubleLeftBracket:
-            push_sym_(rastr_node_delimiter_value(ast, node));
+        case RASTR_BKT_LT_RND:
+        case RASTR_BKT_LT_CURL:
+        case RASTR_BKT_LT_SQR:
+        case RASTR_BKT_LT_DBL_SQR:
+            push_sym_(rastr_dlmtr_syn_get(ast, node));
             break;
-        case RightParen:
-        case RightBrace:
-        case RightBracket:
-        case DoubleRightBracket:
+        case RASTR_BKT_RT_RND:
+        case RASTR_BKT_RT_CURL:
+        case RASTR_BKT_RT_SQR:
             break;
         default:
             rastr_log_error("unexpected delimiter type %s",
@@ -208,54 +207,56 @@ class SexpTransformer: public AstWalker {
         return false;
     }
 
-    virtual bool pre_term(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) override {
         return false;
     }
 
-    virtual bool pre_null(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_null(rastr_ast_t ast, rastr_node_t node) override {
         push_(PROTECT(R_NilValue));
         return false;
     }
 
-    virtual bool pre_logical(rastr_ast_t ast, rastr_node_t node) {
-        push_(PROTECT(rastr_lgl_wrap(rastr_node_logical_value(ast, node))));
+    bool pre_lgl(rastr_ast_t ast, rastr_node_t node) override {
+        push_(PROTECT(lgl_vec1(rastr_lgl_val_get(ast, node))));
         return false;
     }
 
-    virtual bool pre_integer(rastr_ast_t ast, rastr_node_t node) {
-        push_(PROTECT(rastr_int_wrap(rastr_node_integer_value(ast, node))));
+    bool pre_int(rastr_ast_t ast, rastr_node_t node) override {
+        push_(PROTECT(int_vec1(rastr_int_val_get(ast, node))));
         return false;
     }
 
-    virtual bool pre_real(rastr_ast_t ast, rastr_node_t node) {
-        push_(PROTECT(rastr_dbl_wrap(rastr_node_real_value(ast, node))));
+    bool pre_dbl(rastr_ast_t ast, rastr_node_t node) override {
+        push_(PROTECT(dbl_vec1(rastr_dbl_val_get(ast, node))));
         return false;
     }
 
-    virtual bool pre_complex(rastr_ast_t ast, rastr_node_t node) {
-        push_(PROTECT(rastr_cplx_wrap(rastr_node_complex_value(ast, node))));
+    bool pre_cpx(rastr_ast_t ast, rastr_node_t node) override {
+        push_(PROTECT(cpx_vec1(rastr_cpx_val_get(ast, node))));
         return false;
     }
 
-    virtual bool pre_string(rastr_ast_t ast, rastr_node_t node) {
-        push_(PROTECT(rastr_str_wrap(rastr_node_string_value(ast, node))));
+    bool pre_chr(rastr_ast_t ast, rastr_node_t node) override {
+        push_(PROTECT(chr_vec1(rastr_chr_val_get(ast, node))));
         return false;
     }
 
-    virtual bool pre_symbol(rastr_ast_t ast, rastr_node_t node) {
-        push_(PROTECT(rastr_sym_wrap(rastr_node_symbol_value(ast, node))));
+    bool pre_sym(rastr_ast_t ast, rastr_node_t node) override {
+        push_(PROTECT(Rf_install(rastr_sym_val_get(ast, node))));
         return false;
     }
 
-    virtual void post_blk(rastr_ast_t ast, rastr_node_t node) {
-        int len = rastr_blk_len(ast, node);
-        int stack_len_ = stack_.size();
+    void post_blk(rastr_ast_t ast, rastr_node_t node) override {
+        rastr_node_t exprs = rastr_blk_exprs_get(ast, node);
+        int len = rastr_exprs_len_get(ast, exprs);
+
+        int stack_len = stack_.size();
 
         SEXP r_exprs = NewList();
 
         for (int i = 0; i < len; ++i) {
             PROTECT(r_exprs);
-            SEXP r_expr = stack_[stack_len_ - len + i];
+            SEXP r_expr = stack_[stack_len - len + i];
             GrowList(r_exprs, r_expr);
             UNPROTECT(1);
         }
@@ -274,36 +275,36 @@ class SexpTransformer: public AstWalker {
         push_(r_exprs);
     }
 
-    virtual void post_grp(rastr_ast_t ast, rastr_node_t node) {
+    void post_grp(rastr_ast_t ast, rastr_node_t node) override {
         lang2_();
     }
 
-    virtual void post_nuop(rastr_ast_t ast, rastr_node_t node) {
+    void post_nuop(rastr_ast_t ast, rastr_node_t node) override {
         lang1_();
     }
 
-    virtual void post_unop(rastr_ast_t ast, rastr_node_t node) {
+    void post_unop(rastr_ast_t ast, rastr_node_t node) override {
         lang2_();
     }
 
-    virtual void post_binop(rastr_ast_t ast, rastr_node_t node) {
+    void post_binop(rastr_ast_t ast, rastr_node_t node) override {
         SEXP rexpr = pop_();
         SEXP op = pop_();
         SEXP lexpr = pop_();
         SEXP r_ans = R_NilValue;
 
         rastr_node_type_t op_type =
-            rastr_node_type(ast, rastr_binop_op(ast, node));
+            rastr_node_type(ast, rastr_binop_op_get(ast, node));
 
         switch (op_type) {
             /* R's SEXP representation converts -> to <- and reverses order of
              * expressions  */
-        case RightAssign:
-        case RightSuperAssign:
+        case RASTR_OP_RT_ASGN:
+        case RASTR_OP_RT_SUP_ASGN:
             r_ans = Rf_lang3(op, rexpr, lexpr);
             break;
 
-        case PipeForward:
+        case RASTR_OP_PIPE_FWD:
             r_ans = xxpipe(lexpr, rexpr);
             break;
 
@@ -316,23 +317,23 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_ans));
     }
 
-    virtual void post_rlp(rastr_ast_t ast, rastr_node_t node) {
+    void post_rlp(rastr_ast_t ast, rastr_node_t node) override {
         lang2_();
     }
 
-    virtual void post_wlp(rastr_ast_t ast, rastr_node_t node) {
+    void post_wlp(rastr_ast_t ast, rastr_node_t node) override {
         lang3_();
     }
 
-    virtual void post_flp(rastr_ast_t ast, rastr_node_t node) {
+    void post_flp(rastr_ast_t ast, rastr_node_t node) override {
         lang4_();
     }
 
-    virtual void post_icnd(rastr_ast_t ast, rastr_node_t node) {
+    void post_icond(rastr_ast_t ast, rastr_node_t node) override {
         lang3_();
     }
 
-    virtual void post_iecnd(rastr_ast_t ast, rastr_node_t node) {
+    void post_iecond(rastr_ast_t ast, rastr_node_t node) override {
         SEXP r_ebody = pop_();
         SEXP r_else = pop_();
         UNPROTECT_PTR(r_else);
@@ -340,7 +341,7 @@ class SexpTransformer: public AstWalker {
         lang4_();
     }
 
-    virtual void post_fndefn(rastr_ast_t ast, rastr_node_t node) {
+    void post_fndefn(rastr_ast_t ast, rastr_node_t node) override {
         SEXP r_srcref = R_NilValue;
         SEXP r_body = pop_();
         SEXP r_formals = pop_();
@@ -352,7 +353,7 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_res));
     }
 
-    virtual void post_fncall(rastr_ast_t ast, rastr_node_t node) {
+    void post_fncall(rastr_ast_t ast, rastr_node_t node) override {
         SEXP r_fncall = R_NilValue;
         SEXP r_args = pop_();
         SEXP r_fun = pop_();
@@ -377,7 +378,7 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_fncall));
     }
 
-    virtual void post_sub(rastr_ast_t ast, rastr_node_t node) {
+    void post_sub(rastr_ast_t ast, rastr_node_t node) override {
         SEXP r_inds = pop_();
         SEXP r_brack = PROTECT(Rf_install("[["));
         SEXP r_obj = pop_();
@@ -389,7 +390,7 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_result));
     }
 
-    virtual void post_idx(rastr_ast_t ast, rastr_node_t node) {
+    void post_idx(rastr_ast_t ast, rastr_node_t node) override {
         SEXP r_inds = pop_();
         SEXP r_brack = PROTECT(Rf_install("["));
         SEXP r_obj = pop_();
@@ -401,16 +402,16 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_result));
     }
 
-    virtual bool pre_params(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_pars(rastr_ast_t ast, rastr_node_t node) override {
         push_(PROTECT(R_NilValue));
         return true;
     }
 
-    virtual bool pre_dparam(rastr_ast_t ast, rastr_node_t node) {
-        rastr_node_t name = rastr_dparam_name(ast, node);
+    bool pre_dpar(rastr_ast_t ast, rastr_node_t node) override {
+        rastr_node_t name = rastr_dpar_name_get(ast, node);
         walk(ast, name);
 
-        rastr_node_t expr = rastr_dparam_expr(ast, node);
+        rastr_node_t expr = rastr_dpar_expr_get(ast, node);
         walk(ast, expr);
 
         add_arg_();
@@ -418,8 +419,8 @@ class SexpTransformer: public AstWalker {
         return false;
     }
 
-    virtual bool pre_ndparam(rastr_ast_t ast, rastr_node_t node) {
-        rastr_node_t name = rastr_ndparam_name(ast, node);
+    bool pre_ndpar(rastr_ast_t ast, rastr_node_t node) override {
+        rastr_node_t name = rastr_ndpar_name_get(ast, node);
         walk(ast, name);
 
         push_(PROTECT(R_MissingArg));
@@ -429,45 +430,27 @@ class SexpTransformer: public AstWalker {
         return false;
     }
 
-    void add_arg_() {
-        SEXP r_expr = pop_();
-        SEXP r_name = pop_();
-        SEXP r_pars = pop_();
-
-        if (r_pars == R_NilValue) {
-            r_pars = FirstArg(r_expr, r_name);
-        }
-
-        else {
-            NextArg(r_pars, r_expr, r_name);
-        }
-
-        UNPROTECT(3);
-
-        push_(PROTECT(r_pars));
-    }
-
-    virtual bool pre_args(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_args(rastr_ast_t ast, rastr_node_t node) override {
         push_(PROTECT(R_NilValue));
 
         return true;
     }
 
-    virtual bool pre_narg(rastr_ast_t ast, rastr_node_t node) {
-        rastr_node_t name = rastr_narg_name(ast, node);
+    bool pre_narg(rastr_ast_t ast, rastr_node_t node) override {
+        rastr_node_t name = rastr_narg_name_get(ast, node);
 
         rastr_node_type_t name_type = rastr_node_type(ast, name);
 
         const char* name_str = nullptr;
         switch (name_type) {
-        case Symbol:
-            name_str = rastr_node_symbol_value(ast, name);
+        case RASTR_SYM:
+            name_str = rastr_sym_val_get(ast, name);
             break;
-        case Null:
-            name_str = rastr_node_null_syntax(ast, name);
+        case RASTR_NULL:
+            name_str = rastr_null_syn_get(ast, name);
             break;
-        case String:
-            name_str = rastr_node_string_value(ast, name);
+        case RASTR_CHR:
+            name_str = rastr_chr_val_get(ast, name);
             break;
 
         default:
@@ -478,7 +461,7 @@ class SexpTransformer: public AstWalker {
 
         push_sym_(name_str);
 
-        rastr_node_t expr = rastr_narg_expr(ast, node);
+        rastr_node_t expr = rastr_narg_expr_get(ast, node);
         walk(ast, expr);
 
         add_arg_();
@@ -486,10 +469,10 @@ class SexpTransformer: public AstWalker {
         return false;
     }
 
-    virtual bool pre_parg(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_parg(rastr_ast_t ast, rastr_node_t node) override {
         push_(PROTECT(R_NilValue));
 
-        rastr_node_t expr = rastr_parg_expr(ast, node);
+        rastr_node_t expr = rastr_parg_expr_get(ast, node);
         walk(ast, expr);
 
         add_arg_();
@@ -497,20 +480,23 @@ class SexpTransformer: public AstWalker {
         return false;
     }
 
-    virtual bool pre_cnd(rastr_ast_t ast, rastr_node_t node) {
-        walk(ast, rastr_cnd_expr(ast, node));
+    bool pre_cond(rastr_ast_t ast, rastr_node_t node) override {
+        walk(ast, rastr_cond_expr_get(ast, node));
         return false;
     }
 
-    virtual bool pre_iter(rastr_ast_t ast, rastr_node_t node) {
-        walk(ast, rastr_iter_var(ast, node));
-        walk(ast, rastr_iter_expr(ast, node));
+    bool pre_iter(rastr_ast_t ast, rastr_node_t node) override {
+        walk(ast, rastr_iter_var_get(ast, node));
+        walk(ast, rastr_iter_expr_get(ast, node));
         return false;
     }
 
-    virtual void post_pgm(rastr_ast_t ast, rastr_node_t node) {
+    void post_pgm(rastr_ast_t ast, rastr_node_t node) override {
         int stack_len = stack_.size();
-        int len = rastr_pgm_len(ast, node);
+
+        rastr_node_t exprs = rastr_pgm_exprs_get(ast, node);
+        int len = rastr_exprs_len_get(ast, exprs);
+
         SEXP r_pgm = PROTECT(allocVector(EXPRSXP, len));
 
         for (int i = 0; i < len; ++i) {
@@ -526,36 +512,37 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_pgm));
     }
 
-    virtual void post_msng(rastr_ast_t ast, rastr_node_t node) {
+    void post_msng(rastr_ast_t ast, rastr_node_t node) override {
         push_(PROTECT(R_MissingArg));
     }
 
-    virtual bool pre_end(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_end(rastr_ast_t ast, rastr_node_t node) override {
         return false;
     }
 
-    virtual bool pre_gap(rastr_ast_t ast, rastr_node_t node) {
+    bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
         return false;
     }
 
-    virtual void walk(rastr_ast_t ast, rastr_node_t node) {
+    void walk(rastr_ast_t ast, rastr_node_t node) override {
         rastr_node_type_t type = rastr_node_type(ast, node);
 
         switch (type) {
-        case Parameters:
-            if (this->pre_params(ast, node)) {
+        case RASTR_PARS:
+            if (this->pre_pars(ast, node)) {
                 handle_seq_(ast,
-                            rastr_params_len(ast, node),
-                            rastr_params_seq(ast, node));
-                this->post_params(ast, node);
+                            rastr_pars_len_get(ast, node),
+                            rastr_pars_seq_get(ast, node));
+                this->post_pars(ast, node);
             }
 
             break;
 
-        case Arguments:
+        case RASTR_ARGS:
             if (this->pre_args(ast, node)) {
-                handle_seq_(
-                    ast, rastr_args_len(ast, node), rastr_args_seq(ast, node));
+                handle_seq_(ast,
+                            rastr_args_len_get(ast, node),
+                            rastr_args_seq_get(ast, node));
                 this->post_args(ast, node);
             }
 
@@ -655,6 +642,24 @@ class SexpTransformer: public AstWalker {
         UNPROTECT(5);
 
         push_(PROTECT(r_res));
+    }
+
+    void add_arg_() {
+        SEXP r_expr = pop_();
+        SEXP r_name = pop_();
+        SEXP r_pars = pop_();
+
+        if (r_pars == R_NilValue) {
+            r_pars = FirstArg(r_expr, r_name);
+        }
+
+        else {
+            NextArg(r_pars, r_expr, r_name);
+        }
+
+        UNPROTECT(3);
+
+        push_(PROTECT(r_pars));
     }
 };
 

@@ -1,159 +1,158 @@
 #ifndef RASTR_API_H
-#define RASTR_API_H
+#    define RASTR_API_H
 
-#include <rastr/RIncludes.h>
+#    include <rastr/RIncludes.h>
 
 /* WARN: do not change this enum, entries are order sensitive! */
 enum rastr_node_type_t {
-    Special = 0,
+    RASTR_OP_SP = 0,
 
     /* Arithmetic:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/Arithmetic.html
      */
-    Plus,           // unary or binary +
-    Minus,          // unary or binary -
-    Multiplication, // *
-    Division,       // /
-    Power,          // ^
-    Power2,         // **
+    RASTR_OP_PLUS,  // unary or binary +
+    RASTR_OP_MINUS, // unary or binary -
+    RASTR_OP_MUL,   // *
+    RASTR_OP_DIV,   // /
+    RASTR_OP_POW,   // ^
+    RASTR_OP_POW2,  // **
 
     /* Comparison:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/Comparison.html
      */
-    LessThan,         // <
-    LessThanEqual,    // <=
-    GreaterThan,      // >
-    GreaterThanEqual, // >=
-    Equal,            // ==
-    NotEqual,         // !=
+    RASTR_OP_LESS,     // <
+    RASTR_OP_LESS_EQ,  // <=
+    RASTR_OP_GREAT,    // >
+    RASTR_OP_GREAT_EQ, // >=
+    RASTR_OP_EQ,       // ==
+    RASTR_OP_NOT_EQ,   // !=
 
     /* Logic: https://stat.ethz.ch/R-manual/R-devel/library/base/html/Logic.html
      */
-    Not,    // !
-    And,    // &&
-    VecAnd, // &
-    Or,     // ||
-    VecOr,  // |
+    RASTR_OP_NOT,     // !
+    RASTR_OP_AND,     // &&
+    RASTR_OP_VEC_AND, // &
+    RASTR_OP_OR,      // ||
+    RASTR_OP_VEC_OR,  // |
 
     /* Assignments:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/assignOps.html */
-    EqualAssign,      // =
-    LeftAssign,       // <-
-    RightAssign,      // ->
-    LeftSuperAssign,  // <<-
-    RightSuperAssign, // ->>
-    ColonAssign,      // :=
+    RASTR_OP_EQ_ASGN,     // =
+    RASTR_OP_LT_ASGN,     // <-
+    RASTR_OP_RT_ASGN,     // ->
+    RASTR_OP_LT_SUP_ASGN, // <<-
+    RASTR_OP_RT_SUP_ASGN, // ->>
+    RASTR_OP_COLON_ASGN,  // :=
 
     /* Pipe: https://stat.ethz.ch/R-manual/R-devel/library/base/html/pipeOp.html
      */
-    PipeForward, // |>
-    PipeBind,    // =>
+    RASTR_OP_PIPE_FWD,  // |>
+    RASTR_OP_PIPE_BIND, // =>
 
     /* Namespace:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/ns-dblcolon.html
      */
-    PublicNamespace,  // ::
-    PrivateNamespace, // :::
+    RASTR_OP_PUB_NS, // ::
+    RASTR_OP_PVT_NS, // :::
 
     /* Range:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/Colon.html */
-    Range, // :
+    RASTR_OP_RANGE, // :
 
     /* Help */
-    Help, // ?
+    RASTR_OP_HELP, // ?
 
     /* Slot: https://stat.ethz.ch/R-manual/R-devel/library/base/html/slotOp.html
      */
-    SlotExtract, // @
+    RASTR_OP_SLOT, // @
 
     /* Formula:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/tilde.html */
-    Formula, // ~
+    RASTR_OP_FORMULA, // ~
 
     /* Extract:
        https://stat.ethz.ch/R-manual/R-devel/library/base/html/Extract.html */
-    PartExtract, // $
+    RASTR_OP_PART, // $
 
     /* Function */
-    Function2, /* \ */
+    RASTR_OP_FN,  // function
+    RASTR_OP_FN2, /* \ */
 
-    Function, // function
-    While,    // while
-    Repeat,   // repeat
-    For,      // for
-    In,       // in
-    If,       // if
-    Else,     // else
-    Next,     // next
-    Break,    // break
+    RASTR_OP_WHILE,  // while
+    RASTR_OP_REPEAT, // repeat
+    RASTR_OP_FOR,    // for
+    RASTR_OP_IN,     // in
+    RASTR_OP_IF,     // if
+    RASTR_OP_ELSE,   // else
+    RASTR_OP_NEXT,   // next
+    RASTR_OP_BREAK,  // break
+
+    /********************************************************************************
+      Brackets
+    ********************************************************************************/
+    RASTR_BKT_LT_RND,     // (
+    RASTR_BKT_RT_RND,     // )
+    RASTR_BKT_LT_CURL,    // {
+    RASTR_BKT_RT_CURL,    // }
+    RASTR_BKT_LT_SQR,     // [
+    RASTR_BKT_RT_SQR,     // ]
+    RASTR_BKT_LT_DBL_SQR, // [[
 
     /********************************************************************************
       Delimiters
     ********************************************************************************/
-    LeftParen,          // (
-    RightParen,         // )
-    LeftBrace,          // {
-    RightBrace,         // }
-    LeftBracket,        // [
-    RightBracket,       // ]
-    DoubleLeftBracket,  // [[
-    DoubleRightBracket, // ]]
-
-    /********************************************************************************
-      Terminators
-    ********************************************************************************/
-    Semicolon, // ;
-    Newline,   // \n
-    Comma,     // ,
+    RASTR_DLMTR_SCOL, // ;
+    RASTR_DLMTR_COM,  // ,
 
     /********************************************************************************
       Literals
     ********************************************************************************/
-    Null,
-    Logical,
-    Integer,
-    Real,
-    Complex,
-    String,
-    Symbol,
+    RASTR_NULL,
+    RASTR_LGL,
+    RASTR_INT,
+    RASTR_DBL,
+    RASTR_CPX,
+    RASTR_CHR,
+    RASTR_SYM,
 
     /********************************************************************************
       Expressions
     ********************************************************************************/
-    Block,
-    Group,
-    NullaryOperation,
-    UnaryOperation,
-    BinaryOperation,
-    RepeatLoop,
-    WhileLoop,
-    ForLoop,
-    IfConditional,
-    IfElseConditional,
-    FunctionDefinition,
-    FunctionCall,
-    Subset,
-    Index,
+    RASTR_BLK,
+    RASTR_GRP,
+    RASTR_NUOP,
+    RASTR_UNOP,
+    RASTR_BINOP,
+    RASTR_RLP,
+    RASTR_WLP,
+    RASTR_FLP,
+    RASTR_ICOND,
+    RASTR_IECOND,
+    RASTR_FNDEFN,
+    RASTR_FNCALL,
+    RASTR_SUB,
+    RASTR_IDX,
 
     /********************************************************************************
       Miscellaneous
     ********************************************************************************/
-    Parameters,
-    DefaultParameter,
-    NonDefaultParameter,
-    Arguments,
-    NamedArgument,
-    PositionalArgument,
-    Condition,
-    Iteration,
-    Program,
-    Delimited,
-    Missing,
-    Beg,
-    End,
-    Gap,
-    Location,
-    Error
+    RASTR_EXPRS,
+    RASTR_PARS,
+    RASTR_DPAR,
+    RASTR_NDPAR,
+    RASTR_ARGS,
+    RASTR_NARG,
+    RASTR_PARG,
+    RASTR_COND,
+    RASTR_ITER,
+    RASTR_PGM,
+    RASTR_DLMTD,
+    RASTR_MSNG,
+    RASTR_BEG,
+    RASTR_END,
+    RASTR_GAP,
+    RASTR_LOC,
+    RASTR_ERR
 
     // Extract,
     // Function,
@@ -172,14 +171,14 @@ enum rastr_node_type_t {
 };
 
 struct rastr_node_t {
-    std::size_t index;
+    int index;
 };
 
 typedef struct rastr_ast_impl_t* rastr_ast_t;
 
-#ifdef __cplusplus
+#    ifdef __cplusplus
 extern "C" {
-#endif
+#    endif
 
 /********************************************************************************
 APIGEN
@@ -209,358 +208,6 @@ rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces);
  Node Type
 ********************************************************************************/
 const char* rastr_node_type_to_string(rastr_node_type_t type);
-
-/********************************************************************************
-Operator
-********************************************************************************/
-rastr_node_t rastr_op_node(rastr_ast_t ast,
-                           rastr_node_type_t type,
-                           rastr_node_t gap,
-                           rastr_node_t loc);
-
-// val
-const char* rastr_op_val(rastr_ast_t ast, rastr_node_t node);
-SEXP r_rastr_op_val(SEXP r_ast, SEXP r_node);
-
-// syn
-const char* rastr_op_syn(rastr_ast_t ast, rastr_node_t node);
-SEXP r_rastr_op_syn(SEXP r_ast, SEXP r_node);
-
-// gap
-rastr_node_t rastr_op_gap(rastr_ast_t ast, rastr_node_t node);
-SEXP r_rastr_op_gap(SEXP r_ast, SEXP r_node);
-rastr_node_t rastr_op_loc(rastr_ast_t ast, rastr_node_t node);
-
-/********************************************************************************
- Delimiters
-********************************************************************************/
-
-bool rastr_node_is_delimiter(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_node_delimiter(rastr_ast_t ast,
-                                  rastr_node_type_t type,
-                                  rastr_node_t gap,
-                                  rastr_node_t loc);
-const char* rastr_node_delimiter_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_delimiter_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_dlmtr_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_dlmtr_loc(rastr_ast_t ast, rastr_node_t node);
-
-/********************************************************************************
- Terminators
-********************************************************************************/
-
-bool rastr_node_is_terminator(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_node_terminator(rastr_ast_t ast,
-                                   rastr_node_type_t type,
-                                   rastr_node_t gap,
-                                   rastr_node_t loc);
-const char* rastr_node_terminator_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_terminator_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_term_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_term_loc(rastr_ast_t ast, rastr_node_t node);
-
-/********************************************************************************
- Meta
-********************************************************************************/
-
-// End
-rastr_node_t
-rastr_node_end(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc);
-
-// Error
-rastr_node_t rastr_node_error(rastr_ast_t ast, const char* fmt, ...);
-const char* rastr_node_error_message(rastr_ast_t ast, rastr_node_t node);
-
-/********************************************************************************
- Literals
-********************************************************************************/
-bool rastr_node_is_literal(rastr_ast_t ast, rastr_node_t node);
-
-// null
-rastr_node_t
-rastr_node_null(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc);
-const char* rastr_node_null_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_null_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_null_loc(rastr_ast_t ast, rastr_node_t node);
-
-// logical
-rastr_node_t rastr_node_logical(rastr_ast_t ast,
-                                const char* syntax,
-                                int value,
-                                rastr_node_t gap,
-                                rastr_node_t loc);
-int rastr_node_logical_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_logical_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_logical_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_logical_loc(rastr_ast_t ast, rastr_node_t node);
-
-// integer
-rastr_node_t rastr_node_integer(rastr_ast_t ast,
-                                const char* syntax,
-                                int value,
-                                rastr_node_t gap,
-                                rastr_node_t loc);
-int rastr_node_integer_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_integer_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_integer_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_integer_loc(rastr_ast_t ast, rastr_node_t node);
-
-// real
-rastr_node_t rastr_node_real(rastr_ast_t ast,
-                             const char* syntax,
-                             double value,
-                             rastr_node_t gap,
-                             rastr_node_t loc);
-double rastr_node_real_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_real_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_real_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_real_loc(rastr_ast_t ast, rastr_node_t node);
-
-// complex
-rastr_node_t rastr_node_complex(rastr_ast_t ast,
-                                const char* syntax,
-                                const Rcomplex& value,
-                                rastr_node_t gap,
-                                rastr_node_t loc);
-Rcomplex rastr_node_complex_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_complex_syntax(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_complex_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_complex_loc(rastr_ast_t ast, rastr_node_t node);
-
-// string
-rastr_node_t rastr_node_string(rastr_ast_t ast,
-                               const char* syntax,
-                               const char* value,
-                               rastr_node_t gap,
-                               rastr_node_t loc);
-const char* rastr_node_string_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_string_syntax(rastr_ast_t ast, rastr_node_t node);
-bool rastr_node_string_is_raw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_string_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_string_loc(rastr_ast_t ast, rastr_node_t node);
-
-// symbol
-rastr_node_t rastr_node_symbol(rastr_ast_t ast,
-                               const char* syntax,
-                               const char* value,
-                               rastr_node_t gap,
-                               rastr_node_t loc);
-const char* rastr_node_symbol_value(rastr_ast_t ast, rastr_node_t node);
-const char* rastr_node_symbol_syntax(rastr_ast_t ast, rastr_node_t node);
-bool rastr_node_symbol_is_quoted(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_symbol_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_symbol_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_blk_node(rastr_ast_t ast,
-                            rastr_node_t lbrack,
-                            int len,
-                            const rastr_node_t* seq,
-                            rastr_node_t rbrack);
-rastr_node_t rastr_blk_lbrack(rastr_ast_t ast, rastr_node_t node);
-int rastr_blk_len(rastr_ast_t ast, rastr_node_t node);
-const rastr_node_t* rastr_blk_seq(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_blk_rbrack(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_grp_node(rastr_ast_t ast,
-                            rastr_node_t lbrack,
-                            rastr_node_t expr,
-                            rastr_node_t rbrack);
-rastr_node_t rastr_grp_lbrack(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_grp_expr(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_grp_rbrack(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_nuop_node(rastr_ast_t ast, rastr_node_t op);
-rastr_node_t rastr_nuop_op(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_unop_node(rastr_ast_t ast, rastr_node_t op, rastr_node_t expr);
-rastr_node_t rastr_unop_op(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_unop_expr(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_binop_node(rastr_ast_t ast,
-                              rastr_node_t lexpr,
-                              rastr_node_t op,
-                              rastr_node_t rexpr);
-rastr_node_t rastr_binop_lexpr(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_binop_op(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_binop_rexpr(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_rlp_node(rastr_ast_t ast, rastr_node_t kw, rastr_node_t body);
-rastr_node_t rastr_rlp_kw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_rlp_body(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_wlp_node(rastr_ast_t ast,
-                            rastr_node_t kw,
-                            rastr_node_t cond,
-                            rastr_node_t body);
-rastr_node_t rastr_wlp_kw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_wlp_cond(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_wlp_body(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_flp_node(rastr_ast_t ast,
-                            rastr_node_t kw,
-                            rastr_node_t iter,
-                            rastr_node_t body);
-rastr_node_t rastr_flp_kw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_flp_iter(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_flp_body(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_icnd_node(rastr_ast_t ast,
-                             rastr_node_t ikw,
-                             rastr_node_t cond,
-                             rastr_node_t ibody);
-rastr_node_t rastr_icnd_ikw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_icnd_cond(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_icnd_ibody(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_iecnd_node(rastr_ast_t ast,
-                              rastr_node_t ikw,
-                              rastr_node_t cond,
-                              rastr_node_t ibody,
-                              rastr_node_t ekw,
-                              rastr_node_t ebody);
-rastr_node_t rastr_iecnd_ikw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iecnd_cond(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iecnd_ibody(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iecnd_ekw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iecnd_ebody(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_fndefn_node(rastr_ast_t ast,
-                               rastr_node_t hd,
-                               rastr_node_t params,
-                               rastr_node_t body);
-rastr_node_t rastr_fndefn_hd(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_fndefn_params(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_fndefn_body(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_fncall_node(rastr_ast_t ast, rastr_node_t fun, rastr_node_t args);
-rastr_node_t rastr_fncall_fun(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_fncall_args(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_sub_node(rastr_ast_t ast, rastr_node_t obj, rastr_node_t inds);
-rastr_node_t rastr_sub_obj(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_sub_inds(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_idx_node(rastr_ast_t ast, rastr_node_t obj, rastr_node_t inds);
-rastr_node_t rastr_idx_obj(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_idx_inds(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_params_node(rastr_ast_t ast,
-                               rastr_node_t lbrack,
-                               int len,
-                               const rastr_node_t* seq,
-                               rastr_node_t rbrack);
-rastr_node_t rastr_params_lbrack(rastr_ast_t ast, rastr_node_t node);
-int rastr_params_len(rastr_ast_t ast, rastr_node_t node);
-const rastr_node_t* rastr_params_seq(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_params_rbrack(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_dparam_node(rastr_ast_t ast,
-                               rastr_node_t name,
-                               rastr_node_t op,
-                               rastr_node_t expr);
-rastr_node_t rastr_dparam_name(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_dparam_op(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_dparam_expr(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_ndparam_node(rastr_ast_t ast, rastr_node_t name);
-rastr_node_t rastr_ndparam_name(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_args_node(rastr_ast_t ast,
-                             rastr_node_t lbrack,
-                             int len,
-                             const rastr_node_t* seq,
-                             rastr_node_t rbrack);
-rastr_node_t rastr_args_lbrack(rastr_ast_t ast, rastr_node_t node);
-int rastr_args_len(rastr_ast_t ast, rastr_node_t node);
-const rastr_node_t* rastr_args_seq(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_args_rbrack(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_narg_node(rastr_ast_t ast,
-                             rastr_node_t name,
-                             rastr_node_t op,
-                             rastr_node_t expr);
-rastr_node_t rastr_narg_name(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_narg_op(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_narg_expr(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_parg_node(rastr_ast_t ast, rastr_node_t expr);
-rastr_node_t rastr_parg_expr(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_cnd_node(rastr_ast_t ast,
-                            rastr_node_t lbrack,
-                            rastr_node_t expr,
-                            rastr_node_t rbrack);
-rastr_node_t rastr_cnd_lbrack(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_cnd_expr(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_cnd_rbrack(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_iter_node(rastr_ast_t ast,
-                             rastr_node_t lbrack,
-                             rastr_node_t var,
-                             rastr_node_t kw,
-                             rastr_node_t expr,
-                             rastr_node_t rbrack);
-rastr_node_t rastr_iter_lbrack(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iter_var(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iter_kw(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iter_expr(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_iter_rbrack(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_pgm_node(rastr_ast_t ast,
-                            rastr_node_t beg,
-                            int len,
-                            const rastr_node_t* seq,
-                            rastr_node_t end);
-rastr_node_t rastr_pgm_beg(rastr_ast_t ast, rastr_node_t node);
-int rastr_pgm_len(rastr_ast_t ast, rastr_node_t node);
-const rastr_node_t* rastr_pgm_seq(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_pgm_end(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_dlmtd_node(rastr_ast_t ast, rastr_node_t expr, rastr_node_t dlmtr);
-rastr_node_t rastr_dlmtd_expr(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_dlmtd_dlmtr(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_err_node(rastr_ast_t ast, const char* msg);
-const char* rastr_err_msg(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t
-rastr_msng_node(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc);
-rastr_node_t rastr_msng_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_msng_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_beg_node(rastr_ast_t ast, rastr_node_t loc);
-rastr_node_t rastr_beg_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_end_node(rastr_ast_t ast);
-rastr_node_t rastr_end_gap(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_end_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_gap_node_owner(rastr_ast_t ast, char* val, rastr_node_t loc);
-const char* rastr_gap_val(rastr_ast_t ast, rastr_node_t node);
-rastr_node_t rastr_gap_loc(rastr_ast_t ast, rastr_node_t node);
-
-rastr_node_t rastr_loc_node(rastr_ast_t ast,
-                            int lrow,
-                            int lcol,
-                            int lchr,
-                            int lbyte,
-                            int rrow,
-                            int rcol,
-                            int rchr,
-                            int rbyte);
-int rastr_pos_lrow(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_lcol(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_lchr(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_lbyte(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_rrow(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_rcol(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_rchr(rastr_ast_t ast, rastr_node_t node);
-int rastr_pos_rbyte(rastr_ast_t ast, rastr_node_t node);
 
 /********************************************************************************
  Parsing
@@ -603,6 +250,29 @@ SEXP rastr_node_wrap(rastr_node_t node);
 rastr_ast_t rastr_ast_unwrap(SEXP r_ast);
 rastr_node_t rastr_node_unwrap(SEXP r_node);
 
+rastr_node_t rastr_op_node(rastr_ast_t ast,
+                           const char* syn,
+                           rastr_node_t gap,
+                           rastr_node_t loc);
+const char* rastr_op_syn_get(rastr_ast_t ast, rastr_node_t node);
+
+rastr_node_t rastr_bkt_node(rastr_ast_t ast,
+                            const char* syn,
+                            rastr_node_t gap,
+                            rastr_node_t loc);
+
+const char* rastr_bkt_syn_get(rastr_ast_t ast, rastr_node_t node);
+
+rastr_node_t rastr_dlmtr_node(rastr_ast_t ast,
+                              const char* syn,
+                              rastr_node_t gap,
+                              rastr_node_t loc);
+const char* rastr_dlmtr_syn_get(rastr_ast_t ast, rastr_node_t node);
+
+const char* rastr_null_syn_get(rastr_ast_t ast, rastr_node_t node);
+
+#    include <rastr/autogen_node_ifc.h>
+
 class AstWalker {
   public:
     AstWalker() {
@@ -625,11 +295,11 @@ class AstWalker {
     virtual void post_dlmtr(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_term(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_bkt(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_term(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_bkt(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_null(rastr_ast_t ast, rastr_node_t node) {
@@ -639,46 +309,46 @@ class AstWalker {
     virtual void post_null(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_logical(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_lgl(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_logical(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_lgl(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_integer(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_int(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_integer(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_int(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_real(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_dbl(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_real(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_dbl(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_complex(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_cpx(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_complex(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_cpx(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_string(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_chr(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_string(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_chr(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_symbol(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_sym(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_symbol(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_sym(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_blk(rastr_ast_t ast, rastr_node_t node) {
@@ -737,18 +407,18 @@ class AstWalker {
     virtual void post_flp(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_icnd(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_icond(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_icnd(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_icond(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_iecnd(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_iecond(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_iecnd(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_iecond(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_fndefn(rastr_ast_t ast, rastr_node_t node) {
@@ -779,25 +449,32 @@ class AstWalker {
     virtual void post_idx(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_params(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_exprs(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_params(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_exprs(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_dparam(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_pars(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_dparam(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_pars(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_ndparam(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_dpar(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_ndparam(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_dpar(rastr_ast_t ast, rastr_node_t node) {
+    }
+
+    virtual bool pre_ndpar(rastr_ast_t ast, rastr_node_t node) {
+        return true;
+    }
+
+    virtual void post_ndpar(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_args(rastr_ast_t ast, rastr_node_t node) {
@@ -821,11 +498,11 @@ class AstWalker {
     virtual void post_parg(rastr_ast_t ast, rastr_node_t node) {
     }
 
-    virtual bool pre_cnd(rastr_ast_t ast, rastr_node_t node) {
+    virtual bool pre_cond(rastr_ast_t ast, rastr_node_t node) {
         return true;
     }
 
-    virtual void post_cnd(rastr_ast_t ast, rastr_node_t node) {
+    virtual void post_cond(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_iter(rastr_ast_t ast, rastr_node_t node) {
@@ -884,73 +561,60 @@ class AstWalker {
     virtual void post_loc(rastr_ast_t ast, rastr_node_t node) {
     }
 
-#define CALL_WALKER_0(NODE)            \
-    if (this->pre_##NODE(ast, node)) { \
-        this->post_##NODE(ast, node);  \
-    }
+#    define CALL_WALKER_0(NODE)            \
+        if (this->pre_##NODE(ast, node)) { \
+            this->post_##NODE(ast, node);  \
+        }
 
-#define CALL_WALKER_1(NODE, CHILD1)                          \
-    if (this->pre_##NODE(ast, node)) {                       \
-        this->walk(ast, rastr_##NODE##_##CHILD1(ast, node)); \
-        this->post_##NODE(ast, node);                        \
-    }
+#    define CALL_WALKER_1(NODE, CHILD1)                                \
+        if (this->pre_##NODE(ast, node)) {                             \
+            this->walk(ast, rastr_##NODE##_##CHILD1##_get(ast, node)); \
+            this->post_##NODE(ast, node);                              \
+        }
 
-#define CALL_WALKER_2(NODE, CHILD1, CHILD2)                  \
-    if (this->pre_##NODE(ast, node)) {                       \
-        this->walk(ast, rastr_##NODE##_##CHILD1(ast, node)); \
-        this->walk(ast, rastr_##NODE##_##CHILD2(ast, node)); \
-        this->post_##NODE(ast, node);                        \
-    }
+#    define CALL_WALKER_2(NODE, CHILD1, CHILD2)                        \
+        if (this->pre_##NODE(ast, node)) {                             \
+            this->walk(ast, rastr_##NODE##_##CHILD1##_get(ast, node)); \
+            this->walk(ast, rastr_##NODE##_##CHILD2##_get(ast, node)); \
+            this->post_##NODE(ast, node);                              \
+        }
 
-#define CALL_WALKER_3(NODE, CHILD1, CHILD2, CHILD3)          \
-    if (this->pre_##NODE(ast, node)) {                       \
-        this->walk(ast, rastr_##NODE##_##CHILD1(ast, node)); \
-        this->walk(ast, rastr_##NODE##_##CHILD2(ast, node)); \
-        this->walk(ast, rastr_##NODE##_##CHILD3(ast, node)); \
-        this->post_##NODE(ast, node);                        \
-    }
+#    define CALL_WALKER_3(NODE, CHILD1, CHILD2, CHILD3)                \
+        if (this->pre_##NODE(ast, node)) {                             \
+            this->walk(ast, rastr_##NODE##_##CHILD1##_get(ast, node)); \
+            this->walk(ast, rastr_##NODE##_##CHILD2##_get(ast, node)); \
+            this->walk(ast, rastr_##NODE##_##CHILD3##_get(ast, node)); \
+            this->post_##NODE(ast, node);                              \
+        }
 
-#define CALL_WALKER_4(NODE, CHILD1, CHILD2, CHILD3, CHILD4)  \
-    if (this->pre_##NODE(ast, node)) {                       \
-        this->walk(ast, rastr_##NODE##_##CHILD1(ast, node)); \
-        this->walk(ast, rastr_##NODE##_##CHILD2(ast, node)); \
-        this->walk(ast, rastr_##NODE##_##CHILD3(ast, node)); \
-        this->walk(ast, rastr_##NODE##_##CHILD4(ast, node)); \
-        this->post_##NODE(ast, node);                        \
-    }
+#    define CALL_WALKER_4(NODE, CHILD1, CHILD2, CHILD3, CHILD4)        \
+        if (this->pre_##NODE(ast, node)) {                             \
+            this->walk(ast, rastr_##NODE##_##CHILD1##_get(ast, node)); \
+            this->walk(ast, rastr_##NODE##_##CHILD2##_get(ast, node)); \
+            this->walk(ast, rastr_##NODE##_##CHILD3##_get(ast, node)); \
+            this->walk(ast, rastr_##NODE##_##CHILD4##_get(ast, node)); \
+            this->post_##NODE(ast, node);                              \
+        }
 
-#define CALL_WALKER_5(NODE, CHILD1, CHILD2, CHILD3, CHILD4, CHILD5) \
-    if (this->pre_##NODE(ast, node)) {                              \
-        this->walk(ast, rastr_##NODE##_##CHILD1(ast, node));        \
-        this->walk(ast, rastr_##NODE##_##CHILD2(ast, node));        \
-        this->walk(ast, rastr_##NODE##_##CHILD3(ast, node));        \
-        this->walk(ast, rastr_##NODE##_##CHILD4(ast, node));        \
-        this->walk(ast, rastr_##NODE##_##CHILD5(ast, node));        \
-        this->post_##NODE(ast, node);                               \
-    }
+#    define CALL_WALKER_5(NODE, CHILD1, CHILD2, CHILD3, CHILD4, CHILD5) \
+        if (this->pre_##NODE(ast, node)) {                              \
+            this->walk(ast, rastr_##NODE##_##CHILD1##_get(ast, node));  \
+            this->walk(ast, rastr_##NODE##_##CHILD2##_get(ast, node));  \
+            this->walk(ast, rastr_##NODE##_##CHILD3##_get(ast, node));  \
+            this->walk(ast, rastr_##NODE##_##CHILD4##_get(ast, node));  \
+            this->walk(ast, rastr_##NODE##_##CHILD5##_get(ast, node));  \
+            this->post_##NODE(ast, node);                               \
+        }
 
-#define HANDLE_SEQ(NODE, LEN, SEQ)                                 \
-    {                                                              \
-        int len = rastr_##NODE##_##LEN(ast, node);                 \
-        const rastr_node_t* seq = rastr_##NODE##_##SEQ(ast, node); \
-        for (int i = 0; i < len; ++i) {                            \
-            this->walk(ast, seq[i]);                               \
-        }                                                          \
-    }
-
-#define CALL_WALKER_BRACK_SEQ(NODE, LBRACK, LEN, SEQ, RBRACK) \
-    if (this->pre_##NODE(ast, node)) {                        \
-        this->walk(ast, rastr_##NODE##_##LBRACK(ast, node));  \
-        HANDLE_SEQ(NODE, LEN, SEQ);                           \
-        this->walk(ast, rastr_##NODE##_##RBRACK(ast, node));  \
-        this->post_##NODE(ast, node);                         \
-    }
-
-#define CALL_WALKER_SEQ(NODE, LEN, SEQ) \
-    if (this->pre_##NODE(ast, node)) {  \
-        HANDLE_SEQ(NODE, LEN, SEQ);     \
-        this->post_##NODE(ast, node);   \
-    }
+#    define CALL_WALKER_SEQ(NODE, LEN, SEQ)                            \
+        if (this->pre_##NODE(ast, node)) {                             \
+            int len = rastr_##NODE##_##LEN##_get(ast, node);           \
+            for (int i = 0; i < len; ++i) {                            \
+                rastr_node_t child = rastr_##NODE##_get(ast, node, i); \
+                this->walk(ast, child);                                \
+            }                                                          \
+            this->post_##NODE(ast, node);                              \
+        }
 
     virtual void walk(rastr_ast_t ast, rastr_node_t node) {
         rastr_node_type_t type = rastr_node_type(ast, node);
@@ -958,246 +622,381 @@ class AstWalker {
             /********************************************************************************
              Operators
             ********************************************************************************/
-        case Special:
-        case Plus:
-        case Minus:
-        case Multiplication:
-        case Division:
-        case Power:
-        case Power2:
-        case LessThan:
-        case LessThanEqual:
-        case GreaterThan:
-        case GreaterThanEqual:
-        case Equal:
-        case NotEqual:
-        case Not:
-        case And:
-        case VecAnd:
-        case Or:
-        case VecOr:
-        case EqualAssign:
-        case LeftAssign:
-        case RightAssign:
-        case LeftSuperAssign:
-        case RightSuperAssign:
-        case ColonAssign:
-        case PipeForward:
-        case PipeBind:
-        case PublicNamespace:
-        case PrivateNamespace:
-        case Range:
-        case Help:
-        case SlotExtract:
-        case Formula:
-        case PartExtract:
-        case Function:
-        case Function2:
-        case While:
-        case Repeat:
-        case For:
-        case In:
-        case If:
-        case Else:
-        case Next:
-        case Break:
+        case RASTR_OP_SP:
+        case RASTR_OP_PLUS:
+        case RASTR_OP_MINUS:
+        case RASTR_OP_MUL:
+        case RASTR_OP_DIV:
+        case RASTR_OP_POW:
+        case RASTR_OP_POW2:
+        case RASTR_OP_LESS:
+        case RASTR_OP_LESS_EQ:
+        case RASTR_OP_GREAT:
+        case RASTR_OP_GREAT_EQ:
+        case RASTR_OP_EQ:
+        case RASTR_OP_NOT_EQ:
+        case RASTR_OP_NOT:
+        case RASTR_OP_AND:
+        case RASTR_OP_VEC_AND:
+        case RASTR_OP_OR:
+        case RASTR_OP_VEC_OR:
+        case RASTR_OP_EQ_ASGN:
+        case RASTR_OP_LT_ASGN:
+        case RASTR_OP_RT_ASGN:
+        case RASTR_OP_LT_SUP_ASGN:
+        case RASTR_OP_RT_SUP_ASGN:
+        case RASTR_OP_COLON_ASGN:
+        case RASTR_OP_PIPE_FWD:
+        case RASTR_OP_PIPE_BIND:
+        case RASTR_OP_PUB_NS:
+        case RASTR_OP_PVT_NS:
+        case RASTR_OP_RANGE:
+        case RASTR_OP_HELP:
+        case RASTR_OP_SLOT:
+        case RASTR_OP_FORMULA:
+        case RASTR_OP_PART:
+        case RASTR_OP_FN:
+        case RASTR_OP_FN2:
+        case RASTR_OP_WHILE:
+        case RASTR_OP_REPEAT:
+        case RASTR_OP_FOR:
+        case RASTR_OP_IN:
+        case RASTR_OP_IF:
+        case RASTR_OP_ELSE:
+        case RASTR_OP_NEXT:
+        case RASTR_OP_BREAK:
             CALL_WALKER_2(op, gap, loc);
+            break;
+
+            /********************************************************************************
+             Brackets
+            ********************************************************************************/
+        case RASTR_BKT_LT_RND:
+        case RASTR_BKT_RT_RND:
+        case RASTR_BKT_LT_CURL:
+        case RASTR_BKT_RT_CURL:
+        case RASTR_BKT_LT_SQR:
+        case RASTR_BKT_RT_SQR:
+        case RASTR_BKT_LT_DBL_SQR:
+            CALL_WALKER_2(bkt, gap, loc);
             break;
 
             /********************************************************************************
              Delimiters
             ********************************************************************************/
-        case LeftParen:
-        case RightParen:
-        case LeftBrace:
-        case RightBrace:
-        case LeftBracket:
-        case RightBracket:
-        case DoubleLeftBracket:
-        case DoubleRightBracket:
+        case RASTR_DLMTR_SCOL:
+        case RASTR_DLMTR_COM:
             CALL_WALKER_2(dlmtr, gap, loc);
-            break;
-
-            /********************************************************************************
-             Terminators
-            ********************************************************************************/
-        case Semicolon:
-        case Newline:
-        case Comma:
-            CALL_WALKER_2(term, gap, loc);
             break;
 
             /********************************************************************************
               Literals
             ********************************************************************************/
-        case Null:
+        case RASTR_NULL:
             CALL_WALKER_2(null, gap, loc);
             break;
 
-        case Logical:
-            CALL_WALKER_2(logical, gap, loc);
+        case RASTR_LGL:
+            CALL_WALKER_2(lgl, gap, loc);
             break;
 
-        case Integer:
-            CALL_WALKER_2(integer, gap, loc);
+        case RASTR_INT:
+            CALL_WALKER_2(int, gap, loc);
             break;
 
-        case Real:
-            CALL_WALKER_2(real, gap, loc);
+        case RASTR_DBL:
+            CALL_WALKER_2(dbl, gap, loc);
             break;
 
-        case Complex:
-            CALL_WALKER_2(complex, gap, loc);
+        case RASTR_CPX:
+            CALL_WALKER_2(cpx, gap, loc);
             break;
 
-        case String:
-            CALL_WALKER_2(string, gap, loc);
+        case RASTR_CHR:
+            CALL_WALKER_2(chr, gap, loc);
             break;
 
-        case Symbol:
-            CALL_WALKER_2(symbol, gap, loc);
+        case RASTR_SYM:
+            CALL_WALKER_2(sym, gap, loc);
             break;
 
         /********************************************************************************
           Expressions
         ********************************************************************************/
-        case Block:
-            CALL_WALKER_BRACK_SEQ(blk, lbrack, len, seq, rbrack)
+        case RASTR_BLK:
+            CALL_WALKER_3(blk, lbkt, exprs, rbkt)
             break;
 
-        case Group:
-            CALL_WALKER_3(grp, lbrack, expr, rbrack);
+        case RASTR_GRP:
+            CALL_WALKER_3(grp, lbkt, expr, rbkt);
             break;
 
-        case NullaryOperation:
+        case RASTR_NUOP:
             CALL_WALKER_1(nuop, op);
             break;
 
-        case UnaryOperation:
+        case RASTR_UNOP:
             CALL_WALKER_2(unop, op, expr);
             break;
 
-        case BinaryOperation:
+        case RASTR_BINOP:
             CALL_WALKER_3(binop, lexpr, op, rexpr);
             break;
 
-        case RepeatLoop:
-            CALL_WALKER_2(rlp, kw, body);
+        case RASTR_RLP:
+            CALL_WALKER_2(rlp, op, body);
             break;
 
-        case WhileLoop:
-            CALL_WALKER_3(wlp, kw, cond, body);
+        case RASTR_WLP:
+            CALL_WALKER_3(wlp, op, cond, body);
             break;
 
-        case ForLoop:
-            CALL_WALKER_3(flp, kw, iter, body);
+        case RASTR_FLP:
+            CALL_WALKER_3(flp, op, iter, body);
             break;
 
-        case IfConditional:
-            CALL_WALKER_3(icnd, ikw, cond, ibody);
+        case RASTR_ICOND:
+            CALL_WALKER_3(icond, iop, cond, ibody);
             break;
 
-        case IfElseConditional:
-            CALL_WALKER_5(iecnd, ikw, cond, ibody, ekw, ebody);
+        case RASTR_IECOND:
+            CALL_WALKER_5(iecond, iop, cond, ibody, eop, ebody);
             break;
 
-        case FunctionDefinition:
-            CALL_WALKER_3(fndefn, hd, params, body);
+        case RASTR_FNDEFN:
+            CALL_WALKER_5(fndefn, op, lbkt, pars, rbkt, body);
             break;
 
-        case FunctionCall:
-            CALL_WALKER_2(fncall, fun, args);
+        case RASTR_FNCALL:
+            CALL_WALKER_4(fncall, fn, lbkt, args, rbkt);
             break;
 
-        case Subset:
-            CALL_WALKER_2(sub, obj, inds);
+        case RASTR_SUB:
+            CALL_WALKER_4(sub, obj, lbkt, args, rbkt);
             break;
 
-        case Index:
-            CALL_WALKER_2(idx, obj, inds);
+        case RASTR_IDX:
+            CALL_WALKER_5(idx, obj, lbkt, args, rbkt1, rbkt2);
             break;
 
         /********************************************************************************
           Miscellaneous
         ********************************************************************************/
-        case Parameters:
-            CALL_WALKER_BRACK_SEQ(params, lbrack, len, seq, rbrack)
+        case RASTR_EXPRS:
+            CALL_WALKER_SEQ(exprs, len, seq)
             break;
 
-        case DefaultParameter:
-            CALL_WALKER_3(dparam, name, op, expr)
+        case RASTR_PARS:
+            CALL_WALKER_SEQ(pars, len, seq)
             break;
 
-        case NonDefaultParameter:
-            CALL_WALKER_1(ndparam, name)
+        case RASTR_DPAR:
+            CALL_WALKER_3(dpar, name, op, expr)
             break;
 
-        case Arguments:
-            CALL_WALKER_BRACK_SEQ(args, lbrack, len, seq, rbrack)
+        case RASTR_NDPAR:
+            CALL_WALKER_1(ndpar, name)
             break;
 
-        case NamedArgument:
+        case RASTR_ARGS:
+            CALL_WALKER_SEQ(args, len, seq)
+            break;
+
+        case RASTR_NARG:
             CALL_WALKER_3(narg, name, op, expr)
             break;
 
-        case PositionalArgument:
+        case RASTR_PARG:
             CALL_WALKER_1(parg, expr)
             break;
 
-        case Condition:
-            CALL_WALKER_3(cnd, lbrack, expr, rbrack)
+        case RASTR_COND:
+            CALL_WALKER_3(cond, lbkt, expr, rbkt)
             break;
 
-        case Iteration:
-            CALL_WALKER_5(iter, lbrack, var, kw, expr, rbrack)
+        case RASTR_ITER:
+            CALL_WALKER_5(iter, lbkt, var, op, expr, rbkt)
             break;
 
-        case Program:
-            CALL_WALKER_BRACK_SEQ(pgm, beg, len, seq, end)
+        case RASTR_PGM:
+            CALL_WALKER_3(pgm, beg, exprs, end)
             break;
 
-        case Delimited:
+        case RASTR_DLMTD:
             CALL_WALKER_2(dlmtd, expr, dlmtr)
             break;
 
-        case Missing:
+        case RASTR_MSNG:
             CALL_WALKER_2(msng, gap, loc)
             break;
 
-        case Beg:
+        case RASTR_BEG:
             CALL_WALKER_1(beg, loc)
             break;
 
-        case End:
+        case RASTR_END:
             CALL_WALKER_2(end, gap, loc)
             break;
 
-        case Gap:
+        case RASTR_GAP:
             CALL_WALKER_1(gap, loc)
             break;
 
-        case Location:
+        case RASTR_LOC:
             CALL_WALKER_0(loc)
             break;
 
-        case Error:
+        case RASTR_ERR:
             Rf_error("unexpected rastr node of type 'Error'");
             break;
         }
     }
-#undef CALL_WALKER_0
-#undef CALL_WALKER_1
-#undef CALL_WALKER_2
-#undef CALL_WALKER_3
-#undef CALL_WALKER_4
-#undef CALL_WALKER_5
-#undef HANDLE_SEQ
-#undef CALL_WALKER_BRACK_SEQ
-#undef CALL_WALKER_SEQ
+#    undef CALL_WALKER_0
+#    undef CALL_WALKER_1
+#    undef CALL_WALKER_2
+#    undef CALL_WALKER_3
+#    undef CALL_WALKER_4
+#    undef CALL_WALKER_5
+#    undef HANDLE_SEQ
+#    undef CALL_WALKER_SEQ
 };
 
-#ifdef __cplusplus
+#    ifdef __cplusplus
 }
-#endif
+#    endif
 
 #endif /* RASTR_API_H */
+
+/*******************************************************************************
+ * op
+ *******************************************************************************/
+
+rastr_node_t rastr_op_new(rastr_ast_t ast,
+                          const char* syn,
+                          rastr_node_t gap,
+                          rastr_node_t loc);
+SEXP r_rastr_op_new(SEXP r_ast, SEXP r_syn, SEXP r_gap, SEXP r_loc);
+const char* rastr_op_syn_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_op_syn_get(SEXP r_ast, SEXP r_node);
+
+/*******************************************************************************
+ * bkt
+ *******************************************************************************/
+
+rastr_node_t rastr_bkt_new(rastr_ast_t ast,
+                           const char* syn,
+                           rastr_node_t gap,
+                           rastr_node_t loc);
+SEXP r_rastr_bkt_new(SEXP r_ast, SEXP r_syn, SEXP r_gap, SEXP r_loc);
+const char* rastr_bkt_syn_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_bkt_syn_get(SEXP r_ast, SEXP r_node);
+
+/*******************************************************************************
+ * dlmtr
+ *******************************************************************************/
+
+rastr_node_t rastr_dlmtr_new(rastr_ast_t ast,
+                             const char* syn,
+                             rastr_node_t gap,
+                             rastr_node_t loc);
+SEXP r_rastr_dlmtr_new(SEXP r_ast, SEXP r_syn, SEXP r_gap, SEXP r_loc);
+const char* rastr_dlmtr_syn_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_dlmtr_syn_get(SEXP r_ast, SEXP r_node);
+
+/*******************************************************************************
+ * lgl
+ *******************************************************************************/
+
+rastr_node_t
+rastr_lgl_new(rastr_ast_t ast, int val, rastr_node_t gap, rastr_node_t loc);
+SEXP r_rastr_lgl_new(SEXP r_ast, SEXP r_val, SEXP r_gap, SEXP r_loc);
+
+const char* rastr_lgl_syn_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_lgl_syn_get(SEXP r_ast, SEXP r_node);
+
+/*******************************************************************************
+ * int
+ *******************************************************************************/
+
+rastr_node_t
+rastr_int_new(rastr_ast_t ast, int val, rastr_node_t gap, rastr_node_t loc);
+SEXP r_rastr_int_new(SEXP r_ast, SEXP r_val, SEXP r_gap, SEXP r_loc);
+
+/*******************************************************************************
+ * dbl
+ *******************************************************************************/
+
+rastr_node_t
+rastr_dbl_new(rastr_ast_t ast, double val, rastr_node_t gap, rastr_node_t loc);
+SEXP r_rastr_dbl_new(SEXP r_ast, SEXP r_val, SEXP r_gap, SEXP r_loc);
+
+/*******************************************************************************
+ * cpx
+ *******************************************************************************/
+
+rastr_node_t
+rastr_cpx_new(rastr_ast_t ast, double img, rastr_node_t gap, rastr_node_t loc);
+SEXP r_rastr_cpx_new(SEXP r_ast, SEXP r_img, SEXP r_gap, SEXP r_loc);
+
+/*******************************************************************************
+ * chr
+ *******************************************************************************/
+
+rastr_node_t rastr_chr_new_unsafe(rastr_ast_t ast,
+                                  const char* val,
+                                  const char* syn,
+                                  rastr_node_t gap,
+                                  rastr_node_t loc);
+rastr_node_t rastr_chr_new(rastr_ast_t ast,
+                           const char* val,
+                           rastr_node_t gap,
+                           rastr_node_t loc);
+SEXP r_rastr_chr_new(SEXP r_ast, SEXP r_val, SEXP r_gap, SEXP r_loc);
+
+/*******************************************************************************
+ * sym
+ *******************************************************************************/
+
+rastr_node_t rastr_sym_new_unsafe(rastr_ast_t ast,
+                                  const char* val,
+                                  const char* syn,
+                                  rastr_node_t gap,
+                                  rastr_node_t loc);
+rastr_node_t rastr_sym_new(rastr_ast_t ast,
+                           const char* val,
+                           int quote,
+                           rastr_node_t gap,
+                           rastr_node_t loc);
+SEXP r_rastr_sym_new(SEXP r_ast,
+                     SEXP r_val,
+                     SEXP r_quote,
+                     SEXP r_gap,
+                     SEXP r_loc);
+
+/*******************************************************************************
+ * gap
+ *******************************************************************************/
+
+rastr_node_t rastr_gap_new(rastr_ast_t ast, const char* val, rastr_node_t loc);
+
+SEXP r_rastr_gap_new(SEXP r_ast, SEXP r_val, SEXP r_loc);
+
+/*******************************************************************************
+ * beg
+ *******************************************************************************/
+
+rastr_node_t rastr_beg_new(rastr_ast_t ast, const char* bom, rastr_node_t loc);
+
+SEXP r_rastr_beg_new(SEXP r_ast, SEXP r_bom, SEXP r_loc);
+
+/*******************************************************************************
+ * err
+ *******************************************************************************/
+
+rastr_node_t rastr_err_new(rastr_ast_t ast, const char* msg, rastr_node_t loc);
+
+SEXP r_rastr_err_new(SEXP r_ast, SEXP r_msg, SEXP r_loc);
+
+// pred
+int rastr_lit_type(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_lit_type(SEXP r_ast, SEXP r_node);

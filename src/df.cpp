@@ -11,8 +11,8 @@ const Rcomplex NA_COMPLEX{NA_REAL, NA_REAL};
     int id = rastr_node_id(ast, node);         \
     df_->set_id(id);                           \
                                                \
-    df_->set_parent_id(parent_ids_.back());    \
-    parent_ids_.push_back(id);                 \
+    df_->set_pid(pids_.back());                \
+    pids_.push_back(id);                       \
                                                \
     df_->set_type(rastr_node_type(ast, node)); \
                                                \
@@ -22,21 +22,21 @@ const Rcomplex NA_COMPLEX{NA_REAL, NA_REAL};
 #define POST(KIND)      \
     fields_.pop_back(); \
     ++fields_.back();   \
-    parent_ids_.pop_back();
+    pids_.pop_back();
 
 class AstDf {
   public:
     AstDf(int size): index_(-1) {
         r_id_ = PROTECT(int_vec(size, NA_INTEGER));
-        r_parent_id_ = PROTECT(int_vec(size, NA_INTEGER));
-        r_type_ = PROTECT(str_vec(size, nullptr));
+        r_pid_ = PROTECT(int_vec(size, NA_INTEGER));
+        r_type_ = PROTECT(chr_vec(size, nullptr));
         r_field_ = PROTECT(int_vec(size, NA_INTEGER));
-        r_syntax_ = PROTECT(str_vec(size, nullptr));
-        r_val_str_ = PROTECT(str_vec(size, nullptr));
+        r_syn_ = PROTECT(chr_vec(size, nullptr));
+        r_val_chr_ = PROTECT(chr_vec(size, nullptr));
         r_val_lgl_ = PROTECT(lgl_vec(size, NA_LOGICAL));
         r_val_int_ = PROTECT(int_vec(size, NA_INTEGER));
         r_val_dbl_ = PROTECT(dbl_vec(size, NA_REAL));
-        r_val_cplx_ = PROTECT(cplx_vec(size, NA_COMPLEX));
+        r_val_cpx_ = PROTECT(cpx_vec(size, NA_COMPLEX));
         r_lrow_ = PROTECT(int_vec(size, NA_INTEGER));
         r_lcol_ = PROTECT(int_vec(size, NA_INTEGER));
         r_lchr_ = PROTECT(int_vec(size, NA_INTEGER));
@@ -55,24 +55,24 @@ class AstDf {
         return rastr_create_data_frame(18,
                                        "id",
                                        r_id_,
-                                       "parent_id",
-                                       r_parent_id_,
+                                       "pid",
+                                       r_pid_,
                                        "field",
                                        r_field_,
                                        "type",
                                        r_type_,
-                                       "syntax",
-                                       r_syntax_,
-                                       "val_str",
-                                       r_val_str_,
+                                       "syn",
+                                       r_syn_,
+                                       "val_chr",
+                                       r_val_chr_,
                                        "val_lgl",
                                        r_val_lgl_,
                                        "val_int",
                                        r_val_int_,
                                        "val_dbl",
                                        r_val_dbl_,
-                                       "val_cplx",
-                                       r_val_cplx_,
+                                       "val_cpx",
+                                       r_val_cpx_,
                                        "lrow",
                                        r_lrow_,
                                        "lcol",
@@ -95,7 +95,7 @@ class AstDf {
         ++index_;
     }
 
-    void set_pos(int lrow,
+    void set_loc(int lrow,
                  int lcol,
                  int lchr,
                  int lbyte,
@@ -117,12 +117,12 @@ class AstDf {
         int_set(r_id_, index_, id);
     }
 
-    void set_parent_id(int parent_id) {
-        int_set(r_parent_id_, index_, parent_id);
+    void set_pid(int pid) {
+        int_set(r_pid_, index_, pid);
     }
 
     void set_type(rastr_node_type_t type) {
-        str_set(r_type_, index_, rastr_node_type_to_string(type));
+        chr_set(r_type_, index_, rastr_node_type_to_string(type));
     }
 
     void set_field(int field) {
@@ -130,11 +130,11 @@ class AstDf {
     }
 
     void set_syn(const char* value) {
-        str_set(r_syntax_, index_, value);
+        chr_set(r_syn_, index_, value);
     }
 
-    void set_str(const char* value) {
-        str_set(r_val_str_, index_, value);
+    void set_chr(const char* value) {
+        chr_set(r_val_chr_, index_, value);
     }
 
     void set_lgl(int value) {
@@ -149,22 +149,22 @@ class AstDf {
         dbl_set(r_val_dbl_, index_, value);
     }
 
-    void set_cplx(const Rcomplex& value) {
-        cplx_set(r_val_cplx_, index_, value);
+    void set_cpx(const Rcomplex& value) {
+        cpx_set(r_val_cpx_, index_, value);
     }
 
   private:
     int index_;
     SEXP r_id_;
-    SEXP r_parent_id_;
+    SEXP r_pid_;
     SEXP r_type_;
     SEXP r_field_;
-    SEXP r_syntax_;
-    SEXP r_val_str_;
+    SEXP r_syn_;
+    SEXP r_val_chr_;
     SEXP r_val_lgl_;
     SEXP r_val_int_;
     SEXP r_val_dbl_;
-    SEXP r_val_cplx_;
+    SEXP r_val_cpx_;
     SEXP r_lrow_;
     SEXP r_lcol_;
     SEXP r_lchr_;
@@ -178,7 +178,7 @@ class AstDf {
 class DFTransformer: AstWalker {
   public:
     DFTransformer(): AstWalker(), df_(nullptr) {
-        parent_ids_.push_back(NA_INTEGER);
+        pids_.push_back(NA_INTEGER);
         fields_.push_back(0);
     }
 
@@ -198,8 +198,7 @@ class DFTransformer: AstWalker {
     bool pre_op(rastr_ast_t ast, rastr_node_t node) override {
         PRE(op)
 
-        df_->set_syn(rastr_op_syn(ast, node));
-        df_->set_str(rastr_op_val(ast, node));
+        df_->set_syn(rastr_op_syn_get(ast, node));
 
         return true;
     }
@@ -208,11 +207,22 @@ class DFTransformer: AstWalker {
         POST(op)
     }
 
+    bool pre_bkt(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(bkt)
+
+        df_->set_syn(rastr_bkt_syn_get(ast, node));
+
+        return true;
+    }
+
+    void post_bkt(rastr_ast_t ast, rastr_node_t node) override {
+        POST(bkt)
+    }
+
     bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) override {
         PRE(dlmtr)
 
-        df_->set_syn(rastr_node_delimiter_syntax(ast, node));
-        df_->set_str(rastr_node_delimiter_value(ast, node));
+        df_->set_syn(rastr_dlmtr_syn_get(ast, node));
 
         return true;
     }
@@ -221,23 +231,10 @@ class DFTransformer: AstWalker {
         POST(dlmtr)
     }
 
-    bool pre_term(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(term)
-
-        df_->set_syn(rastr_node_terminator_syntax(ast, node));
-        df_->set_str(rastr_node_terminator_value(ast, node));
-
-        return true;
-    }
-
-    void post_term(rastr_ast_t ast, rastr_node_t node) override {
-        POST(term)
-    }
-
     bool pre_null(rastr_ast_t ast, rastr_node_t node) override {
         PRE(null)
 
-        df_->set_syn(rastr_node_null_syntax(ast, node));
+        df_->set_syn(rastr_null_syn_get(ast, node));
 
         return true;
     }
@@ -246,82 +243,82 @@ class DFTransformer: AstWalker {
         POST(null)
     }
 
-    bool pre_logical(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(logical)
+    bool pre_lgl(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(lgl)
 
-        df_->set_syn(rastr_node_logical_syntax(ast, node));
-        df_->set_lgl(rastr_node_logical_value(ast, node));
-
-        return true;
-    }
-
-    void post_logical(rastr_ast_t ast, rastr_node_t node) override {
-        POST(logical)
-    }
-
-    bool pre_integer(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(integer)
-
-        df_->set_syn(rastr_node_integer_syntax(ast, node));
-        df_->set_int(rastr_node_integer_value(ast, node));
+        df_->set_syn(rastr_lgl_syn_get(ast, node));
+        df_->set_lgl(rastr_lgl_val_get(ast, node));
 
         return true;
     }
 
-    void post_integer(rastr_ast_t ast, rastr_node_t node) override {
-        POST(integer)
+    void post_lgl(rastr_ast_t ast, rastr_node_t node) override {
+        POST(lgl)
     }
 
-    bool pre_real(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(real)
+    bool pre_int(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(int)
 
-        df_->set_syn(rastr_node_real_syntax(ast, node));
-        df_->set_dbl(rastr_node_real_value(ast, node));
+        df_->set_syn(rastr_int_syn_get(ast, node));
+        df_->set_int(rastr_int_val_get(ast, node));
 
         return true;
     }
 
-    void post_real(rastr_ast_t ast, rastr_node_t node) override {
-        POST(real)
+    void post_int(rastr_ast_t ast, rastr_node_t node) override {
+        POST(int)
     }
 
-    bool pre_complex(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(complex)
+    bool pre_dbl(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(dbl)
 
-        df_->set_syn(rastr_node_complex_syntax(ast, node));
-        df_->set_cplx(rastr_node_complex_value(ast, node));
+        df_->set_syn(rastr_dbl_syn_get(ast, node));
+        df_->set_dbl(rastr_dbl_val_get(ast, node));
 
         return true;
     }
 
-    void post_complex(rastr_ast_t ast, rastr_node_t node) override {
-        POST(complex)
+    void post_dbl(rastr_ast_t ast, rastr_node_t node) override {
+        POST(dbl)
     }
 
-    bool pre_string(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(string)
+    bool pre_cpx(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(cpx)
 
-        df_->set_syn(rastr_node_string_syntax(ast, node));
-        df_->set_str(rastr_node_string_value(ast, node));
+        df_->set_syn(rastr_cpx_syn_get(ast, node));
+        df_->set_cpx(rastr_cpx_val_get(ast, node));
 
         return true;
     }
 
-    void post_string(rastr_ast_t ast, rastr_node_t node) override {
-        POST(string)
+    void post_cpx(rastr_ast_t ast, rastr_node_t node) override {
+        POST(cpx)
     }
 
-    bool pre_symbol(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(symbol)
+    bool pre_chr(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(chr)
 
-        df_->set_syn(rastr_node_symbol_syntax(ast, node));
-        df_->set_str(rastr_node_symbol_value(ast, node));
+        df_->set_syn(rastr_chr_syn_get(ast, node));
+        df_->set_chr(rastr_chr_val_get(ast, node));
 
         return true;
     }
 
-    void post_symbol(rastr_ast_t ast, rastr_node_t node) override {
-        POST(symbol)
+    void post_chr(rastr_ast_t ast, rastr_node_t node) override {
+        POST(chr)
+    }
+
+    bool pre_sym(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(sym)
+
+        df_->set_syn(rastr_sym_syn_get(ast, node));
+        df_->set_chr(rastr_sym_val_get(ast, node));
+
+        return true;
+    }
+
+    void post_sym(rastr_ast_t ast, rastr_node_t node) override {
+        POST(sym)
     }
 
     bool pre_blk(rastr_ast_t ast, rastr_node_t node) override {
@@ -396,26 +393,25 @@ class DFTransformer: AstWalker {
         POST(flp)
     }
 
-    bool pre_icnd(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(icnd)
+    bool pre_icond(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(icond)
         return true;
     }
 
-    void post_icnd(rastr_ast_t ast, rastr_node_t node) override {
-        POST(icnd)
+    void post_icond(rastr_ast_t ast, rastr_node_t node) override {
+        POST(icond)
     }
 
-    bool pre_iecnd(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(iecnd)
+    bool pre_iecond(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(iecond)
         return true;
     }
 
-    void post_iecnd(rastr_ast_t ast, rastr_node_t node) override {
-        POST(iecnd)
+    void post_iecond(rastr_ast_t ast, rastr_node_t node) override {
+        POST(iecond)
     }
 
     bool pre_fndefn(rastr_ast_t ast, rastr_node_t node) override {
-        ;
         PRE(fndefn)
         return true;
     }
@@ -451,31 +447,40 @@ class DFTransformer: AstWalker {
         POST(idx)
     }
 
-    bool pre_params(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(params)
+    bool pre_exprs(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(exprs)
         return true;
     }
 
-    void post_params(rastr_ast_t ast, rastr_node_t node) override {
-        POST(params)
+    void post_exprs(rastr_ast_t ast, rastr_node_t node) override {
+        POST(exprs)
     }
 
-    bool pre_dparam(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(dparam)
+    bool pre_pars(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(pars)
         return true;
     }
 
-    void post_dparam(rastr_ast_t ast, rastr_node_t node) override {
-        POST(dparam)
+    void post_pars(rastr_ast_t ast, rastr_node_t node) override {
+        POST(pars)
     }
 
-    bool pre_ndparam(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(ndparam)
+    bool pre_dpar(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(dpar)
         return true;
     }
 
-    void post_ndparam(rastr_ast_t ast, rastr_node_t node) override {
-        POST(ndparam)
+    void post_dpar(rastr_ast_t ast, rastr_node_t node) override {
+        POST(dpar)
+    }
+
+    bool pre_ndpar(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(ndpar)
+        return true;
+    }
+
+    void post_ndpar(rastr_ast_t ast, rastr_node_t node) override {
+        POST(ndpar)
     }
 
     bool pre_args(rastr_ast_t ast, rastr_node_t node) override {
@@ -505,13 +510,13 @@ class DFTransformer: AstWalker {
         POST(parg)
     }
 
-    bool pre_cnd(rastr_ast_t ast, rastr_node_t node) override {
-        PRE(cnd)
+    bool pre_cond(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(cond)
         return true;
     }
 
-    void post_cnd(rastr_ast_t ast, rastr_node_t node) override {
-        POST(cnd)
+    void post_cond(rastr_ast_t ast, rastr_node_t node) override {
+        POST(cond)
     }
 
     bool pre_iter(rastr_ast_t ast, rastr_node_t node) override {
@@ -571,10 +576,10 @@ class DFTransformer: AstWalker {
     bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
         PRE(gap)
 
-        const char* value = rastr_gap_val(ast, node);
+        const char* val = rastr_gap_val_get(ast, node);
 
-        df_->set_syn(value);
-        df_->set_str(value);
+        df_->set_syn(val);
+        df_->set_chr(val);
 
         return true;
     }
@@ -586,16 +591,16 @@ class DFTransformer: AstWalker {
     bool pre_loc(rastr_ast_t ast, rastr_node_t node) override {
         PRE(loc)
 
-        int lrow = rastr_pos_lrow(ast, node);
-        int lcol = rastr_pos_lcol(ast, node);
-        int lchr = rastr_pos_lchr(ast, node);
-        int lbyte = rastr_pos_lbyte(ast, node);
-        int rrow = rastr_pos_rrow(ast, node);
-        int rcol = rastr_pos_rcol(ast, node);
-        int rchr = rastr_pos_rchr(ast, node);
-        int rbyte = rastr_pos_rbyte(ast, node);
+        int lrow = rastr_loc_lrow_get(ast, node);
+        int lcol = rastr_loc_lcol_get(ast, node);
+        int lchr = rastr_loc_lchr_get(ast, node);
+        int lbyte = rastr_loc_lbyte_get(ast, node);
+        int rrow = rastr_loc_rrow_get(ast, node);
+        int rcol = rastr_loc_rcol_get(ast, node);
+        int rchr = rastr_loc_rchr_get(ast, node);
+        int rbyte = rastr_loc_rbyte_get(ast, node);
 
-        df_->set_pos(lrow, lcol, lchr, lbyte, rrow, rcol, rchr, rbyte);
+        df_->set_loc(lrow, lcol, lchr, lbyte, rrow, rcol, rchr, rbyte);
 
         return true;
     }
@@ -605,7 +610,7 @@ class DFTransformer: AstWalker {
     }
 
   private:
-    std::vector<int> parent_ids_;
+    std::vector<int> pids_;
     std::vector<int> fields_;
     AstDf* df_;
 };

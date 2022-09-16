@@ -11,48 +11,48 @@ class AstSerializer: public AstWalker {
     AstSerializer(std::iostream* stream): AstWalker(), stream_(stream) {
     }
 
-    virtual void post_op(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_op_syn(ast, node);
+    void post_op(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_op_syn_get(ast, node);
     }
 
-    virtual void post_dlmtr(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_delimiter_syntax(ast, node);
+    void post_bkt(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_bkt_syn_get(ast, node);
     }
 
-    virtual void post_term(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_terminator_syntax(ast, node);
+    void post_dlmtr(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_dlmtr_syn_get(ast, node);
     }
 
-    virtual void post_null(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_null_syntax(ast, node);
+    void post_null(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_null_syn_get(ast, node);
     }
 
-    virtual void post_logical(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_logical_syntax(ast, node);
+    void post_lgl(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_lgl_syn_get(ast, node);
     }
 
-    virtual void post_integer(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_integer_syntax(ast, node);
+    void post_int(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_int_syn_get(ast, node);
     }
 
-    virtual void post_real(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_real_syntax(ast, node);
+    void post_dbl(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_dbl_syn_get(ast, node);
     }
 
-    virtual void post_complex(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_complex_syntax(ast, node);
+    void post_cpx(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_cpx_syn_get(ast, node);
     }
 
-    virtual void post_string(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_string_syntax(ast, node);
+    void post_chr(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_chr_syn_get(ast, node);
     }
 
-    virtual void post_symbol(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_node_symbol_syntax(ast, node);
+    void post_sym(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_sym_syn_get(ast, node);
     }
 
-    virtual void post_gap(rastr_ast_t ast, rastr_node_t node) {
-        (*stream_) << rastr_gap_val(ast, node);
+    void post_gap(rastr_ast_t ast, rastr_node_t node) override {
+        (*stream_) << rastr_gap_val_get(ast, node);
     }
 
   private:

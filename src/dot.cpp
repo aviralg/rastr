@@ -30,8 +30,8 @@ const char* ColorBlueGray = "#607D8B";
 const char* ColorBlack = "#000000";
 const char* ColorWhite = "#FFFFFF";
 
-#define EXPORT_EDGE(KIND, CHILD)                            \
-    rastr_node_t CHILD = rastr_##KIND##_##CHILD(ast, node); \
+#define EXPORT_EDGE(KIND, CHILD)                                  \
+    rastr_node_t CHILD = rastr_##KIND##_##CHILD##_get(ast, node); \
     write_edge_(ast, node, CHILD, #CHILD);
 
 #define EXPORT_EDGE_HEADER(n) \
@@ -59,6 +59,14 @@ const char* ColorWhite = "#FFFFFF";
     EXPORT_EDGE(KIND, CHILD3)                        \
     EXPORT_EDGE_FOOTER()
 
+#define EXPORT_EDGES_4(KIND, CHILD1, CHILD2, CHILD3, CHILD4) \
+    EXPORT_EDGE_HEADER(4)                                    \
+    EXPORT_EDGE(KIND, CHILD1)                                \
+    EXPORT_EDGE(KIND, CHILD2)                                \
+    EXPORT_EDGE(KIND, CHILD3)                                \
+    EXPORT_EDGE(KIND, CHILD4)                                \
+    EXPORT_EDGE_FOOTER()
+
 #define EXPORT_EDGES_5(KIND, CHILD1, CHILD2, CHILD3, CHILD4, CHILD5) \
     EXPORT_EDGE_HEADER(5)                                            \
     EXPORT_EDGE(KIND, CHILD1)                                        \
@@ -68,26 +76,16 @@ const char* ColorWhite = "#FFFFFF";
     EXPORT_EDGE(KIND, CHILD5)                                        \
     EXPORT_EDGE_FOOTER()
 
-#define EXPORT_EDGES_BRACK_SEQ(KIND, LBRACK, LEN, SEQ, RBRACK) \
-    EXPORT_EDGE_HEADER(2 + rastr_##KIND##_##LEN(ast, node))    \
-    EXPORT_EDGE(KIND, LBRACK)                                  \
-    EXPORT_EDGES_SEQ_INNER(KIND, LEN, SEQ)                     \
-    EXPORT_EDGE(KIND, RBRACK)                                  \
+#define EXPORT_EDGES_SEQ(KIND, LEN, SEQ)                             \
+    EXPORT_EDGE_HEADER(rastr_##KIND##_##LEN##_get(ast, node))        \
+    const rastr_node_t* seq = rastr_##KIND##_##SEQ##_get(ast, node); \
+    int len = rastr_##KIND##_##LEN##_get(ast, node);                 \
+                                                                     \
+    for (int i = 0; i < len; ++i) {                                  \
+        rastr_node_t child = seq[i];                                 \
+        write_edge_(ast, node, child, bufprintf("seq[%d]", i));      \
+    }                                                                \
     EXPORT_EDGE_FOOTER()
-
-#define EXPORT_EDGES_SEQ(KIND, LEN, SEQ)                \
-    EXPORT_EDGE_HEADER(rastr_##KIND##_##LEN(ast, node)) \
-    EXPORT_EDGES_SEQ_INNER(KIND, LEN, SEQ)              \
-    EXPORT_EDGE_FOOTER()
-
-#define EXPORT_EDGES_SEQ_INNER(KIND, LEN, SEQ)                  \
-    const rastr_node_t* seq = rastr_##KIND##_##SEQ(ast, node);  \
-    int len = rastr_##KIND##_##LEN(ast, node);                  \
-                                                                \
-    for (int i = 0; i < len; ++i) {                             \
-        rastr_node_t child = seq[i];                            \
-        write_edge_(ast, node, child, bufprintf("seq[%d]", i)); \
-    }
 
 class DotSerializer: public AstWalker {
   public:
@@ -95,130 +93,127 @@ class DotSerializer: public AstWalker {
     }
 
     bool pre_op(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(ast, node, "syn", rastr_op_syn(ast, node), NULL);
+        write_node_(ast, node, "syn", rastr_op_syn_get(ast, node), NULL);
 
         EXPORT_EDGES_2(op, gap, loc);
 
         return true;
     }
 
+    bool pre_bkt(rastr_ast_t ast, rastr_node_t node) override {
+        write_node_(ast, node, "syn", rastr_bkt_syn_get(ast, node), NULL);
+
+        EXPORT_EDGES_2(bkt, gap, loc);
+
+        return true;
+    }
+
     bool pre_dlmtr(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast, node, "syn", rastr_node_delimiter_syntax(ast, node), NULL);
+        write_node_(ast, node, "syn", rastr_dlmtr_syn_get(ast, node), NULL);
 
         EXPORT_EDGES_2(dlmtr, gap, loc);
 
         return true;
     }
 
-    bool pre_term(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast, node, "syn", rastr_node_terminator_syntax(ast, node), NULL);
-
-        EXPORT_EDGES_2(term, gap, loc);
-
-        return true;
-    }
-
     bool pre_null(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(ast, node, "syn", rastr_node_null_syntax(ast, node), NULL);
+        write_node_(ast, node, "syn", rastr_null_syn_get(ast, node), NULL);
 
         EXPORT_EDGES_2(null, gap, loc);
 
         return true;
     }
 
-    bool pre_logical(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_lgl(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "syn",
-                    rastr_node_logical_syntax(ast, node),
+                    rastr_lgl_syn_get(ast, node),
                     "val",
-                    bufprintf("%d", rastr_node_logical_value(ast, node)),
+                    bufprintf("%d", rastr_lgl_val_get(ast, node)),
                     NULL);
 
-        EXPORT_EDGES_2(logical, gap, loc);
+        EXPORT_EDGES_2(lgl, gap, loc);
 
         return true;
     }
 
-    bool pre_integer(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_int(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "syn",
-                    rastr_node_integer_syntax(ast, node),
+                    rastr_int_syn_get(ast, node),
                     "val",
-                    bufprintf("%d", rastr_node_integer_value(ast, node)),
+                    bufprintf("%d", rastr_int_val_get(ast, node)),
                     NULL);
 
-        EXPORT_EDGES_2(integer, gap, loc);
+        EXPORT_EDGES_2(int, gap, loc);
 
         return true;
     }
 
-    bool pre_real(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_dbl(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "syn",
-                    rastr_node_real_syntax(ast, node),
+                    rastr_dbl_syn_get(ast, node),
                     "val",
-                    bufprintf("%f", rastr_node_real_value(ast, node)),
+                    bufprintf("%f", rastr_dbl_val_get(ast, node)),
                     NULL);
 
-        EXPORT_EDGES_2(real, gap, loc);
+        EXPORT_EDGES_2(dbl, gap, loc);
 
         return true;
     }
 
-    bool pre_complex(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_cpx(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "syn",
-                    rastr_node_complex_syntax(ast, node),
+                    rastr_cpx_syn_get(ast, node),
                     "val",
                     bufprintf("{r: %d, i: %d}",
-                              rastr_node_complex_value(ast, node).r,
-                              rastr_node_complex_value(ast, node).i),
+                              rastr_cpx_val_get(ast, node).r,
+                              rastr_cpx_val_get(ast, node).i),
                     NULL);
 
-        EXPORT_EDGES_2(complex, gap, loc);
+        EXPORT_EDGES_2(cpx, gap, loc);
 
         return true;
     }
 
-    bool pre_string(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_chr(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "syn",
-                    rastr_node_string_syntax(ast, node),
+                    rastr_chr_syn_get(ast, node),
                     "val",
-                    rastr_node_string_value(ast, node),
+                    rastr_chr_val_get(ast, node),
                     NULL);
 
-        EXPORT_EDGES_2(string, gap, loc);
+        EXPORT_EDGES_2(chr, gap, loc);
 
         return true;
     }
 
-    bool pre_symbol(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_sym(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "syn",
-                    rastr_node_symbol_syntax(ast, node),
+                    rastr_sym_syn_get(ast, node),
                     "val",
-                    rastr_node_symbol_value(ast, node),
+                    rastr_sym_val_get(ast, node),
                     NULL);
 
-        EXPORT_EDGES_2(symbol, gap, loc);
+        EXPORT_EDGES_2(sym, gap, loc);
 
         return true;
     }
 
     bool pre_blk(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast, node, "len", bufprintf("%d", rastr_blk_len(ast, node)), NULL);
+        write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_BRACK_SEQ(blk, lbrack, len, seq, rbrack)
+        EXPORT_EDGES_3(blk, lbkt, exprs, rbkt)
 
         return true;
     }
@@ -226,7 +221,7 @@ class DotSerializer: public AstWalker {
     bool pre_grp(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_3(grp, lbrack, expr, rbrack);
+        EXPORT_EDGES_3(grp, lbkt, expr, rbkt);
 
         return true;
     }
@@ -258,7 +253,7 @@ class DotSerializer: public AstWalker {
     bool pre_rlp(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_2(rlp, kw, body);
+        EXPORT_EDGES_2(rlp, op, body);
 
         return true;
     }
@@ -266,7 +261,7 @@ class DotSerializer: public AstWalker {
     bool pre_wlp(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_3(wlp, kw, cond, body);
+        EXPORT_EDGES_3(wlp, op, cond, body);
 
         return true;
     }
@@ -274,23 +269,23 @@ class DotSerializer: public AstWalker {
     bool pre_flp(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_3(flp, kw, iter, body);
+        EXPORT_EDGES_3(flp, op, iter, body);
 
         return true;
     }
 
-    bool pre_icnd(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_icond(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_3(icnd, ikw, cond, ibody);
+        EXPORT_EDGES_3(icond, iop, cond, ibody);
 
         return true;
     }
 
-    bool pre_iecnd(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_iecond(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_5(iecnd, ikw, cond, ibody, ekw, ebody);
+        EXPORT_EDGES_5(iecond, iop, cond, ibody, eop, ebody);
 
         return true;
     }
@@ -298,7 +293,7 @@ class DotSerializer: public AstWalker {
     bool pre_fndefn(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_3(fndefn, hd, params, body);
+        EXPORT_EDGES_3(fndefn, op, pars, body);
 
         return true;
     }
@@ -306,7 +301,7 @@ class DotSerializer: public AstWalker {
     bool pre_fncall(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_2(fncall, fun, args);
+        EXPORT_EDGES_4(fncall, fn, lbkt, args, rbkt);
 
         return true;
     }
@@ -314,7 +309,7 @@ class DotSerializer: public AstWalker {
     bool pre_sub(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_2(sub, obj, inds);
+        EXPORT_EDGES_4(sub, obj, lbkt, args, rbkt);
 
         return true;
     }
@@ -322,44 +317,59 @@ class DotSerializer: public AstWalker {
     bool pre_idx(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_2(idx, obj, inds);
+        EXPORT_EDGES_5(idx, obj, lbkt, args, rbkt1, rbkt2);
 
         return true;
     }
 
-    bool pre_params(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_exprs(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
                     "len",
-                    bufprintf("%d", rastr_params_len(ast, node)),
+                    bufprintf("%d", rastr_exprs_len_get(ast, node)),
                     NULL);
 
-        EXPORT_EDGES_BRACK_SEQ(params, lbrack, len, seq, rbrack)
+        EXPORT_EDGES_SEQ(exprs, len, seq)
 
         return true;
     }
 
-    bool pre_dparam(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(ast, node, NULL);
+    bool pre_pars(rastr_ast_t ast, rastr_node_t node) override {
+        write_node_(ast,
+                    node,
+                    "len",
+                    bufprintf("%d", rastr_pars_len_get(ast, node)),
+                    NULL);
 
-        EXPORT_EDGES_3(dparam, name, op, expr)
+        EXPORT_EDGES_SEQ(pars, len, seq)
 
         return true;
     }
 
-    bool pre_ndparam(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_dpar(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_1(ndparam, name)
+        EXPORT_EDGES_3(dpar, name, op, expr)
+
+        return true;
+    }
+
+    bool pre_ndpar(rastr_ast_t ast, rastr_node_t node) override {
+        write_node_(ast, node, NULL);
+
+        EXPORT_EDGES_1(ndpar, name)
 
         return true;
     }
 
     bool pre_args(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast, node, "len", bufprintf("%d", rastr_args_len(ast, node)), NULL);
+        write_node_(ast,
+                    node,
+                    "len",
+                    bufprintf("%d", rastr_args_len_get(ast, node)),
+                    NULL);
 
-        EXPORT_EDGES_BRACK_SEQ(args, lbrack, len, seq, rbrack)
+        EXPORT_EDGES_SEQ(args, len, seq)
 
         return true;
     }
@@ -380,10 +390,10 @@ class DotSerializer: public AstWalker {
         return true;
     }
 
-    bool pre_cnd(rastr_ast_t ast, rastr_node_t node) override {
+    bool pre_cond(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_3(cnd, lbrack, expr, rbrack)
+        EXPORT_EDGES_3(cond, lbkt, expr, rbkt)
 
         return true;
     }
@@ -391,16 +401,15 @@ class DotSerializer: public AstWalker {
     bool pre_iter(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_5(iter, lbrack, var, kw, expr, rbrack)
+        EXPORT_EDGES_5(iter, lbkt, var, op, expr, rbkt)
 
         return true;
     }
 
     bool pre_pgm(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(
-            ast, node, "len", bufprintf("%d", rastr_pgm_len(ast, node)), NULL);
+        write_node_(ast, node, NULL);
 
-        EXPORT_EDGES_BRACK_SEQ(pgm, beg, len, seq, end)
+        EXPORT_EDGES_3(pgm, beg, exprs, end)
 
         return true;
     }
@@ -438,7 +447,7 @@ class DotSerializer: public AstWalker {
     }
 
     bool pre_gap(rastr_ast_t ast, rastr_node_t node) override {
-        write_node_(ast, node, "val", rastr_gap_val(ast, node), NULL);
+        write_node_(ast, node, "val", rastr_gap_val_get(ast, node), NULL);
 
         EXPORT_EDGES_1(gap, loc)
 
@@ -455,14 +464,14 @@ class DotSerializer: public AstWalker {
         char rchr[10];
         char rbyte[10];
 
-        sprintf(lrow, "%d", rastr_pos_lrow(ast, node));
-        sprintf(lcol, "%d", rastr_pos_lcol(ast, node));
-        sprintf(lchr, "%d", rastr_pos_lchr(ast, node));
-        sprintf(lbyte, "%d", rastr_pos_lbyte(ast, node));
-        sprintf(rrow, "%d", rastr_pos_rrow(ast, node));
-        sprintf(rcol, "%d", rastr_pos_rcol(ast, node));
-        sprintf(rchr, "%d", rastr_pos_rchr(ast, node));
-        sprintf(rbyte, "%d", rastr_pos_rbyte(ast, node));
+        sprintf(lrow, "%d", rastr_loc_lrow_get(ast, node));
+        sprintf(lcol, "%d", rastr_loc_lcol_get(ast, node));
+        sprintf(lchr, "%d", rastr_loc_lchr_get(ast, node));
+        sprintf(lbyte, "%d", rastr_loc_lbyte_get(ast, node));
+        sprintf(rrow, "%d", rastr_loc_rrow_get(ast, node));
+        sprintf(rcol, "%d", rastr_loc_rcol_get(ast, node));
+        sprintf(rchr, "%d", rastr_loc_rchr_get(ast, node));
+        sprintf(rbyte, "%d", rastr_loc_rbyte_get(ast, node));
 
         write_node_(ast,
                     node,
@@ -665,198 +674,202 @@ digraph ast {
 
     const char* get_color_(rastr_node_type_t type) {
         switch (type) {
-            /********************************************************************************
-      Operators
-            ********************************************************************************/
-        case Special:
-        case Plus:
-        case Minus:
-        case Multiplication:
-        case Division:
-        case Power:
-        case Power2:
-        case LessThan:
-        case LessThanEqual:
-        case GreaterThan:
-        case GreaterThanEqual:
-        case Equal:
-        case NotEqual:
-        case Not:
-        case And:
-        case VecAnd:
-        case Or:
-        case VecOr:
-        case EqualAssign:
-        case LeftAssign:
-        case RightAssign:
-        case LeftSuperAssign:
-        case RightSuperAssign:
-        case ColonAssign:
-        case PipeForward:
-        case PipeBind:
-        case PublicNamespace:
-        case PrivateNamespace:
-        case Range:
-        case Help:
-        case SlotExtract:
-        case Formula:
-        case PartExtract:
-        case Function2:
-        case Function:
-        case While:
-        case Repeat:
-        case For:
-        case In:
-        case If:
-        case Else:
-        case Next:
-        case Break:
+        case RASTR_OP_SP:
+        case RASTR_OP_PLUS:
+        case RASTR_OP_MINUS:
+        case RASTR_OP_MUL:
+        case RASTR_OP_DIV:
+        case RASTR_OP_POW:
+        case RASTR_OP_POW2:
+        case RASTR_OP_LESS:
+        case RASTR_OP_LESS_EQ:
+        case RASTR_OP_GREAT:
+        case RASTR_OP_GREAT_EQ:
+        case RASTR_OP_EQ:
+        case RASTR_OP_NOT_EQ:
+        case RASTR_OP_NOT:
+        case RASTR_OP_AND:
+        case RASTR_OP_VEC_AND:
+        case RASTR_OP_OR:
+        case RASTR_OP_VEC_OR:
+        case RASTR_OP_EQ_ASGN:
+        case RASTR_OP_LT_ASGN:
+        case RASTR_OP_RT_ASGN:
+        case RASTR_OP_LT_SUP_ASGN:
+        case RASTR_OP_RT_SUP_ASGN:
+        case RASTR_OP_COLON_ASGN:
+        case RASTR_OP_PIPE_FWD:
+        case RASTR_OP_PIPE_BIND:
+        case RASTR_OP_PUB_NS:
+        case RASTR_OP_PVT_NS:
+        case RASTR_OP_RANGE:
+        case RASTR_OP_HELP:
+        case RASTR_OP_SLOT:
+        case RASTR_OP_FORMULA:
+        case RASTR_OP_PART:
+        case RASTR_OP_FN:
+        case RASTR_OP_FN2:
+        case RASTR_OP_WHILE:
+        case RASTR_OP_REPEAT:
+        case RASTR_OP_FOR:
+        case RASTR_OP_IN:
+        case RASTR_OP_IF:
+        case RASTR_OP_ELSE:
+        case RASTR_OP_NEXT:
+        case RASTR_OP_BREAK:
             return ColorRed;
             break;
 
-        /********************************************************************************
-          Delimiters
-        ********************************************************************************/
-        case LeftParen:
-        case RightParen:
-        case LeftBrace:
-        case RightBrace:
-        case LeftBracket:
-        case RightBracket:
-        case DoubleLeftBracket:
-        case DoubleRightBracket:
+            /********************************************************************************
+             Brackets
+            ********************************************************************************/
+        case RASTR_BKT_LT_RND:
+        case RASTR_BKT_RT_RND:
+        case RASTR_BKT_LT_CURL:
+        case RASTR_BKT_RT_CURL:
+        case RASTR_BKT_LT_SQR:
+        case RASTR_BKT_RT_SQR:
+        case RASTR_BKT_LT_DBL_SQR:
             return ColorPink;
             break;
 
             /********************************************************************************
-              Terminators
+             Delimiters
             ********************************************************************************/
-        case Semicolon:
-        case Newline:
-        case Comma:
+        case RASTR_DLMTR_SCOL:
+        case RASTR_DLMTR_COM:
             return ColorPurple;
             break;
 
-        /********************************************************************************
-          Literals
-        ********************************************************************************/
-        case Null:
+            /********************************************************************************
+              Literals
+            ********************************************************************************/
+        case RASTR_NULL:
             return ColorGreen;
             break;
-        case Logical:
+
+        case RASTR_LGL:
             return ColorGreen;
             break;
-        case Integer:
+
+        case RASTR_INT:
             return ColorGreen;
             break;
-        case Real:
+
+        case RASTR_DBL:
             return ColorGreen;
             break;
-        case Complex:
+
+        case RASTR_CPX:
             return ColorGreen;
             break;
-        case String:
+
+        case RASTR_CHR:
             return ColorGreen;
             break;
-        case Symbol:
+
+        case RASTR_SYM:
             return ColorGreen;
             break;
 
         /********************************************************************************
           Expressions
         ********************************************************************************/
-        case Block:
+        case RASTR_BLK:
             return ColorDeepPurple;
             break;
-        case Group:
+
+        case RASTR_GRP:
             return ColorIndigo;
             break;
-        case NullaryOperation:
+        case RASTR_NUOP:
             return ColorBlue;
             break;
-        case UnaryOperation:
+        case RASTR_UNOP:
             return ColorBlue;
             break;
-        case BinaryOperation:
+        case RASTR_BINOP:
             return ColorBlue;
             break;
-        case RepeatLoop:
+        case RASTR_RLP:
             return ColorTeal;
             break;
-        case WhileLoop:
+        case RASTR_WLP:
             return ColorTeal;
             break;
-        case ForLoop:
+        case RASTR_FLP:
             return ColorTeal;
             break;
-        case IfConditional:
+        case RASTR_ICOND:
             return ColorLightGreen;
             break;
-        case IfElseConditional:
+        case RASTR_IECOND:
             return ColorLightGreen;
             break;
-        case FunctionDefinition:
+        case RASTR_FNDEFN:
             return ColorLime;
             break;
-        case FunctionCall:
+        case RASTR_FNCALL:
             return ColorYellow;
             break;
-        case Subset:
+        case RASTR_SUB:
             return ColorYellow;
             break;
-        case Index:
+        case RASTR_IDX:
             return ColorYellow;
             break;
-
         /********************************************************************************
           Miscellaneous
         ********************************************************************************/
-        case Parameters:
+        case RASTR_EXPRS:
             return ColorAmber;
             break;
-        case DefaultParameter:
+        case RASTR_PARS:
+            return ColorAmber;
+            break;
+        case RASTR_DPAR:
             return ColorOrange;
             break;
-        case NonDefaultParameter:
+        case RASTR_NDPAR:
             return ColorOrange;
             break;
-        case Arguments:
+        case RASTR_ARGS:
             return ColorBrown;
             break;
-        case NamedArgument:
+        case RASTR_NARG:
             return ColorDeepOrange;
             break;
-        case PositionalArgument:
+        case RASTR_PARG:
             return ColorDeepOrange;
             break;
-        case Condition:
+        case RASTR_COND:
             return ColorBrown;
             break;
-        case Iteration:
+        case RASTR_ITER:
             return ColorBrown;
             break;
-        case Program:
+        case RASTR_PGM:
             return ColorLightBlue;
             break;
-        case Delimited:
+        case RASTR_DLMTD:
             return ColorCyan;
             break;
-        case Missing:
+        case RASTR_MSNG:
             return ColorBlueGray;
             break;
-        case Beg:
+        case RASTR_BEG:
             return ColorGray;
             break;
-        case End:
+        case RASTR_END:
             return ColorGray;
             break;
-        case Gap:
+        case RASTR_GAP:
             return ColorBlack;
             break;
-        case Location:
+        case RASTR_LOC:
             return ColorBlack;
             break;
-        case Error:
+        case RASTR_ERR:
             return ColorBlack;
             break;
         }

@@ -14,6 +14,10 @@ bool file_exists(const char* filepath);
 
 std::string read_file(const char* filepath);
 
+char* str_dup(const char* str);
+
+char* str_dup(const char* str, int len);
+
 const char* bufprintf(const char* fmt, ...);
 
 const char* vbufprintf(const char* fmt, std::va_list args);

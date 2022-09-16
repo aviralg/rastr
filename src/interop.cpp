@@ -257,13 +257,17 @@ SEXP r_rastr_get_object_details(SEXP r_value,
     return r_result;
 }
 
-SEXP str_vec1(const char* val) {
+int vec_len(SEXP r_vec) {
+    return Rf_length(r_vec);
+}
+
+SEXP chr_vec1(const char* val) {
     SEXP r_str = Rf_allocVector(STRSXP, 1);
     SET_STRING_ELT(r_str, 0, val == nullptr ? NA_STRING : mkChar(val));
     return r_str;
 }
 
-SEXP str_vec(int size, const char* val) {
+SEXP chr_vec(int size, const char* val) {
     SEXP r_str = PROTECT(allocVector(STRSXP, size));
     SEXP r_val = PROTECT(val == nullptr ? NA_STRING : mkChar(val));
 
@@ -275,12 +279,12 @@ SEXP str_vec(int size, const char* val) {
     return r_str;
 }
 
-const char* str_get(SEXP r_vec, int index) {
+const char* chr_get(SEXP r_vec, int index) {
     SEXP r_char = STRING_ELT(r_vec, index);
     return r_char == NA_STRING ? nullptr : CHAR(r_char);
 }
 
-void str_set(SEXP r_vec, int index, const char* val) {
+void chr_set(SEXP r_vec, int index, const char* val) {
     SEXP r_val = PROTECT(val == nullptr ? NA_STRING : mkChar(val));
     SET_STRING_ELT(r_vec, index, r_val);
     UNPROTECT(1);
@@ -351,24 +355,61 @@ void dbl_set(SEXP r_vec, int index, double val) {
     REAL(r_vec)[index] = val;
 }
 
-SEXP cplx_vec1(const Rcomplex& value) {
+double num_get(SEXP r_vec, int index) {
+    switch (TYPEOF(r_vec)) {
+    case INTSXP:
+        return int_get(r_vec, index);
+    case REALSXP:
+        return dbl_get(r_vec, index);
+    case LGLSXP:
+        return lgl_get(r_vec, index);
+    default:
+        Rf_error("expected a numeric vector");
+    }
+}
+
+SEXP cpx_vec1(const Rcomplex& value) {
     return ScalarComplex(value);
 }
 
-SEXP cplx_vec(int size, const Rcomplex& val) {
-    SEXP r_cplx = allocVector(CPLXSXP, size);
+SEXP cpx_vec(int size, const Rcomplex& val) {
+    SEXP r_cpx = allocVector(CPLXSXP, size);
 
     for (int i = 0; i < size; ++i) {
-        COMPLEX(r_cplx)[i] = val;
+        COMPLEX(r_cpx)[i] = val;
     }
 
-    return r_cplx;
+    return r_cpx;
 }
 
-const Rcomplex& cplx_get(SEXP r_vec, int index) {
+const Rcomplex& cpx_get(SEXP r_vec, int index) {
     return COMPLEX(r_vec)[index];
 }
 
-void cplx_set(SEXP r_vec, int index, const Rcomplex& val) {
+void cpx_set(SEXP r_vec, int index, const Rcomplex& val) {
     COMPLEX(r_vec)[index] = val;
+}
+
+SEXP attr_get(SEXP r_obj, SEXP r_attr) {
+    return Rf_getAttrib(r_obj, r_attr);
+}
+
+SEXP class_get(SEXP r_obj) {
+    return attr_get(r_obj, R_ClassSymbol);
+}
+
+bool class_has(SEXP r_obj, const char* cls) {
+    SEXP r_class = class_get(r_obj);
+
+    if (r_class == R_NilValue)
+        return false;
+
+    for (int i = 0; i < vec_len(r_class); ++i) {
+        const char* elt = chr_get(r_class, i);
+        if (elt != nullptr && !strcmp(elt, cls)) {
+            return true;
+        }
+    }
+
+    return false;
 }

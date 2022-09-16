@@ -51,10 +51,12 @@ SEXP r_rastr_get_object_details(SEXP r_value,
                                 SEXP r_environment,
                                 SEXP r_peek);
 
-SEXP str_vec1(const char* val);
-SEXP str_vec(int size, const char* val);
-const char* str_get(SEXP r_vec, int index);
-void str_set(SEXP r_vec, int index, const char* val);
+int vec_len(SEXP r_vec);
+
+SEXP chr_vec1(const char* val);
+SEXP chr_vec(int size, const char* val);
+const char* chr_get(SEXP r_vec, int index);
+void chr_set(SEXP r_vec, int index, const char* val);
 
 SEXP lgl_vec1(int val);
 SEXP lgl_vec(int size, int val);
@@ -71,10 +73,16 @@ SEXP dbl_vec(int size, double val);
 double dbl_get(SEXP r_vec, int index);
 void dbl_set(SEXP r_vec, int index, double val);
 
-SEXP cplx_vec1(const Rcomplex& val);
-SEXP cplx_vec(int size, const Rcomplex& val);
-const Rcomplex& cplx_get(SEXP r_vec, int index);
-void cplx_set(SEXP r_vec, int index, const Rcomplex& val);
+double num_get(SEXP r_vec, int index);
+
+SEXP cpx_vec1(const Rcomplex& val);
+SEXP cpx_vec(int size, const Rcomplex& val);
+const Rcomplex& cpx_get(SEXP r_vec, int index);
+void cpx_set(SEXP r_vec, int index, const Rcomplex& val);
+
+SEXP attr_get(SEXP r_obj, SEXP r_attr);
+SEXP class_get(SEXP r_obj);
+bool class_has(SEXP r_obj, const char* cls);
 
 #ifdef __cplusplus
 }

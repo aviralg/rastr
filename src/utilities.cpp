@@ -63,6 +63,29 @@ std::string read_file(const char* filepath) {
     return contents;
 }
 
+char* str_dup(const char* str) {
+    if (str == nullptr)
+        return nullptr;
+
+    int len = std::strlen(str);
+    return str_dup(str, len);
+}
+
+char* str_dup(const char* str, int len) {
+    if (str == nullptr)
+        return nullptr;
+
+    int bytes = sizeof(char) * (len + 1);
+
+    char* result = (char*) malloc(bytes);
+
+    std::memcpy(result, str, sizeof(char) * len);
+
+    result[len] = '\0';
+
+    return result;
+}
+
 const std::size_t STR_BUFFER_SIZE = 10000;
 char str_buffer[STR_BUFFER_SIZE];
 

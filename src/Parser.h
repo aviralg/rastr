@@ -17,22 +17,22 @@ const int INVALID_PRECEDENCE = -1;
 /* TODO: remove this. */
 void rastr_ast_set_root(rastr_ast_t ast, rastr_node_t root);
 
-#define PROPAGATE_ERROR(node)                   \
-    if (rastr_node_type(ast_, node) == Error) { \
-        res = node;                             \
-        goto end;                               \
+#define PROPAGATE_ERROR(node)            \
+    if (node_type_(node) == RASTR_ERR) { \
+        res = node;                      \
+        goto end;                        \
     }
 
 #define PROPAGATE_ERROR_IF_NOT(node, type, msg) \
-    if (rastr_node_type(ast_, node) != type) {  \
+    if (node_type_(node) != type) {             \
         res = pcont_error(msg);                 \
         goto end;                               \
     }
 
-#define PROPAGATE_ERROR_IF(node, type, msg)    \
-    if (rastr_node_type(ast_, node) == type) { \
-        res = pcont_error(msg);                \
-        goto end;                              \
+#define PROPAGATE_ERROR_IF(node, type, msg) \
+    if (node_type_(node) == type) {         \
+        res = pcont_error(msg);             \
+        goto end;                           \
     }
 
 #define RETURN_IF_UNDEFINED(node)        \
@@ -40,34 +40,34 @@ void rastr_ast_set_root(rastr_ast_t ast, rastr_node_t root);
         return node;                     \
     }
 
-rastr_node_t UNDEFINED_NODE{(std::size_t)(-1)};
-
-bool rastr_node_is_undefined(rastr_node_t node) {
-    return node.index == (std::size_t)(-1);
-}
-
 class Parser {
   public:
     Parser(Input& input, rastr_ast_t& ast)
         : ast_(ast), lexer_(input, ast_), saved_tok_(), pcont_() {
     }
 
+    int node_type_(rastr_node_t node) {
+        return rastr_node_is_newline(node) ? RASTR_NL
+                                           : rastr_node_type(ast_, node);
+    }
+
     rastr_node_t parse_prog() {
         rastr_node_t res;
         rastr_node_t end;
+        rastr_node_t exprs;
 
         pcont_push("<pgm> ▸ <stmt>* <expr>? <eof>");
 
         std::vector<rastr_node_t> stmts;
 
         rastr_node_t beg = next_token_();
-        PROPAGATE_ERROR_IF_NOT(beg, Beg, "expected '<beg>'")
+        PROPAGATE_ERROR_IF_NOT(beg, RASTR_BEG, "expected '<beg>'")
 
         while (true) {
             rastr_node_t node = peek_token_();
 
             /* if <eof> is encountered, program has been parsed */
-            if (rastr_node_type(ast_, node) == End) {
+            if (node_type_(node) == RASTR_END) {
                 consume_();
                 end = node;
                 break;
@@ -77,62 +77,60 @@ class Parser {
                beginning of the file. since we have not yet read a stmt (which
                would have eaten up subsequent newlines), we have to eat and
                destroy this newlines until we encounter a non-newline token */
-            else if (rastr_node_type(ast_, node) == Newline) {
+            else if (node_type_(node) == RASTR_NL) {
                 consume_();
-                rastr_node_destroy(ast_, node);
                 continue;
             }
 
             else {
-                rastr_node_t stmt = parse_stmt(End);
+                rastr_node_t stmt = parse_stmt(RASTR_END);
                 PROPAGATE_ERROR(stmt);
 
                 stmts.push_back(stmt);
             }
         }
 
-        res = rastr_pgm_node(ast_, beg, stmts.size(), stmts.data(), end);
+        exprs = rastr_exprs_new(ast_, stmts.size(), stmts.data());
+        res = rastr_pgm_new(ast_, beg, exprs, end);
 
     end:
         pcont_pop();
         return res;
     }
 
-    /* parse complete expression followed by an actual terminator (\n or ;) or
-     * a contextual terminator such as } or ) */
-    rastr_node_t parse_stmt(rastr_node_type_t cont_term_type) {
+    /* parse complete expression followed by an actual dlmtr (\n or ;) or
+     * a contextual dlmtr such as } or ) */
+    rastr_node_t parse_stmt(rastr_node_type_t cont_dlmtr_type) {
         rastr_node_t res;
-        rastr_node_t terminator;
-        rastr_node_type_t term_type;
+        rastr_node_t dlmtr;
+        rastr_node_t expr;
+        int dlmtr_type;
 
         pcont_push("<stmt> ▸ <expr> ; | <expr> \\n | <expr> <eof>");
 
-        rastr_node_t expr = parse_expr(LOWEST_PRECEDENCE);
+        expr = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(expr);
 
-        terminator = peek_token_();
-        term_type = rastr_node_type(ast_, terminator);
+        dlmtr = peek_token_();
+        dlmtr_type = node_type_(dlmtr);
 
-        if (term_type == cont_term_type || term_type == End) {
+        if (dlmtr_type == cont_dlmtr_type || dlmtr_type == RASTR_END) {
             res = expr;
         }
 
-        /* TODO: replace this with direct check for term_type */
-        else if (rastr_node_is_terminator(ast_, terminator)) {
-            while (rastr_node_is_terminator(ast_, terminator)) {
+        else if (dlmtr_type == RASTR_DLMTR_SCOL || dlmtr_type == RASTR_NL) {
+            do {
                 consume_();
                 /* attach delimiter if ; or , */
-                if (term_type != Newline) {
-                    expr = rastr_dlmtd_node(ast_, expr, terminator);
-                }
-                /* delete node if Newline */
-                else {
-                    rastr_node_destroy(ast_, terminator);
+                if (dlmtr_type == RASTR_DLMTR_SCOL) {
+                    expr = rastr_dlmtd_new(ast_, expr, dlmtr);
                 }
 
-                terminator = peek_token_();
-                term_type = rastr_node_type(ast_, terminator);
-            }
+                dlmtr = peek_token_();
+                dlmtr_type = node_type_(dlmtr);
+
+            } while (dlmtr_type == RASTR_DLMTR_SCOL || dlmtr_type == RASTR_NL);
+
             res = expr;
         }
 
@@ -154,17 +152,18 @@ class Parser {
 
         while (true) {
             rastr_node_t node = peek_token_();
-            rastr_node_type_t cur_type = rastr_node_type(ast_, node);
+            int cur_type = node_type_(node);
 
             /* terminator is encountered, return; */
-            if (rastr_node_is_terminator(ast_, node) || cur_type == End) {
+            if (cur_type == RASTR_NL || cur_type == RASTR_DLMTR_COM ||
+                cur_type == RASTR_DLMTR_SCOL || cur_type == RASTR_END) {
                 break;
             }
 
             ///* if parse_expr is called from parse_block or parse_group, the
             //   expression will be delimited by right paren or right brace. */
-            // else if (cur_type == End || cur_type == RightParen || cur_type ==
-            // RightBrace) {
+            // else if (cur_type == RASTR_END || cur_type == RASTR_BKT_RT_RND ||
+            // cur_type == RASTR_BKT_RT_CURL) {
             //    break;
             //}
 
@@ -195,51 +194,51 @@ class Parser {
         rastr_node_t res;
 
         rastr_node_t op = next_token_();
-        rastr_node_type_t type = rastr_node_type(ast_, op);
+        int type = node_type_(op);
 
         /* null, logical, real, integer, complex, string, and symbol don't need
          * extra parsing for completion*/
-        if (rastr_node_is_literal(ast_, op)) {
+        if (rastr_lit_type(ast_, op)) {
             res = op;
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == LeftParen) {
+        else if (type == RASTR_BKT_LT_RND) {
             res = parse_grp(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == LeftBrace) {
+        else if (type == RASTR_BKT_LT_CURL) {
             res = parse_blk(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == Repeat) {
+        else if (type == RASTR_OP_REPEAT) {
             res = parse_rlp(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == While) {
+        else if (type == RASTR_OP_WHILE) {
             res = parse_wlp(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == For) {
+        else if (type == RASTR_OP_FOR) {
             res = parse_flp(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == If) {
+        else if (type == RASTR_OP_IF) {
             res = parse_iecnd(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == Function || type == Function2) {
+        else if (type == RASTR_OP_FN || type == RASTR_OP_FN2) {
             res = parse_fndefn(op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == Next || type == Break) {
+        else if (type == RASTR_OP_NEXT || type == RASTR_OP_BREAK) {
             res = parse_nuop(op);
             PROPAGATE_ERROR(res);
         }
@@ -250,7 +249,7 @@ class Parser {
             rastr_node_t expr = parse_expr(precedence);
             PROPAGATE_ERROR(expr);
 
-            res = rastr_unop_node(ast_, op, expr);
+            res = rastr_unop_new(ast_, op, expr);
         }
 
     end:
@@ -261,35 +260,36 @@ class Parser {
         rastr_node_t res;
 
         rastr_node_t op = next_token_();
-        rastr_node_type_t type = rastr_node_type(ast_, op);
+        int type = node_type_(op);
 
-        if (type == LeftParen) {
+        if (type == RASTR_BKT_LT_RND) {
             res = parse_fncall(left, op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == LeftBracket) {
-            res = parse_idx(left, op);
+        else if (type == RASTR_BKT_LT_SQR) {
+            res = parse_sub(left, op);
             PROPAGATE_ERROR(res);
         }
 
-        else if (type == DoubleLeftBracket) {
-            res = parse_sub(left, op);
+        else if (type == RASTR_BKT_LT_DBL_SQR) {
+            res = parse_idx(left, op);
             PROPAGATE_ERROR(res);
         }
 
         else {
             /* to correctly parse right-associative operators, reduce precedence
              * by 1 */
-            if (type == Power || type == LeftAssign ||
-                type == LeftSuperAssign || type == EqualAssign) {
+            if (type == RASTR_OP_POW || type == RASTR_OP_POW2 ||
+                type == RASTR_OP_LT_ASGN || type == RASTR_OP_LT_SUP_ASGN ||
+                type == RASTR_OP_EQ_ASGN) {
                 precedence = precedence - 1;
             }
 
             rastr_node_t right = parse_expr(precedence);
             PROPAGATE_ERROR(right);
 
-            res = rastr_binop_node(ast_, left, op, right);
+            res = rastr_binop_new(ast_, left, op, right);
         }
 
     end:
@@ -307,46 +307,48 @@ class Parser {
         PROPAGATE_ERROR(expr);
 
         right_paren = next_token_();
-        PROPAGATE_ERROR_IF_NOT(right_paren, RightParen, "expected ')'")
+        PROPAGATE_ERROR_IF_NOT(right_paren, RASTR_BKT_RT_RND, "expected ')'")
 
-        res = rastr_grp_node(ast_, left_paren, expr, right_paren);
+        res = rastr_grp_new(ast_, left_paren, expr, right_paren);
 
     end:
         pcont_pop();
         return res;
     }
 
-    rastr_node_t parse_blk(rastr_node_t lbrack) {
+    rastr_node_t parse_blk(rastr_node_t lbkt) {
         rastr_node_t res;
-        rastr_node_t rbrack;
+        rastr_node_t rbkt;
         rastr_node_t stmt;
+        rastr_node_t exprs;
 
         pcont_push("<blk> ▸ { <stmt>* <expr>? }");
 
-        std::vector<rastr_node_t> exprs;
+        std::vector<rastr_node_t> exprs_vec;
 
         while (true) {
             rastr_node_t node = peek_token_();
-            rastr_node_type_t type = rastr_node_type(ast_, node);
+            int type = node_type_(node);
 
-            if (type == RightBrace) {
+            if (type == RASTR_BKT_RT_CURL) {
                 consume_();
-                rbrack = node;
+                rbkt = node;
                 break;
             }
 
             // TODO: consume_();
-            PROPAGATE_ERROR_IF(node, End, "unexpected <eof>");
+            PROPAGATE_ERROR_IF(node, RASTR_END, "unexpected <eof>");
 
-            stmt = parse_stmt(RightBrace);
+            stmt = parse_stmt(RASTR_BKT_RT_CURL);
             PROPAGATE_ERROR(stmt);
 
-            exprs.push_back(stmt);
+            exprs_vec.push_back(stmt);
         }
 
         lexer_.disable_eat_lines();
 
-        res = rastr_blk_node(ast_, lbrack, exprs.size(), exprs.data(), rbrack);
+        exprs = rastr_exprs_new(ast_, exprs_vec.size(), exprs_vec.data());
+        res = rastr_blk_new(ast_, lbkt, exprs, rbkt);
 
     end:
         pcont_pop();
@@ -363,7 +365,7 @@ class Parser {
         body = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(body);
 
-        res = rastr_rlp_node(ast_, kw, body);
+        res = rastr_rlp_new(ast_, kw, body);
 
     end:
         pcont_pop();
@@ -384,7 +386,7 @@ class Parser {
         body = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(body);
 
-        res = rastr_wlp_node(ast_, kw, cond, body);
+        res = rastr_wlp_new(ast_, kw, cond, body);
 
     end:
         pcont_pop();
@@ -405,7 +407,7 @@ class Parser {
         body = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(body);
 
-        res = rastr_flp_node(ast_, kw, iter, body);
+        res = rastr_flp_new(ast_, kw, iter, body);
 
     end:
         pcont_pop();
@@ -413,35 +415,35 @@ class Parser {
     }
 
     /* <icnd> | <iecnd> : if <cond> <expr> [else <expr>] */
-    rastr_node_t parse_iecnd(rastr_node_t if_kw) {
+    rastr_node_t parse_iecnd(rastr_node_t iop) {
         rastr_node_t res;
         rastr_node_t cond;
-        rastr_node_t csq;
-        rastr_node_t else_kw;
-        rastr_node_t alt;
+        rastr_node_t ibody;
+        rastr_node_t eop;
+        rastr_node_t ebody;
 
         pcont_push("<icnd> | <iecnd> ▸ if <cond> <expr> [else <expr>]");
 
         cond = parse_cond();
         PROPAGATE_ERROR(cond);
 
-        csq = parse_expr(LOWEST_PRECEDENCE);
-        PROPAGATE_ERROR(csq);
+        ibody = parse_expr(LOWEST_PRECEDENCE);
+        PROPAGATE_ERROR(ibody);
 
-        else_kw = peek_token_();
+        eop = peek_token_();
 
         /* there is no else following the if */
-        if (rastr_node_type(ast_, else_kw) != Else) {
-            res = rastr_icnd_node(ast_, if_kw, cond, csq);
+        if (node_type_(eop) != RASTR_OP_ELSE) {
+            res = rastr_icond_new(ast_, iop, cond, ibody);
         }
         /* else follows if */
         else {
             consume_();
 
-            alt = parse_expr(LOWEST_PRECEDENCE);
-            PROPAGATE_ERROR(alt);
+            ebody = parse_expr(LOWEST_PRECEDENCE);
+            PROPAGATE_ERROR(ebody);
 
-            res = rastr_iecnd_node(ast_, if_kw, cond, csq, else_kw, alt);
+            res = rastr_iecond_new(ast_, iop, cond, ibody, eop, ebody);
         }
 
     end:
@@ -449,22 +451,30 @@ class Parser {
         return res;
     }
 
-    rastr_node_t parse_fndefn(rastr_node_t kw) {
+    rastr_node_t parse_fndefn(rastr_node_t op) {
         rastr_node_t res;
-        rastr_node_t params;
+        rastr_node_t lbkt;
+        rastr_node_t pars;
+        rastr_node_t rbkt;
         rastr_node_t body;
 
         pcont_push("<fndefn> ▸ function <params> <expr>");
 
-        params = parse_params();
-        PROPAGATE_ERROR(params);
+        lbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(lbkt, RASTR_BKT_LT_RND, "expected '('")
+
+        pars = parse_pars();
+        PROPAGATE_ERROR(pars);
+
+        rbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt, RASTR_BKT_RT_RND, "expected ')'")
 
         lexer_.enable_eat_lines();
 
         body = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(body);
 
-        res = rastr_fndefn_node(ast_, kw, params, body);
+        res = rastr_fndefn_new(ast_, op, lbkt, pars, rbkt, body);
 
     end:
         pcont_pop();
@@ -476,55 +486,71 @@ class Parser {
 
         pcont_push("<nuop> ▸ <op>");
 
-        res = rastr_nuop_node(ast_, op);
+        res = rastr_nuop_new(ast_, op);
 
     end:
         pcont_pop();
         return res;
     }
 
-    rastr_node_t parse_fncall(rastr_node_t fun, rastr_node_t lbrack) {
+    rastr_node_t parse_fncall(rastr_node_t fn, rastr_node_t lbkt) {
         rastr_node_t res;
         rastr_node_t args;
+        rastr_node_t rbkt;
 
         pcont_push("<fncall> ▸ <fun> <args>");
 
-        args = parse_args(lbrack);
+        args = parse_args();
         PROPAGATE_ERROR(args);
 
-        res = rastr_fncall_node(ast_, fun, args);
+        rbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt, RASTR_BKT_RT_RND, "expected ')'")
+
+        res = rastr_fncall_new(ast_, fn, lbkt, args, rbkt);
 
     end:
         pcont_pop();
         return res;
     }
 
-    rastr_node_t parse_idx(rastr_node_t obj, rastr_node_t lbrack) {
+    rastr_node_t parse_sub(rastr_node_t obj, rastr_node_t lbkt) {
         rastr_node_t res;
-        rastr_node_t inds;
-
-        pcont_push("<idx> ▸ <obj> <inds>");
-
-        inds = parse_args(lbrack);
-        PROPAGATE_ERROR(inds);
-
-        res = rastr_idx_node(ast_, obj, inds);
-
-    end:
-        pcont_pop();
-        return res;
-    }
-
-    rastr_node_t parse_sub(rastr_node_t obj, rastr_node_t lbrack) {
-        rastr_node_t res;
-        rastr_node_t inds;
+        rastr_node_t args;
+        rastr_node_t rbkt;
 
         pcont_push("<sub> ▸ <obj> <inds>");
 
-        inds = parse_args(lbrack);
-        PROPAGATE_ERROR(inds);
+        args = parse_args();
+        PROPAGATE_ERROR(args);
 
-        res = rastr_sub_node(ast_, obj, inds);
+        rbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt, RASTR_BKT_RT_SQR, "expected ']'")
+
+        res = rastr_sub_new(ast_, obj, lbkt, args, rbkt);
+
+    end:
+        pcont_pop();
+        return res;
+    }
+
+    rastr_node_t parse_idx(rastr_node_t obj, rastr_node_t lbkt) {
+        rastr_node_t res;
+        rastr_node_t args;
+        rastr_node_t rbkt1;
+        rastr_node_t rbkt2;
+
+        pcont_push("<idx> ▸ <obj> <inds>");
+
+        args = parse_args();
+        PROPAGATE_ERROR(args);
+
+        rbkt1 = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt1, RASTR_BKT_RT_SQR, "expected ']]'")
+
+        rbkt2 = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt2, RASTR_BKT_RT_SQR, "expected ']]'")
+
+        res = rastr_idx_new(ast_, obj, lbkt, args, rbkt1, rbkt2);
 
     end:
         pcont_pop();
@@ -534,23 +560,23 @@ class Parser {
     /* <cond>: ( <expr> ) */
     rastr_node_t parse_cond() {
         rastr_node_t res;
-        rastr_node_t lbrack;
+        rastr_node_t lbkt;
         rastr_node_t expr;
-        rastr_node_t rbrack;
+        rastr_node_t rbkt;
 
         pcont_push("<cond> ▸ ( <expr> )");
 
-        lbrack = next_token_();
-        PROPAGATE_ERROR_IF_NOT(lbrack, LeftParen, "expected '('")
+        lbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(lbkt, RASTR_BKT_LT_RND, "expected '('")
 
         expr = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(expr)
 
-        rbrack = next_token_();
-        PROPAGATE_ERROR_IF_NOT(rbrack, RightParen, "expected ')'")
+        rbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt, RASTR_BKT_RT_RND, "expected ')'")
 
         lexer_.enable_eat_lines();
-        res = rastr_cnd_node(ast_, lbrack, expr, rbrack);
+        res = rastr_cond_new(ast_, lbkt, expr, rbkt);
 
     end:
         pcont_pop();
@@ -560,32 +586,32 @@ class Parser {
     /* <iter>: (<var> in <expr>) */
     rastr_node_t parse_iter() {
         rastr_node_t res;
-        rastr_node_t lbrack;
+        rastr_node_t lbkt;
         rastr_node_t var;
         rastr_node_t kw;
         rastr_node_t expr;
-        rastr_node_t rbrack;
+        rastr_node_t rbkt;
 
         pcont_push("<iter> ▸ (<var> in <expr>)");
 
-        lbrack = next_token_();
-        PROPAGATE_ERROR_IF_NOT(lbrack, LeftParen, "expected '('")
+        lbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(lbkt, RASTR_BKT_LT_RND, "expected '('")
 
         var = next_token_();
-        PROPAGATE_ERROR_IF_NOT(var, Symbol, "expected symbol")
+        PROPAGATE_ERROR_IF_NOT(var, RASTR_SYM, "expected symbol")
 
         kw = next_token_();
-        PROPAGATE_ERROR_IF_NOT(kw, In, "expected 'in'")
+        PROPAGATE_ERROR_IF_NOT(kw, RASTR_OP_IN, "expected 'in'")
 
         expr = parse_expr(LOWEST_PRECEDENCE);
         PROPAGATE_ERROR(expr);
 
-        rbrack = next_token_();
-        PROPAGATE_ERROR_IF_NOT(rbrack, RightParen, "expected ')'")
+        rbkt = next_token_();
+        PROPAGATE_ERROR_IF_NOT(rbkt, RASTR_BKT_RT_RND, "expected ')'")
 
         lexer_.enable_eat_lines();
 
-        res = rastr_iter_node(ast_, lbrack, var, kw, expr, rbrack);
+        res = rastr_iter_new(ast_, lbkt, var, kw, expr, rbkt);
 
     end:
         pcont_pop();
@@ -593,45 +619,37 @@ class Parser {
     }
 
     /* <params> : (  | (<param>,)* <param> ) */
-    rastr_node_t parse_params() {
+    rastr_node_t parse_pars() {
         rastr_node_t res;
-        rastr_node_t lbrack;
-        rastr_node_t rbrack;
         rastr_node_t node;
-        rastr_node_t param;
-        std::vector<rastr_node_t> params;
+        rastr_node_t par;
+        std::vector<rastr_node_t> pars;
 
-        pcont_push("<params> : (  | (<param>,)* <param> )");
-
-        lbrack = next_token_();
-        PROPAGATE_ERROR_IF_NOT(lbrack, LeftParen, "expected '('")
+        pcont_push("<params> :  | (<param>,)* <param> ");
 
         while (true) {
             node = peek_token_();
-            rastr_node_type_t type = rastr_node_type(ast_, node);
+            int type = node_type_(node);
 
-            if (type == RightParen) {
-                consume_();
-                rbrack = node;
+            if (type == RASTR_BKT_RT_RND) {
                 break;
             }
 
-            PROPAGATE_ERROR_IF(node, End, "unexpected <eof>")
+            PROPAGATE_ERROR_IF(node, RASTR_END, "unexpected <eof>")
 
-            param = parse_param();
-            PROPAGATE_ERROR(param);
+            par = parse_par();
+            PROPAGATE_ERROR(par);
 
             node = peek_token_();
-            if (rastr_node_type(ast_, node) == Comma) {
+            if (node_type_(node) == RASTR_DLMTR_COM) {
                 consume_();
-                param = rastr_dlmtd_node(ast_, param, node);
+                par = rastr_dlmtd_new(ast_, par, node);
             }
 
-            params.push_back(param);
+            pars.push_back(par);
         }
 
-        res = rastr_params_node(
-            ast_, lbrack, params.size(), params.data(), rbrack);
+        res = rastr_pars_new(ast_, pars.size(), pars.data());
 
     end:
         pcont_pop();
@@ -639,7 +657,7 @@ class Parser {
     }
 
     /* <param> : <symbol> | <symbol> = <expr> */
-    rastr_node_t parse_param() {
+    rastr_node_t parse_par() {
         rastr_node_t res;
         rastr_node_t name;
         rastr_node_t op;
@@ -648,23 +666,23 @@ class Parser {
         pcont_push("<param> : <symbol> | <symbol> = <expr>");
 
         name = next_token_();
-        PROPAGATE_ERROR_IF_NOT(name, Symbol, "expected <symbol>")
+        PROPAGATE_ERROR_IF_NOT(name, RASTR_SYM, "expected <symbol>")
 
         op = peek_token_();
 
         /* <param> is of the form <symbol> = <expr> */
-        if (rastr_node_type(ast_, op) == EqualAssign) {
+        if (node_type_(op) == RASTR_OP_EQ_ASGN) {
             consume_();
 
             expr = parse_expr(LOWEST_PRECEDENCE);
             PROPAGATE_ERROR(expr)
 
-            res = rastr_dparam_node(ast_, name, op, expr);
+            res = rastr_dpar_new(ast_, name, op, expr);
         }
 
         /* <param> is of the form <symbol> */
         else {
-            res = rastr_ndparam_node(ast_, name);
+            res = rastr_ndpar_new(ast_, name);
         }
 
     end:
@@ -673,67 +691,38 @@ class Parser {
     }
 
     /* <args> : (  | (<arg>,)* <arg> ) */
-    rastr_node_t parse_args(rastr_node_t lbrack) {
+    rastr_node_t parse_args() {
         rastr_node_t res;
-        rastr_node_t rbrack;
-        rastr_node_t next_rbrack;
         rastr_node_t node;
         rastr_node_t arg;
         std::vector<rastr_node_t> args;
 
         pcont_push("<args> : (  | (<arg>,)* <arg> )");
 
-        rastr_node_type_t lbrack_type = rastr_node_type(ast_, lbrack);
-
         while (true) {
             node = peek_token_();
-            rastr_node_type_t type = rastr_node_type(ast_, node);
+            int type = node_type_(node);
 
-            if (lbrack_type == LeftParen && type == RightParen) {
-                rbrack = node;
-                consume_();
+            if (type == RASTR_BKT_RT_RND || type == RASTR_BKT_RT_SQR) {
                 break;
             }
 
-            else if (lbrack_type == LeftBracket && type == RightBracket) {
-                rbrack = node;
-                consume_();
-                break;
-            }
-
-            else if (lbrack_type == DoubleLeftBracket && type == RightBracket) {
-                rbrack = node;
-                consume_();
-                next_rbrack = next_token_();
-
-                PROPAGATE_ERROR_IF_NOT(next_rbrack, RightBracket, "expected ]");
-
-                /* to retain the gap, it is easier to change type of rbrack */
-                /* TODO: read gap from next_rbrack */
-                rastr_dlmtr_set_type(ast_, rbrack, DoubleRightBracket);
-
-                /* destroy these nodes as they are not needed */
-                rastr_node_destroy(ast_, next_rbrack);
-
-                break;
-            }
-
-            PROPAGATE_ERROR_IF(node, End, "unexpected <eof>")
+            PROPAGATE_ERROR_IF(node, RASTR_END, "unexpected <eof>")
 
             arg = parse_arg();
             PROPAGATE_ERROR(arg)
 
             node = peek_token_();
-            if (rastr_node_type(ast_, node) == Comma) {
+            if (node_type_(node) == RASTR_DLMTR_COM) {
                 consume_();
                 lexer_.enable_eat_lines();
-                arg = rastr_dlmtd_node(ast_, arg, node);
+                arg = rastr_dlmtd_new(ast_, arg, node);
             }
 
             args.push_back(arg);
         }
 
-        res = rastr_args_node(ast_, lbrack, args.size(), args.data(), rbrack);
+        res = rastr_args_new(ast_, args.size(), args.data());
 
     end:
         pcont_pop();
@@ -750,14 +739,15 @@ class Parser {
                    "<null> = <mexpr>");
 
         name = peek_token_();
-        rastr_node_type_t name_type = rastr_node_type(ast_, name);
+        int name_type = node_type_(name);
 
         /* <arg> is of the form <mexpr> */
-        if (name_type != Symbol && name_type != String && name_type != Null) {
+        if (name_type != RASTR_SYM && name_type != RASTR_CHR &&
+            name_type != RASTR_NULL) {
             rastr_node_t mexpr = parse_mexpr();
             PROPAGATE_ERROR(mexpr)
 
-            res = rastr_parg_node(ast_, mexpr);
+            res = rastr_parg_new(ast_, mexpr);
         }
 
         /* <arg> may have any of the following forms:
@@ -769,13 +759,13 @@ class Parser {
             op = peek_token_();
 
             /* <arg> is <mexpr> */
-            if (rastr_node_type(ast_, op) != EqualAssign) {
+            if (node_type_(op) != RASTR_OP_EQ_ASGN) {
                 push_token_(name);
 
                 mexpr = parse_mexpr();
                 PROPAGATE_ERROR(mexpr)
 
-                res = rastr_parg_node(ast_, mexpr);
+                res = rastr_parg_new(ast_, mexpr);
             }
 
             /* <arg> has one of the following forms:
@@ -788,7 +778,7 @@ class Parser {
                 mexpr = parse_mexpr();
                 PROPAGATE_ERROR(mexpr)
 
-                res = rastr_narg_node(ast_, name, op, mexpr);
+                res = rastr_narg_new(ast_, name, op, mexpr);
             }
         }
 
@@ -804,13 +794,14 @@ class Parser {
         pcont_push("<mexpr> : <msng> | <expr>");
 
         node = peek_token_();
-        rastr_node_type_t type = rastr_node_type(ast_, node);
+        int type = node_type_(node);
 
-        if (type == Comma || type == RightParen || type == RightBracket) {
+        if (type == RASTR_DLMTR_COM || type == RASTR_BKT_RT_RND ||
+            type == RASTR_BKT_RT_SQR) {
             /* TODO: fix position */
-            res = rastr_msng_node(
+            res = rastr_msng_new(
                 ast_,
-                rastr_gap_node_owner(ast_, nullptr, empty_loc_()),
+                rastr_gap_new_unsafe(ast_, nullptr, empty_loc_()),
                 empty_loc_());
         }
 
@@ -826,7 +817,7 @@ class Parser {
 
     /* TODO: delete */
     rastr_node_t empty_loc_() {
-        return rastr_loc_node(ast_, 0, 0, 0, 0, 0, 0, 0, 0);
+        return rastr_loc_new(ast_, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     void pcont_push(const char* prod) {
@@ -850,7 +841,7 @@ class Parser {
 
         std::string str = sstr.str();
 
-        return rastr_err_node(ast_, str.c_str());
+        return rastr_err_new(ast_, str.c_str(), empty_loc_());
     }
 
   private:
@@ -879,17 +870,17 @@ class Parser {
     // %right   '^'
     // %left    '$' '@'// %left    NS_GET NS_GET_INT
     // %nonassoc '(' '[' LBB
-    int get_precedence(rastr_node_type_t type, bool prefix) {
+    int get_precedence(int type, bool prefix) {
         if (prefix) {
             switch (type) {
-            case Help:
+            case RASTR_OP_HELP:
                 return 1;
-            case Formula:
+            case RASTR_OP_FORMULA:
                 return 8;
-            case Not:
+            case RASTR_OP_NOT:
                 return 11;
-            case Minus:
-            case Plus:
+            case RASTR_OP_MINUS:
+            case RASTR_OP_PLUS:
                 return 18;
             default:
                 return LOWEST_PRECEDENCE;
@@ -898,7 +889,7 @@ class Parser {
 
         else {
             switch (type) {
-            case Help:
+            case RASTR_OP_HELP:
                 return 1;
             // case While:
             // case For:
@@ -908,57 +899,57 @@ class Parser {
             //     return 3;
             // case Else:
             //     return 4;
-            case EqualAssign:
+            case RASTR_OP_EQ_ASGN:
                 return 5;
-            case LeftAssign:
-            case LeftSuperAssign:
-            case ColonAssign:
+            case RASTR_OP_LT_ASGN:
+            case RASTR_OP_LT_SUP_ASGN:
+            case RASTR_OP_COLON_ASGN:
                 return 6;
-            case RightAssign:
-            case RightSuperAssign:
+            case RASTR_OP_RT_ASGN:
+            case RASTR_OP_RT_SUP_ASGN:
                 return 7;
-            case Formula:
+            case RASTR_OP_FORMULA:
                 return 8;
-            case Or:
-            case VecOr:
+            case RASTR_OP_OR:
+            case RASTR_OP_VEC_OR:
                 return 9;
-            case And:
-            case VecAnd:
+            case RASTR_OP_AND:
+            case RASTR_OP_VEC_AND:
                 return 10;
-            case Not:
+            case RASTR_OP_NOT:
                 return 11;
-            case LessThan:
-            case LessThanEqual:
-            case GreaterThan:
-            case GreaterThanEqual:
-            case Equal:
-            case NotEqual:
+            case RASTR_OP_LESS:
+            case RASTR_OP_LESS_EQ:
+            case RASTR_OP_GREAT:
+            case RASTR_OP_GREAT_EQ:
+            case RASTR_OP_EQ:
+            case RASTR_OP_NOT_EQ:
                 return 12;
-            case Plus:
-            case Minus:
+            case RASTR_OP_PLUS:
+            case RASTR_OP_MINUS:
                 return 13;
-            case Multiplication:
-            case Division:
+            case RASTR_OP_MUL:
+            case RASTR_OP_DIV:
                 return 14;
-            case Special:
-            case PipeForward:
+            case RASTR_OP_SP:
+            case RASTR_OP_PIPE_FWD:
                 return 15;
-            case PipeBind:
+            case RASTR_OP_PIPE_BIND:
                 return 16;
-            case Range:
+            case RASTR_OP_RANGE:
                 return 17;
-            case Power:
-            case Power2:
+            case RASTR_OP_POW:
+            case RASTR_OP_POW2:
                 return 19;
-            case PartExtract:
-            case SlotExtract:
+            case RASTR_OP_PART:
+            case RASTR_OP_SLOT:
                 return 20;
-            case PublicNamespace:
-            case PrivateNamespace:
+            case RASTR_OP_PUB_NS:
+            case RASTR_OP_PVT_NS:
                 return 21;
-            case LeftParen:
-            case LeftBracket:
-            case DoubleLeftBracket:
+            case RASTR_BKT_LT_RND:
+            case RASTR_BKT_LT_SQR:
+            case RASTR_BKT_LT_DBL_SQR:
                 return 22;
             default:
                 return LOWEST_PRECEDENCE;
