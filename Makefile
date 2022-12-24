@@ -66,3 +66,9 @@ cppcheck:
 	              -I inst/include/                                        \
 	             $(SOURCES)                                               \
 	             $(INCLUDES)
+
+api:
+	cd apigen && R --file=rapi.R
+	mv apigen/autogen_node.R R/
+	mv apigen/autogen_node_ifc.h inst/include/rastr/
+	mv apigen/autogen_*.h src/
