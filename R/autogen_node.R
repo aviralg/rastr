@@ -1262,6 +1262,49 @@ idx_rbkt2_set <- function(ast, node, rbkt2) {
 
 
 ################################################################################
+# aexpr
+################################################################################
+#' @export
+aexpr_new <- function(ast, ann, expr) {
+    .Call(C_rastr_aexpr_new, ast, ann, expr)
+}
+#' @export
+aexpr_type <- function(ast, node) {
+    .Call(C_rastr_aexpr_type, ast, node)
+}
+# ann ##########################################################################
+#' @export
+aexpr_ann_get <- function(ast, node) {
+    .Call(C_rastr_aexpr_ann_get, ast, node)
+}
+#' @export
+aexpr_ann_rep <- function(ast, node, ann) {
+    .Call(C_rastr_aexpr_ann_rep, ast, node, ann)
+}
+#' @export
+aexpr_ann_set <- function(ast, node, ann) {
+    invisible(.Call(C_rastr_aexpr_ann_set, ast, node, ann))
+}
+
+
+# expr #########################################################################
+#' @export
+aexpr_expr_get <- function(ast, node) {
+    .Call(C_rastr_aexpr_expr_get, ast, node)
+}
+#' @export
+aexpr_expr_rep <- function(ast, node, expr) {
+    .Call(C_rastr_aexpr_expr_rep, ast, node, expr)
+}
+#' @export
+aexpr_expr_set <- function(ast, node, expr) {
+    invisible(.Call(C_rastr_aexpr_expr_set, ast, node, expr))
+}
+
+
+
+
+################################################################################
 # exprs
 ################################################################################
 #' @export

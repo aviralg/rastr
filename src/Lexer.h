@@ -21,7 +21,8 @@ class Lexer {
         , lrow_(-1)
         , lcol_(-1)
         , lchr_(-1)
-        , lbyte_(-1) {
+        , lbyte_(-1)
+        , gap_(RASTR_NODE_UNDEFINED) {
     }
 
     int rastr_node_type_nl(rastr_node_t node) {
@@ -642,12 +643,19 @@ class Lexer {
     }
 
     bool parse_gap_() {
+
+        bool nl = false;
+
+        // success
+        if (!rastr_node_is_undefined(gap_)) {
+            return nl;
+        }
+
         int a = 0;
         int b = 0;
         int c = 0;
         int d = 0;
         int e = 0;
-        bool nl = false;
         bool process = true;
 
         while (process) {
@@ -1191,7 +1199,9 @@ class Lexer {
     }
 
     rastr_node_t get_gap_() {
-        return gap_;
+        rastr_node_t res = gap_;
+        gap_ = RASTR_NODE_UNDEFINED;
+        return res;
     }
 
     rastr_node_t get_loc_() {

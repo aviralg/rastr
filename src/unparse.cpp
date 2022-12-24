@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include "utilities.h"
-#include "r_api.h"
 
 class AstSerializer: public AstWalker {
   public:
@@ -97,7 +96,7 @@ char* rastr_node_unparse_str(rastr_ast_t ast, rastr_node_t node) {
 }
 
 char* rastr_ast_unparse_str(rastr_ast_t ast) {
-    return rastr_node_unparse_str(ast, rastr_ast_root(ast));
+    return rastr_node_unparse_str(ast, rastr_ast_root_get(ast));
 }
 
 // void rastr_node_unparse_file(rastr_ast_t ast,

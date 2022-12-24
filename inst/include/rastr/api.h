@@ -136,6 +136,7 @@ enum rastr_node_type_t {
     /********************************************************************************
       Miscellaneous
     ********************************************************************************/
+    RASTR_AEXPR,
     RASTR_EXPRS,
     RASTR_PARS,
     RASTR_DPAR,
@@ -181,19 +182,21 @@ extern "C" {
 #    endif
 
 /********************************************************************************
-APIGEN
-********************************************************************************/
-
-/********************************************************************************
  Ast
 ********************************************************************************/
-
-rastr_ast_t rastr_ast_create(std::size_t capacity);
+rastr_ast_t rastr_ast_new(int capacity);
+SEXP r_rastr_ast_new(SEXP r_capacity);
 void rastr_ast_destroy(rastr_ast_t ast);
-rastr_node_t rastr_ast_root(rastr_ast_t ast);
-const char* rastr_ast_to_string(rastr_ast_t ast);
-int rastr_is_empty(rastr_ast_t ast);
+int rastr_ast_id(rastr_ast_t ast);
+SEXP r_rastr_ast_id(SEXP r_ast);
 int rastr_ast_size(rastr_ast_t ast);
+SEXP r_rastr_ast_size(SEXP r_ast);
+rastr_node_t rastr_ast_root_get(rastr_ast_t ast);
+SEXP r_rastr_ast_root_get(SEXP r_ast);
+rastr_node_t rastr_ast_root_rep(rastr_ast_t ast, rastr_node_t root);
+SEXP r_rastr_ast_root_rep(SEXP r_ast, SEXP r_root);
+void rastr_ast_root_set(rastr_ast_t ast, rastr_node_t root);
+SEXP r_rastr_ast_root_set(SEXP r_ast, SEXP r_root);
 
 /********************************************************************************
  Node
@@ -447,6 +450,13 @@ class AstWalker {
     }
 
     virtual void post_idx(rastr_ast_t ast, rastr_node_t node) {
+    }
+
+    virtual bool pre_aexpr(rastr_ast_t ast, rastr_node_t node) {
+        return true;
+    }
+
+    virtual void post_aexpr(rastr_ast_t ast, rastr_node_t node) {
     }
 
     virtual bool pre_exprs(rastr_ast_t ast, rastr_node_t node) {
@@ -782,6 +792,10 @@ class AstWalker {
         /********************************************************************************
           Miscellaneous
         ********************************************************************************/
+        case RASTR_AEXPR:
+            CALL_WALKER_2(aexpr, ann, expr)
+            break;
+
         case RASTR_EXPRS:
             CALL_WALKER_SEQ(exprs, len, seq)
             break;

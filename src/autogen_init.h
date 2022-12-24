@@ -578,6 +578,25 @@ DECLARE_BINDING(rastr_idx_rbkt2_set, 3),
 
 
 /*******************************************************************************
+* aexpr
+*******************************************************************************/
+DECLARE_BINDING(rastr_aexpr_new, 3),
+DECLARE_BINDING(rastr_aexpr_type, 2),
+/* ann ************************************************************************/
+DECLARE_BINDING(rastr_aexpr_ann_get, 2),
+DECLARE_BINDING(rastr_aexpr_ann_rep, 3),
+DECLARE_BINDING(rastr_aexpr_ann_set, 3),
+
+
+/* expr ***********************************************************************/
+DECLARE_BINDING(rastr_aexpr_expr_get, 2),
+DECLARE_BINDING(rastr_aexpr_expr_rep, 3),
+DECLARE_BINDING(rastr_aexpr_expr_set, 3),
+
+
+
+
+/*******************************************************************************
 * exprs
 *******************************************************************************/
 DECLARE_BINDING(rastr_exprs_new, 2),

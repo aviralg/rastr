@@ -322,6 +322,14 @@ class DotSerializer: public AstWalker {
         return true;
     }
 
+    bool pre_aexpr(rastr_ast_t ast, rastr_node_t node) override {
+        write_node_(ast, node, NULL);
+
+        EXPORT_EDGES_2(aexpr, ann, expr)
+
+        return true;
+    }
+
     bool pre_exprs(rastr_ast_t ast, rastr_node_t node) override {
         write_node_(ast,
                     node,
@@ -529,7 +537,7 @@ digraph ast {
 
         depths_.push_back(depth);
 
-        this->walk(ast, rastr_ast_root(ast));
+        this->walk(ast, rastr_ast_root_get(ast));
 
         fprintf(file_, "}");
     }
@@ -818,9 +826,13 @@ digraph ast {
         case RASTR_IDX:
             return ColorYellow;
             break;
-        /********************************************************************************
-          Miscellaneous
-        ********************************************************************************/
+            /********************************************************************************
+              Miscellaneous
+            ********************************************************************************/
+            /* TODO: choose a different color */
+        case RASTR_AEXPR:
+            return ColorAmber;
+            break;
         case RASTR_EXPRS:
             return ColorAmber;
             break;
@@ -936,7 +948,7 @@ void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth) {
 }
 
 void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth) {
-    return rastr_export_to_dot_node(file, ast, rastr_ast_root(ast), depth);
+    return rastr_export_to_dot_node(file, ast, rastr_ast_root_get(ast), depth);
 }
 
 void rastr_export_to_dot_node(FILE* file,

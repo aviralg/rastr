@@ -20,6 +20,17 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_parse_file, 1),
 
     /*******************************************************************************
+     * ast
+     *******************************************************************************/
+
+    DECLARE_BINDING(rastr_ast_new, 1),
+    DECLARE_BINDING(rastr_ast_id, 1),
+    DECLARE_BINDING(rastr_ast_size, 1),
+    DECLARE_BINDING(rastr_ast_root_get, 1),
+    DECLARE_BINDING(rastr_ast_root_rep, 2),
+    DECLARE_BINDING(rastr_ast_root_set, 2),
+
+    /*******************************************************************************
      * op
      *******************************************************************************/
 

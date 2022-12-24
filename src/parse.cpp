@@ -6,7 +6,7 @@
 
 rastr_ast_t rastr_parse_str(const char* str) {
     Input input((const std::uint8_t*) str, std::strlen(str));
-    rastr_ast_t ast = rastr_ast_create(100);
+    rastr_ast_t ast = rastr_ast_new(10000);
 
     Parser parser(input, ast);
     rastr_node_t root = parser.parse_prog();
@@ -16,7 +16,7 @@ rastr_ast_t rastr_parse_str(const char* str) {
         const char* msg = rastr_err_msg_get(ast, root);
         rastr_log_error("%s", msg);
     } else {
-        rastr_ast_set_root(ast, root);
+        rastr_ast_root_set(ast, root);
     }
     //std::cout << "AST size: " << rastr_ast_size(ast) << std::endl;
 

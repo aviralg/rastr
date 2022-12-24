@@ -14,9 +14,6 @@
 const int LOWEST_PRECEDENCE = 0;
 const int INVALID_PRECEDENCE = -1;
 
-/* TODO: remove this. */
-void rastr_ast_set_root(rastr_ast_t ast, rastr_node_t root);
-
 #define PROPAGATE_ERROR(node)            \
     if (node_type_(node) == RASTR_ERR) { \
         res = node;                      \
@@ -656,12 +653,19 @@ class Parser {
         return res;
     }
 
+    bool is_strict_annotation_(rastr_node_t ann) {
+        return (node_type_(ann) == RASTR_SYM) &&
+               strcmp(rastr_sym_val_get(ast_, ann), "strict");
+    }
+
     /* <param> : <symbol> | <symbol> = <expr> */
     rastr_node_t parse_par() {
         rastr_node_t res;
         rastr_node_t name;
         rastr_node_t op;
         rastr_node_t expr;
+        rastr_node_t ann;
+        bool has_ann = false;
 
         pcont_push("<param> : <symbol> | <symbol> = <expr>");
 
@@ -669,6 +673,18 @@ class Parser {
         PROPAGATE_ERROR_IF_NOT(name, RASTR_SYM, "expected <symbol>")
 
         op = peek_token_();
+
+        /* if current node is a symbol and the previous symbol is "lazy"
+           then, parameter is of the form: `strict <name> [= <expr>]` */
+        if (node_type_(op) == RASTR_SYM && is_strict_annotation_(name)) {
+            consume_();
+
+            ann = name;
+            name = op;
+            has_ann = true;
+
+            op = peek_token_();
+        }
 
         /* <param> is of the form <symbol> = <expr> */
         if (node_type_(op) == RASTR_OP_EQ_ASGN) {
@@ -683,6 +699,10 @@ class Parser {
         /* <param> is of the form <symbol> */
         else {
             res = rastr_ndpar_new(ast_, name);
+        }
+
+        if (has_ann) {
+            res = rastr_aexpr_new(ast_, ann, res);
         }
 
     end:
@@ -801,7 +821,7 @@ class Parser {
             /* TODO: fix position */
             res = rastr_msng_new(
                 ast_,
-                rastr_gap_new_unsafe(ast_, nullptr, empty_loc_()),
+                rastr_gap_new(ast_, "", empty_loc_()),
                 empty_loc_());
         }
 

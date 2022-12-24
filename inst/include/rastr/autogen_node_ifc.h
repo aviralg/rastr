@@ -1019,6 +1019,40 @@ SEXP r_rastr_idx_rbkt2_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt2);
 
 
 /*******************************************************************************
+* aexpr
+*******************************************************************************/
+rastr_node_t rastr_aexpr_new(rastr_ast_t ast, rastr_node_t ann, rastr_node_t expr);
+SEXP r_rastr_aexpr_new(SEXP r_ast, SEXP r_ann, SEXP r_expr);
+// pred
+int rastr_aexpr_type(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_aexpr_type(SEXP r_ast, SEXP r_node);
+/* ann ************************************************************************/
+// get
+rastr_node_t rastr_aexpr_ann_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_aexpr_ann_get(SEXP r_ast, SEXP r_node);
+// rep
+rastr_node_t rastr_aexpr_ann_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ann);
+SEXP r_rastr_aexpr_ann_rep(SEXP r_ast, SEXP r_node, SEXP r_ann);
+// set
+void rastr_aexpr_ann_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t ann);
+SEXP r_rastr_aexpr_ann_set(SEXP r_ast, SEXP r_node, SEXP r_ann);
+
+
+/* expr ***********************************************************************/
+// get
+rastr_node_t rastr_aexpr_expr_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_aexpr_expr_get(SEXP r_ast, SEXP r_node);
+// rep
+rastr_node_t rastr_aexpr_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr);
+SEXP r_rastr_aexpr_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr);
+// set
+void rastr_aexpr_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr);
+SEXP r_rastr_aexpr_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr);
+
+
+
+
+/*******************************************************************************
 * exprs
 *******************************************************************************/
 rastr_node_t rastr_exprs_new(rastr_ast_t ast, int len, const rastr_node_t* seq);

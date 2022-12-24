@@ -6,8 +6,14 @@
 extern rastr_node_t RASTR_NODE_UNDEFINED;
 extern rastr_node_t RASTR_NODE_NEWLINE;
 
+/*******************************************************************************
+ * node
+ *******************************************************************************/
+
 int rastr_node_is_undefined(rastr_node_t node);
 int rastr_node_is_newline(rastr_node_t node);
+void rastr_node_pid_unset(rastr_ast_t ast, rastr_node_t node);
+void rastr_ast_root_set(rastr_ast_t ast, rastr_node_t root);
 
 /*******************************************************************************
  * op

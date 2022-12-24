@@ -402,6 +402,12 @@ class SexpTransformer: public AstWalker {
         push_(PROTECT(r_result));
     }
 
+    bool pre_aexpr(rastr_ast_t ast, rastr_node_t node) override {
+        rastr_node_t expr = rastr_aexpr_expr_get(ast, node);
+        walk(ast, expr);
+        return false;
+    }
+
     bool pre_pars(rastr_ast_t ast, rastr_node_t node) override {
         push_(PROTECT(R_NilValue));
         return true;
@@ -670,7 +676,7 @@ struct data_t {
 };
 
 SEXP rastr_ast_as_sexp(rastr_ast_t ast) {
-    return rastr_node_as_sexp(ast, rastr_ast_root(ast));
+    return rastr_node_as_sexp(ast, rastr_ast_root_get(ast));
 }
 
 SEXP r_rastr_ast_as_sexp(SEXP r_ast) {

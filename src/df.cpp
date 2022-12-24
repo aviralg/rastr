@@ -447,6 +447,15 @@ class DFTransformer: AstWalker {
         POST(idx)
     }
 
+    bool pre_aexpr(rastr_ast_t ast, rastr_node_t node) override {
+        PRE(aexpr)
+        return true;
+    }
+
+    void post_aexpr(rastr_ast_t ast, rastr_node_t node) override {
+        POST(aexpr)
+    }
+
     bool pre_exprs(rastr_ast_t ast, rastr_node_t node) override {
         PRE(exprs)
         return true;
@@ -623,7 +632,7 @@ struct data_t {
 };
 
 SEXP rastr_ast_as_df(rastr_ast_t ast) {
-    return rastr_node_as_df(ast, rastr_ast_root(ast));
+    return rastr_node_as_df(ast, rastr_ast_root_get(ast));
 }
 
 SEXP r_rastr_ast_as_df(SEXP r_ast) {
