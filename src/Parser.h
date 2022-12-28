@@ -655,7 +655,7 @@ class Parser {
 
     bool is_strict_annotation_(rastr_node_t ann) {
         return (node_type_(ann) == RASTR_SYM) &&
-               strcmp(rastr_sym_val_get(ast_, ann), "strict");
+               !strcmp(rastr_sym_val_get(ast_, ann), "strict");
     }
 
     /* <param> : <symbol> | <symbol> = <expr> */
@@ -820,9 +820,7 @@ class Parser {
             type == RASTR_BKT_RT_SQR) {
             /* TODO: fix position */
             res = rastr_msng_new(
-                ast_,
-                rastr_gap_new(ast_, "", empty_loc_()),
-                empty_loc_());
+                ast_, rastr_gap_new(ast_, "", empty_loc_()), empty_loc_());
         }
 
         else {

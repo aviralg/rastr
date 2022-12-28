@@ -2278,6 +2278,561 @@ rastr_node_t rastr_node_clone(rastr_ast_t ast, rastr_node_t node) {
 #undef CLONE_5
 #undef CLONE_SEQ
 
+rastr_node_t rastr_node_leftmost(rastr_ast_t ast, rastr_node_t node) {
+    rastr_node_type_t type = rastr_node_type(ast, node);
+
+    switch (type) {
+    /********************************************************************************
+     Operators
+    ********************************************************************************/
+    case RASTR_OP_SP:
+    case RASTR_OP_PLUS:
+    case RASTR_OP_MINUS:
+    case RASTR_OP_MUL:
+    case RASTR_OP_DIV:
+    case RASTR_OP_POW:
+    case RASTR_OP_POW2:
+    case RASTR_OP_LESS:
+    case RASTR_OP_LESS_EQ:
+    case RASTR_OP_GREAT:
+    case RASTR_OP_GREAT_EQ:
+    case RASTR_OP_EQ:
+    case RASTR_OP_NOT_EQ:
+    case RASTR_OP_NOT:
+    case RASTR_OP_AND:
+    case RASTR_OP_VEC_AND:
+    case RASTR_OP_OR:
+    case RASTR_OP_VEC_OR:
+    case RASTR_OP_EQ_ASGN:
+    case RASTR_OP_LT_ASGN:
+    case RASTR_OP_RT_ASGN:
+    case RASTR_OP_LT_SUP_ASGN:
+    case RASTR_OP_RT_SUP_ASGN:
+    case RASTR_OP_COLON_ASGN:
+    case RASTR_OP_PIPE_FWD:
+    case RASTR_OP_PIPE_BIND:
+    case RASTR_OP_PUB_NS:
+    case RASTR_OP_PVT_NS:
+    case RASTR_OP_RANGE:
+    case RASTR_OP_HELP:
+    case RASTR_OP_SLOT:
+    case RASTR_OP_FORMULA:
+    case RASTR_OP_PART:
+    case RASTR_OP_FN:
+    case RASTR_OP_FN2:
+    case RASTR_OP_WHILE:
+    case RASTR_OP_REPEAT:
+    case RASTR_OP_FOR:
+    case RASTR_OP_IN:
+    case RASTR_OP_IF:
+    case RASTR_OP_ELSE:
+    case RASTR_OP_NEXT:
+    case RASTR_OP_BREAK:
+        return node;
+
+        /********************************************************************************
+         Brackets
+        ********************************************************************************/
+    case RASTR_BKT_LT_RND:
+    case RASTR_BKT_RT_RND:
+    case RASTR_BKT_LT_CURL:
+    case RASTR_BKT_RT_CURL:
+    case RASTR_BKT_LT_SQR:
+    case RASTR_BKT_RT_SQR:
+    case RASTR_BKT_LT_DBL_SQR:
+        return node;
+
+        /********************************************************************************
+         Terminators
+        ********************************************************************************/
+    case RASTR_DLMTR_SCOL:
+    case RASTR_DLMTR_COM:
+        return node;
+
+        /********************************************************************************
+          Literals
+        ********************************************************************************/
+    case RASTR_NULL:
+    case RASTR_LGL:
+    case RASTR_INT:
+    case RASTR_DBL:
+    case RASTR_CPX:
+    case RASTR_CHR:
+    case RASTR_SYM:
+        return node;
+
+    /********************************************************************************
+      Expressions
+    ********************************************************************************/
+    case RASTR_BLK:
+        return rastr_blk_lbkt_get(ast, node);
+
+    case RASTR_GRP:
+        return rastr_grp_lbkt_get(ast, node);
+
+    case RASTR_NUOP:
+        return rastr_node_leftmost(ast, rastr_nuop_op_get(ast, node));
+
+    case RASTR_UNOP:
+        return rastr_node_leftmost(ast, rastr_unop_op_get(ast, node));
+
+    case RASTR_BINOP:
+        return rastr_node_leftmost(ast, rastr_binop_lexpr_get(ast, node));
+
+    case RASTR_RLP:
+        return rastr_node_leftmost(ast, rastr_rlp_op_get(ast, node));
+
+    case RASTR_WLP:
+        return rastr_node_leftmost(ast, rastr_wlp_op_get(ast, node));
+
+    case RASTR_FLP:
+        return rastr_node_leftmost(ast, rastr_flp_op_get(ast, node));
+
+    case RASTR_ICOND:
+        return rastr_node_leftmost(ast, rastr_icond_iop_get(ast, node));
+
+    case RASTR_IECOND:
+        return rastr_node_leftmost(ast, rastr_iecond_iop_get(ast, node));
+
+    case RASTR_FNDEFN:
+        return rastr_node_leftmost(ast, rastr_fndefn_op_get(ast, node));
+
+    case RASTR_FNCALL:
+        return rastr_node_leftmost(ast, rastr_fncall_fn_get(ast, node));
+
+    case RASTR_SUB:
+        return rastr_node_leftmost(ast, rastr_sub_obj_get(ast, node));
+
+    case RASTR_IDX:
+        return rastr_node_leftmost(ast, rastr_idx_obj_get(ast, node));
+
+        /********************************************************************************
+          Miscellaneous
+        ********************************************************************************/
+    case RASTR_AEXPR:
+        return rastr_node_leftmost(ast, rastr_aexpr_ann_get(ast, node));
+
+    case RASTR_EXPRS: {
+        int len = rastr_exprs_len_get(ast, node);
+        if (len == 0)
+            return node;
+        const rastr_node_t* seq = rastr_exprs_seq_get(ast, node);
+        return seq[0];
+    }
+
+    case RASTR_PARS: {
+        int len = rastr_pars_len_get(ast, node);
+        if (len == 0)
+            return node;
+        const rastr_node_t* seq = rastr_pars_seq_get(ast, node);
+        return seq[0];
+    }
+
+    case RASTR_DPAR:
+        return rastr_node_leftmost(ast, rastr_dpar_name_get(ast, node));
+
+    case RASTR_NDPAR:
+        return rastr_node_leftmost(ast, rastr_ndpar_name_get(ast, node));
+
+    case RASTR_ARGS: {
+        int len = rastr_args_len_get(ast, node);
+        if (len == 0)
+            return node;
+        const rastr_node_t* seq = rastr_args_seq_get(ast, node);
+        return seq[0];
+    }
+
+    case RASTR_NARG:
+        return rastr_node_leftmost(ast, rastr_narg_name_get(ast, node));
+
+    case RASTR_PARG:
+        return rastr_node_leftmost(ast, rastr_parg_expr_get(ast, node));
+
+    case RASTR_COND:
+        return rastr_cond_lbkt_get(ast, node);
+
+    case RASTR_ITER:
+        return rastr_iter_lbkt_get(ast, node);
+
+    case RASTR_PGM:
+        return rastr_node_leftmost(ast, rastr_pgm_exprs_get(ast, node));
+
+    case RASTR_DLMTD:
+        return rastr_dlmtd_expr_get(ast, node);
+
+    case RASTR_MSNG:
+        return node;
+
+    case RASTR_BEG:
+        return node;
+
+    case RASTR_END:
+        return node;
+
+    case RASTR_GAP:
+        return node;
+
+    case RASTR_LOC:
+        return node;
+
+    case RASTR_ERR:
+        Rf_error("unexpected node of type RASTR_ERR");
+    }
+
+    Rf_error("unhandled node type");
+    return RASTR_NODE_UNDEFINED;
+}
+
+SEXP r_rastr_node_leftmost(SEXP r_ast, SEXP r_node) {
+    ensure_ast_class(r_ast);
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+
+    ensure_node_class(r_node);
+    rastr_node_t node = rastr_node_unwrap(r_node);
+
+    return rastr_node_wrap(rastr_node_leftmost(ast, node));
+}
+
+rastr_node_t rastr_node_gap_get(rastr_ast_t ast, rastr_node_t node) {
+    rastr_node_type_t type = rastr_node_type(ast, node);
+
+    switch (type) {
+    /********************************************************************************
+     Operators
+    ********************************************************************************/
+    case RASTR_OP_SP:
+    case RASTR_OP_PLUS:
+    case RASTR_OP_MINUS:
+    case RASTR_OP_MUL:
+    case RASTR_OP_DIV:
+    case RASTR_OP_POW:
+    case RASTR_OP_POW2:
+    case RASTR_OP_LESS:
+    case RASTR_OP_LESS_EQ:
+    case RASTR_OP_GREAT:
+    case RASTR_OP_GREAT_EQ:
+    case RASTR_OP_EQ:
+    case RASTR_OP_NOT_EQ:
+    case RASTR_OP_NOT:
+    case RASTR_OP_AND:
+    case RASTR_OP_VEC_AND:
+    case RASTR_OP_OR:
+    case RASTR_OP_VEC_OR:
+    case RASTR_OP_EQ_ASGN:
+    case RASTR_OP_LT_ASGN:
+    case RASTR_OP_RT_ASGN:
+    case RASTR_OP_LT_SUP_ASGN:
+    case RASTR_OP_RT_SUP_ASGN:
+    case RASTR_OP_COLON_ASGN:
+    case RASTR_OP_PIPE_FWD:
+    case RASTR_OP_PIPE_BIND:
+    case RASTR_OP_PUB_NS:
+    case RASTR_OP_PVT_NS:
+    case RASTR_OP_RANGE:
+    case RASTR_OP_HELP:
+    case RASTR_OP_SLOT:
+    case RASTR_OP_FORMULA:
+    case RASTR_OP_PART:
+    case RASTR_OP_FN:
+    case RASTR_OP_FN2:
+    case RASTR_OP_WHILE:
+    case RASTR_OP_REPEAT:
+    case RASTR_OP_FOR:
+    case RASTR_OP_IN:
+    case RASTR_OP_IF:
+    case RASTR_OP_ELSE:
+    case RASTR_OP_NEXT:
+    case RASTR_OP_BREAK:
+        return rastr_op_gap_get(ast, node);
+
+        /********************************************************************************
+         Brackets
+        ********************************************************************************/
+    case RASTR_BKT_LT_RND:
+    case RASTR_BKT_RT_RND:
+    case RASTR_BKT_LT_CURL:
+    case RASTR_BKT_RT_CURL:
+    case RASTR_BKT_LT_SQR:
+    case RASTR_BKT_RT_SQR:
+    case RASTR_BKT_LT_DBL_SQR:
+        return rastr_bkt_gap_get(ast, node);
+
+        /********************************************************************************
+         Terminators
+        ********************************************************************************/
+    case RASTR_DLMTR_SCOL:
+    case RASTR_DLMTR_COM:
+        return rastr_dlmtr_gap_get(ast, node);
+
+        /********************************************************************************
+          Literals
+        ********************************************************************************/
+    case RASTR_NULL:
+        return rastr_null_gap_get(ast, node);
+    case RASTR_LGL:
+        return rastr_lgl_gap_get(ast, node);
+    case RASTR_INT:
+        return rastr_int_gap_get(ast, node);
+    case RASTR_DBL:
+        return rastr_dbl_gap_get(ast, node);
+    case RASTR_CPX:
+        return rastr_cpx_gap_get(ast, node);
+    case RASTR_CHR:
+        return rastr_chr_gap_get(ast, node);
+    case RASTR_SYM:
+        return rastr_sym_gap_get(ast, node);
+
+    /********************************************************************************
+      Expressions
+    ********************************************************************************/
+    case RASTR_BLK:
+    case RASTR_GRP:
+    case RASTR_NUOP:
+    case RASTR_UNOP:
+    case RASTR_BINOP:
+    case RASTR_RLP:
+    case RASTR_WLP:
+    case RASTR_FLP:
+    case RASTR_ICOND:
+    case RASTR_IECOND:
+    case RASTR_FNDEFN:
+    case RASTR_FNCALL:
+    case RASTR_SUB:
+    case RASTR_IDX:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+
+        /********************************************************************************
+          Miscellaneous
+        ********************************************************************************/
+    case RASTR_AEXPR:
+    case RASTR_EXPRS:
+    case RASTR_PARS:
+    case RASTR_DPAR:
+    case RASTR_NDPAR:
+    case RASTR_ARGS:
+    case RASTR_NARG:
+    case RASTR_PARG:
+    case RASTR_COND:
+    case RASTR_ITER:
+    case RASTR_PGM:
+    case RASTR_DLMTD:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+
+    case RASTR_MSNG:
+        return rastr_msng_gap_get(ast, node);
+
+    case RASTR_BEG:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+
+    case RASTR_END:
+        return rastr_end_gap_get(ast, node);
+
+    case RASTR_GAP:
+        return node;
+
+    case RASTR_LOC:
+    case RASTR_ERR:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+    }
+
+    Rf_error("unhandled node type");
+    return RASTR_NODE_UNDEFINED;
+}
+
+SEXP r_rastr_node_gap_get(SEXP r_ast, SEXP r_node) {
+    ensure_ast_class(r_ast);
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+
+    ensure_node_class(r_node);
+    rastr_node_t node = rastr_node_unwrap(r_node);
+
+    return rastr_node_wrap(rastr_node_gap_get(ast, node));
+}
+
+void rastr_node_gap_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    rastr_node_type_t type = rastr_node_type(ast, node);
+
+    switch (type) {
+    /********************************************************************************
+     Operators
+    ********************************************************************************/
+    case RASTR_OP_SP:
+    case RASTR_OP_PLUS:
+    case RASTR_OP_MINUS:
+    case RASTR_OP_MUL:
+    case RASTR_OP_DIV:
+    case RASTR_OP_POW:
+    case RASTR_OP_POW2:
+    case RASTR_OP_LESS:
+    case RASTR_OP_LESS_EQ:
+    case RASTR_OP_GREAT:
+    case RASTR_OP_GREAT_EQ:
+    case RASTR_OP_EQ:
+    case RASTR_OP_NOT_EQ:
+    case RASTR_OP_NOT:
+    case RASTR_OP_AND:
+    case RASTR_OP_VEC_AND:
+    case RASTR_OP_OR:
+    case RASTR_OP_VEC_OR:
+    case RASTR_OP_EQ_ASGN:
+    case RASTR_OP_LT_ASGN:
+    case RASTR_OP_RT_ASGN:
+    case RASTR_OP_LT_SUP_ASGN:
+    case RASTR_OP_RT_SUP_ASGN:
+    case RASTR_OP_COLON_ASGN:
+    case RASTR_OP_PIPE_FWD:
+    case RASTR_OP_PIPE_BIND:
+    case RASTR_OP_PUB_NS:
+    case RASTR_OP_PVT_NS:
+    case RASTR_OP_RANGE:
+    case RASTR_OP_HELP:
+    case RASTR_OP_SLOT:
+    case RASTR_OP_FORMULA:
+    case RASTR_OP_PART:
+    case RASTR_OP_FN:
+    case RASTR_OP_FN2:
+    case RASTR_OP_WHILE:
+    case RASTR_OP_REPEAT:
+    case RASTR_OP_FOR:
+    case RASTR_OP_IN:
+    case RASTR_OP_IF:
+    case RASTR_OP_ELSE:
+    case RASTR_OP_NEXT:
+    case RASTR_OP_BREAK:
+        rastr_op_gap_set(ast, node, gap);
+        return;
+
+        /********************************************************************************
+         Brackets
+        ********************************************************************************/
+    case RASTR_BKT_LT_RND:
+    case RASTR_BKT_RT_RND:
+    case RASTR_BKT_LT_CURL:
+    case RASTR_BKT_RT_CURL:
+    case RASTR_BKT_LT_SQR:
+    case RASTR_BKT_RT_SQR:
+    case RASTR_BKT_LT_DBL_SQR:
+        rastr_bkt_gap_set(ast, node, gap);
+        return;
+
+        /********************************************************************************
+         Terminators
+        ********************************************************************************/
+    case RASTR_DLMTR_SCOL:
+    case RASTR_DLMTR_COM:
+        rastr_dlmtr_gap_set(ast, node, gap);
+        return;
+
+        /********************************************************************************
+          Literals
+        ********************************************************************************/
+    case RASTR_NULL:
+        rastr_null_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_LGL:
+        rastr_lgl_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_INT:
+        rastr_int_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_DBL:
+        rastr_dbl_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_CPX:
+        rastr_cpx_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_CHR:
+        rastr_chr_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_SYM:
+        rastr_sym_gap_set(ast, node, gap);
+        return;
+
+    /********************************************************************************
+      Expressions
+    ********************************************************************************/
+    case RASTR_BLK:
+    case RASTR_GRP:
+    case RASTR_NUOP:
+    case RASTR_UNOP:
+    case RASTR_BINOP:
+    case RASTR_RLP:
+    case RASTR_WLP:
+    case RASTR_FLP:
+    case RASTR_ICOND:
+    case RASTR_IECOND:
+    case RASTR_FNDEFN:
+    case RASTR_FNCALL:
+    case RASTR_SUB:
+    case RASTR_IDX:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+
+        /********************************************************************************
+          Miscellaneous
+        ********************************************************************************/
+    case RASTR_AEXPR:
+    case RASTR_EXPRS:
+    case RASTR_PARS:
+    case RASTR_DPAR:
+    case RASTR_NDPAR:
+    case RASTR_ARGS:
+    case RASTR_NARG:
+    case RASTR_PARG:
+    case RASTR_COND:
+    case RASTR_ITER:
+    case RASTR_PGM:
+    case RASTR_DLMTD:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+
+    case RASTR_MSNG:
+        rastr_msng_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_BEG:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+
+    case RASTR_END:
+        rastr_end_gap_set(ast, node, gap);
+        return;
+
+    case RASTR_GAP:
+    case RASTR_LOC:
+    case RASTR_ERR:
+        Rf_error("unexpected node of type: %s",
+                 rastr_node_type_to_string(type));
+    }
+
+    Rf_error("unhandled node type");
+}
+
+SEXP r_rastr_node_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
+    ensure_ast_class(r_ast);
+    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
+
+    ensure_node_class(r_node);
+    rastr_node_t node = rastr_node_unwrap(r_node);
+
+    ensure_node_class(r_gap);
+    rastr_node_t gap = rastr_node_unwrap(r_gap);
+
+    rastr_node_gap_set(ast, node, gap);
+
+    return R_NilValue;
+}
+
 #define ENSURE_NODE_TYPE(PRED, NODE)                     \
     if (!PRED(ast, NODE)) {                              \
         Rf_error(#PRED " : received invalid node type"); \

@@ -1078,6 +1078,9 @@ SEXP r_rastr_exprs_rep(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_expr);
 // set
 void rastr_exprs_set(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t expr);
 SEXP r_rastr_exprs_set(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_expr);
+// ins
+void rastr_exprs_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rastr_node_t* seq);
+SEXP r_rastr_exprs_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq);
 
 
 
@@ -1108,6 +1111,9 @@ SEXP r_rastr_pars_rep(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_par);
 // set
 void rastr_pars_set(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t par);
 SEXP r_rastr_pars_set(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_par);
+// ins
+void rastr_pars_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rastr_node_t* seq);
+SEXP r_rastr_pars_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq);
 
 
 
@@ -1206,6 +1212,9 @@ SEXP r_rastr_args_rep(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_arg);
 // set
 void rastr_args_set(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t arg);
 SEXP r_rastr_args_set(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_arg);
+// ins
+void rastr_args_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rastr_node_t* seq);
+SEXP r_rastr_args_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq);
 
 
 

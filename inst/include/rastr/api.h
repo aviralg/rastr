@@ -206,6 +206,23 @@ rastr_node_type_t rastr_node_type(rastr_ast_t ast, rastr_node_t node);
 int rastr_node_id(rastr_ast_t ast, rastr_node_t node);
 const char*
 rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces);
+rastr_node_t rastr_node_clone(rastr_ast_t ast, rastr_node_t node);
+
+rastr_node_t rastr_node_leftmost(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_node_leftmost(SEXP r_ast, SEXP r_node);
+
+rastr_node_t rastr_node_gap_get(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_node_gap_get(SEXP r_ast, SEXP r_node);
+
+void rastr_node_gap_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap);
+SEXP r_rastr_node_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap);
+
+rastr_node_t
+rastr_node_desugar(rastr_ast_t ast, rastr_node_t node, int strictness);
+
+rastr_ast_t rastr_ast_desugar(rastr_ast_t ast, int strictness);
+SEXP r_rastr_node_desugar(SEXP r_ast, SEXP r_node, SEXP r_strictness);
+SEXP r_rastr_ast_desugar(SEXP r_ast, SEXP r_strictness);
 
 /********************************************************************************
  Node Type

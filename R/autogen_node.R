@@ -1340,6 +1340,10 @@ exprs_rep <- function(ast, node, index, expr) {
 exprs_expr_set <- function(ast, node, index, expr) {
     invisible(.Call(C_rastr_exprs_set, ast, node, index, expr))
 }
+#' @export
+exprs_ins <- function(ast, node, index, len, seq) {
+    invisible(.Call(C_rastr_exprs_ins, ast, node, index, len, seq))
+}
 
 
 
@@ -1379,6 +1383,10 @@ pars_rep <- function(ast, node, index, par) {
 #' @export
 pars_par_set <- function(ast, node, index, par) {
     invisible(.Call(C_rastr_pars_set, ast, node, index, par))
+}
+#' @export
+pars_ins <- function(ast, node, index, len, seq) {
+    invisible(.Call(C_rastr_pars_ins, ast, node, index, len, seq))
 }
 
 
@@ -1505,6 +1513,10 @@ args_rep <- function(ast, node, index, arg) {
 #' @export
 args_arg_set <- function(ast, node, index, arg) {
     invisible(.Call(C_rastr_args_set, ast, node, index, arg))
+}
+#' @export
+args_ins <- function(ast, node, index, len, seq) {
+    invisible(.Call(C_rastr_args_ins, ast, node, index, len, seq))
 }
 
 

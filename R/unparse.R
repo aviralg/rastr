@@ -29,3 +29,12 @@ as_df <- function(ast, node = NULL) {
     }
 }
 
+#' @export
+desugar <- function(ast, node = NULL, strictness = TRUE) {
+    if(is.null(node)) {
+        .Call(C_rastr_ast_desugar, ast, strictness)
+    }
+    else {
+        .Call(C_rastr_node_desugar, ast, node, strictness)
+    }
+}

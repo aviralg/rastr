@@ -19,6 +19,14 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_parse_str, 1),
     DECLARE_BINDING(rastr_parse_file, 1),
 
+    /* desugar */
+    DECLARE_BINDING(rastr_node_desugar, 3),
+    DECLARE_BINDING(rastr_ast_desugar, 2),
+
+    DECLARE_BINDING(rastr_node_leftmost, 2),
+    DECLARE_BINDING(rastr_node_gap_get, 2),
+    DECLARE_BINDING(rastr_node_gap_set, 3),
+
     /*******************************************************************************
      * ast
      *******************************************************************************/

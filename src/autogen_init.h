@@ -610,6 +610,7 @@ DECLARE_BINDING(rastr_exprs_get, 3),
 DECLARE_BINDING(rastr_exprs_seq_get, 2),
 DECLARE_BINDING(rastr_exprs_rep, 4),
 DECLARE_BINDING(rastr_exprs_set, 4),
+DECLARE_BINDING(rastr_exprs_ins, 5),
 
 
 
@@ -628,6 +629,7 @@ DECLARE_BINDING(rastr_pars_get, 3),
 DECLARE_BINDING(rastr_pars_seq_get, 2),
 DECLARE_BINDING(rastr_pars_rep, 4),
 DECLARE_BINDING(rastr_pars_set, 4),
+DECLARE_BINDING(rastr_pars_ins, 5),
 
 
 
@@ -684,6 +686,7 @@ DECLARE_BINDING(rastr_args_get, 3),
 DECLARE_BINDING(rastr_args_seq_get, 2),
 DECLARE_BINDING(rastr_args_rep, 4),
 DECLARE_BINDING(rastr_args_set, 4),
+DECLARE_BINDING(rastr_args_ins, 5),
 
 
 
