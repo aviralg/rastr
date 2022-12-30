@@ -109,8 +109,9 @@ SEXP rastr_c_pointer_to_r_externalptr(void* pointer,
 }
 
 SEXP rastr_str_wrap(const char* string) {
-    SEXP r_str = Rf_allocVector(STRSXP, 1);
+    SEXP r_str = PROTECT(Rf_allocVector(STRSXP, 1));
     SET_STRING_ELT(r_str, 0, string == nullptr ? NA_STRING : mkChar(string));
+    UNPROTECT(1);
     return r_str;
 }
 

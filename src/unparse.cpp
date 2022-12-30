@@ -71,8 +71,8 @@ SEXP serialize_str(void* data) {
 
     ser_data->serializer->walk(ser_data->ast, ser_data->node);
 
-    int len = (int) ser_data->stream->tellp() + 1;
-    buffer = (char*) malloc_or_fail(sizeof(char) * len);
+    int len = (int) ser_data->stream->tellp();
+    buffer = (char*) malloc_or_fail(sizeof(char) * (len + 1));
     ser_data->stream->read(buffer, len);
     buffer[len] = '\0';
 
