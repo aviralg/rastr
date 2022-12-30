@@ -1,0 +1,19 @@
+Name: Desugar Project
+Description: Replace `strict` annotations with force calls in this project.
+Binding: desugarProjectAddin
+Interactive: false
+
+Name: Desugar File
+Description: Replace `strict` annotations with force calls in this file.
+Binding: desugarFileAddin
+Interactive: false
+
+Name: Resugar Project
+Description: Insert `strict` annotations in this project.
+Binding: resugarProjectAddin
+Interactive: false
+
+Name: Resugar File
+Description: Insert `strict` annotations in this file.
+Binding: resugarFileAddin
+Interactive: false
