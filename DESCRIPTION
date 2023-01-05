@@ -1,6 +1,6 @@
 Type: Package
 Package: rastr
-Title: R AST Processor
+Title: An R AST Processing Framework
 Version: 0.1
 Authors@R:
     person(given = "Aviral",
@@ -9,8 +9,8 @@ Authors@R:
            email = "goel.aviral@gmail.com",
            comment = c(ORCID = "0000-0002-0814-5015"))
 Description: rastr is an AST processing framework for R that
-             provides a high-fidelity representation of R AST
-             for syntax rewriting and code analysis.
+             provides an abstract representation of R code
+             for code analysis and manipulation.
 License: MIT + file LICENSE
 URL: http://aviral.io/rastr/
 BugReports: https://github.com/aviralg/rastr/issues
