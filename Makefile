@@ -8,7 +8,7 @@ INCLUDES := $(shell find $(INCLUDEDIR) -name '*.hpp') $(shell find $(SOURCEDIR) 
 CPPCHECK := cppcheck
 SCAN_BUILD := scan-build
 
-.PHONY: all api build check document test
+.PHONY: all api build check document test favicons
 
 all: clean document build check install
 
@@ -75,3 +75,5 @@ api:
 	mv api/store/impl.cpp src/autogen_node_impl.h
 	mv api/store/ifc.cpp inst/include/rastr/autogen_node_ifc.h
 
+favicons:
+	$(R) -e "pkgdown::build_favicons(overwrite = TRUE)"
