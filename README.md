@@ -1,9 +1,21 @@
 
-# TODO
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-- All parser functions should return an error token instead of printing error on console and exiting abruptly.
+# rastr <a href='https://dplyr.tidyverse.org'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
+rastr is a library for manipulating R code.
 
-parse_string("   %in%+-*/^r'--[i am a raw string]--' while for _ hello");
-    parse_string("    %in%");
+## Installation
 
+rastr is under active development. You have to install it directly from
+GitHub.
+
+``` r
+# install.packages("devtools")
+devtools::install_github("aviralg/rastr")
+```
+
+## Issues and Feature Requests
+
+If you encounter an issue or have a feature request please open an issue
+on [GitHub](https://github.com/aviralg/rastr/issues).

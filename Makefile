@@ -30,7 +30,7 @@ uninstall:
 	$(R) --slave -e "remove.packages('rastr')"
 
 document: install-devtools
-	$(R) --slave -e "devtools::document()"
+	$(R) --slave -e "devtools::build_readme(); devtools::document();"
 
 website: document
 	$(R) --slave -e "pkgdown::build_site()"

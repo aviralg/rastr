@@ -1,0 +1,67 @@
+url: http://aviral.io/rastr
+
+template:
+  bootstrap: 5
+  bootswatch: simplex
+
+#home:
+#  links:
+#  - text: Browse source code
+#    href: https://github.com/aviralg/rastr
+#  - text: Report a bug
+#    href: https://github.com/aviralg/rastr/issues
+
+reference:
+- title: Ast
+  contents:
+  - starts_with("ast_")
+
+- title: Node
+  desc: >
+    These functions create and query node objects.
+  contents:
+  - starts_with("op_")
+  - starts_with("bkt_")
+  - starts_with("dlmtr_")
+  - starts_with("null_")
+  - starts_with("lgl_")
+  - starts_with("int_")
+  - starts_with("dbl_")
+  - starts_with("cpx_")
+  - starts_with("chr_")
+  - starts_with("sym_")
+  - starts_with("blk_")
+  - starts_with("grp_")
+  - starts_with("nuop_")
+  - starts_with("unop_")
+  - starts_with("binop_")
+  - starts_with("rlp_")
+  - starts_with("wlp_")
+  - starts_with("flp_")
+  - starts_with("icond_")
+  - starts_with("iecond_")
+  - starts_with("fndefn_")
+  - starts_with("fncall_")
+  - starts_with("sub_")
+  - starts_with("idx_")
+  - starts_with("aexpr_")
+  - starts_with("exprs_")
+  - starts_with("pars_")
+  - starts_with("dpar_")
+  - starts_with("ndpar_")
+  - starts_with("args_")
+  - starts_with("narg_")
+  - starts_with("parg_")
+  - starts_with("cond_")
+  - starts_with("iter_")
+  - starts_with("pgm_")
+  - starts_with("dlmtd_")
+  - starts_with("msng_")
+  - starts_with("beg_")
+  - starts_with("end_")
+  - starts_with("gap_")
+  - starts_with("loc_")
+  - starts_with("err_")
+
+development:
+  mode: auto

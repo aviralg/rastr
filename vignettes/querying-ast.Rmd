@@ -1,0 +1,17 @@
+---
+title: "Querying AST"
+description: >
+  Learn how to query an AST with rastr.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Querying AST}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
