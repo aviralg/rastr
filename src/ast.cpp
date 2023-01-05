@@ -1903,19 +1903,6 @@ void rastr_node_destroy(rastr_ast_t ast, rastr_node_t node) {
     ast->pool->deallocate(node.index);
 }
 
-const char* rastr_ast_to_string(rastr_ast_t ast) {
-    const char* root_str = StringView::duplicate(
-        rastr_node_to_string(ast, rastr_ast_root_get(ast), INDENTATION));
-
-    const char* result = bufprintf("ast {\n"
-                                   "%s\n"
-                                   "}\n",
-                                   root_str);
-
-    free((void*) root_str);
-    return result;
-}
-
 /********************************************************************************
  Node
 ********************************************************************************/

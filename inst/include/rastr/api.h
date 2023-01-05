@@ -204,8 +204,6 @@ SEXP r_rastr_ast_root_set(SEXP r_ast, SEXP r_root);
 
 rastr_node_type_t rastr_node_type(rastr_ast_t ast, rastr_node_t node);
 int rastr_node_id(rastr_ast_t ast, rastr_node_t node);
-const char*
-rastr_node_to_string(rastr_ast_t ast, rastr_node_t node, int spaces);
 rastr_node_t rastr_node_clone(rastr_ast_t ast, rastr_node_t node);
 
 rastr_node_t rastr_node_leftmost(rastr_ast_t ast, rastr_node_t node);
