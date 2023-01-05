@@ -2,7 +2,7 @@ Type: Package
 Package: rastr
 Title: R AST Processor
 Version: 0.1
-Authors@R: 
+Authors@R:
     person(given = "Aviral",
            family = "Goel",
            role = c("aut", "cre"),
@@ -12,11 +12,13 @@ Description: rastr is an AST processing framework for R that
              provides a high-fidelity representation of R AST
              for syntax rewriting and code analysis.
 License: MIT + file LICENSE
-URL: https://aviralg.github.io/rastr/
+URL: http://aviral.io/rastr/
 BugReports: https://github.com/aviralg/rastr/issues
 Encoding: UTF-8
 LazyData: true
 SystemRequirements: C++11
+Imports:
+  rstudioapi
 Suggests:
     knitr,
     rmarkdown,
