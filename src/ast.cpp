@@ -2833,7 +2833,7 @@ SEXP r_rastr_node_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-#define ENSURE_NODE_TYPE(PRED, NODE)                     \
+#define CHECK_NODETYPE(PRED, NODE)                     \
     if (!PRED(ast, NODE)) {                              \
         Rf_error(#PRED " : received invalid node type"); \
     }
@@ -2995,7 +2995,7 @@ SEXP r_rastr_op_new(SEXP r_ast, SEXP r_syn, SEXP r_gap, SEXP r_loc) {
 }
 
 const char* rastr_op_syn_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_op_type, node);
+    CHECK_NODETYPE(rastr_op_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3093,7 +3093,7 @@ SEXP r_rastr_bkt_new(SEXP r_ast, SEXP r_syn, SEXP r_gap, SEXP r_loc) {
 }
 
 const char* rastr_bkt_syn_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_bkt_type, node);
+    CHECK_NODETYPE(rastr_bkt_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3181,7 +3181,7 @@ SEXP r_rastr_dlmtr_new(SEXP r_ast, SEXP r_syn, SEXP r_gap, SEXP r_loc) {
 }
 
 const char* rastr_dlmtr_syn_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_dlmtr_type, node);
+    CHECK_NODETYPE(rastr_dlmtr_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3209,7 +3209,7 @@ SEXP r_rastr_dlmtr_syn_get(SEXP r_ast, SEXP r_node) {
 }
 
 const char* rastr_null_syn_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_null_type, node);
+    CHECK_NODETYPE(rastr_null_type, node);
     return "NULL";
 }
 
@@ -3247,7 +3247,7 @@ SEXP r_rastr_lgl_new(SEXP r_ast, SEXP r_val, SEXP r_gap, SEXP r_loc) {
 }
 
 const char* rastr_lgl_syn_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_lgl_type, node);
+    CHECK_NODETYPE(rastr_lgl_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 

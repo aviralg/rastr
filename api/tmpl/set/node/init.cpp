@@ -1,0 +1,1 @@
+DECLARE_BINDING(rastr__NODE___CHILD__set, 3),

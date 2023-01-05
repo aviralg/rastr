@@ -8,7 +8,7 @@ INCLUDES := $(shell find $(INCLUDEDIR) -name '*.hpp') $(shell find $(SOURCEDIR) 
 CPPCHECK := cppcheck
 SCAN_BUILD := scan-build
 
-.PHONY: all build check document test
+.PHONY: all api build check document test
 
 all: clean document build check install
 
@@ -68,7 +68,10 @@ cppcheck:
 	             $(INCLUDES)
 
 api:
-	cd apigen && R --file=rapi.R
-	mv apigen/autogen_node.R R/
-	mv apigen/autogen_node_ifc.h inst/include/rastr/
-	mv apigen/autogen_*.h src/
+	cd api && R --file=api.R --args node-decl.yml tmpl store
+	clang-format -i api/store/*.cpp
+	mv api/store/impl.R R/autogen_node.R
+	mv api/store/init.cpp src/autogen_init.h
+	mv api/store/impl.cpp src/autogen_node_impl.h
+	mv api/store/ifc.cpp inst/include/rastr/autogen_node_ifc.h
+

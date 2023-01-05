@@ -1,0 +1,577 @@
+
+- type:
+  - RASTR_OP_SP
+  - RASTR_OP_PLUS
+  - RASTR_OP_MINUS
+  - RASTR_OP_MUL
+  - RASTR_OP_DIV
+  - RASTR_OP_POW
+  - RASTR_OP_POW2
+  - RASTR_OP_LESS
+  - RASTR_OP_LESS_EQ
+  - RASTR_OP_GREAT
+  - RASTR_OP_GREAT_EQ
+  - RASTR_OP_EQ
+  - RASTR_OP_NOT_EQ
+  - RASTR_OP_NOT
+  - RASTR_OP_AND
+  - RASTR_OP_VEC_AND
+  - RASTR_OP_OR
+  - RASTR_OP_VEC_OR
+  - RASTR_OP_EQ_ASGN
+  - RASTR_OP_LT_ASGN
+  - RASTR_OP_RT_ASGN
+  - RASTR_OP_LT_SUP_ASGN
+  - RASTR_OP_RT_SUP_ASGN
+  - RASTR_OP_COLON_ASGN
+  - RASTR_OP_PIPE_FWD
+  - RASTR_OP_PIPE_BIND
+  - RASTR_OP_PUB_NS
+  - RASTR_OP_PVT_NS
+  - RASTR_OP_RANGE
+  - RASTR_OP_HELP
+  - RASTR_OP_SLOT
+  - RASTR_OP_FORMULA
+  - RASTR_OP_PART
+  - RASTR_OP_FN
+  - RASTR_OP_FN2
+  - RASTR_OP_WHILE
+  - RASTR_OP_REPEAT
+  - RASTR_OP_FOR
+  - RASTR_OP_IN
+  - RASTR_OP_IF
+  - RASTR_OP_ELSE
+  - RASTR_OP_NEXT
+  - RASTR_OP_BREAK
+  node: op
+  children:
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type:
+  - RASTR_DLMTR_SCOL
+  - RASTR_DLMTR_COM
+  node: dlmtr
+  children:
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type:
+  - RASTR_BKT_LT_RND
+  - RASTR_BKT_RT_RND
+  - RASTR_BKT_LT_CURL
+  - RASTR_BKT_RT_CURL
+  - RASTR_BKT_LT_SQR
+  - RASTR_BKT_RT_SQR
+  - RASTR_BKT_LT_DBL_SQR
+  node: bkt
+  children:
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_NULL
+  node: 'null'
+  children:
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_LGL
+  node: lgl
+  children:
+  - name: val
+    type: lgl
+    mut: no
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_INT
+  node: int
+  children:
+  - name: syn
+    type: chr
+    mut: no
+  - name: val
+    type: int
+    mut: no
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_DBL
+  node: dbl
+  children:
+  - name: syn
+    type: chr
+  - name: val
+    type: dbl
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_CPX
+  node: cpx
+  children:
+  - name: syn
+    type: chr
+  - name: val
+    type: cpx
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_CHR
+  node: chr
+  children:
+  - name: syn
+    type: chr
+  - name: val
+    type: chr
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_SYM
+  node: sym
+  children:
+  - name: syn
+    type: chr
+  - name: val
+    type: chr
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_BLK
+  node: blk
+  children:
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: exprs
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+
+- type: RASTR_GRP
+  node: grp
+  children:
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: expr
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+
+- type: RASTR_NUOP
+  node: nuop
+  children:
+  - name: op
+    type: node
+    mut: yes
+
+- type: RASTR_UNOP
+  node: unop
+  children:
+  - name: op
+    type: node
+    mut: yes
+  - name: expr
+    type: node
+    mut: yes
+
+- type: RASTR_BINOP
+  node: binop
+  children:
+  - name: lexpr
+    type: node
+    mut: yes
+  - name: op
+    type: node
+    mut: yes
+  - name: rexpr
+    type: node
+    mut: yes
+
+- type: RASTR_RLP
+  node: rlp
+  children:
+  - name: op
+    type: node
+    mut: yes
+  - name: body
+    type: node
+    mut: yes
+
+- type: RASTR_WLP
+  node: wlp
+  children:
+  - name: op
+    type: node
+    mut: yes
+  - name: cond
+    type: node
+    mut: yes
+  - name: body
+    type: node
+    mut: yes
+
+- type: RASTR_FLP
+  node: flp
+  children:
+  - name: op
+    type: node
+    mut: yes
+  - name: iter
+    type: node
+    mut: yes
+  - name: body
+    type: node
+    mut: yes
+
+- type: RASTR_ICOND
+  node: icond
+  children:
+  - name: iop
+    type: node
+    mut: yes
+  - name: cond
+    type: node
+    mut: yes
+  - name: ibody
+    type: node
+    mut: yes
+
+- type: RASTR_IECOND
+  node: iecond
+  children:
+  - name: iop
+    type: node
+    mut: yes
+  - name: cond
+    type: node
+    mut: yes
+  - name: ibody
+    type: node
+    mut: yes
+  - name: eop
+    type: node
+    mut: yes
+  - name: ebody
+    type: node
+    mut: yes
+
+- type: RASTR_FNDEFN
+  node: fndefn
+  children:
+  - name: op
+    type: node
+    mut: yes
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: pars
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+  - name: body
+    type: node
+    mut: yes
+
+- type: RASTR_FNCALL
+  node: fncall
+  children:
+  - name: fn
+    type: node
+    mut: yes
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: args
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+
+- type: RASTR_SUB
+  node: sub
+  children:
+  - name: obj
+    type: node
+    mut: yes
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: args
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+
+- type: RASTR_IDX
+  node: idx
+  children:
+  - name: obj
+    type: node
+    mut: yes
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: args
+    type: node
+    mut: yes
+  - name: rbkt1
+    type: node
+    mut: yes
+  - name: rbkt2
+    type: node
+    mut: yes
+
+- type: RASTR_AEXPR
+  node: aexpr
+  children:
+  - name: ann
+    type: node
+    mut: no
+  - name: expr
+    type: node
+    mut: no
+
+- type: RASTR_EXPRS
+  node: exprs
+  children:
+  - name: len
+    type: int
+  - name: seq
+    type: seq
+
+- type: RASTR_PARS
+  node: pars
+  children:
+  - name: len
+    type: int
+  - name: seq
+    type: seq
+
+- type: RASTR_DPAR
+  node: dpar
+  children:
+  - name: name
+    type: node
+    mut: yes
+  - name: op
+    type: node
+    mut: yes
+  - name: expr
+    type: node
+    mut: yes
+
+- type: RASTR_NDPAR
+  node: ndpar
+  children:
+  - name: name
+    type: node
+    mut: yes
+
+- type: RASTR_ARGS
+  node: args
+  children:
+  - name: len
+    type: int
+  - name: seq
+    type: seq
+
+- type: RASTR_NARG
+  node: narg
+  children:
+  - name: name
+    type: node
+    mut: yes
+  - name: op
+    type: node
+    mut: yes
+  - name: expr
+    type: node
+    mut: yes
+
+- type: RASTR_PARG
+  node: parg
+  children:
+  - name: expr
+    type: node
+    mut: yes
+
+- type: RASTR_COND
+  node: cond
+  children:
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: expr
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+
+- type: RASTR_ITER
+  node: iter
+  children:
+  - name: lbkt
+    type: node
+    mut: yes
+  - name: var
+    type: node
+    mut: yes
+  - name: op
+    type: node
+    mut: yes
+  - name: expr
+    type: node
+    mut: yes
+  - name: rbkt
+    type: node
+    mut: yes
+
+- type: RASTR_PGM
+  node: pgm
+  children:
+  - name: beg
+    type: node
+    mut: yes
+  - name: exprs
+    type: node
+    mut: yes
+  - name: end
+    type: node
+    mut: yes
+
+- type: RASTR_DLMTD
+  node: dlmtd
+  children:
+  - name: expr
+    type: node
+    mut: yes
+  - name: dlmtr
+    type: node
+    mut: yes
+
+- type: RASTR_MSNG
+  node: msng
+  children:
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_BEG
+  node: beg
+  children:
+  - name: bom
+    type: chr
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_END
+  node: end
+  children:
+  - name: gap
+    type: node
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_GAP
+  node: gap
+  children:
+  - name: val
+    type: chr
+    mut: no
+  - name: loc
+    type: node
+    mut: no
+
+- type: RASTR_LOC
+  node: loc
+  children:
+  - name: lrow
+    type: int
+    mut: no
+  - name: lcol
+    type: int
+    mut: no
+  - name: lchr
+    type: int
+    mut: no
+  - name: lbyte
+    type: int
+    mut: no
+  - name: rrow
+    type: int
+    mut: no
+  - name: rcol
+    type: int
+    mut: no
+  - name: rchr
+    type: int
+    mut: no
+  - name: rbyte
+    type: int
+    mut: no
+- type: RASTR_ERR
+  node: err
+  children:
+  - name: msg
+    type: chr
+    mut: no
+  - name: loc
+    type: node
+    mut: no

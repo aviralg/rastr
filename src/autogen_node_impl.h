@@ -1,11 +1,31 @@
 /*******************************************************************************
-* op
-*******************************************************************************/
+ * op
+ *******************************************************************************/
 // pred
 int rastr_op_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
-    return (type == RASTR_OP_SP || type == RASTR_OP_PLUS || type == RASTR_OP_MINUS || type == RASTR_OP_MUL || type == RASTR_OP_DIV || type == RASTR_OP_POW || type == RASTR_OP_POW2 || type == RASTR_OP_LESS || type == RASTR_OP_LESS_EQ || type == RASTR_OP_GREAT || type == RASTR_OP_GREAT_EQ || type == RASTR_OP_EQ || type == RASTR_OP_NOT_EQ || type == RASTR_OP_NOT || type == RASTR_OP_AND || type == RASTR_OP_VEC_AND || type == RASTR_OP_OR || type == RASTR_OP_VEC_OR || type == RASTR_OP_EQ_ASGN || type == RASTR_OP_LT_ASGN || type == RASTR_OP_RT_ASGN || type == RASTR_OP_LT_SUP_ASGN || type == RASTR_OP_RT_SUP_ASGN || type == RASTR_OP_COLON_ASGN || type == RASTR_OP_PIPE_FWD || type == RASTR_OP_PIPE_BIND || type == RASTR_OP_PUB_NS || type == RASTR_OP_PVT_NS || type == RASTR_OP_RANGE || type == RASTR_OP_HELP || type == RASTR_OP_SLOT || type == RASTR_OP_FORMULA || type == RASTR_OP_PART || type == RASTR_OP_FN || type == RASTR_OP_FN2 || type == RASTR_OP_WHILE || type == RASTR_OP_REPEAT || type == RASTR_OP_FOR || type == RASTR_OP_IN || type == RASTR_OP_IF || type == RASTR_OP_ELSE || type == RASTR_OP_NEXT || type == RASTR_OP_BREAK);
+    rastr_node_type_t type = ptr->type;
+    return (
+        type == RASTR_OP_SP || type == RASTR_OP_PLUS ||
+        type == RASTR_OP_MINUS || type == RASTR_OP_MUL ||
+        type == RASTR_OP_DIV || type == RASTR_OP_POW || type == RASTR_OP_POW2 ||
+        type == RASTR_OP_LESS || type == RASTR_OP_LESS_EQ ||
+        type == RASTR_OP_GREAT || type == RASTR_OP_GREAT_EQ ||
+        type == RASTR_OP_EQ || type == RASTR_OP_NOT_EQ ||
+        type == RASTR_OP_NOT || type == RASTR_OP_AND ||
+        type == RASTR_OP_VEC_AND || type == RASTR_OP_OR ||
+        type == RASTR_OP_VEC_OR || type == RASTR_OP_EQ_ASGN ||
+        type == RASTR_OP_LT_ASGN || type == RASTR_OP_RT_ASGN ||
+        type == RASTR_OP_LT_SUP_ASGN || type == RASTR_OP_RT_SUP_ASGN ||
+        type == RASTR_OP_COLON_ASGN || type == RASTR_OP_PIPE_FWD ||
+        type == RASTR_OP_PIPE_BIND || type == RASTR_OP_PUB_NS ||
+        type == RASTR_OP_PVT_NS || type == RASTR_OP_RANGE ||
+        type == RASTR_OP_HELP || type == RASTR_OP_SLOT ||
+        type == RASTR_OP_FORMULA || type == RASTR_OP_PART ||
+        type == RASTR_OP_FN || type == RASTR_OP_FN2 || type == RASTR_OP_WHILE ||
+        type == RASTR_OP_REPEAT || type == RASTR_OP_FOR ||
+        type == RASTR_OP_IN || type == RASTR_OP_IF || type == RASTR_OP_ELSE ||
+        type == RASTR_OP_NEXT || type == RASTR_OP_BREAK);
 }
 
 SEXP r_rastr_op_type(SEXP r_ast, SEXP r_node) {
@@ -16,11 +36,11 @@ SEXP r_rastr_op_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_op_type(ast, node);
     return lgl_vec1(result);
 }
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_op_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_op_type, node);
+    CHECK_NODETYPE(rastr_op_type, node);
     return ptr->node.op_node.gap;
 }
 
@@ -33,8 +53,9 @@ SEXP r_rastr_op_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_op_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_op_type, node);
+rastr_node_t
+rastr_op_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_op_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -80,12 +101,11 @@ SEXP r_rastr_op_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_op_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_op_type, node);
+    CHECK_NODETYPE(rastr_op_type, node);
     return ptr->node.op_node.loc;
 }
 
@@ -98,16 +118,13 @@ SEXP r_rastr_op_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* dlmtr
-*******************************************************************************/
+ * dlmtr
+ *******************************************************************************/
 // pred
 int rastr_dlmtr_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_DLMTR_SCOL || type == RASTR_DLMTR_COM);
 }
 
@@ -119,11 +136,11 @@ SEXP r_rastr_dlmtr_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_dlmtr_type(ast, node);
     return lgl_vec1(result);
 }
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_dlmtr_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dlmtr_type, node);
+    CHECK_NODETYPE(rastr_dlmtr_type, node);
     return ptr->node.dlmtr_node.gap;
 }
 
@@ -136,8 +153,9 @@ SEXP r_rastr_dlmtr_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dlmtr_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_dlmtr_type, node);
+rastr_node_t
+rastr_dlmtr_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_dlmtr_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -183,12 +201,11 @@ SEXP r_rastr_dlmtr_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_dlmtr_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dlmtr_type, node);
+    CHECK_NODETYPE(rastr_dlmtr_type, node);
     return ptr->node.dlmtr_node.loc;
 }
 
@@ -201,17 +218,17 @@ SEXP r_rastr_dlmtr_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* bkt
-*******************************************************************************/
+ * bkt
+ *******************************************************************************/
 // pred
 int rastr_bkt_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
-    return (type == RASTR_BKT_LT_RND || type == RASTR_BKT_RT_RND || type == RASTR_BKT_LT_CURL || type == RASTR_BKT_RT_CURL || type == RASTR_BKT_LT_SQR || type == RASTR_BKT_RT_SQR || type == RASTR_BKT_LT_DBL_SQR);
+    rastr_node_type_t type = ptr->type;
+    return (type == RASTR_BKT_LT_RND || type == RASTR_BKT_RT_RND ||
+            type == RASTR_BKT_LT_CURL || type == RASTR_BKT_RT_CURL ||
+            type == RASTR_BKT_LT_SQR || type == RASTR_BKT_RT_SQR ||
+            type == RASTR_BKT_LT_DBL_SQR);
 }
 
 SEXP r_rastr_bkt_type(SEXP r_ast, SEXP r_node) {
@@ -222,11 +239,11 @@ SEXP r_rastr_bkt_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_bkt_type(ast, node);
     return lgl_vec1(result);
 }
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_bkt_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_bkt_type, node);
+    CHECK_NODETYPE(rastr_bkt_type, node);
     return ptr->node.bkt_node.gap;
 }
 
@@ -239,8 +256,9 @@ SEXP r_rastr_bkt_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_bkt_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_bkt_type, node);
+rastr_node_t
+rastr_bkt_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_bkt_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -286,12 +304,11 @@ SEXP r_rastr_bkt_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_bkt_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_bkt_type, node);
+    CHECK_NODETYPE(rastr_bkt_type, node);
     return ptr->node.bkt_node.loc;
 }
 
@@ -304,40 +321,33 @@ SEXP r_rastr_bkt_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* null
-*******************************************************************************/
-rastr_node_t rastr_null_new(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
+ * null
+ *******************************************************************************/
+rastr_node_t
+rastr_null_new(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_NULL);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(null, gap, id)
     ASSIGN_CHILD(null, loc, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_null_new(SEXP r_ast, SEXP r_gap, SEXP r_loc) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_gap);
     rastr_node_t gap = rastr_node_unwrap(r_gap);
     ensure_node_class(r_loc);
     rastr_node_t loc = rastr_node_unwrap(r_loc);
-
     rastr_node_t result = rastr_null_new(ast, gap, loc);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_null_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_NULL);
 }
 
@@ -349,11 +359,11 @@ SEXP r_rastr_null_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_null_type(ast, node);
     return lgl_vec1(result);
 }
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_null_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_null_type, node);
+    CHECK_NODETYPE(rastr_null_type, node);
     return ptr->node.null_node.gap;
 }
 
@@ -366,8 +376,9 @@ SEXP r_rastr_null_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_null_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_null_type, node);
+rastr_node_t
+rastr_null_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_null_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -413,12 +424,11 @@ SEXP r_rastr_null_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_null_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_null_type, node);
+    CHECK_NODETYPE(rastr_null_type, node);
     return ptr->node.null_node.loc;
 }
 
@@ -431,16 +441,13 @@ SEXP r_rastr_null_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* lgl
-*******************************************************************************/
+ * lgl
+ *******************************************************************************/
 // pred
 int rastr_lgl_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_LGL);
 }
 
@@ -452,11 +459,11 @@ SEXP r_rastr_lgl_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_lgl_type(ast, node);
     return lgl_vec1(result);
 }
-/* val ************************************************************************/
+// val
 // get
 int rastr_lgl_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_lgl_type, node);
+    CHECK_NODETYPE(rastr_lgl_type, node);
     return ptr->node.lgl_node.val;
 }
 
@@ -469,12 +476,11 @@ SEXP r_rastr_lgl_val_get(SEXP r_ast, SEXP r_node) {
     return lgl_vec1(result);
 }
 
-
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_lgl_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_lgl_type, node);
+    CHECK_NODETYPE(rastr_lgl_type, node);
     return ptr->node.lgl_node.gap;
 }
 
@@ -487,8 +493,9 @@ SEXP r_rastr_lgl_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_lgl_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_lgl_type, node);
+rastr_node_t
+rastr_lgl_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_lgl_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -534,12 +541,11 @@ SEXP r_rastr_lgl_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_lgl_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_lgl_type, node);
+    CHECK_NODETYPE(rastr_lgl_type, node);
     return ptr->node.lgl_node.loc;
 }
 
@@ -552,16 +558,13 @@ SEXP r_rastr_lgl_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* int
-*******************************************************************************/
+ * int
+ *******************************************************************************/
 // pred
 int rastr_int_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_INT);
 }
 
@@ -573,11 +576,11 @@ SEXP r_rastr_int_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_int_type(ast, node);
     return lgl_vec1(result);
 }
-/* syn ************************************************************************/
+// syn
 // get
 const char* rastr_int_syn_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_int_type, node);
+    CHECK_NODETYPE(rastr_int_type, node);
     return ptr->node.int_node.syn;
 }
 
@@ -590,12 +593,11 @@ SEXP r_rastr_int_syn_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* val ************************************************************************/
+// val
 // get
 int rastr_int_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_int_type, node);
+    CHECK_NODETYPE(rastr_int_type, node);
     return ptr->node.int_node.val;
 }
 
@@ -608,12 +610,11 @@ SEXP r_rastr_int_val_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_int_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_int_type, node);
+    CHECK_NODETYPE(rastr_int_type, node);
     return ptr->node.int_node.gap;
 }
 
@@ -626,8 +627,9 @@ SEXP r_rastr_int_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_int_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_int_type, node);
+rastr_node_t
+rastr_int_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_int_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -673,12 +675,11 @@ SEXP r_rastr_int_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_int_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_int_type, node);
+    CHECK_NODETYPE(rastr_int_type, node);
     return ptr->node.int_node.loc;
 }
 
@@ -691,16 +692,13 @@ SEXP r_rastr_int_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* dbl
-*******************************************************************************/
+ * dbl
+ *******************************************************************************/
 // pred
 int rastr_dbl_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_DBL);
 }
 
@@ -712,11 +710,11 @@ SEXP r_rastr_dbl_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_dbl_type(ast, node);
     return lgl_vec1(result);
 }
-/* syn ************************************************************************/
+// syn
 // get
 const char* rastr_dbl_syn_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dbl_type, node);
+    CHECK_NODETYPE(rastr_dbl_type, node);
     return ptr->node.dbl_node.syn;
 }
 
@@ -729,12 +727,11 @@ SEXP r_rastr_dbl_syn_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* val ************************************************************************/
+// val
 // get
 double rastr_dbl_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dbl_type, node);
+    CHECK_NODETYPE(rastr_dbl_type, node);
     return ptr->node.dbl_node.val;
 }
 
@@ -747,12 +744,11 @@ SEXP r_rastr_dbl_val_get(SEXP r_ast, SEXP r_node) {
     return dbl_vec1(result);
 }
 
-
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_dbl_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dbl_type, node);
+    CHECK_NODETYPE(rastr_dbl_type, node);
     return ptr->node.dbl_node.gap;
 }
 
@@ -765,8 +761,9 @@ SEXP r_rastr_dbl_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dbl_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_dbl_type, node);
+rastr_node_t
+rastr_dbl_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_dbl_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -812,12 +809,11 @@ SEXP r_rastr_dbl_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_dbl_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dbl_type, node);
+    CHECK_NODETYPE(rastr_dbl_type, node);
     return ptr->node.dbl_node.loc;
 }
 
@@ -830,16 +826,13 @@ SEXP r_rastr_dbl_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* cpx
-*******************************************************************************/
+ * cpx
+ *******************************************************************************/
 // pred
 int rastr_cpx_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_CPX);
 }
 
@@ -851,11 +844,11 @@ SEXP r_rastr_cpx_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_cpx_type(ast, node);
     return lgl_vec1(result);
 }
-/* syn ************************************************************************/
+// syn
 // get
 const char* rastr_cpx_syn_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cpx_type, node);
+    CHECK_NODETYPE(rastr_cpx_type, node);
     return ptr->node.cpx_node.syn;
 }
 
@@ -868,12 +861,11 @@ SEXP r_rastr_cpx_syn_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* val ************************************************************************/
+// val
 // get
 Rcomplex rastr_cpx_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cpx_type, node);
+    CHECK_NODETYPE(rastr_cpx_type, node);
     return ptr->node.cpx_node.val;
 }
 
@@ -886,12 +878,11 @@ SEXP r_rastr_cpx_val_get(SEXP r_ast, SEXP r_node) {
     return cpx_vec1(result);
 }
 
-
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_cpx_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cpx_type, node);
+    CHECK_NODETYPE(rastr_cpx_type, node);
     return ptr->node.cpx_node.gap;
 }
 
@@ -904,8 +895,9 @@ SEXP r_rastr_cpx_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_cpx_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_cpx_type, node);
+rastr_node_t
+rastr_cpx_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_cpx_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -951,12 +943,11 @@ SEXP r_rastr_cpx_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_cpx_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cpx_type, node);
+    CHECK_NODETYPE(rastr_cpx_type, node);
     return ptr->node.cpx_node.loc;
 }
 
@@ -969,16 +960,13 @@ SEXP r_rastr_cpx_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* chr
-*******************************************************************************/
+ * chr
+ *******************************************************************************/
 // pred
 int rastr_chr_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_CHR);
 }
 
@@ -990,11 +978,11 @@ SEXP r_rastr_chr_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_chr_type(ast, node);
     return lgl_vec1(result);
 }
-/* syn ************************************************************************/
+// syn
 // get
 const char* rastr_chr_syn_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_chr_type, node);
+    CHECK_NODETYPE(rastr_chr_type, node);
     return ptr->node.chr_node.syn;
 }
 
@@ -1007,12 +995,11 @@ SEXP r_rastr_chr_syn_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* val ************************************************************************/
+// val
 // get
 const char* rastr_chr_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_chr_type, node);
+    CHECK_NODETYPE(rastr_chr_type, node);
     return ptr->node.chr_node.val;
 }
 
@@ -1025,12 +1012,11 @@ SEXP r_rastr_chr_val_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_chr_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_chr_type, node);
+    CHECK_NODETYPE(rastr_chr_type, node);
     return ptr->node.chr_node.gap;
 }
 
@@ -1043,8 +1029,9 @@ SEXP r_rastr_chr_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_chr_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_chr_type, node);
+rastr_node_t
+rastr_chr_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_chr_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1090,12 +1077,11 @@ SEXP r_rastr_chr_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_chr_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_chr_type, node);
+    CHECK_NODETYPE(rastr_chr_type, node);
     return ptr->node.chr_node.loc;
 }
 
@@ -1108,16 +1094,13 @@ SEXP r_rastr_chr_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* sym
-*******************************************************************************/
+ * sym
+ *******************************************************************************/
 // pred
 int rastr_sym_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_SYM);
 }
 
@@ -1129,11 +1112,11 @@ SEXP r_rastr_sym_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_sym_type(ast, node);
     return lgl_vec1(result);
 }
-/* syn ************************************************************************/
+// syn
 // get
 const char* rastr_sym_syn_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sym_type, node);
+    CHECK_NODETYPE(rastr_sym_type, node);
     return ptr->node.sym_node.syn;
 }
 
@@ -1146,12 +1129,11 @@ SEXP r_rastr_sym_syn_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* val ************************************************************************/
+// val
 // get
 const char* rastr_sym_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sym_type, node);
+    CHECK_NODETYPE(rastr_sym_type, node);
     return ptr->node.sym_node.val;
 }
 
@@ -1164,12 +1146,11 @@ SEXP r_rastr_sym_val_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_sym_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sym_type, node);
+    CHECK_NODETYPE(rastr_sym_type, node);
     return ptr->node.sym_node.gap;
 }
 
@@ -1182,8 +1163,9 @@ SEXP r_rastr_sym_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_sym_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_sym_type, node);
+rastr_node_t
+rastr_sym_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_sym_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1229,12 +1211,11 @@ SEXP r_rastr_sym_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_sym_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sym_type, node);
+    CHECK_NODETYPE(rastr_sym_type, node);
     return ptr->node.sym_node.loc;
 }
 
@@ -1247,43 +1228,38 @@ SEXP r_rastr_sym_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* blk
-*******************************************************************************/
-rastr_node_t rastr_blk_new(rastr_ast_t ast, rastr_node_t lbkt, rastr_node_t exprs, rastr_node_t rbkt) {
+ * blk
+ *******************************************************************************/
+rastr_node_t rastr_blk_new(rastr_ast_t ast,
+                           rastr_node_t lbkt,
+                           rastr_node_t exprs,
+                           rastr_node_t rbkt) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_BLK);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(blk, lbkt, id)
     ASSIGN_CHILD(blk, exprs, id)
     ASSIGN_CHILD(blk, rbkt, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_blk_new(SEXP r_ast, SEXP r_lbkt, SEXP r_exprs, SEXP r_rbkt) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_lbkt);
     rastr_node_t lbkt = rastr_node_unwrap(r_lbkt);
     ensure_node_class(r_exprs);
     rastr_node_t exprs = rastr_node_unwrap(r_exprs);
     ensure_node_class(r_rbkt);
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
-
     rastr_node_t result = rastr_blk_new(ast, lbkt, exprs, rbkt);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_blk_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_BLK);
 }
 
@@ -1295,11 +1271,11 @@ SEXP r_rastr_blk_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_blk_type(ast, node);
     return lgl_vec1(result);
 }
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_blk_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_blk_type, node);
+    CHECK_NODETYPE(rastr_blk_type, node);
     return ptr->node.blk_node.lbkt;
 }
 
@@ -1312,8 +1288,9 @@ SEXP r_rastr_blk_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_blk_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_blk_type, node);
+rastr_node_t
+rastr_blk_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_blk_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1359,12 +1336,11 @@ SEXP r_rastr_blk_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* exprs **********************************************************************/
+// exprs
 // get
 rastr_node_t rastr_blk_exprs_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_blk_type, node);
+    CHECK_NODETYPE(rastr_blk_type, node);
     return ptr->node.blk_node.exprs;
 }
 
@@ -1377,8 +1353,9 @@ SEXP r_rastr_blk_exprs_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_blk_exprs_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t exprs) {
-    ENSURE_NODE_TYPE(rastr_blk_type, node);
+rastr_node_t
+rastr_blk_exprs_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t exprs) {
+    CHECK_NODETYPE(rastr_blk_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1405,7 +1382,9 @@ SEXP r_rastr_blk_exprs_rep(SEXP r_ast, SEXP r_node, SEXP r_exprs) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_blk_exprs_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t exprs) {
+void rastr_blk_exprs_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t exprs) {
     rastr_node_t result = rastr_blk_exprs_rep(ast, node, exprs);
     rastr_node_destroy(ast, result);
 }
@@ -1424,12 +1403,11 @@ SEXP r_rastr_blk_exprs_set(SEXP r_ast, SEXP r_node, SEXP r_exprs) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_blk_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_blk_type, node);
+    CHECK_NODETYPE(rastr_blk_type, node);
     return ptr->node.blk_node.rbkt;
 }
 
@@ -1442,8 +1420,9 @@ SEXP r_rastr_blk_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_blk_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_blk_type, node);
+rastr_node_t
+rastr_blk_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_blk_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1489,43 +1468,38 @@ SEXP r_rastr_blk_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* grp
-*******************************************************************************/
-rastr_node_t rastr_grp_new(rastr_ast_t ast, rastr_node_t lbkt, rastr_node_t expr, rastr_node_t rbkt) {
+ * grp
+ *******************************************************************************/
+rastr_node_t rastr_grp_new(rastr_ast_t ast,
+                           rastr_node_t lbkt,
+                           rastr_node_t expr,
+                           rastr_node_t rbkt) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_GRP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(grp, lbkt, id)
     ASSIGN_CHILD(grp, expr, id)
     ASSIGN_CHILD(grp, rbkt, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_grp_new(SEXP r_ast, SEXP r_lbkt, SEXP r_expr, SEXP r_rbkt) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_lbkt);
     rastr_node_t lbkt = rastr_node_unwrap(r_lbkt);
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
     ensure_node_class(r_rbkt);
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
-
     rastr_node_t result = rastr_grp_new(ast, lbkt, expr, rbkt);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_grp_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_GRP);
 }
 
@@ -1537,11 +1511,11 @@ SEXP r_rastr_grp_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_grp_type(ast, node);
     return lgl_vec1(result);
 }
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_grp_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_grp_type, node);
+    CHECK_NODETYPE(rastr_grp_type, node);
     return ptr->node.grp_node.lbkt;
 }
 
@@ -1554,8 +1528,9 @@ SEXP r_rastr_grp_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_grp_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_grp_type, node);
+rastr_node_t
+rastr_grp_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_grp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1601,12 +1576,11 @@ SEXP r_rastr_grp_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_grp_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_grp_type, node);
+    CHECK_NODETYPE(rastr_grp_type, node);
     return ptr->node.grp_node.expr;
 }
 
@@ -1619,8 +1593,9 @@ SEXP r_rastr_grp_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_grp_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_grp_type, node);
+rastr_node_t
+rastr_grp_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_grp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1666,12 +1641,11 @@ SEXP r_rastr_grp_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_grp_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_grp_type, node);
+    CHECK_NODETYPE(rastr_grp_type, node);
     return ptr->node.grp_node.rbkt;
 }
 
@@ -1684,8 +1658,9 @@ SEXP r_rastr_grp_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_grp_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_grp_type, node);
+rastr_node_t
+rastr_grp_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_grp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1731,37 +1706,29 @@ SEXP r_rastr_grp_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* nuop
-*******************************************************************************/
+ * nuop
+ *******************************************************************************/
 rastr_node_t rastr_nuop_new(rastr_ast_t ast, rastr_node_t op) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_NUOP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(nuop, op, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_nuop_new(SEXP r_ast, SEXP r_op) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
-
     rastr_node_t result = rastr_nuop_new(ast, op);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_nuop_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_NUOP);
 }
 
@@ -1773,11 +1740,11 @@ SEXP r_rastr_nuop_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_nuop_type(ast, node);
     return lgl_vec1(result);
 }
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_nuop_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_nuop_type, node);
+    CHECK_NODETYPE(rastr_nuop_type, node);
     return ptr->node.nuop_node.op;
 }
 
@@ -1790,8 +1757,9 @@ SEXP r_rastr_nuop_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_nuop_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_nuop_type, node);
+rastr_node_t
+rastr_nuop_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_nuop_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1837,40 +1805,33 @@ SEXP r_rastr_nuop_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* unop
-*******************************************************************************/
-rastr_node_t rastr_unop_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t expr) {
+ * unop
+ *******************************************************************************/
+rastr_node_t
+rastr_unop_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t expr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_UNOP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(unop, op, id)
     ASSIGN_CHILD(unop, expr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_unop_new(SEXP r_ast, SEXP r_op, SEXP r_expr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
-
     rastr_node_t result = rastr_unop_new(ast, op, expr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_unop_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_UNOP);
 }
 
@@ -1882,11 +1843,11 @@ SEXP r_rastr_unop_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_unop_type(ast, node);
     return lgl_vec1(result);
 }
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_unop_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_unop_type, node);
+    CHECK_NODETYPE(rastr_unop_type, node);
     return ptr->node.unop_node.op;
 }
 
@@ -1899,8 +1860,9 @@ SEXP r_rastr_unop_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_unop_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_unop_type, node);
+rastr_node_t
+rastr_unop_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_unop_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1946,12 +1908,11 @@ SEXP r_rastr_unop_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_unop_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_unop_type, node);
+    CHECK_NODETYPE(rastr_unop_type, node);
     return ptr->node.unop_node.expr;
 }
 
@@ -1964,8 +1925,9 @@ SEXP r_rastr_unop_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_unop_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_unop_type, node);
+rastr_node_t
+rastr_unop_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_unop_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -1992,7 +1954,9 @@ SEXP r_rastr_unop_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_unop_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_unop_expr_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t expr) {
     rastr_node_t result = rastr_unop_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -2011,43 +1975,38 @@ SEXP r_rastr_unop_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* binop
-*******************************************************************************/
-rastr_node_t rastr_binop_new(rastr_ast_t ast, rastr_node_t lexpr, rastr_node_t op, rastr_node_t rexpr) {
+ * binop
+ *******************************************************************************/
+rastr_node_t rastr_binop_new(rastr_ast_t ast,
+                             rastr_node_t lexpr,
+                             rastr_node_t op,
+                             rastr_node_t rexpr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_BINOP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(binop, lexpr, id)
     ASSIGN_CHILD(binop, op, id)
     ASSIGN_CHILD(binop, rexpr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_binop_new(SEXP r_ast, SEXP r_lexpr, SEXP r_op, SEXP r_rexpr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_lexpr);
     rastr_node_t lexpr = rastr_node_unwrap(r_lexpr);
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_rexpr);
     rastr_node_t rexpr = rastr_node_unwrap(r_rexpr);
-
     rastr_node_t result = rastr_binop_new(ast, lexpr, op, rexpr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_binop_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_BINOP);
 }
 
@@ -2059,11 +2018,11 @@ SEXP r_rastr_binop_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_binop_type(ast, node);
     return lgl_vec1(result);
 }
-/* lexpr **********************************************************************/
+// lexpr
 // get
 rastr_node_t rastr_binop_lexpr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_binop_type, node);
+    CHECK_NODETYPE(rastr_binop_type, node);
     return ptr->node.binop_node.lexpr;
 }
 
@@ -2076,8 +2035,9 @@ SEXP r_rastr_binop_lexpr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_binop_lexpr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lexpr) {
-    ENSURE_NODE_TYPE(rastr_binop_type, node);
+rastr_node_t
+rastr_binop_lexpr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lexpr) {
+    CHECK_NODETYPE(rastr_binop_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2104,7 +2064,9 @@ SEXP r_rastr_binop_lexpr_rep(SEXP r_ast, SEXP r_node, SEXP r_lexpr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_binop_lexpr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t lexpr) {
+void rastr_binop_lexpr_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t lexpr) {
     rastr_node_t result = rastr_binop_lexpr_rep(ast, node, lexpr);
     rastr_node_destroy(ast, result);
 }
@@ -2123,12 +2085,11 @@ SEXP r_rastr_binop_lexpr_set(SEXP r_ast, SEXP r_node, SEXP r_lexpr) {
     return R_NilValue;
 }
 
-
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_binop_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_binop_type, node);
+    CHECK_NODETYPE(rastr_binop_type, node);
     return ptr->node.binop_node.op;
 }
 
@@ -2141,8 +2102,9 @@ SEXP r_rastr_binop_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_binop_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_binop_type, node);
+rastr_node_t
+rastr_binop_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_binop_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2188,12 +2150,11 @@ SEXP r_rastr_binop_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* rexpr **********************************************************************/
+// rexpr
 // get
 rastr_node_t rastr_binop_rexpr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_binop_type, node);
+    CHECK_NODETYPE(rastr_binop_type, node);
     return ptr->node.binop_node.rexpr;
 }
 
@@ -2206,8 +2167,9 @@ SEXP r_rastr_binop_rexpr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_binop_rexpr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rexpr) {
-    ENSURE_NODE_TYPE(rastr_binop_type, node);
+rastr_node_t
+rastr_binop_rexpr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rexpr) {
+    CHECK_NODETYPE(rastr_binop_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2234,7 +2196,9 @@ SEXP r_rastr_binop_rexpr_rep(SEXP r_ast, SEXP r_node, SEXP r_rexpr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_binop_rexpr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rexpr) {
+void rastr_binop_rexpr_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t rexpr) {
     rastr_node_t result = rastr_binop_rexpr_rep(ast, node, rexpr);
     rastr_node_destroy(ast, result);
 }
@@ -2253,40 +2217,33 @@ SEXP r_rastr_binop_rexpr_set(SEXP r_ast, SEXP r_node, SEXP r_rexpr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* rlp
-*******************************************************************************/
-rastr_node_t rastr_rlp_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t body) {
+ * rlp
+ *******************************************************************************/
+rastr_node_t
+rastr_rlp_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t body) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_RLP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(rlp, op, id)
     ASSIGN_CHILD(rlp, body, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_rlp_new(SEXP r_ast, SEXP r_op, SEXP r_body) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_body);
     rastr_node_t body = rastr_node_unwrap(r_body);
-
     rastr_node_t result = rastr_rlp_new(ast, op, body);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_rlp_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_RLP);
 }
 
@@ -2298,11 +2255,11 @@ SEXP r_rastr_rlp_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_rlp_type(ast, node);
     return lgl_vec1(result);
 }
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_rlp_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_rlp_type, node);
+    CHECK_NODETYPE(rastr_rlp_type, node);
     return ptr->node.rlp_node.op;
 }
 
@@ -2315,8 +2272,9 @@ SEXP r_rastr_rlp_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_rlp_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_rlp_type, node);
+rastr_node_t
+rastr_rlp_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_rlp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2362,12 +2320,11 @@ SEXP r_rastr_rlp_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* body ***********************************************************************/
+// body
 // get
 rastr_node_t rastr_rlp_body_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_rlp_type, node);
+    CHECK_NODETYPE(rastr_rlp_type, node);
     return ptr->node.rlp_node.body;
 }
 
@@ -2380,8 +2337,9 @@ SEXP r_rastr_rlp_body_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_rlp_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
-    ENSURE_NODE_TYPE(rastr_rlp_type, node);
+rastr_node_t
+rastr_rlp_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
+    CHECK_NODETYPE(rastr_rlp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2427,43 +2385,38 @@ SEXP r_rastr_rlp_body_set(SEXP r_ast, SEXP r_node, SEXP r_body) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* wlp
-*******************************************************************************/
-rastr_node_t rastr_wlp_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t cond, rastr_node_t body) {
+ * wlp
+ *******************************************************************************/
+rastr_node_t rastr_wlp_new(rastr_ast_t ast,
+                           rastr_node_t op,
+                           rastr_node_t cond,
+                           rastr_node_t body) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_WLP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(wlp, op, id)
     ASSIGN_CHILD(wlp, cond, id)
     ASSIGN_CHILD(wlp, body, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_wlp_new(SEXP r_ast, SEXP r_op, SEXP r_cond, SEXP r_body) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_cond);
     rastr_node_t cond = rastr_node_unwrap(r_cond);
     ensure_node_class(r_body);
     rastr_node_t body = rastr_node_unwrap(r_body);
-
     rastr_node_t result = rastr_wlp_new(ast, op, cond, body);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_wlp_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_WLP);
 }
 
@@ -2475,11 +2428,11 @@ SEXP r_rastr_wlp_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_wlp_type(ast, node);
     return lgl_vec1(result);
 }
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_wlp_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_wlp_type, node);
+    CHECK_NODETYPE(rastr_wlp_type, node);
     return ptr->node.wlp_node.op;
 }
 
@@ -2492,8 +2445,9 @@ SEXP r_rastr_wlp_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_wlp_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_wlp_type, node);
+rastr_node_t
+rastr_wlp_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_wlp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2539,12 +2493,11 @@ SEXP r_rastr_wlp_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* cond ***********************************************************************/
+// cond
 // get
 rastr_node_t rastr_wlp_cond_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_wlp_type, node);
+    CHECK_NODETYPE(rastr_wlp_type, node);
     return ptr->node.wlp_node.cond;
 }
 
@@ -2557,8 +2510,9 @@ SEXP r_rastr_wlp_cond_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_wlp_cond_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
-    ENSURE_NODE_TYPE(rastr_wlp_type, node);
+rastr_node_t
+rastr_wlp_cond_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
+    CHECK_NODETYPE(rastr_wlp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2604,12 +2558,11 @@ SEXP r_rastr_wlp_cond_set(SEXP r_ast, SEXP r_node, SEXP r_cond) {
     return R_NilValue;
 }
 
-
-/* body ***********************************************************************/
+// body
 // get
 rastr_node_t rastr_wlp_body_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_wlp_type, node);
+    CHECK_NODETYPE(rastr_wlp_type, node);
     return ptr->node.wlp_node.body;
 }
 
@@ -2622,8 +2575,9 @@ SEXP r_rastr_wlp_body_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_wlp_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
-    ENSURE_NODE_TYPE(rastr_wlp_type, node);
+rastr_node_t
+rastr_wlp_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
+    CHECK_NODETYPE(rastr_wlp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2669,43 +2623,38 @@ SEXP r_rastr_wlp_body_set(SEXP r_ast, SEXP r_node, SEXP r_body) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* flp
-*******************************************************************************/
-rastr_node_t rastr_flp_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t iter, rastr_node_t body) {
+ * flp
+ *******************************************************************************/
+rastr_node_t rastr_flp_new(rastr_ast_t ast,
+                           rastr_node_t op,
+                           rastr_node_t iter,
+                           rastr_node_t body) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_FLP);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(flp, op, id)
     ASSIGN_CHILD(flp, iter, id)
     ASSIGN_CHILD(flp, body, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_flp_new(SEXP r_ast, SEXP r_op, SEXP r_iter, SEXP r_body) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_iter);
     rastr_node_t iter = rastr_node_unwrap(r_iter);
     ensure_node_class(r_body);
     rastr_node_t body = rastr_node_unwrap(r_body);
-
     rastr_node_t result = rastr_flp_new(ast, op, iter, body);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_flp_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_FLP);
 }
 
@@ -2717,11 +2666,11 @@ SEXP r_rastr_flp_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_flp_type(ast, node);
     return lgl_vec1(result);
 }
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_flp_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_flp_type, node);
+    CHECK_NODETYPE(rastr_flp_type, node);
     return ptr->node.flp_node.op;
 }
 
@@ -2734,8 +2683,9 @@ SEXP r_rastr_flp_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_flp_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_flp_type, node);
+rastr_node_t
+rastr_flp_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_flp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2781,12 +2731,11 @@ SEXP r_rastr_flp_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* iter ***********************************************************************/
+// iter
 // get
 rastr_node_t rastr_flp_iter_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_flp_type, node);
+    CHECK_NODETYPE(rastr_flp_type, node);
     return ptr->node.flp_node.iter;
 }
 
@@ -2799,8 +2748,9 @@ SEXP r_rastr_flp_iter_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_flp_iter_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t iter) {
-    ENSURE_NODE_TYPE(rastr_flp_type, node);
+rastr_node_t
+rastr_flp_iter_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t iter) {
+    CHECK_NODETYPE(rastr_flp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2846,12 +2796,11 @@ SEXP r_rastr_flp_iter_set(SEXP r_ast, SEXP r_node, SEXP r_iter) {
     return R_NilValue;
 }
 
-
-/* body ***********************************************************************/
+// body
 // get
 rastr_node_t rastr_flp_body_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_flp_type, node);
+    CHECK_NODETYPE(rastr_flp_type, node);
     return ptr->node.flp_node.body;
 }
 
@@ -2864,8 +2813,9 @@ SEXP r_rastr_flp_body_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_flp_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
-    ENSURE_NODE_TYPE(rastr_flp_type, node);
+rastr_node_t
+rastr_flp_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
+    CHECK_NODETYPE(rastr_flp_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -2911,43 +2861,38 @@ SEXP r_rastr_flp_body_set(SEXP r_ast, SEXP r_node, SEXP r_body) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* icond
-*******************************************************************************/
-rastr_node_t rastr_icond_new(rastr_ast_t ast, rastr_node_t iop, rastr_node_t cond, rastr_node_t ibody) {
+ * icond
+ *******************************************************************************/
+rastr_node_t rastr_icond_new(rastr_ast_t ast,
+                             rastr_node_t iop,
+                             rastr_node_t cond,
+                             rastr_node_t ibody) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_ICOND);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(icond, iop, id)
     ASSIGN_CHILD(icond, cond, id)
     ASSIGN_CHILD(icond, ibody, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_icond_new(SEXP r_ast, SEXP r_iop, SEXP r_cond, SEXP r_ibody) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_iop);
     rastr_node_t iop = rastr_node_unwrap(r_iop);
     ensure_node_class(r_cond);
     rastr_node_t cond = rastr_node_unwrap(r_cond);
     ensure_node_class(r_ibody);
     rastr_node_t ibody = rastr_node_unwrap(r_ibody);
-
     rastr_node_t result = rastr_icond_new(ast, iop, cond, ibody);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_icond_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_ICOND);
 }
 
@@ -2959,11 +2904,11 @@ SEXP r_rastr_icond_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_icond_type(ast, node);
     return lgl_vec1(result);
 }
-/* iop ************************************************************************/
+// iop
 // get
 rastr_node_t rastr_icond_iop_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_icond_type, node);
+    CHECK_NODETYPE(rastr_icond_type, node);
     return ptr->node.icond_node.iop;
 }
 
@@ -2976,8 +2921,9 @@ SEXP r_rastr_icond_iop_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_icond_iop_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t iop) {
-    ENSURE_NODE_TYPE(rastr_icond_type, node);
+rastr_node_t
+rastr_icond_iop_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t iop) {
+    CHECK_NODETYPE(rastr_icond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3023,12 +2969,11 @@ SEXP r_rastr_icond_iop_set(SEXP r_ast, SEXP r_node, SEXP r_iop) {
     return R_NilValue;
 }
 
-
-/* cond ***********************************************************************/
+// cond
 // get
 rastr_node_t rastr_icond_cond_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_icond_type, node);
+    CHECK_NODETYPE(rastr_icond_type, node);
     return ptr->node.icond_node.cond;
 }
 
@@ -3041,8 +2986,9 @@ SEXP r_rastr_icond_cond_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_icond_cond_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
-    ENSURE_NODE_TYPE(rastr_icond_type, node);
+rastr_node_t
+rastr_icond_cond_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
+    CHECK_NODETYPE(rastr_icond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3069,7 +3015,9 @@ SEXP r_rastr_icond_cond_rep(SEXP r_ast, SEXP r_node, SEXP r_cond) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_icond_cond_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
+void rastr_icond_cond_set(rastr_ast_t ast,
+                          rastr_node_t node,
+                          rastr_node_t cond) {
     rastr_node_t result = rastr_icond_cond_rep(ast, node, cond);
     rastr_node_destroy(ast, result);
 }
@@ -3088,12 +3036,11 @@ SEXP r_rastr_icond_cond_set(SEXP r_ast, SEXP r_node, SEXP r_cond) {
     return R_NilValue;
 }
 
-
-/* ibody **********************************************************************/
+// ibody
 // get
 rastr_node_t rastr_icond_ibody_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_icond_type, node);
+    CHECK_NODETYPE(rastr_icond_type, node);
     return ptr->node.icond_node.ibody;
 }
 
@@ -3106,8 +3053,9 @@ SEXP r_rastr_icond_ibody_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_icond_ibody_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ibody) {
-    ENSURE_NODE_TYPE(rastr_icond_type, node);
+rastr_node_t
+rastr_icond_ibody_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ibody) {
+    CHECK_NODETYPE(rastr_icond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3134,7 +3082,9 @@ SEXP r_rastr_icond_ibody_rep(SEXP r_ast, SEXP r_node, SEXP r_ibody) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_icond_ibody_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t ibody) {
+void rastr_icond_ibody_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t ibody) {
     rastr_node_t result = rastr_icond_ibody_rep(ast, node, ibody);
     rastr_node_destroy(ast, result);
 }
@@ -3153,30 +3103,34 @@ SEXP r_rastr_icond_ibody_set(SEXP r_ast, SEXP r_node, SEXP r_ibody) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* iecond
-*******************************************************************************/
-rastr_node_t rastr_iecond_new(rastr_ast_t ast, rastr_node_t iop, rastr_node_t cond, rastr_node_t ibody, rastr_node_t eop, rastr_node_t ebody) {
+ * iecond
+ *******************************************************************************/
+rastr_node_t rastr_iecond_new(rastr_ast_t ast,
+                              rastr_node_t iop,
+                              rastr_node_t cond,
+                              rastr_node_t ibody,
+                              rastr_node_t eop,
+                              rastr_node_t ebody) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_IECOND);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(iecond, iop, id)
     ASSIGN_CHILD(iecond, cond, id)
     ASSIGN_CHILD(iecond, ibody, id)
     ASSIGN_CHILD(iecond, eop, id)
     ASSIGN_CHILD(iecond, ebody, id)
-
     return pair.node;
 }
 
-SEXP r_rastr_iecond_new(SEXP r_ast, SEXP r_iop, SEXP r_cond, SEXP r_ibody, SEXP r_eop, SEXP r_ebody) {
+SEXP r_rastr_iecond_new(SEXP r_ast,
+                        SEXP r_iop,
+                        SEXP r_cond,
+                        SEXP r_ibody,
+                        SEXP r_eop,
+                        SEXP r_ebody) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_iop);
     rastr_node_t iop = rastr_node_unwrap(r_iop);
     ensure_node_class(r_cond);
@@ -3187,15 +3141,13 @@ SEXP r_rastr_iecond_new(SEXP r_ast, SEXP r_iop, SEXP r_cond, SEXP r_ibody, SEXP 
     rastr_node_t eop = rastr_node_unwrap(r_eop);
     ensure_node_class(r_ebody);
     rastr_node_t ebody = rastr_node_unwrap(r_ebody);
-
     rastr_node_t result = rastr_iecond_new(ast, iop, cond, ibody, eop, ebody);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_iecond_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_IECOND);
 }
 
@@ -3207,11 +3159,11 @@ SEXP r_rastr_iecond_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_iecond_type(ast, node);
     return lgl_vec1(result);
 }
-/* iop ************************************************************************/
+// iop
 // get
 rastr_node_t rastr_iecond_iop_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+    CHECK_NODETYPE(rastr_iecond_type, node);
     return ptr->node.iecond_node.iop;
 }
 
@@ -3224,8 +3176,9 @@ SEXP r_rastr_iecond_iop_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iecond_iop_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t iop) {
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+rastr_node_t
+rastr_iecond_iop_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t iop) {
+    CHECK_NODETYPE(rastr_iecond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3252,7 +3205,9 @@ SEXP r_rastr_iecond_iop_rep(SEXP r_ast, SEXP r_node, SEXP r_iop) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iecond_iop_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t iop) {
+void rastr_iecond_iop_set(rastr_ast_t ast,
+                          rastr_node_t node,
+                          rastr_node_t iop) {
     rastr_node_t result = rastr_iecond_iop_rep(ast, node, iop);
     rastr_node_destroy(ast, result);
 }
@@ -3271,12 +3226,11 @@ SEXP r_rastr_iecond_iop_set(SEXP r_ast, SEXP r_node, SEXP r_iop) {
     return R_NilValue;
 }
 
-
-/* cond ***********************************************************************/
+// cond
 // get
 rastr_node_t rastr_iecond_cond_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+    CHECK_NODETYPE(rastr_iecond_type, node);
     return ptr->node.iecond_node.cond;
 }
 
@@ -3289,8 +3243,9 @@ SEXP r_rastr_iecond_cond_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iecond_cond_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+rastr_node_t
+rastr_iecond_cond_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
+    CHECK_NODETYPE(rastr_iecond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3317,7 +3272,9 @@ SEXP r_rastr_iecond_cond_rep(SEXP r_ast, SEXP r_node, SEXP r_cond) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iecond_cond_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t cond) {
+void rastr_iecond_cond_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t cond) {
     rastr_node_t result = rastr_iecond_cond_rep(ast, node, cond);
     rastr_node_destroy(ast, result);
 }
@@ -3336,12 +3293,11 @@ SEXP r_rastr_iecond_cond_set(SEXP r_ast, SEXP r_node, SEXP r_cond) {
     return R_NilValue;
 }
 
-
-/* ibody **********************************************************************/
+// ibody
 // get
 rastr_node_t rastr_iecond_ibody_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+    CHECK_NODETYPE(rastr_iecond_type, node);
     return ptr->node.iecond_node.ibody;
 }
 
@@ -3354,8 +3310,9 @@ SEXP r_rastr_iecond_ibody_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iecond_ibody_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ibody) {
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+rastr_node_t
+rastr_iecond_ibody_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ibody) {
+    CHECK_NODETYPE(rastr_iecond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3382,7 +3339,9 @@ SEXP r_rastr_iecond_ibody_rep(SEXP r_ast, SEXP r_node, SEXP r_ibody) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iecond_ibody_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t ibody) {
+void rastr_iecond_ibody_set(rastr_ast_t ast,
+                            rastr_node_t node,
+                            rastr_node_t ibody) {
     rastr_node_t result = rastr_iecond_ibody_rep(ast, node, ibody);
     rastr_node_destroy(ast, result);
 }
@@ -3401,12 +3360,11 @@ SEXP r_rastr_iecond_ibody_set(SEXP r_ast, SEXP r_node, SEXP r_ibody) {
     return R_NilValue;
 }
 
-
-/* eop ************************************************************************/
+// eop
 // get
 rastr_node_t rastr_iecond_eop_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+    CHECK_NODETYPE(rastr_iecond_type, node);
     return ptr->node.iecond_node.eop;
 }
 
@@ -3419,8 +3377,9 @@ SEXP r_rastr_iecond_eop_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iecond_eop_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t eop) {
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+rastr_node_t
+rastr_iecond_eop_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t eop) {
+    CHECK_NODETYPE(rastr_iecond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3447,7 +3406,9 @@ SEXP r_rastr_iecond_eop_rep(SEXP r_ast, SEXP r_node, SEXP r_eop) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iecond_eop_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t eop) {
+void rastr_iecond_eop_set(rastr_ast_t ast,
+                          rastr_node_t node,
+                          rastr_node_t eop) {
     rastr_node_t result = rastr_iecond_eop_rep(ast, node, eop);
     rastr_node_destroy(ast, result);
 }
@@ -3466,12 +3427,11 @@ SEXP r_rastr_iecond_eop_set(SEXP r_ast, SEXP r_node, SEXP r_eop) {
     return R_NilValue;
 }
 
-
-/* ebody **********************************************************************/
+// ebody
 // get
 rastr_node_t rastr_iecond_ebody_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+    CHECK_NODETYPE(rastr_iecond_type, node);
     return ptr->node.iecond_node.ebody;
 }
 
@@ -3484,8 +3444,9 @@ SEXP r_rastr_iecond_ebody_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iecond_ebody_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ebody) {
-    ENSURE_NODE_TYPE(rastr_iecond_type, node);
+rastr_node_t
+rastr_iecond_ebody_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ebody) {
+    CHECK_NODETYPE(rastr_iecond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3512,7 +3473,9 @@ SEXP r_rastr_iecond_ebody_rep(SEXP r_ast, SEXP r_node, SEXP r_ebody) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iecond_ebody_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t ebody) {
+void rastr_iecond_ebody_set(rastr_ast_t ast,
+                            rastr_node_t node,
+                            rastr_node_t ebody) {
     rastr_node_t result = rastr_iecond_ebody_rep(ast, node, ebody);
     rastr_node_destroy(ast, result);
 }
@@ -3531,30 +3494,34 @@ SEXP r_rastr_iecond_ebody_set(SEXP r_ast, SEXP r_node, SEXP r_ebody) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* fndefn
-*******************************************************************************/
-rastr_node_t rastr_fndefn_new(rastr_ast_t ast, rastr_node_t op, rastr_node_t lbkt, rastr_node_t pars, rastr_node_t rbkt, rastr_node_t body) {
+ * fndefn
+ *******************************************************************************/
+rastr_node_t rastr_fndefn_new(rastr_ast_t ast,
+                              rastr_node_t op,
+                              rastr_node_t lbkt,
+                              rastr_node_t pars,
+                              rastr_node_t rbkt,
+                              rastr_node_t body) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_FNDEFN);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(fndefn, op, id)
     ASSIGN_CHILD(fndefn, lbkt, id)
     ASSIGN_CHILD(fndefn, pars, id)
     ASSIGN_CHILD(fndefn, rbkt, id)
     ASSIGN_CHILD(fndefn, body, id)
-
     return pair.node;
 }
 
-SEXP r_rastr_fndefn_new(SEXP r_ast, SEXP r_op, SEXP r_lbkt, SEXP r_pars, SEXP r_rbkt, SEXP r_body) {
+SEXP r_rastr_fndefn_new(SEXP r_ast,
+                        SEXP r_op,
+                        SEXP r_lbkt,
+                        SEXP r_pars,
+                        SEXP r_rbkt,
+                        SEXP r_body) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_lbkt);
@@ -3565,15 +3532,13 @@ SEXP r_rastr_fndefn_new(SEXP r_ast, SEXP r_op, SEXP r_lbkt, SEXP r_pars, SEXP r_
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
     ensure_node_class(r_body);
     rastr_node_t body = rastr_node_unwrap(r_body);
-
     rastr_node_t result = rastr_fndefn_new(ast, op, lbkt, pars, rbkt, body);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_fndefn_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_FNDEFN);
 }
 
@@ -3585,11 +3550,11 @@ SEXP r_rastr_fndefn_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_fndefn_type(ast, node);
     return lgl_vec1(result);
 }
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_fndefn_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+    CHECK_NODETYPE(rastr_fndefn_type, node);
     return ptr->node.fndefn_node.op;
 }
 
@@ -3602,8 +3567,9 @@ SEXP r_rastr_fndefn_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fndefn_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+rastr_node_t
+rastr_fndefn_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_fndefn_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3649,12 +3615,11 @@ SEXP r_rastr_fndefn_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_fndefn_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+    CHECK_NODETYPE(rastr_fndefn_type, node);
     return ptr->node.fndefn_node.lbkt;
 }
 
@@ -3667,8 +3632,9 @@ SEXP r_rastr_fndefn_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fndefn_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+rastr_node_t
+rastr_fndefn_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_fndefn_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3695,7 +3661,9 @@ SEXP r_rastr_fndefn_lbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fndefn_lbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+void rastr_fndefn_lbkt_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t lbkt) {
     rastr_node_t result = rastr_fndefn_lbkt_rep(ast, node, lbkt);
     rastr_node_destroy(ast, result);
 }
@@ -3714,12 +3682,11 @@ SEXP r_rastr_fndefn_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* pars ***********************************************************************/
+// pars
 // get
 rastr_node_t rastr_fndefn_pars_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+    CHECK_NODETYPE(rastr_fndefn_type, node);
     return ptr->node.fndefn_node.pars;
 }
 
@@ -3732,8 +3699,9 @@ SEXP r_rastr_fndefn_pars_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fndefn_pars_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t pars) {
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+rastr_node_t
+rastr_fndefn_pars_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t pars) {
+    CHECK_NODETYPE(rastr_fndefn_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3760,7 +3728,9 @@ SEXP r_rastr_fndefn_pars_rep(SEXP r_ast, SEXP r_node, SEXP r_pars) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fndefn_pars_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t pars) {
+void rastr_fndefn_pars_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t pars) {
     rastr_node_t result = rastr_fndefn_pars_rep(ast, node, pars);
     rastr_node_destroy(ast, result);
 }
@@ -3779,12 +3749,11 @@ SEXP r_rastr_fndefn_pars_set(SEXP r_ast, SEXP r_node, SEXP r_pars) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_fndefn_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+    CHECK_NODETYPE(rastr_fndefn_type, node);
     return ptr->node.fndefn_node.rbkt;
 }
 
@@ -3797,8 +3766,9 @@ SEXP r_rastr_fndefn_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fndefn_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+rastr_node_t
+rastr_fndefn_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_fndefn_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3825,7 +3795,9 @@ SEXP r_rastr_fndefn_rbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fndefn_rbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+void rastr_fndefn_rbkt_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t rbkt) {
     rastr_node_t result = rastr_fndefn_rbkt_rep(ast, node, rbkt);
     rastr_node_destroy(ast, result);
 }
@@ -3844,12 +3816,11 @@ SEXP r_rastr_fndefn_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-/* body ***********************************************************************/
+// body
 // get
 rastr_node_t rastr_fndefn_body_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+    CHECK_NODETYPE(rastr_fndefn_type, node);
     return ptr->node.fndefn_node.body;
 }
 
@@ -3862,8 +3833,9 @@ SEXP r_rastr_fndefn_body_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fndefn_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
-    ENSURE_NODE_TYPE(rastr_fndefn_type, node);
+rastr_node_t
+rastr_fndefn_body_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
+    CHECK_NODETYPE(rastr_fndefn_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -3890,7 +3862,9 @@ SEXP r_rastr_fndefn_body_rep(SEXP r_ast, SEXP r_node, SEXP r_body) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fndefn_body_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t body) {
+void rastr_fndefn_body_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t body) {
     rastr_node_t result = rastr_fndefn_body_rep(ast, node, body);
     rastr_node_destroy(ast, result);
 }
@@ -3909,29 +3883,31 @@ SEXP r_rastr_fndefn_body_set(SEXP r_ast, SEXP r_node, SEXP r_body) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* fncall
-*******************************************************************************/
-rastr_node_t rastr_fncall_new(rastr_ast_t ast, rastr_node_t fn, rastr_node_t lbkt, rastr_node_t args, rastr_node_t rbkt) {
+ * fncall
+ *******************************************************************************/
+rastr_node_t rastr_fncall_new(rastr_ast_t ast,
+                              rastr_node_t fn,
+                              rastr_node_t lbkt,
+                              rastr_node_t args,
+                              rastr_node_t rbkt) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_FNCALL);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(fncall, fn, id)
     ASSIGN_CHILD(fncall, lbkt, id)
     ASSIGN_CHILD(fncall, args, id)
     ASSIGN_CHILD(fncall, rbkt, id)
-
     return pair.node;
 }
 
-SEXP r_rastr_fncall_new(SEXP r_ast, SEXP r_fn, SEXP r_lbkt, SEXP r_args, SEXP r_rbkt) {
+SEXP r_rastr_fncall_new(SEXP r_ast,
+                        SEXP r_fn,
+                        SEXP r_lbkt,
+                        SEXP r_args,
+                        SEXP r_rbkt) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_fn);
     rastr_node_t fn = rastr_node_unwrap(r_fn);
     ensure_node_class(r_lbkt);
@@ -3940,15 +3916,13 @@ SEXP r_rastr_fncall_new(SEXP r_ast, SEXP r_fn, SEXP r_lbkt, SEXP r_args, SEXP r_
     rastr_node_t args = rastr_node_unwrap(r_args);
     ensure_node_class(r_rbkt);
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
-
     rastr_node_t result = rastr_fncall_new(ast, fn, lbkt, args, rbkt);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_fncall_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_FNCALL);
 }
 
@@ -3960,11 +3934,11 @@ SEXP r_rastr_fncall_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_fncall_type(ast, node);
     return lgl_vec1(result);
 }
-/* fn *************************************************************************/
+// fn
 // get
 rastr_node_t rastr_fncall_fn_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+    CHECK_NODETYPE(rastr_fncall_type, node);
     return ptr->node.fncall_node.fn;
 }
 
@@ -3977,8 +3951,9 @@ SEXP r_rastr_fncall_fn_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fncall_fn_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t fn) {
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+rastr_node_t
+rastr_fncall_fn_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t fn) {
+    CHECK_NODETYPE(rastr_fncall_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4024,12 +3999,11 @@ SEXP r_rastr_fncall_fn_set(SEXP r_ast, SEXP r_node, SEXP r_fn) {
     return R_NilValue;
 }
 
-
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_fncall_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+    CHECK_NODETYPE(rastr_fncall_type, node);
     return ptr->node.fncall_node.lbkt;
 }
 
@@ -4042,8 +4016,9 @@ SEXP r_rastr_fncall_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fncall_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+rastr_node_t
+rastr_fncall_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_fncall_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4070,7 +4045,9 @@ SEXP r_rastr_fncall_lbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fncall_lbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+void rastr_fncall_lbkt_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t lbkt) {
     rastr_node_t result = rastr_fncall_lbkt_rep(ast, node, lbkt);
     rastr_node_destroy(ast, result);
 }
@@ -4089,12 +4066,11 @@ SEXP r_rastr_fncall_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* args ***********************************************************************/
+// args
 // get
 rastr_node_t rastr_fncall_args_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+    CHECK_NODETYPE(rastr_fncall_type, node);
     return ptr->node.fncall_node.args;
 }
 
@@ -4107,8 +4083,9 @@ SEXP r_rastr_fncall_args_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fncall_args_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+rastr_node_t
+rastr_fncall_args_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
+    CHECK_NODETYPE(rastr_fncall_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4135,7 +4112,9 @@ SEXP r_rastr_fncall_args_rep(SEXP r_ast, SEXP r_node, SEXP r_args) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fncall_args_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
+void rastr_fncall_args_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t args) {
     rastr_node_t result = rastr_fncall_args_rep(ast, node, args);
     rastr_node_destroy(ast, result);
 }
@@ -4154,12 +4133,11 @@ SEXP r_rastr_fncall_args_set(SEXP r_ast, SEXP r_node, SEXP r_args) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_fncall_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+    CHECK_NODETYPE(rastr_fncall_type, node);
     return ptr->node.fncall_node.rbkt;
 }
 
@@ -4172,8 +4150,9 @@ SEXP r_rastr_fncall_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_fncall_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_fncall_type, node);
+rastr_node_t
+rastr_fncall_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_fncall_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4200,7 +4179,9 @@ SEXP r_rastr_fncall_rbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_fncall_rbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+void rastr_fncall_rbkt_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t rbkt) {
     rastr_node_t result = rastr_fncall_rbkt_rep(ast, node, rbkt);
     rastr_node_destroy(ast, result);
 }
@@ -4219,29 +4200,31 @@ SEXP r_rastr_fncall_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* sub
-*******************************************************************************/
-rastr_node_t rastr_sub_new(rastr_ast_t ast, rastr_node_t obj, rastr_node_t lbkt, rastr_node_t args, rastr_node_t rbkt) {
+ * sub
+ *******************************************************************************/
+rastr_node_t rastr_sub_new(rastr_ast_t ast,
+                           rastr_node_t obj,
+                           rastr_node_t lbkt,
+                           rastr_node_t args,
+                           rastr_node_t rbkt) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_SUB);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(sub, obj, id)
     ASSIGN_CHILD(sub, lbkt, id)
     ASSIGN_CHILD(sub, args, id)
     ASSIGN_CHILD(sub, rbkt, id)
-
     return pair.node;
 }
 
-SEXP r_rastr_sub_new(SEXP r_ast, SEXP r_obj, SEXP r_lbkt, SEXP r_args, SEXP r_rbkt) {
+SEXP r_rastr_sub_new(SEXP r_ast,
+                     SEXP r_obj,
+                     SEXP r_lbkt,
+                     SEXP r_args,
+                     SEXP r_rbkt) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_obj);
     rastr_node_t obj = rastr_node_unwrap(r_obj);
     ensure_node_class(r_lbkt);
@@ -4250,15 +4233,13 @@ SEXP r_rastr_sub_new(SEXP r_ast, SEXP r_obj, SEXP r_lbkt, SEXP r_args, SEXP r_rb
     rastr_node_t args = rastr_node_unwrap(r_args);
     ensure_node_class(r_rbkt);
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
-
     rastr_node_t result = rastr_sub_new(ast, obj, lbkt, args, rbkt);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_sub_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_SUB);
 }
 
@@ -4270,11 +4251,11 @@ SEXP r_rastr_sub_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_sub_type(ast, node);
     return lgl_vec1(result);
 }
-/* obj ************************************************************************/
+// obj
 // get
 rastr_node_t rastr_sub_obj_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+    CHECK_NODETYPE(rastr_sub_type, node);
     return ptr->node.sub_node.obj;
 }
 
@@ -4287,8 +4268,9 @@ SEXP r_rastr_sub_obj_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_sub_obj_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t obj) {
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+rastr_node_t
+rastr_sub_obj_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t obj) {
+    CHECK_NODETYPE(rastr_sub_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4334,12 +4316,11 @@ SEXP r_rastr_sub_obj_set(SEXP r_ast, SEXP r_node, SEXP r_obj) {
     return R_NilValue;
 }
 
-
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_sub_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+    CHECK_NODETYPE(rastr_sub_type, node);
     return ptr->node.sub_node.lbkt;
 }
 
@@ -4352,8 +4333,9 @@ SEXP r_rastr_sub_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_sub_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+rastr_node_t
+rastr_sub_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_sub_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4399,12 +4381,11 @@ SEXP r_rastr_sub_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* args ***********************************************************************/
+// args
 // get
 rastr_node_t rastr_sub_args_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+    CHECK_NODETYPE(rastr_sub_type, node);
     return ptr->node.sub_node.args;
 }
 
@@ -4417,8 +4398,9 @@ SEXP r_rastr_sub_args_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_sub_args_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+rastr_node_t
+rastr_sub_args_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
+    CHECK_NODETYPE(rastr_sub_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4464,12 +4446,11 @@ SEXP r_rastr_sub_args_set(SEXP r_ast, SEXP r_node, SEXP r_args) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_sub_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+    CHECK_NODETYPE(rastr_sub_type, node);
     return ptr->node.sub_node.rbkt;
 }
 
@@ -4482,8 +4463,9 @@ SEXP r_rastr_sub_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_sub_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_sub_type, node);
+rastr_node_t
+rastr_sub_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_sub_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4529,30 +4511,34 @@ SEXP r_rastr_sub_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* idx
-*******************************************************************************/
-rastr_node_t rastr_idx_new(rastr_ast_t ast, rastr_node_t obj, rastr_node_t lbkt, rastr_node_t args, rastr_node_t rbkt1, rastr_node_t rbkt2) {
+ * idx
+ *******************************************************************************/
+rastr_node_t rastr_idx_new(rastr_ast_t ast,
+                           rastr_node_t obj,
+                           rastr_node_t lbkt,
+                           rastr_node_t args,
+                           rastr_node_t rbkt1,
+                           rastr_node_t rbkt2) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_IDX);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(idx, obj, id)
     ASSIGN_CHILD(idx, lbkt, id)
     ASSIGN_CHILD(idx, args, id)
     ASSIGN_CHILD(idx, rbkt1, id)
     ASSIGN_CHILD(idx, rbkt2, id)
-
     return pair.node;
 }
 
-SEXP r_rastr_idx_new(SEXP r_ast, SEXP r_obj, SEXP r_lbkt, SEXP r_args, SEXP r_rbkt1, SEXP r_rbkt2) {
+SEXP r_rastr_idx_new(SEXP r_ast,
+                     SEXP r_obj,
+                     SEXP r_lbkt,
+                     SEXP r_args,
+                     SEXP r_rbkt1,
+                     SEXP r_rbkt2) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_obj);
     rastr_node_t obj = rastr_node_unwrap(r_obj);
     ensure_node_class(r_lbkt);
@@ -4563,15 +4549,13 @@ SEXP r_rastr_idx_new(SEXP r_ast, SEXP r_obj, SEXP r_lbkt, SEXP r_args, SEXP r_rb
     rastr_node_t rbkt1 = rastr_node_unwrap(r_rbkt1);
     ensure_node_class(r_rbkt2);
     rastr_node_t rbkt2 = rastr_node_unwrap(r_rbkt2);
-
     rastr_node_t result = rastr_idx_new(ast, obj, lbkt, args, rbkt1, rbkt2);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_idx_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_IDX);
 }
 
@@ -4583,11 +4567,11 @@ SEXP r_rastr_idx_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_idx_type(ast, node);
     return lgl_vec1(result);
 }
-/* obj ************************************************************************/
+// obj
 // get
 rastr_node_t rastr_idx_obj_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+    CHECK_NODETYPE(rastr_idx_type, node);
     return ptr->node.idx_node.obj;
 }
 
@@ -4600,8 +4584,9 @@ SEXP r_rastr_idx_obj_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_idx_obj_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t obj) {
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+rastr_node_t
+rastr_idx_obj_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t obj) {
+    CHECK_NODETYPE(rastr_idx_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4647,12 +4632,11 @@ SEXP r_rastr_idx_obj_set(SEXP r_ast, SEXP r_node, SEXP r_obj) {
     return R_NilValue;
 }
 
-
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_idx_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+    CHECK_NODETYPE(rastr_idx_type, node);
     return ptr->node.idx_node.lbkt;
 }
 
@@ -4665,8 +4649,9 @@ SEXP r_rastr_idx_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_idx_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+rastr_node_t
+rastr_idx_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_idx_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4712,12 +4697,11 @@ SEXP r_rastr_idx_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* args ***********************************************************************/
+// args
 // get
 rastr_node_t rastr_idx_args_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+    CHECK_NODETYPE(rastr_idx_type, node);
     return ptr->node.idx_node.args;
 }
 
@@ -4730,8 +4714,9 @@ SEXP r_rastr_idx_args_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_idx_args_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+rastr_node_t
+rastr_idx_args_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t args) {
+    CHECK_NODETYPE(rastr_idx_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4777,12 +4762,11 @@ SEXP r_rastr_idx_args_set(SEXP r_ast, SEXP r_node, SEXP r_args) {
     return R_NilValue;
 }
 
-
-/* rbkt1 **********************************************************************/
+// rbkt1
 // get
 rastr_node_t rastr_idx_rbkt1_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+    CHECK_NODETYPE(rastr_idx_type, node);
     return ptr->node.idx_node.rbkt1;
 }
 
@@ -4795,8 +4779,9 @@ SEXP r_rastr_idx_rbkt1_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_idx_rbkt1_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt1) {
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+rastr_node_t
+rastr_idx_rbkt1_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt1) {
+    CHECK_NODETYPE(rastr_idx_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4823,7 +4808,9 @@ SEXP r_rastr_idx_rbkt1_rep(SEXP r_ast, SEXP r_node, SEXP r_rbkt1) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_idx_rbkt1_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt1) {
+void rastr_idx_rbkt1_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t rbkt1) {
     rastr_node_t result = rastr_idx_rbkt1_rep(ast, node, rbkt1);
     rastr_node_destroy(ast, result);
 }
@@ -4842,12 +4829,11 @@ SEXP r_rastr_idx_rbkt1_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt1) {
     return R_NilValue;
 }
 
-
-/* rbkt2 **********************************************************************/
+// rbkt2
 // get
 rastr_node_t rastr_idx_rbkt2_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+    CHECK_NODETYPE(rastr_idx_type, node);
     return ptr->node.idx_node.rbkt2;
 }
 
@@ -4860,8 +4846,9 @@ SEXP r_rastr_idx_rbkt2_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_idx_rbkt2_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt2) {
-    ENSURE_NODE_TYPE(rastr_idx_type, node);
+rastr_node_t
+rastr_idx_rbkt2_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt2) {
+    CHECK_NODETYPE(rastr_idx_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -4888,7 +4875,9 @@ SEXP r_rastr_idx_rbkt2_rep(SEXP r_ast, SEXP r_node, SEXP r_rbkt2) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_idx_rbkt2_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt2) {
+void rastr_idx_rbkt2_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t rbkt2) {
     rastr_node_t result = rastr_idx_rbkt2_rep(ast, node, rbkt2);
     rastr_node_destroy(ast, result);
 }
@@ -4907,40 +4896,33 @@ SEXP r_rastr_idx_rbkt2_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt2) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* aexpr
-*******************************************************************************/
-rastr_node_t rastr_aexpr_new(rastr_ast_t ast, rastr_node_t ann, rastr_node_t expr) {
+ * aexpr
+ *******************************************************************************/
+rastr_node_t
+rastr_aexpr_new(rastr_ast_t ast, rastr_node_t ann, rastr_node_t expr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_AEXPR);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(aexpr, ann, id)
     ASSIGN_CHILD(aexpr, expr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_aexpr_new(SEXP r_ast, SEXP r_ann, SEXP r_expr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_ann);
     rastr_node_t ann = rastr_node_unwrap(r_ann);
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
-
     rastr_node_t result = rastr_aexpr_new(ast, ann, expr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_aexpr_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_AEXPR);
 }
 
@@ -4952,11 +4934,11 @@ SEXP r_rastr_aexpr_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_aexpr_type(ast, node);
     return lgl_vec1(result);
 }
-/* ann ************************************************************************/
+// ann
 // get
 rastr_node_t rastr_aexpr_ann_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_aexpr_type, node);
+    CHECK_NODETYPE(rastr_aexpr_type, node);
     return ptr->node.aexpr_node.ann;
 }
 
@@ -4969,8 +4951,9 @@ SEXP r_rastr_aexpr_ann_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_aexpr_ann_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ann) {
-    ENSURE_NODE_TYPE(rastr_aexpr_type, node);
+rastr_node_t
+rastr_aexpr_ann_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t ann) {
+    CHECK_NODETYPE(rastr_aexpr_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -5016,12 +4999,11 @@ SEXP r_rastr_aexpr_ann_set(SEXP r_ast, SEXP r_node, SEXP r_ann) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_aexpr_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_aexpr_type, node);
+    CHECK_NODETYPE(rastr_aexpr_type, node);
     return ptr->node.aexpr_node.expr;
 }
 
@@ -5034,8 +5016,9 @@ SEXP r_rastr_aexpr_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_aexpr_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_aexpr_type, node);
+rastr_node_t
+rastr_aexpr_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_aexpr_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -5062,7 +5045,9 @@ SEXP r_rastr_aexpr_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_aexpr_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_aexpr_expr_set(rastr_ast_t ast,
+                          rastr_node_t node,
+                          rastr_node_t expr) {
     rastr_node_t result = rastr_aexpr_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -5081,19 +5066,18 @@ SEXP r_rastr_aexpr_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* exprs
-*******************************************************************************/
-rastr_node_t rastr_exprs_new(rastr_ast_t ast, int len, const rastr_node_t* seq) {
+ * exprs
+ *******************************************************************************/
+rastr_node_t
+rastr_exprs_new(rastr_ast_t ast, int len, const rastr_node_t* seq) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_EXPRS);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
 
     ptr->node.exprs_node.len = len;
-    ptr->node.exprs_node.seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    ptr->node.exprs_node.seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
 
     for (int i = 0; i < len; ++i) {
         rastr_node_t child = seq[i];
@@ -5113,7 +5097,8 @@ SEXP r_rastr_exprs_new(SEXP r_ast, SEXP r_seq) {
 
     int len = Rf_length(r_seq);
     ptr->node.exprs_node.len = len;
-    ptr->node.exprs_node.seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    ptr->node.exprs_node.seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
 
     for (int i = 0; i < len; ++i) {
         rastr_node_t child = rastr_node_unwrap(VECTOR_ELT(r_seq, i));
@@ -5125,7 +5110,7 @@ SEXP r_rastr_exprs_new(SEXP r_ast, SEXP r_seq) {
 // pred
 int rastr_exprs_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_EXPRS);
 }
 
@@ -5137,11 +5122,11 @@ SEXP r_rastr_exprs_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_exprs_type(ast, node);
     return lgl_vec1(result);
 }
-/* len ************************************************************************/
+// len
 // get
 int rastr_exprs_len_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_exprs_type, node);
+    CHECK_NODETYPE(rastr_exprs_type, node);
     return ptr->node.exprs_node.len;
 }
 
@@ -5154,11 +5139,10 @@ SEXP r_rastr_exprs_len_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* seq ************************************************************************/
+// seq
 // get
 const rastr_node_t* rastr_exprs_seq_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_exprs_type, node);
+    CHECK_NODETYPE(rastr_exprs_type, node);
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     return ptr->node.exprs_node.seq;
 }
@@ -5175,7 +5159,7 @@ SEXP r_rastr_exprs_seq_get(SEXP r_ast, SEXP r_node) {
 
     SEXP r_result = PROTECT(Rf_allocVector(VECSXP, len));
 
-    for(int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         SET_VECTOR_ELT(r_result, i, rastr_node_wrap(seq[i]));
     }
 
@@ -5184,7 +5168,7 @@ SEXP r_rastr_exprs_seq_get(SEXP r_ast, SEXP r_node) {
 }
 
 rastr_node_t rastr_exprs_get(rastr_ast_t ast, rastr_node_t node, int index) {
-    ENSURE_NODE_TYPE(rastr_exprs_type, node);
+    CHECK_NODETYPE(rastr_exprs_type, node);
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     return ptr->node.exprs_node.seq[index];
 }
@@ -5203,8 +5187,11 @@ SEXP r_rastr_exprs_get(SEXP r_ast, SEXP r_node, SEXP r_index) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_exprs_rep(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_exprs_type, node);
+rastr_node_t rastr_exprs_rep(rastr_ast_t ast,
+                             rastr_node_t node,
+                             int index,
+                             rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_exprs_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     int id = ptr->id;
@@ -5234,7 +5221,10 @@ SEXP r_rastr_exprs_rep(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_exprs_set(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t expr) {
+void rastr_exprs_set(rastr_ast_t ast,
+                     rastr_node_t node,
+                     int index,
+                     rastr_node_t expr) {
     rastr_node_t result = rastr_exprs_rep(ast, node, index, expr);
     rastr_node_destroy(ast, result);
 }
@@ -5256,8 +5246,12 @@ SEXP r_rastr_exprs_set(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_expr) {
     return R_NilValue;
 }
 // ins
-void rastr_exprs_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rastr_node_t* seq) {
 
+void rastr_exprs_ins(rastr_ast_t ast,
+                     rastr_node_t node,
+                     int index,
+                     int len,
+                     rastr_node_t* seq) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     int id = ptr->id;
 
@@ -5271,16 +5265,21 @@ void rastr_exprs_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, ras
     ptr->node.exprs_node.seq = tot_seq;
 
     /* move existing nodes to the right to make space for new nodes*/
-    std::memmove(tot_seq + index + len, tot_seq + index, sizeof(rastr_node_t) * (orig_len - index));
+    std::memmove(tot_seq + index + len,
+                 tot_seq + index,
+                 sizeof(rastr_node_t) * (orig_len - index));
 
     /* copy new nodes at their rightful place*/
-    for(int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         ASSIGN_SEQ_CHILD(exprs, i + index, seq[i], id)
     }
-
 }
 
-SEXP r_rastr_exprs_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq) {
+SEXP r_rastr_exprs_ins(SEXP r_ast,
+                       SEXP r_node,
+                       SEXP r_index,
+                       SEXP r_len,
+                       SEXP r_seq) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
 
@@ -5293,7 +5292,8 @@ SEXP r_rastr_exprs_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r
     ensure_numeric_sexp(r_len, 1);
     int len = (int) num_get(r_len, 0);
 
-    rastr_node_t* seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    rastr_node_t* seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
     for (int i = 0; i < len; ++i) {
         seq[i] = rastr_node_unwrap(VECTOR_ELT(r_seq, i));
     }
@@ -5305,19 +5305,17 @@ SEXP r_rastr_exprs_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* pars
-*******************************************************************************/
+ * pars
+ *******************************************************************************/
 rastr_node_t rastr_pars_new(rastr_ast_t ast, int len, const rastr_node_t* seq) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_PARS);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
 
     ptr->node.pars_node.len = len;
-    ptr->node.pars_node.seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    ptr->node.pars_node.seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
 
     for (int i = 0; i < len; ++i) {
         rastr_node_t child = seq[i];
@@ -5337,7 +5335,8 @@ SEXP r_rastr_pars_new(SEXP r_ast, SEXP r_seq) {
 
     int len = Rf_length(r_seq);
     ptr->node.pars_node.len = len;
-    ptr->node.pars_node.seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    ptr->node.pars_node.seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
 
     for (int i = 0; i < len; ++i) {
         rastr_node_t child = rastr_node_unwrap(VECTOR_ELT(r_seq, i));
@@ -5349,7 +5348,7 @@ SEXP r_rastr_pars_new(SEXP r_ast, SEXP r_seq) {
 // pred
 int rastr_pars_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_PARS);
 }
 
@@ -5361,11 +5360,11 @@ SEXP r_rastr_pars_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_pars_type(ast, node);
     return lgl_vec1(result);
 }
-/* len ************************************************************************/
+// len
 // get
 int rastr_pars_len_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_pars_type, node);
+    CHECK_NODETYPE(rastr_pars_type, node);
     return ptr->node.pars_node.len;
 }
 
@@ -5378,11 +5377,10 @@ SEXP r_rastr_pars_len_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* seq ************************************************************************/
+// seq
 // get
 const rastr_node_t* rastr_pars_seq_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_pars_type, node);
+    CHECK_NODETYPE(rastr_pars_type, node);
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     return ptr->node.pars_node.seq;
 }
@@ -5399,7 +5397,7 @@ SEXP r_rastr_pars_seq_get(SEXP r_ast, SEXP r_node) {
 
     SEXP r_result = PROTECT(Rf_allocVector(VECSXP, len));
 
-    for(int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         SET_VECTOR_ELT(r_result, i, rastr_node_wrap(seq[i]));
     }
 
@@ -5408,7 +5406,7 @@ SEXP r_rastr_pars_seq_get(SEXP r_ast, SEXP r_node) {
 }
 
 rastr_node_t rastr_pars_get(rastr_ast_t ast, rastr_node_t node, int index) {
-    ENSURE_NODE_TYPE(rastr_pars_type, node);
+    CHECK_NODETYPE(rastr_pars_type, node);
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     return ptr->node.pars_node.seq[index];
 }
@@ -5427,8 +5425,11 @@ SEXP r_rastr_pars_get(SEXP r_ast, SEXP r_node, SEXP r_index) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_pars_rep(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t par) {
-    ENSURE_NODE_TYPE(rastr_pars_type, node);
+rastr_node_t rastr_pars_rep(rastr_ast_t ast,
+                            rastr_node_t node,
+                            int index,
+                            rastr_node_t par) {
+    CHECK_NODETYPE(rastr_pars_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     int id = ptr->id;
@@ -5458,7 +5459,10 @@ SEXP r_rastr_pars_rep(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_par) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_pars_set(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t par) {
+void rastr_pars_set(rastr_ast_t ast,
+                    rastr_node_t node,
+                    int index,
+                    rastr_node_t par) {
     rastr_node_t result = rastr_pars_rep(ast, node, index, par);
     rastr_node_destroy(ast, result);
 }
@@ -5480,8 +5484,12 @@ SEXP r_rastr_pars_set(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_par) {
     return R_NilValue;
 }
 // ins
-void rastr_pars_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rastr_node_t* seq) {
 
+void rastr_pars_ins(rastr_ast_t ast,
+                    rastr_node_t node,
+                    int index,
+                    int len,
+                    rastr_node_t* seq) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     int id = ptr->id;
 
@@ -5495,16 +5503,21 @@ void rastr_pars_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rast
     ptr->node.pars_node.seq = tot_seq;
 
     /* move existing nodes to the right to make space for new nodes*/
-    std::memmove(tot_seq + index + len, tot_seq + index, sizeof(rastr_node_t) * (orig_len - index));
+    std::memmove(tot_seq + index + len,
+                 tot_seq + index,
+                 sizeof(rastr_node_t) * (orig_len - index));
 
     /* copy new nodes at their rightful place*/
-    for(int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         ASSIGN_SEQ_CHILD(pars, i + index, seq[i], id)
     }
-
 }
 
-SEXP r_rastr_pars_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq) {
+SEXP r_rastr_pars_ins(SEXP r_ast,
+                      SEXP r_node,
+                      SEXP r_index,
+                      SEXP r_len,
+                      SEXP r_seq) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
 
@@ -5517,7 +5530,8 @@ SEXP r_rastr_pars_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_
     ensure_numeric_sexp(r_len, 1);
     int len = (int) num_get(r_len, 0);
 
-    rastr_node_t* seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    rastr_node_t* seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
     for (int i = 0; i < len; ++i) {
         seq[i] = rastr_node_unwrap(VECTOR_ELT(r_seq, i));
     }
@@ -5529,43 +5543,38 @@ SEXP r_rastr_pars_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* dpar
-*******************************************************************************/
-rastr_node_t rastr_dpar_new(rastr_ast_t ast, rastr_node_t name, rastr_node_t op, rastr_node_t expr) {
+ * dpar
+ *******************************************************************************/
+rastr_node_t rastr_dpar_new(rastr_ast_t ast,
+                            rastr_node_t name,
+                            rastr_node_t op,
+                            rastr_node_t expr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_DPAR);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(dpar, name, id)
     ASSIGN_CHILD(dpar, op, id)
     ASSIGN_CHILD(dpar, expr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_dpar_new(SEXP r_ast, SEXP r_name, SEXP r_op, SEXP r_expr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_name);
     rastr_node_t name = rastr_node_unwrap(r_name);
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
-
     rastr_node_t result = rastr_dpar_new(ast, name, op, expr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_dpar_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_DPAR);
 }
 
@@ -5577,11 +5586,11 @@ SEXP r_rastr_dpar_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_dpar_type(ast, node);
     return lgl_vec1(result);
 }
-/* name ***********************************************************************/
+// name
 // get
 rastr_node_t rastr_dpar_name_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dpar_type, node);
+    CHECK_NODETYPE(rastr_dpar_type, node);
     return ptr->node.dpar_node.name;
 }
 
@@ -5594,8 +5603,9 @@ SEXP r_rastr_dpar_name_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dpar_name_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
-    ENSURE_NODE_TYPE(rastr_dpar_type, node);
+rastr_node_t
+rastr_dpar_name_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
+    CHECK_NODETYPE(rastr_dpar_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -5622,7 +5632,9 @@ SEXP r_rastr_dpar_name_rep(SEXP r_ast, SEXP r_node, SEXP r_name) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_dpar_name_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
+void rastr_dpar_name_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t name) {
     rastr_node_t result = rastr_dpar_name_rep(ast, node, name);
     rastr_node_destroy(ast, result);
 }
@@ -5641,12 +5653,11 @@ SEXP r_rastr_dpar_name_set(SEXP r_ast, SEXP r_node, SEXP r_name) {
     return R_NilValue;
 }
 
-
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_dpar_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dpar_type, node);
+    CHECK_NODETYPE(rastr_dpar_type, node);
     return ptr->node.dpar_node.op;
 }
 
@@ -5659,8 +5670,9 @@ SEXP r_rastr_dpar_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dpar_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_dpar_type, node);
+rastr_node_t
+rastr_dpar_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_dpar_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -5706,12 +5718,11 @@ SEXP r_rastr_dpar_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_dpar_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dpar_type, node);
+    CHECK_NODETYPE(rastr_dpar_type, node);
     return ptr->node.dpar_node.expr;
 }
 
@@ -5724,8 +5735,9 @@ SEXP r_rastr_dpar_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dpar_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_dpar_type, node);
+rastr_node_t
+rastr_dpar_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_dpar_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -5752,7 +5764,9 @@ SEXP r_rastr_dpar_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_dpar_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_dpar_expr_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t expr) {
     rastr_node_t result = rastr_dpar_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -5771,37 +5785,29 @@ SEXP r_rastr_dpar_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* ndpar
-*******************************************************************************/
+ * ndpar
+ *******************************************************************************/
 rastr_node_t rastr_ndpar_new(rastr_ast_t ast, rastr_node_t name) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_NDPAR);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(ndpar, name, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_ndpar_new(SEXP r_ast, SEXP r_name) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_name);
     rastr_node_t name = rastr_node_unwrap(r_name);
-
     rastr_node_t result = rastr_ndpar_new(ast, name);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_ndpar_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_NDPAR);
 }
 
@@ -5813,11 +5819,11 @@ SEXP r_rastr_ndpar_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_ndpar_type(ast, node);
     return lgl_vec1(result);
 }
-/* name ***********************************************************************/
+// name
 // get
 rastr_node_t rastr_ndpar_name_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_ndpar_type, node);
+    CHECK_NODETYPE(rastr_ndpar_type, node);
     return ptr->node.ndpar_node.name;
 }
 
@@ -5830,8 +5836,9 @@ SEXP r_rastr_ndpar_name_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_ndpar_name_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
-    ENSURE_NODE_TYPE(rastr_ndpar_type, node);
+rastr_node_t
+rastr_ndpar_name_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
+    CHECK_NODETYPE(rastr_ndpar_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -5858,7 +5865,9 @@ SEXP r_rastr_ndpar_name_rep(SEXP r_ast, SEXP r_node, SEXP r_name) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_ndpar_name_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
+void rastr_ndpar_name_set(rastr_ast_t ast,
+                          rastr_node_t node,
+                          rastr_node_t name) {
     rastr_node_t result = rastr_ndpar_name_rep(ast, node, name);
     rastr_node_destroy(ast, result);
 }
@@ -5877,19 +5886,17 @@ SEXP r_rastr_ndpar_name_set(SEXP r_ast, SEXP r_node, SEXP r_name) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* args
-*******************************************************************************/
+ * args
+ *******************************************************************************/
 rastr_node_t rastr_args_new(rastr_ast_t ast, int len, const rastr_node_t* seq) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_ARGS);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
 
     ptr->node.args_node.len = len;
-    ptr->node.args_node.seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    ptr->node.args_node.seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
 
     for (int i = 0; i < len; ++i) {
         rastr_node_t child = seq[i];
@@ -5909,7 +5916,8 @@ SEXP r_rastr_args_new(SEXP r_ast, SEXP r_seq) {
 
     int len = Rf_length(r_seq);
     ptr->node.args_node.len = len;
-    ptr->node.args_node.seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    ptr->node.args_node.seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
 
     for (int i = 0; i < len; ++i) {
         rastr_node_t child = rastr_node_unwrap(VECTOR_ELT(r_seq, i));
@@ -5921,7 +5929,7 @@ SEXP r_rastr_args_new(SEXP r_ast, SEXP r_seq) {
 // pred
 int rastr_args_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_ARGS);
 }
 
@@ -5933,11 +5941,11 @@ SEXP r_rastr_args_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_args_type(ast, node);
     return lgl_vec1(result);
 }
-/* len ************************************************************************/
+// len
 // get
 int rastr_args_len_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_args_type, node);
+    CHECK_NODETYPE(rastr_args_type, node);
     return ptr->node.args_node.len;
 }
 
@@ -5950,11 +5958,10 @@ SEXP r_rastr_args_len_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* seq ************************************************************************/
+// seq
 // get
 const rastr_node_t* rastr_args_seq_get(rastr_ast_t ast, rastr_node_t node) {
-    ENSURE_NODE_TYPE(rastr_args_type, node);
+    CHECK_NODETYPE(rastr_args_type, node);
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     return ptr->node.args_node.seq;
 }
@@ -5971,7 +5978,7 @@ SEXP r_rastr_args_seq_get(SEXP r_ast, SEXP r_node) {
 
     SEXP r_result = PROTECT(Rf_allocVector(VECSXP, len));
 
-    for(int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         SET_VECTOR_ELT(r_result, i, rastr_node_wrap(seq[i]));
     }
 
@@ -5980,7 +5987,7 @@ SEXP r_rastr_args_seq_get(SEXP r_ast, SEXP r_node) {
 }
 
 rastr_node_t rastr_args_get(rastr_ast_t ast, rastr_node_t node, int index) {
-    ENSURE_NODE_TYPE(rastr_args_type, node);
+    CHECK_NODETYPE(rastr_args_type, node);
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     return ptr->node.args_node.seq[index];
 }
@@ -5999,8 +6006,11 @@ SEXP r_rastr_args_get(SEXP r_ast, SEXP r_node, SEXP r_index) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_args_rep(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t arg) {
-    ENSURE_NODE_TYPE(rastr_args_type, node);
+rastr_node_t rastr_args_rep(rastr_ast_t ast,
+                            rastr_node_t node,
+                            int index,
+                            rastr_node_t arg) {
+    CHECK_NODETYPE(rastr_args_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     int id = ptr->id;
@@ -6030,7 +6040,10 @@ SEXP r_rastr_args_rep(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_arg) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_args_set(rastr_ast_t ast, rastr_node_t node, int index, rastr_node_t arg) {
+void rastr_args_set(rastr_ast_t ast,
+                    rastr_node_t node,
+                    int index,
+                    rastr_node_t arg) {
     rastr_node_t result = rastr_args_rep(ast, node, index, arg);
     rastr_node_destroy(ast, result);
 }
@@ -6052,8 +6065,12 @@ SEXP r_rastr_args_set(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_arg) {
     return R_NilValue;
 }
 // ins
-void rastr_args_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rastr_node_t* seq) {
 
+void rastr_args_ins(rastr_ast_t ast,
+                    rastr_node_t node,
+                    int index,
+                    int len,
+                    rastr_node_t* seq) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
     int id = ptr->id;
 
@@ -6067,16 +6084,21 @@ void rastr_args_ins(rastr_ast_t ast, rastr_node_t node, int index, int len, rast
     ptr->node.args_node.seq = tot_seq;
 
     /* move existing nodes to the right to make space for new nodes*/
-    std::memmove(tot_seq + index + len, tot_seq + index, sizeof(rastr_node_t) * (orig_len - index));
+    std::memmove(tot_seq + index + len,
+                 tot_seq + index,
+                 sizeof(rastr_node_t) * (orig_len - index));
 
     /* copy new nodes at their rightful place*/
-    for(int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         ASSIGN_SEQ_CHILD(args, i + index, seq[i], id)
     }
-
 }
 
-SEXP r_rastr_args_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq) {
+SEXP r_rastr_args_ins(SEXP r_ast,
+                      SEXP r_node,
+                      SEXP r_index,
+                      SEXP r_len,
+                      SEXP r_seq) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
 
@@ -6089,7 +6111,8 @@ SEXP r_rastr_args_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_
     ensure_numeric_sexp(r_len, 1);
     int len = (int) num_get(r_len, 0);
 
-    rastr_node_t* seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
+    rastr_node_t* seq =
+        (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
     for (int i = 0; i < len; ++i) {
         seq[i] = rastr_node_unwrap(VECTOR_ELT(r_seq, i));
     }
@@ -6101,43 +6124,38 @@ SEXP r_rastr_args_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* narg
-*******************************************************************************/
-rastr_node_t rastr_narg_new(rastr_ast_t ast, rastr_node_t name, rastr_node_t op, rastr_node_t expr) {
+ * narg
+ *******************************************************************************/
+rastr_node_t rastr_narg_new(rastr_ast_t ast,
+                            rastr_node_t name,
+                            rastr_node_t op,
+                            rastr_node_t expr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_NARG);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(narg, name, id)
     ASSIGN_CHILD(narg, op, id)
     ASSIGN_CHILD(narg, expr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_narg_new(SEXP r_ast, SEXP r_name, SEXP r_op, SEXP r_expr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_name);
     rastr_node_t name = rastr_node_unwrap(r_name);
     ensure_node_class(r_op);
     rastr_node_t op = rastr_node_unwrap(r_op);
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
-
     rastr_node_t result = rastr_narg_new(ast, name, op, expr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_narg_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_NARG);
 }
 
@@ -6149,11 +6167,11 @@ SEXP r_rastr_narg_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_narg_type(ast, node);
     return lgl_vec1(result);
 }
-/* name ***********************************************************************/
+// name
 // get
 rastr_node_t rastr_narg_name_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_narg_type, node);
+    CHECK_NODETYPE(rastr_narg_type, node);
     return ptr->node.narg_node.name;
 }
 
@@ -6166,8 +6184,9 @@ SEXP r_rastr_narg_name_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_narg_name_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
-    ENSURE_NODE_TYPE(rastr_narg_type, node);
+rastr_node_t
+rastr_narg_name_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
+    CHECK_NODETYPE(rastr_narg_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6194,7 +6213,9 @@ SEXP r_rastr_narg_name_rep(SEXP r_ast, SEXP r_node, SEXP r_name) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_narg_name_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t name) {
+void rastr_narg_name_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t name) {
     rastr_node_t result = rastr_narg_name_rep(ast, node, name);
     rastr_node_destroy(ast, result);
 }
@@ -6213,12 +6234,11 @@ SEXP r_rastr_narg_name_set(SEXP r_ast, SEXP r_node, SEXP r_name) {
     return R_NilValue;
 }
 
-
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_narg_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_narg_type, node);
+    CHECK_NODETYPE(rastr_narg_type, node);
     return ptr->node.narg_node.op;
 }
 
@@ -6231,8 +6251,9 @@ SEXP r_rastr_narg_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_narg_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_narg_type, node);
+rastr_node_t
+rastr_narg_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_narg_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6278,12 +6299,11 @@ SEXP r_rastr_narg_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_narg_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_narg_type, node);
+    CHECK_NODETYPE(rastr_narg_type, node);
     return ptr->node.narg_node.expr;
 }
 
@@ -6296,8 +6316,9 @@ SEXP r_rastr_narg_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_narg_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_narg_type, node);
+rastr_node_t
+rastr_narg_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_narg_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6324,7 +6345,9 @@ SEXP r_rastr_narg_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_narg_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_narg_expr_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t expr) {
     rastr_node_t result = rastr_narg_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -6343,37 +6366,29 @@ SEXP r_rastr_narg_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* parg
-*******************************************************************************/
+ * parg
+ *******************************************************************************/
 rastr_node_t rastr_parg_new(rastr_ast_t ast, rastr_node_t expr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_PARG);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(parg, expr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_parg_new(SEXP r_ast, SEXP r_expr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
-
     rastr_node_t result = rastr_parg_new(ast, expr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_parg_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_PARG);
 }
 
@@ -6385,11 +6400,11 @@ SEXP r_rastr_parg_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_parg_type(ast, node);
     return lgl_vec1(result);
 }
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_parg_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_parg_type, node);
+    CHECK_NODETYPE(rastr_parg_type, node);
     return ptr->node.parg_node.expr;
 }
 
@@ -6402,8 +6417,9 @@ SEXP r_rastr_parg_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_parg_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_parg_type, node);
+rastr_node_t
+rastr_parg_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_parg_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6430,7 +6446,9 @@ SEXP r_rastr_parg_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_parg_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_parg_expr_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t expr) {
     rastr_node_t result = rastr_parg_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -6449,43 +6467,38 @@ SEXP r_rastr_parg_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* cond
-*******************************************************************************/
-rastr_node_t rastr_cond_new(rastr_ast_t ast, rastr_node_t lbkt, rastr_node_t expr, rastr_node_t rbkt) {
+ * cond
+ *******************************************************************************/
+rastr_node_t rastr_cond_new(rastr_ast_t ast,
+                            rastr_node_t lbkt,
+                            rastr_node_t expr,
+                            rastr_node_t rbkt) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_COND);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(cond, lbkt, id)
     ASSIGN_CHILD(cond, expr, id)
     ASSIGN_CHILD(cond, rbkt, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_cond_new(SEXP r_ast, SEXP r_lbkt, SEXP r_expr, SEXP r_rbkt) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_lbkt);
     rastr_node_t lbkt = rastr_node_unwrap(r_lbkt);
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
     ensure_node_class(r_rbkt);
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
-
     rastr_node_t result = rastr_cond_new(ast, lbkt, expr, rbkt);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_cond_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_COND);
 }
 
@@ -6497,11 +6510,11 @@ SEXP r_rastr_cond_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_cond_type(ast, node);
     return lgl_vec1(result);
 }
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_cond_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cond_type, node);
+    CHECK_NODETYPE(rastr_cond_type, node);
     return ptr->node.cond_node.lbkt;
 }
 
@@ -6514,8 +6527,9 @@ SEXP r_rastr_cond_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_cond_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_cond_type, node);
+rastr_node_t
+rastr_cond_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_cond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6542,7 +6556,9 @@ SEXP r_rastr_cond_lbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_cond_lbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+void rastr_cond_lbkt_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t lbkt) {
     rastr_node_t result = rastr_cond_lbkt_rep(ast, node, lbkt);
     rastr_node_destroy(ast, result);
 }
@@ -6561,12 +6577,11 @@ SEXP r_rastr_cond_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_cond_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cond_type, node);
+    CHECK_NODETYPE(rastr_cond_type, node);
     return ptr->node.cond_node.expr;
 }
 
@@ -6579,8 +6594,9 @@ SEXP r_rastr_cond_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_cond_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_cond_type, node);
+rastr_node_t
+rastr_cond_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_cond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6607,7 +6623,9 @@ SEXP r_rastr_cond_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_cond_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_cond_expr_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t expr) {
     rastr_node_t result = rastr_cond_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -6626,12 +6644,11 @@ SEXP r_rastr_cond_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_cond_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_cond_type, node);
+    CHECK_NODETYPE(rastr_cond_type, node);
     return ptr->node.cond_node.rbkt;
 }
 
@@ -6644,8 +6661,9 @@ SEXP r_rastr_cond_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_cond_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_cond_type, node);
+rastr_node_t
+rastr_cond_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_cond_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6672,7 +6690,9 @@ SEXP r_rastr_cond_rbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_cond_rbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+void rastr_cond_rbkt_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t rbkt) {
     rastr_node_t result = rastr_cond_rbkt_rep(ast, node, rbkt);
     rastr_node_destroy(ast, result);
 }
@@ -6691,30 +6711,34 @@ SEXP r_rastr_cond_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* iter
-*******************************************************************************/
-rastr_node_t rastr_iter_new(rastr_ast_t ast, rastr_node_t lbkt, rastr_node_t var, rastr_node_t op, rastr_node_t expr, rastr_node_t rbkt) {
+ * iter
+ *******************************************************************************/
+rastr_node_t rastr_iter_new(rastr_ast_t ast,
+                            rastr_node_t lbkt,
+                            rastr_node_t var,
+                            rastr_node_t op,
+                            rastr_node_t expr,
+                            rastr_node_t rbkt) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_ITER);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(iter, lbkt, id)
     ASSIGN_CHILD(iter, var, id)
     ASSIGN_CHILD(iter, op, id)
     ASSIGN_CHILD(iter, expr, id)
     ASSIGN_CHILD(iter, rbkt, id)
-
     return pair.node;
 }
 
-SEXP r_rastr_iter_new(SEXP r_ast, SEXP r_lbkt, SEXP r_var, SEXP r_op, SEXP r_expr, SEXP r_rbkt) {
+SEXP r_rastr_iter_new(SEXP r_ast,
+                      SEXP r_lbkt,
+                      SEXP r_var,
+                      SEXP r_op,
+                      SEXP r_expr,
+                      SEXP r_rbkt) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_lbkt);
     rastr_node_t lbkt = rastr_node_unwrap(r_lbkt);
     ensure_node_class(r_var);
@@ -6725,15 +6749,13 @@ SEXP r_rastr_iter_new(SEXP r_ast, SEXP r_lbkt, SEXP r_var, SEXP r_op, SEXP r_exp
     rastr_node_t expr = rastr_node_unwrap(r_expr);
     ensure_node_class(r_rbkt);
     rastr_node_t rbkt = rastr_node_unwrap(r_rbkt);
-
     rastr_node_t result = rastr_iter_new(ast, lbkt, var, op, expr, rbkt);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_iter_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_ITER);
 }
 
@@ -6745,11 +6767,11 @@ SEXP r_rastr_iter_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_iter_type(ast, node);
     return lgl_vec1(result);
 }
-/* lbkt ***********************************************************************/
+// lbkt
 // get
 rastr_node_t rastr_iter_lbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+    CHECK_NODETYPE(rastr_iter_type, node);
     return ptr->node.iter_node.lbkt;
 }
 
@@ -6762,8 +6784,9 @@ SEXP r_rastr_iter_lbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iter_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+rastr_node_t
+rastr_iter_lbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+    CHECK_NODETYPE(rastr_iter_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6790,7 +6813,9 @@ SEXP r_rastr_iter_lbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iter_lbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t lbkt) {
+void rastr_iter_lbkt_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t lbkt) {
     rastr_node_t result = rastr_iter_lbkt_rep(ast, node, lbkt);
     rastr_node_destroy(ast, result);
 }
@@ -6809,12 +6834,11 @@ SEXP r_rastr_iter_lbkt_set(SEXP r_ast, SEXP r_node, SEXP r_lbkt) {
     return R_NilValue;
 }
 
-
-/* var ************************************************************************/
+// var
 // get
 rastr_node_t rastr_iter_var_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+    CHECK_NODETYPE(rastr_iter_type, node);
     return ptr->node.iter_node.var;
 }
 
@@ -6827,8 +6851,9 @@ SEXP r_rastr_iter_var_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iter_var_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t var) {
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+rastr_node_t
+rastr_iter_var_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t var) {
+    CHECK_NODETYPE(rastr_iter_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6874,12 +6899,11 @@ SEXP r_rastr_iter_var_set(SEXP r_ast, SEXP r_node, SEXP r_var) {
     return R_NilValue;
 }
 
-
-/* op *************************************************************************/
+// op
 // get
 rastr_node_t rastr_iter_op_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+    CHECK_NODETYPE(rastr_iter_type, node);
     return ptr->node.iter_node.op;
 }
 
@@ -6892,8 +6916,9 @@ SEXP r_rastr_iter_op_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iter_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+rastr_node_t
+rastr_iter_op_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t op) {
+    CHECK_NODETYPE(rastr_iter_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6939,12 +6964,11 @@ SEXP r_rastr_iter_op_set(SEXP r_ast, SEXP r_node, SEXP r_op) {
     return R_NilValue;
 }
 
-
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_iter_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+    CHECK_NODETYPE(rastr_iter_type, node);
     return ptr->node.iter_node.expr;
 }
 
@@ -6957,8 +6981,9 @@ SEXP r_rastr_iter_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iter_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+rastr_node_t
+rastr_iter_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_iter_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -6985,7 +7010,9 @@ SEXP r_rastr_iter_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iter_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_iter_expr_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t expr) {
     rastr_node_t result = rastr_iter_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -7004,12 +7031,11 @@ SEXP r_rastr_iter_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-/* rbkt ***********************************************************************/
+// rbkt
 // get
 rastr_node_t rastr_iter_rbkt_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+    CHECK_NODETYPE(rastr_iter_type, node);
     return ptr->node.iter_node.rbkt;
 }
 
@@ -7022,8 +7048,9 @@ SEXP r_rastr_iter_rbkt_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_iter_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
-    ENSURE_NODE_TYPE(rastr_iter_type, node);
+rastr_node_t
+rastr_iter_rbkt_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+    CHECK_NODETYPE(rastr_iter_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7050,7 +7077,9 @@ SEXP r_rastr_iter_rbkt_rep(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_iter_rbkt_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t rbkt) {
+void rastr_iter_rbkt_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t rbkt) {
     rastr_node_t result = rastr_iter_rbkt_rep(ast, node, rbkt);
     rastr_node_destroy(ast, result);
 }
@@ -7069,43 +7098,38 @@ SEXP r_rastr_iter_rbkt_set(SEXP r_ast, SEXP r_node, SEXP r_rbkt) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* pgm
-*******************************************************************************/
-rastr_node_t rastr_pgm_new(rastr_ast_t ast, rastr_node_t beg, rastr_node_t exprs, rastr_node_t end) {
+ * pgm
+ *******************************************************************************/
+rastr_node_t rastr_pgm_new(rastr_ast_t ast,
+                           rastr_node_t beg,
+                           rastr_node_t exprs,
+                           rastr_node_t end) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_PGM);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(pgm, beg, id)
     ASSIGN_CHILD(pgm, exprs, id)
     ASSIGN_CHILD(pgm, end, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_pgm_new(SEXP r_ast, SEXP r_beg, SEXP r_exprs, SEXP r_end) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_beg);
     rastr_node_t beg = rastr_node_unwrap(r_beg);
     ensure_node_class(r_exprs);
     rastr_node_t exprs = rastr_node_unwrap(r_exprs);
     ensure_node_class(r_end);
     rastr_node_t end = rastr_node_unwrap(r_end);
-
     rastr_node_t result = rastr_pgm_new(ast, beg, exprs, end);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_pgm_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_PGM);
 }
 
@@ -7117,11 +7141,11 @@ SEXP r_rastr_pgm_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_pgm_type(ast, node);
     return lgl_vec1(result);
 }
-/* beg ************************************************************************/
+// beg
 // get
 rastr_node_t rastr_pgm_beg_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_pgm_type, node);
+    CHECK_NODETYPE(rastr_pgm_type, node);
     return ptr->node.pgm_node.beg;
 }
 
@@ -7134,8 +7158,9 @@ SEXP r_rastr_pgm_beg_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_pgm_beg_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t beg) {
-    ENSURE_NODE_TYPE(rastr_pgm_type, node);
+rastr_node_t
+rastr_pgm_beg_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t beg) {
+    CHECK_NODETYPE(rastr_pgm_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7181,12 +7206,11 @@ SEXP r_rastr_pgm_beg_set(SEXP r_ast, SEXP r_node, SEXP r_beg) {
     return R_NilValue;
 }
 
-
-/* exprs **********************************************************************/
+// exprs
 // get
 rastr_node_t rastr_pgm_exprs_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_pgm_type, node);
+    CHECK_NODETYPE(rastr_pgm_type, node);
     return ptr->node.pgm_node.exprs;
 }
 
@@ -7199,8 +7223,9 @@ SEXP r_rastr_pgm_exprs_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_pgm_exprs_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t exprs) {
-    ENSURE_NODE_TYPE(rastr_pgm_type, node);
+rastr_node_t
+rastr_pgm_exprs_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t exprs) {
+    CHECK_NODETYPE(rastr_pgm_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7227,7 +7252,9 @@ SEXP r_rastr_pgm_exprs_rep(SEXP r_ast, SEXP r_node, SEXP r_exprs) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_pgm_exprs_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t exprs) {
+void rastr_pgm_exprs_set(rastr_ast_t ast,
+                         rastr_node_t node,
+                         rastr_node_t exprs) {
     rastr_node_t result = rastr_pgm_exprs_rep(ast, node, exprs);
     rastr_node_destroy(ast, result);
 }
@@ -7246,12 +7273,11 @@ SEXP r_rastr_pgm_exprs_set(SEXP r_ast, SEXP r_node, SEXP r_exprs) {
     return R_NilValue;
 }
 
-
-/* end ************************************************************************/
+// end
 // get
 rastr_node_t rastr_pgm_end_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_pgm_type, node);
+    CHECK_NODETYPE(rastr_pgm_type, node);
     return ptr->node.pgm_node.end;
 }
 
@@ -7264,8 +7290,9 @@ SEXP r_rastr_pgm_end_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_pgm_end_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t end) {
-    ENSURE_NODE_TYPE(rastr_pgm_type, node);
+rastr_node_t
+rastr_pgm_end_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t end) {
+    CHECK_NODETYPE(rastr_pgm_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7311,40 +7338,33 @@ SEXP r_rastr_pgm_end_set(SEXP r_ast, SEXP r_node, SEXP r_end) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* dlmtd
-*******************************************************************************/
-rastr_node_t rastr_dlmtd_new(rastr_ast_t ast, rastr_node_t expr, rastr_node_t dlmtr) {
+ * dlmtd
+ *******************************************************************************/
+rastr_node_t
+rastr_dlmtd_new(rastr_ast_t ast, rastr_node_t expr, rastr_node_t dlmtr) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_DLMTD);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(dlmtd, expr, id)
     ASSIGN_CHILD(dlmtd, dlmtr, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_dlmtd_new(SEXP r_ast, SEXP r_expr, SEXP r_dlmtr) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_expr);
     rastr_node_t expr = rastr_node_unwrap(r_expr);
     ensure_node_class(r_dlmtr);
     rastr_node_t dlmtr = rastr_node_unwrap(r_dlmtr);
-
     rastr_node_t result = rastr_dlmtd_new(ast, expr, dlmtr);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_dlmtd_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_DLMTD);
 }
 
@@ -7356,11 +7376,11 @@ SEXP r_rastr_dlmtd_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_dlmtd_type(ast, node);
     return lgl_vec1(result);
 }
-/* expr ***********************************************************************/
+// expr
 // get
 rastr_node_t rastr_dlmtd_expr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dlmtd_type, node);
+    CHECK_NODETYPE(rastr_dlmtd_type, node);
     return ptr->node.dlmtd_node.expr;
 }
 
@@ -7373,8 +7393,9 @@ SEXP r_rastr_dlmtd_expr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dlmtd_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
-    ENSURE_NODE_TYPE(rastr_dlmtd_type, node);
+rastr_node_t
+rastr_dlmtd_expr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+    CHECK_NODETYPE(rastr_dlmtd_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7401,7 +7422,9 @@ SEXP r_rastr_dlmtd_expr_rep(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_dlmtd_expr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t expr) {
+void rastr_dlmtd_expr_set(rastr_ast_t ast,
+                          rastr_node_t node,
+                          rastr_node_t expr) {
     rastr_node_t result = rastr_dlmtd_expr_rep(ast, node, expr);
     rastr_node_destroy(ast, result);
 }
@@ -7420,12 +7443,11 @@ SEXP r_rastr_dlmtd_expr_set(SEXP r_ast, SEXP r_node, SEXP r_expr) {
     return R_NilValue;
 }
 
-
-/* dlmtr **********************************************************************/
+// dlmtr
 // get
 rastr_node_t rastr_dlmtd_dlmtr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_dlmtd_type, node);
+    CHECK_NODETYPE(rastr_dlmtd_type, node);
     return ptr->node.dlmtd_node.dlmtr;
 }
 
@@ -7438,8 +7460,9 @@ SEXP r_rastr_dlmtd_dlmtr_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_dlmtd_dlmtr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t dlmtr) {
-    ENSURE_NODE_TYPE(rastr_dlmtd_type, node);
+rastr_node_t
+rastr_dlmtd_dlmtr_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t dlmtr) {
+    CHECK_NODETYPE(rastr_dlmtd_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7466,7 +7489,9 @@ SEXP r_rastr_dlmtd_dlmtr_rep(SEXP r_ast, SEXP r_node, SEXP r_dlmtr) {
     return rastr_node_wrap(result);
 }
 // set
-void rastr_dlmtd_dlmtr_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t dlmtr) {
+void rastr_dlmtd_dlmtr_set(rastr_ast_t ast,
+                           rastr_node_t node,
+                           rastr_node_t dlmtr) {
     rastr_node_t result = rastr_dlmtd_dlmtr_rep(ast, node, dlmtr);
     rastr_node_destroy(ast, result);
 }
@@ -7485,40 +7510,33 @@ SEXP r_rastr_dlmtd_dlmtr_set(SEXP r_ast, SEXP r_node, SEXP r_dlmtr) {
     return R_NilValue;
 }
 
-
-
-
 /*******************************************************************************
-* msng
-*******************************************************************************/
-rastr_node_t rastr_msng_new(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
+ * msng
+ *******************************************************************************/
+rastr_node_t
+rastr_msng_new(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_MSNG);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(msng, gap, id)
     ASSIGN_CHILD(msng, loc, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_msng_new(SEXP r_ast, SEXP r_gap, SEXP r_loc) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_gap);
     rastr_node_t gap = rastr_node_unwrap(r_gap);
     ensure_node_class(r_loc);
     rastr_node_t loc = rastr_node_unwrap(r_loc);
-
     rastr_node_t result = rastr_msng_new(ast, gap, loc);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_msng_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_MSNG);
 }
 
@@ -7530,11 +7548,11 @@ SEXP r_rastr_msng_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_msng_type(ast, node);
     return lgl_vec1(result);
 }
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_msng_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_msng_type, node);
+    CHECK_NODETYPE(rastr_msng_type, node);
     return ptr->node.msng_node.gap;
 }
 
@@ -7547,8 +7565,9 @@ SEXP r_rastr_msng_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_msng_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_msng_type, node);
+rastr_node_t
+rastr_msng_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_msng_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7594,12 +7613,11 @@ SEXP r_rastr_msng_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_msng_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_msng_type, node);
+    CHECK_NODETYPE(rastr_msng_type, node);
     return ptr->node.msng_node.loc;
 }
 
@@ -7612,16 +7630,13 @@ SEXP r_rastr_msng_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* beg
-*******************************************************************************/
+ * beg
+ *******************************************************************************/
 // pred
 int rastr_beg_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_BEG);
 }
 
@@ -7633,11 +7648,11 @@ SEXP r_rastr_beg_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_beg_type(ast, node);
     return lgl_vec1(result);
 }
-/* bom ************************************************************************/
+// bom
 // get
 const char* rastr_beg_bom_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_beg_type, node);
+    CHECK_NODETYPE(rastr_beg_type, node);
     return ptr->node.beg_node.bom;
 }
 
@@ -7650,12 +7665,11 @@ SEXP r_rastr_beg_bom_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_beg_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_beg_type, node);
+    CHECK_NODETYPE(rastr_beg_type, node);
     return ptr->node.beg_node.loc;
 }
 
@@ -7668,40 +7682,33 @@ SEXP r_rastr_beg_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* end
-*******************************************************************************/
-rastr_node_t rastr_end_new(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
+ * end
+ *******************************************************************************/
+rastr_node_t
+rastr_end_new(rastr_ast_t ast, rastr_node_t gap, rastr_node_t loc) {
     rastr_node_pair_t pair = rastr_node_create(ast, RASTR_END);
     rastr_node_ptr_t ptr = pair.ptr;
     int id = ptr->id;
-
     ASSIGN_CHILD(end, gap, id)
     ASSIGN_CHILD(end, loc, id)
-
     return pair.node;
 }
 
 SEXP r_rastr_end_new(SEXP r_ast, SEXP r_gap, SEXP r_loc) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
     ensure_node_class(r_gap);
     rastr_node_t gap = rastr_node_unwrap(r_gap);
     ensure_node_class(r_loc);
     rastr_node_t loc = rastr_node_unwrap(r_loc);
-
     rastr_node_t result = rastr_end_new(ast, gap, loc);
     return rastr_node_wrap(result);
 }
-
 // pred
 int rastr_end_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_END);
 }
 
@@ -7713,11 +7720,11 @@ SEXP r_rastr_end_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_end_type(ast, node);
     return lgl_vec1(result);
 }
-/* gap ************************************************************************/
+// gap
 // get
 rastr_node_t rastr_end_gap_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_end_type, node);
+    CHECK_NODETYPE(rastr_end_type, node);
     return ptr->node.end_node.gap;
 }
 
@@ -7730,8 +7737,9 @@ SEXP r_rastr_end_gap_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 // rep
-rastr_node_t rastr_end_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
-    ENSURE_NODE_TYPE(rastr_end_type, node);
+rastr_node_t
+rastr_end_gap_rep(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap) {
+    CHECK_NODETYPE(rastr_end_type, node);
 
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
 
@@ -7777,12 +7785,11 @@ SEXP r_rastr_end_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap) {
     return R_NilValue;
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_end_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_end_type, node);
+    CHECK_NODETYPE(rastr_end_type, node);
     return ptr->node.end_node.loc;
 }
 
@@ -7795,16 +7802,13 @@ SEXP r_rastr_end_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* gap
-*******************************************************************************/
+ * gap
+ *******************************************************************************/
 // pred
 int rastr_gap_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_GAP);
 }
 
@@ -7816,11 +7820,11 @@ SEXP r_rastr_gap_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_gap_type(ast, node);
     return lgl_vec1(result);
 }
-/* val ************************************************************************/
+// val
 // get
 const char* rastr_gap_val_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_gap_type, node);
+    CHECK_NODETYPE(rastr_gap_type, node);
     return ptr->node.gap_node.val;
 }
 
@@ -7833,12 +7837,11 @@ SEXP r_rastr_gap_val_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_gap_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_gap_type, node);
+    CHECK_NODETYPE(rastr_gap_type, node);
     return ptr->node.gap_node.loc;
 }
 
@@ -7851,16 +7854,13 @@ SEXP r_rastr_gap_loc_get(SEXP r_ast, SEXP r_node) {
     return rastr_node_wrap(result);
 }
 
-
-
-
 /*******************************************************************************
-* loc
-*******************************************************************************/
+ * loc
+ *******************************************************************************/
 // pred
 int rastr_loc_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_LOC);
 }
 
@@ -7872,11 +7872,11 @@ SEXP r_rastr_loc_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_loc_type(ast, node);
     return lgl_vec1(result);
 }
-/* lrow ***********************************************************************/
+// lrow
 // get
 int rastr_loc_lrow_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.lrow;
 }
 
@@ -7889,12 +7889,11 @@ SEXP r_rastr_loc_lrow_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* lcol ***********************************************************************/
+// lcol
 // get
 int rastr_loc_lcol_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.lcol;
 }
 
@@ -7907,12 +7906,11 @@ SEXP r_rastr_loc_lcol_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* lchr ***********************************************************************/
+// lchr
 // get
 int rastr_loc_lchr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.lchr;
 }
 
@@ -7925,12 +7923,11 @@ SEXP r_rastr_loc_lchr_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* lbyte **********************************************************************/
+// lbyte
 // get
 int rastr_loc_lbyte_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.lbyte;
 }
 
@@ -7943,12 +7940,11 @@ SEXP r_rastr_loc_lbyte_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* rrow ***********************************************************************/
+// rrow
 // get
 int rastr_loc_rrow_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.rrow;
 }
 
@@ -7961,12 +7957,11 @@ SEXP r_rastr_loc_rrow_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* rcol ***********************************************************************/
+// rcol
 // get
 int rastr_loc_rcol_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.rcol;
 }
 
@@ -7979,12 +7974,11 @@ SEXP r_rastr_loc_rcol_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* rchr ***********************************************************************/
+// rchr
 // get
 int rastr_loc_rchr_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.rchr;
 }
 
@@ -7997,12 +7991,11 @@ SEXP r_rastr_loc_rchr_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-/* rbyte **********************************************************************/
+// rbyte
 // get
 int rastr_loc_rbyte_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_loc_type, node);
+    CHECK_NODETYPE(rastr_loc_type, node);
     return ptr->node.loc_node.rbyte;
 }
 
@@ -8015,16 +8008,13 @@ SEXP r_rastr_loc_rbyte_get(SEXP r_ast, SEXP r_node) {
     return int_vec1(result);
 }
 
-
-
-
 /*******************************************************************************
-* err
-*******************************************************************************/
+ * err
+ *******************************************************************************/
 // pred
 int rastr_err_type(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    rastr_node_type_t type = ptr -> type;
+    rastr_node_type_t type = ptr->type;
     return (type == RASTR_ERR);
 }
 
@@ -8036,11 +8026,11 @@ SEXP r_rastr_err_type(SEXP r_ast, SEXP r_node) {
     int result = rastr_err_type(ast, node);
     return lgl_vec1(result);
 }
-/* msg ************************************************************************/
+// msg
 // get
 const char* rastr_err_msg_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_err_type, node);
+    CHECK_NODETYPE(rastr_err_type, node);
     return ptr->node.err_node.msg;
 }
 
@@ -8053,12 +8043,11 @@ SEXP r_rastr_err_msg_get(SEXP r_ast, SEXP r_node) {
     return chr_vec1(result);
 }
 
-
-/* loc ************************************************************************/
+// loc
 // get
 rastr_node_t rastr_err_loc_get(rastr_ast_t ast, rastr_node_t node) {
     rastr_node_ptr_t ptr = rastr_ast_get_impl(ast, node);
-    ENSURE_NODE_TYPE(rastr_err_type, node);
+    CHECK_NODETYPE(rastr_err_type, node);
     return ptr->node.err_node.loc;
 }
 
@@ -8070,7 +8059,3 @@ SEXP r_rastr_err_loc_get(SEXP r_ast, SEXP r_node) {
     rastr_node_t result = rastr_err_loc_get(ast, node);
     return rastr_node_wrap(result);
 }
-
-
-
-
