@@ -1,9 +1,13 @@
-pandoc: 2.7.3
-pkgdown: 1.5.1.9000
-pkgdown_sha: caf7cc74e008e8d0d6e53eeda93cd3cad3545bf2
-articles: []
-last_built: 2020-07-12T17:09Z
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  analyzing-ast: analyzing-ast.html
+  querying-ast: querying-ast.html
+  rastr: rastr.html
+  transforming-ast: transforming-ast.html
+last_built: 2023-01-05T21:32Z
 urls:
-  reference: https://prl-prg.github.io/rastr//reference
-  article: https://prl-prg.github.io/rastr//articles
+  reference: http://aviral.io/rastr/reference
+  article: http://aviral.io/rastr/articles
 
