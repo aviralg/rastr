@@ -28,6 +28,15 @@
     <loc>http://aviral.io/rastr/index.html</loc>
   </url>
   <url>
+    <loc>http://aviral.io/rastr/reference/analyze.html</loc>
+  </url>
+  <url>
+    <loc>http://aviral.io/rastr/reference/ast.html</loc>
+  </url>
+  <url>
+    <loc>http://aviral.io/rastr/reference/convert.html</loc>
+  </url>
+  <url>
     <loc>http://aviral.io/rastr/reference/doc_aexpr.html</loc>
   </url>
   <url>
@@ -155,5 +164,11 @@
   </url>
   <url>
     <loc>http://aviral.io/rastr/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>http://aviral.io/rastr/reference/parse.html</loc>
+  </url>
+  <url>
+    <loc>http://aviral.io/rastr/reference/sugr.html</loc>
   </url>
 </urlset>
