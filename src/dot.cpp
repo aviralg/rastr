@@ -1,9 +1,11 @@
 #include <vector>
 #include <rastr/api.h>
 #include <cstdio>
+#include "r_api.h"
 #include "logger.h"
 #include "interop.h"
 #include "utilities.h"
+#include <sstream>
 
 /* Material Design colors taken from
    https://material.io/design/color/the-color-system.html#tools-for-picking-colors
@@ -87,9 +89,36 @@ const char* ColorWhite = "#FFFFFF";
     }                                                                \
     EXPORT_EDGE_FOOTER()
 
-class DotSerializer: public AstWalker {
+class StringStream {
   public:
-    DotSerializer(FILE* file): AstWalker(), file_(file) {
+    StringStream() {
+    }
+
+    void format(const char* format, ...) {
+        va_list args;
+        va_start(args, format);
+        sprintf(buffer_, format, args);
+        va_end(args);
+
+        stream_ << buffer_;
+    }
+
+    char* extract() {
+        return cppstr_to_cstr(stream_.str());
+    }
+
+  private:
+    char buffer_[10240];
+    std::stringstream stream_;
+};
+
+class DotTransformer: public AstWalker {
+  public:
+    DotTransformer(): AstWalker(), stream_(new StringStream()) {
+    }
+
+    virtual ~DotTransformer() {
+        delete stream_;
     }
 
     bool pre_op(rastr_ast_t ast, rastr_node_t node) override {
@@ -504,7 +533,7 @@ class DotSerializer: public AstWalker {
         return true;
     }
 
-    void write(rastr_ast_t ast, rastr_node_t node, int depth) {
+    char* transform(rastr_ast_t ast, rastr_node_t node, int depth) {
         const char* graph_tmpl = R"-(
 digraph ast {
 
@@ -533,13 +562,15 @@ digraph ast {
     charset="UTF-8"
 )-";
 
-        fprintf(file_, "%s", graph_tmpl);
+        stream_->format("%s", graph_tmpl);
 
         depths_.push_back(depth);
 
         this->walk(ast, rastr_ast_root_get(ast));
 
-        fprintf(file_, "}");
+        stream_->format("}");
+
+        return stream_->extract();
     }
 
     void walk(rastr_ast_t ast, rastr_node_t node) override {
@@ -550,7 +581,7 @@ digraph ast {
     }
 
   private:
-    FILE* file_;
+    StringStream* stream_;
     std::vector<int> depths_;
 
     void repeat_depths_(int n) {
@@ -587,7 +618,7 @@ digraph ast {
                       <tr><td align="center" colspan="3"><B>%s</B></td></tr>
                       <tr><td align="left">id</td><td>➜</td><td align="left">%d</td></tr>)-";
 
-        fprintf(file_, header_tmpl, id, fillcolor, type_str, id, type_str, id);
+        stream_->format(header_tmpl, id, fillcolor, type_str, id, type_str, id);
     }
 
     void write_footer_() {
@@ -599,7 +630,7 @@ digraph ast {
         /* note: the indirection of substituting footer in %s is to
            avoid format-security error on Ubuntu
            https://stackoverflow.com/questions/17260409/fprintf-error-format-not-a-string-literal-and-no-format-arguments-werror-for*/
-        fprintf(file_, "%s", footer_tmpl);
+        stream_->format("%s", footer_tmpl);
     }
 
     void write_row_(const char* field, const char* value) {
@@ -608,7 +639,7 @@ digraph ast {
         const char* row_tmpl = R"-(
                       <tr><td align="left">%s</td><td>➜</td><td align="left">%s</td></tr>)-";
 
-        fprintf(file_, row_tmpl, field, esc_value.c_str());
+        stream_->format(row_tmpl, field, esc_value.c_str());
     }
 
     void write_node_(rastr_ast_t ast, rastr_node_t node, ...) {
@@ -653,31 +684,30 @@ digraph ast {
     ]
 )-";
 
-        fprintf(file_,
-                edge_tmpl,
-                par_id,
-                chd_id,
-                label,
-                par_type_str,
-                par_id,
-                chd_type_str,
-                chd_id,
-                par_type_str,
-                par_id,
-                chd_type_str,
-                chd_id,
-                par_type_str,
-                par_id,
-                chd_type_str,
-                chd_id,
-                par_type_str,
-                par_id,
-                chd_type_str,
-                chd_id,
-                par_type_str,
-                par_id,
-                chd_type_str,
-                chd_id);
+        stream_->format(edge_tmpl,
+                        par_id,
+                        chd_id,
+                        label,
+                        par_type_str,
+                        par_id,
+                        chd_type_str,
+                        chd_id,
+                        par_type_str,
+                        par_id,
+                        chd_type_str,
+                        chd_id,
+                        par_type_str,
+                        par_id,
+                        chd_type_str,
+                        chd_id,
+                        par_type_str,
+                        par_id,
+                        chd_type_str,
+                        chd_id,
+                        par_type_str,
+                        par_id,
+                        chd_type_str,
+                        chd_id);
     }
 
     const char* get_color_(rastr_node_type_t type) {
@@ -890,72 +920,35 @@ digraph ast {
     }
 };
 
-void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth);
-void rastr_export_to_dot_node(FILE* file,
-                              rastr_ast_t ast,
-                              rastr_node_t node,
-                              int depth);
+struct data_t {
+    DotTransformer* transformer;
+    rastr_ast_t ast;
+    rastr_node_t node;
+};
 
-SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth) {
-    SEXPTYPE type = TYPEOF(r_filepath);
+static SEXP transform(void* ptr) {
+    data_t* data = static_cast<data_t*>(ptr);
+    // TODO: expose depth argument to R level after implementing for to_list and
+    // to_df
+    return (SEXP)data->transformer->transform(data->ast, data->node, INT_MAX);
+}
 
-    if (type != STRSXP) {
-        Rf_error("expected a filepath of type string, received "
-                 "a value of type "
-                 "%s instead",
-                 Rf_type2str(type));
-        return R_NilValue;
-    }
+static void cleanup(void* ptr) {
+    data_t* data = static_cast<data_t*>(ptr);
+    delete data->transformer;
+}
 
-    int length = Rf_length(r_filepath);
+char* rastr_to_dot(rastr_ast_t ast, rastr_node_t node) {
+    DotTransformer* transformer = new DotTransformer();
+    data_t data{transformer, ast, node};
+    return (char*) R_ExecWithCleanup(transform, &data, cleanup, &data);
+}
 
-    if (length != 1) {
-        Rf_error("expected a filepath string of size 1, "
-                 "received a string of "
-                 "size %d instead",
-                 length);
-        return R_NilValue;
-    }
-
-    SEXP str_elt = STRING_ELT(r_filepath, 0);
-
-    if (str_elt == NA_STRING) {
-        Rf_error("expected a filepath, received NA_character_ "
-                 "instead");
-        return R_NilValue;
-    }
-
-    const char* filepath = CHAR(str_elt);
-
+SEXP r_rastr_to_dot(SEXP r_ast, SEXP r_node) {
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-
-    int depth = INTEGER(r_depth)[0];
-
-    rastr_export_to_dot(ast, filepath, depth);
-
-    return R_NilValue;
-}
-
-void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth) {
-    FILE* file = fopen(filepath, "w");
-
-    if (file == nullptr) {
-        rastr_log_error("cannot open file '%s'", filepath);
-    }
-
-    rastr_export_to_dot_ast(file, ast, depth);
-    fclose(file);
-}
-
-void rastr_export_to_dot_ast(FILE* file, rastr_ast_t ast, int depth) {
-    return rastr_export_to_dot_node(file, ast, rastr_ast_root_get(ast), depth);
-}
-
-void rastr_export_to_dot_node(FILE* file,
-                              rastr_ast_t ast,
-                              rastr_node_t node,
-                              int depth) {
-    DotSerializer* dot_ser = new DotSerializer(file);
-    dot_ser->write(ast, node, depth);
-    delete dot_ser;
+    rastr_node_t node = rastr_node_unwrap(r_node);
+    char* str = rastr_to_dot(ast, node);
+    SEXP r_str = rastr_str_wrap(str);
+    free(str);
+    return r_str;
 }

@@ -3,48 +3,79 @@
 \name{doc_idx}
 \alias{doc_idx}
 \alias{idx_new}
+\alias{idx_type}
 \alias{idx_obj_get}
+\alias{idx_obj_rep}
+\alias{idx_obj_set}
 \alias{idx_lbkt_get}
+\alias{idx_lbkt_rep}
+\alias{idx_lbkt_set}
 \alias{idx_args_get}
+\alias{idx_args_rep}
+\alias{idx_args_set}
 \alias{idx_rbkt1_get}
+\alias{idx_rbkt1_rep}
+\alias{idx_rbkt1_set}
 \alias{idx_rbkt2_get}
+\alias{idx_rbkt2_rep}
+\alias{idx_rbkt2_set}
 \title{Create and query \code{idx} nodes}
 \usage{
 idx_new(ast, obj, lbkt, args, rbkt1, rbkt2)
 
+idx_type(ast, node)
+
 idx_obj_get(ast, node)
+
+idx_obj_rep(ast, node, obj)
+
+idx_obj_set(ast, node, obj)
 
 idx_lbkt_get(ast, node)
 
+idx_lbkt_rep(ast, node, lbkt)
+
+idx_lbkt_set(ast, node, lbkt)
+
 idx_args_get(ast, node)
+
+idx_args_rep(ast, node, args)
+
+idx_args_set(ast, node, args)
 
 idx_rbkt1_get(ast, node)
 
+idx_rbkt1_rep(ast, node, rbkt1)
+
+idx_rbkt1_set(ast, node, rbkt1)
+
 idx_rbkt2_get(ast, node)
+
+idx_rbkt2_rep(ast, node, rbkt2)
+
+idx_rbkt2_set(ast, node, rbkt2)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{idx} node.}
+\item{obj}{\code{obj} node}
+
+\item{lbkt}{\code{lbkt} node}
+
+\item{args}{\code{args} node}
+
+\item{rbkt1}{\code{rbkt1} node}
+
+\item{rbkt2}{\code{rbkt2} node}
+
+\item{node}{\code{idx} node}
 }
 \description{
 \itemize{
-\item \code{idx_obj_get()} returns the \code{obj} node of \code{idx}
-}
-
-\itemize{
-\item \code{idx_lbkt_get()} returns the \code{lbkt} node of \code{idx}
-}
-
-\itemize{
-\item \code{idx_args_get()} returns the \code{args} node of \code{idx}
-}
-
-\itemize{
-\item \code{idx_rbkt1_get()} returns the \code{rbkt1} node of \code{idx}
-}
-
-\itemize{
-\item \code{idx_rbkt2_get()} returns the \code{rbkt2} node of \code{idx}
+\item \code{idx_new()} instantiates a new \code{idx} node.
+\item \code{idx_type()} checks if the node is a \code{idx} node.
+\item \verb{idx_<child>_get()} returns the \verb{<child>} node of \code{idx}.
+\item \verb{idx_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{idx_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

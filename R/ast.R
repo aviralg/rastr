@@ -1,205 +1,51 @@
+#' AST APIs
+#'
+#' @description
+#' * `ast_new()` instantiates a new AST
+#' * `ast_id()` returns the unique id of the AST
+#' * `ast_size()` returns the number of nodes in the AST
+#' * `ast_root_get()` returns the root node of `_NODE_`.
+#' * `ast_root_set()` sets the new root and deletes the old root.
+#' * `ast_root_rep()` sets the new root and returns the old root.
+#'
+#' @param ast AST object
+#' @param root Root node
+#' @param capacity expected size of AST; size will increase dynamically if more nodes are added
+#' @name ast
 
 #' @export
+#' @rdname ast
 ast_new <- function(capacity = 10000L) {
-    .Call(C_ast_new, capacity)
+    .Call(C_rastr_ast_new, capacity)
 }
 
 #' @export
+#' @rdname ast
 ast_id <- function(ast) {
-    .Call(C_ast_id, ast)
+    .Call(C_rastr_ast_id, ast)
 }
 
 #' @export
+#' @rdname ast
 ast_size <- function(ast) {
-    .Call(C_ast_size, ast)
+    .Call(C_rastr_ast_size, ast)
 }
 
 #' @export
+#' @rdname ast
 ast_root_get <- function(ast) {
-    .Call(C_ast_root_get, ast)
+    .Call(C_rastr_ast_root_get, ast)
 }
 
 #' @export
+#' @rdname ast
 ast_root_rep <- function(ast, root) {
-    .Call(C_ast_root_rep, ast, root)
+    .Call(C_rastr_ast_root_rep, ast, root)
 }
 
 #' @export
+#' @rdname ast
 ast_root_set <- function(ast, root) {
-    .Call(C_ast_root_set, ast, root)
+    .Call(C_rastr_ast_root_set, ast, root)
 }
 
-#' @export
-ast_walk <- function(ast,
-                     node = ast_root_get(ast),
-                     state,
-                     pre_op = NULL,
-                     post_op = NULL,
-                     pre_dlmtr = NULL,
-                     post_dlmtr = NULL,
-                     pre_bkt = NULL,
-                     post_bkt = NULL,
-                     pre_null = NULL,
-                     post_null = NULL,
-                     pre_lgl = NULL,
-                     post_lgl = NULL,
-                     pre_int = NULL,
-                     post_int = NULL,
-                     pre_dbl = NULL,
-                     post_dbl = NULL,
-                     pre_cpx = NULL,
-                     post_cpx = NULL,
-                     pre_chr = NULL,
-                     post_chr = NULL,
-                     pre_sym = NULL,
-                     post_sym = NULL,
-                     pre_blk = NULL,
-                     post_blk = NULL,
-                     pre_grp = NULL,
-                     post_grp = NULL,
-                     pre_nuop = NULL,
-                     post_nuop = NULL,
-                     pre_unop = NULL,
-                     post_unop = NULL,
-                     pre_binop = NULL,
-                     post_binop = NULL,
-                     pre_rlp = NULL,
-                     post_rlp = NULL,
-                     pre_wlp = NULL,
-                     post_wlp = NULL,
-                     pre_flp = NULL,
-                     post_flp = NULL,
-                     pre_icond = NULL,
-                     post_icond = NULL,
-                     pre_iecond = NULL,
-                     post_iecond = NULL,
-                     pre_fndefn = NULL,
-                     post_fndefn = NULL,
-                     pre_fncall = NULL,
-                     post_fncall = NULL,
-                     pre_sub = NULL,
-                     post_sub = NULL,
-                     pre_idx = NULL,
-                     post_idx = NULL,
-                     pre_aexpr = NULL,
-                     post_aexpr = NULL,
-                     pre_exprs = NULL,
-                     post_exprs = NULL,
-                     pre_pars = NULL,
-                     post_pars = NULL,
-                     pre_dpar = NULL,
-                     post_dpar = NULL,
-                     pre_ndpar = NULL,
-                     post_ndpar = NULL,
-                     pre_args = NULL,
-                     post_args = NULL,
-                     pre_narg = NULL,
-                     post_narg = NULL,
-                     pre_parg = NULL,
-                     post_parg = NULL,
-                     pre_cond = NULL,
-                     post_cond = NULL,
-                     pre_iter = NULL,
-                     post_iter = NULL,
-                     pre_pgm = NULL,
-                     post_pgm = NULL,
-                     pre_dlmtd = NULL,
-                     post_dlmtd = NULL,
-                     pre_msng = NULL,
-                     post_msng = NULL,
-                     pre_beg = NULL,
-                     post_beg = NULL,
-                     pre_end = NULL,
-                     post_end = NULL,
-                     pre_gap = NULL,
-                     post_gap = NULL,
-                     pre_loc = NULL,
-                     post_loc = NULL) {
-    .Call(C_rastr_ast_walk,
-          ast,
-          node,
-          environment(),
-          state,
-          pre_op,
-          post_op,
-          pre_dlmtr,
-          post_dlmtr,
-          pre_bkt,
-          post_bkt,
-          pre_null,
-          post_null,
-          pre_lgl,
-          post_lgl,
-          pre_int,
-          post_int,
-          pre_dbl,
-          post_dbl,
-          pre_cpx,
-          post_cpx,
-          pre_chr,
-          post_chr,
-          pre_sym,
-          post_sym,
-          pre_blk,
-          post_blk,
-          pre_grp,
-          post_grp,
-          pre_nuop,
-          post_nuop,
-          pre_unop,
-          post_unop,
-          pre_binop,
-          post_binop,
-          pre_rlp,
-          post_rlp,
-          pre_wlp,
-          post_wlp,
-          pre_flp,
-          post_flp,
-          pre_icond,
-          post_icond,
-          pre_iecond,
-          post_iecond,
-          pre_fndefn,
-          post_fndefn,
-          pre_fncall,
-          post_fncall,
-          pre_sub,
-          post_sub,
-          pre_idx,
-          post_idx,
-          pre_aexpr,
-          post_aexpr,
-          pre_exprs,
-          post_exprs,
-          pre_pars,
-          post_pars,
-          pre_dpar,
-          post_dpar,
-          pre_ndpar,
-          post_ndpar,
-          pre_args,
-          post_args,
-          pre_narg,
-          post_narg,
-          pre_parg,
-          post_parg,
-          pre_cond,
-          post_cond,
-          pre_iter,
-          post_iter,
-          pre_pgm,
-          post_pgm,
-          pre_dlmtd,
-          post_dlmtd,
-          pre_msng,
-          post_msng,
-          pre_beg,
-          post_beg,
-          pre_end,
-          post_end,
-          pre_gap,
-          post_gap,
-          pre_loc,
-          post_loc)
-}

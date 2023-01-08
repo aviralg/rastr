@@ -3,41 +3,68 @@
 \name{doc_sub}
 \alias{doc_sub}
 \alias{sub_new}
+\alias{sub_type}
 \alias{sub_obj_get}
+\alias{sub_obj_rep}
+\alias{sub_obj_set}
 \alias{sub_lbkt_get}
+\alias{sub_lbkt_rep}
+\alias{sub_lbkt_set}
 \alias{sub_args_get}
+\alias{sub_args_rep}
+\alias{sub_args_set}
 \alias{sub_rbkt_get}
+\alias{sub_rbkt_rep}
+\alias{sub_rbkt_set}
 \title{Create and query \code{sub} nodes}
 \usage{
 sub_new(ast, obj, lbkt, args, rbkt)
 
+sub_type(ast, node)
+
 sub_obj_get(ast, node)
+
+sub_obj_rep(ast, node, obj)
+
+sub_obj_set(ast, node, obj)
 
 sub_lbkt_get(ast, node)
 
+sub_lbkt_rep(ast, node, lbkt)
+
+sub_lbkt_set(ast, node, lbkt)
+
 sub_args_get(ast, node)
 
+sub_args_rep(ast, node, args)
+
+sub_args_set(ast, node, args)
+
 sub_rbkt_get(ast, node)
+
+sub_rbkt_rep(ast, node, rbkt)
+
+sub_rbkt_set(ast, node, rbkt)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{sub} node.}
+\item{obj}{\code{obj} node}
+
+\item{lbkt}{\code{lbkt} node}
+
+\item{args}{\code{args} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{node}{\code{sub} node}
 }
 \description{
 \itemize{
-\item \code{sub_obj_get()} returns the \code{obj} node of \code{sub}
-}
-
-\itemize{
-\item \code{sub_lbkt_get()} returns the \code{lbkt} node of \code{sub}
-}
-
-\itemize{
-\item \code{sub_args_get()} returns the \code{args} node of \code{sub}
-}
-
-\itemize{
-\item \code{sub_rbkt_get()} returns the \code{rbkt} node of \code{sub}
+\item \code{sub_new()} instantiates a new \code{sub} node.
+\item \code{sub_type()} checks if the node is a \code{sub} node.
+\item \verb{sub_<child>_get()} returns the \verb{<child>} node of \code{sub}.
+\item \verb{sub_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{sub_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

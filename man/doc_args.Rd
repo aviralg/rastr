@@ -3,36 +3,48 @@
 \name{doc_args}
 \alias{doc_args}
 \alias{args_new}
+\alias{args_type}
 \alias{args_len_get}
 \alias{args_seq_get}
 \alias{args_get}
+\alias{args_rep}
+\alias{args_arg_set}
+\alias{args_ins}
 \title{Create and query \code{args} nodes}
 \usage{
 args_new(ast, seq)
+
+args_type(ast, node)
 
 args_len_get(ast, node)
 
 args_seq_get(ast, node)
 
 args_get(ast, node, index)
+
+args_rep(ast, node, index, arg)
+
+args_arg_set(ast, node, index, arg)
+
+args_ins(ast, node, index, seq)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{args} node.}
+\item{seq}{list of child nodes}
 
-\item{`index`}{is one-based index of the child node}
+\item{node}{\code{args} node}
+
+\item{index}{one-based index into the \code{args} node}
 }
 \description{
 \itemize{
-\item \code{args_len_get()} returns the \code{len} node of \code{args}
-}
-
-\itemize{
-\item \code{args_seq_get()} returns the child nodes as a list
-}
-
-\itemize{
-\item \code{args_get()} returns the child node at position \code{index}
+\item \code{args_new()} instantiates a new \code{args} node.
+\item \code{args_type()} checks if the node is a \code{args} node.
+\item \code{args_seq_get()} returns all the child nodes as a list.
+\item \code{args_get()} returns node at position \code{index}.
+\item \code{args_set()} sets node at position \code{index} and deletes the previous node.
+\item \code{args_rep()} sets node at position \code{index} and returns the previous node.
+\item \code{args_ins()} inserts nodes starting from position \code{index}.
 }
 }

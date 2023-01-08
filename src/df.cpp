@@ -631,15 +631,6 @@ struct data_t {
     rastr_node_t node;
 };
 
-SEXP rastr_ast_as_df(rastr_ast_t ast) {
-    return rastr_node_as_df(ast, rastr_ast_root_get(ast));
-}
-
-SEXP r_rastr_ast_as_df(SEXP r_ast) {
-    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-    return rastr_ast_as_df(ast);
-}
-
 static SEXP transform(void* ptr) {
     data_t* data = static_cast<data_t*>(ptr);
     return data->transformer->transform(data->df, data->ast, data->node);
@@ -651,7 +642,7 @@ static void cleanup(void* ptr) {
     delete data->df;
 }
 
-SEXP rastr_node_as_df(rastr_ast_t ast, rastr_node_t node) {
+SEXP rastr_to_df(rastr_ast_t ast, rastr_node_t node) {
     DFTransformer* transformer = new DFTransformer();
     /* TODO: replace with node_size */
     int size = rastr_ast_size(ast);
@@ -660,8 +651,8 @@ SEXP rastr_node_as_df(rastr_ast_t ast, rastr_node_t node) {
     return R_ExecWithCleanup(transform, &data, cleanup, &data);
 }
 
-SEXP r_rastr_node_as_df(SEXP r_ast, SEXP r_node) {
+SEXP r_rastr_to_df(SEXP r_ast, SEXP r_node) {
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
     rastr_node_t node = rastr_node_unwrap(r_node);
-    return rastr_node_as_df(ast, node);
+    return rastr_to_df(ast, node);
 }

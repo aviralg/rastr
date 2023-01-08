@@ -3,34 +3,57 @@
 \name{doc_pgm}
 \alias{doc_pgm}
 \alias{pgm_new}
+\alias{pgm_type}
 \alias{pgm_beg_get}
+\alias{pgm_beg_rep}
+\alias{pgm_beg_set}
 \alias{pgm_exprs_get}
+\alias{pgm_exprs_rep}
+\alias{pgm_exprs_set}
 \alias{pgm_end_get}
+\alias{pgm_end_rep}
+\alias{pgm_end_set}
 \title{Create and query \code{pgm} nodes}
 \usage{
 pgm_new(ast, beg, exprs, end)
 
+pgm_type(ast, node)
+
 pgm_beg_get(ast, node)
+
+pgm_beg_rep(ast, node, beg)
+
+pgm_beg_set(ast, node, beg)
 
 pgm_exprs_get(ast, node)
 
+pgm_exprs_rep(ast, node, exprs)
+
+pgm_exprs_set(ast, node, exprs)
+
 pgm_end_get(ast, node)
+
+pgm_end_rep(ast, node, end)
+
+pgm_end_set(ast, node, end)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{pgm} node.}
+\item{beg}{\code{beg} node}
+
+\item{exprs}{\code{exprs} node}
+
+\item{end}{\code{end} node}
+
+\item{node}{\code{pgm} node}
 }
 \description{
 \itemize{
-\item \code{pgm_beg_get()} returns the \code{beg} node of \code{pgm}
-}
-
-\itemize{
-\item \code{pgm_exprs_get()} returns the \code{exprs} node of \code{pgm}
-}
-
-\itemize{
-\item \code{pgm_end_get()} returns the \code{end} node of \code{pgm}
+\item \code{pgm_new()} instantiates a new \code{pgm} node.
+\item \code{pgm_type()} checks if the node is a \code{pgm} node.
+\item \verb{pgm_<child>_get()} returns the \verb{<child>} node of \code{pgm}.
+\item \verb{pgm_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{pgm_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

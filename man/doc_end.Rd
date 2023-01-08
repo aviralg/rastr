@@ -3,27 +3,38 @@
 \name{doc_end}
 \alias{doc_end}
 \alias{end_new}
+\alias{end_type}
 \alias{end_gap_get}
+\alias{end_gap_rep}
+\alias{end_gap_set}
 \alias{end_loc_get}
 \title{Create and query \code{end} nodes}
 \usage{
 end_new(ast, gap, loc)
 
+end_type(ast, node)
+
 end_gap_get(ast, node)
+
+end_gap_rep(ast, node, gap)
+
+end_gap_set(ast, node, gap)
 
 end_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{end} node.}
+\item{gap}{\code{gap} node}
+
+\item{node}{\code{end} node}
 }
 \description{
 \itemize{
-\item \code{end_gap_get()} returns the \code{gap} node of \code{end}
-}
-
-\itemize{
-\item \code{end_loc_get()} returns the \code{loc} node of \code{end}
+\item \code{end_new()} instantiates a new \code{end} node.
+\item \code{end_type()} checks if the node is a \code{end} node.
+\item \verb{end_<child>_get()} returns the \verb{<child>} node of \code{end}.
+\item \verb{end_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{end_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

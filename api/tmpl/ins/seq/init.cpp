@@ -1,1 +1,1 @@
-DECLARE_BINDING(rastr__NODE__ins, 5),
+DECLARE_BINDING(rastr__NODE__ins, 4),

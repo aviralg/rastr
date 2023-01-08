@@ -3,34 +3,57 @@
 \name{doc_flp}
 \alias{doc_flp}
 \alias{flp_new}
+\alias{flp_type}
 \alias{flp_op_get}
+\alias{flp_op_rep}
+\alias{flp_op_set}
 \alias{flp_iter_get}
+\alias{flp_iter_rep}
+\alias{flp_iter_set}
 \alias{flp_body_get}
+\alias{flp_body_rep}
+\alias{flp_body_set}
 \title{Create and query \code{flp} nodes}
 \usage{
 flp_new(ast, op, iter, body)
 
+flp_type(ast, node)
+
 flp_op_get(ast, node)
+
+flp_op_rep(ast, node, op)
+
+flp_op_set(ast, node, op)
 
 flp_iter_get(ast, node)
 
+flp_iter_rep(ast, node, iter)
+
+flp_iter_set(ast, node, iter)
+
 flp_body_get(ast, node)
+
+flp_body_rep(ast, node, body)
+
+flp_body_set(ast, node, body)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{flp} node.}
+\item{op}{\code{op} node}
+
+\item{iter}{\code{iter} node}
+
+\item{body}{\code{body} node}
+
+\item{node}{\code{flp} node}
 }
 \description{
 \itemize{
-\item \code{flp_op_get()} returns the \code{op} node of \code{flp}
-}
-
-\itemize{
-\item \code{flp_iter_get()} returns the \code{iter} node of \code{flp}
-}
-
-\itemize{
-\item \code{flp_body_get()} returns the \code{body} node of \code{flp}
+\item \code{flp_new()} instantiates a new \code{flp} node.
+\item \code{flp_type()} checks if the node is a \code{flp} node.
+\item \verb{flp_<child>_get()} returns the \verb{<child>} node of \code{flp}.
+\item \verb{flp_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{flp_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

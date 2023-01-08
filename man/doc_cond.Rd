@@ -3,34 +3,57 @@
 \name{doc_cond}
 \alias{doc_cond}
 \alias{cond_new}
+\alias{cond_type}
 \alias{cond_lbkt_get}
+\alias{cond_lbkt_rep}
+\alias{cond_lbkt_set}
 \alias{cond_expr_get}
+\alias{cond_expr_rep}
+\alias{cond_expr_set}
 \alias{cond_rbkt_get}
+\alias{cond_rbkt_rep}
+\alias{cond_rbkt_set}
 \title{Create and query \code{cond} nodes}
 \usage{
 cond_new(ast, lbkt, expr, rbkt)
 
+cond_type(ast, node)
+
 cond_lbkt_get(ast, node)
+
+cond_lbkt_rep(ast, node, lbkt)
+
+cond_lbkt_set(ast, node, lbkt)
 
 cond_expr_get(ast, node)
 
+cond_expr_rep(ast, node, expr)
+
+cond_expr_set(ast, node, expr)
+
 cond_rbkt_get(ast, node)
+
+cond_rbkt_rep(ast, node, rbkt)
+
+cond_rbkt_set(ast, node, rbkt)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{cond} node.}
+\item{lbkt}{\code{lbkt} node}
+
+\item{expr}{\code{expr} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{node}{\code{cond} node}
 }
 \description{
 \itemize{
-\item \code{cond_lbkt_get()} returns the \code{lbkt} node of \code{cond}
-}
-
-\itemize{
-\item \code{cond_expr_get()} returns the \code{expr} node of \code{cond}
-}
-
-\itemize{
-\item \code{cond_rbkt_get()} returns the \code{rbkt} node of \code{cond}
+\item \code{cond_new()} instantiates a new \code{cond} node.
+\item \code{cond_type()} checks if the node is a \code{cond} node.
+\item \verb{cond_<child>_get()} returns the \verb{<child>} node of \code{cond}.
+\item \verb{cond_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{cond_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

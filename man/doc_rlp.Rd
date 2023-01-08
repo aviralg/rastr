@@ -3,27 +3,46 @@
 \name{doc_rlp}
 \alias{doc_rlp}
 \alias{rlp_new}
+\alias{rlp_type}
 \alias{rlp_op_get}
+\alias{rlp_op_rep}
+\alias{rlp_op_set}
 \alias{rlp_body_get}
+\alias{rlp_body_rep}
+\alias{rlp_body_set}
 \title{Create and query \code{rlp} nodes}
 \usage{
 rlp_new(ast, op, body)
 
+rlp_type(ast, node)
+
 rlp_op_get(ast, node)
 
+rlp_op_rep(ast, node, op)
+
+rlp_op_set(ast, node, op)
+
 rlp_body_get(ast, node)
+
+rlp_body_rep(ast, node, body)
+
+rlp_body_set(ast, node, body)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{rlp} node.}
+\item{op}{\code{op} node}
+
+\item{body}{\code{body} node}
+
+\item{node}{\code{rlp} node}
 }
 \description{
 \itemize{
-\item \code{rlp_op_get()} returns the \code{op} node of \code{rlp}
-}
-
-\itemize{
-\item \code{rlp_body_get()} returns the \code{body} node of \code{rlp}
+\item \code{rlp_new()} instantiates a new \code{rlp} node.
+\item \code{rlp_type()} checks if the node is a \code{rlp} node.
+\item \verb{rlp_<child>_get()} returns the \verb{<child>} node of \code{rlp}.
+\item \verb{rlp_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{rlp_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

@@ -6,6 +6,8 @@
 \alias{dbl_syn_get}
 \alias{dbl_val_get}
 \alias{dbl_gap_get}
+\alias{dbl_gap_rep}
+\alias{dbl_gap_set}
 \alias{dbl_loc_get}
 \title{Create and query \code{dbl} nodes}
 \usage{
@@ -17,27 +19,25 @@ dbl_val_get(ast, node)
 
 dbl_gap_get(ast, node)
 
+dbl_gap_rep(ast, node, gap)
+
+dbl_gap_set(ast, node, gap)
+
 dbl_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{dbl} node.}
+\item{node}{\code{dbl} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{dbl_syn_get()} returns the \code{syn} node of \code{dbl}
-}
-
-\itemize{
-\item \code{dbl_val_get()} returns the \code{val} node of \code{dbl}
-}
-
-\itemize{
-\item \code{dbl_gap_get()} returns the \code{gap} node of \code{dbl}
-}
-
-\itemize{
-\item \code{dbl_loc_get()} returns the \code{loc} node of \code{dbl}
+\item \code{dbl_new()} instantiates a new \code{dbl} node.
+\item \code{dbl_type()} checks if the node is a \code{dbl} node.
+\item \verb{dbl_<child>_get()} returns the \verb{<child>} node of \code{dbl}.
+\item \verb{dbl_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{dbl_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

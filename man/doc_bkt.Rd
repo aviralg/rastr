@@ -4,6 +4,8 @@
 \alias{doc_bkt}
 \alias{bkt_type}
 \alias{bkt_gap_get}
+\alias{bkt_gap_rep}
+\alias{bkt_gap_set}
 \alias{bkt_loc_get}
 \title{Create and query \code{bkt} nodes}
 \usage{
@@ -11,19 +13,25 @@ bkt_type(ast, node)
 
 bkt_gap_get(ast, node)
 
+bkt_gap_rep(ast, node, gap)
+
+bkt_gap_set(ast, node, gap)
+
 bkt_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{bkt} node.}
+\item{node}{\code{bkt} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{bkt_gap_get()} returns the \code{gap} node of \code{bkt}
-}
-
-\itemize{
-\item \code{bkt_loc_get()} returns the \code{loc} node of \code{bkt}
+\item \code{bkt_new()} instantiates a new \code{bkt} node.
+\item \code{bkt_type()} checks if the node is a \code{bkt} node.
+\item \verb{bkt_<child>_get()} returns the \verb{<child>} node of \code{bkt}.
+\item \verb{bkt_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{bkt_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

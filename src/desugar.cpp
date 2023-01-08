@@ -233,32 +233,19 @@ class StrictnessDesugarer: public AstWalker {
     }
 };
 
-rastr_node_t
-rastr_node_desugar(rastr_ast_t ast, rastr_node_t node, int strictness) {
+
+void rastr_desugar(rastr_ast_t ast, rastr_node_t node, int strictness) {
     if (strictness) {
         StrictnessDesugarer* desugarer = new StrictnessDesugarer();
         desugarer->walk(ast, node);
+        delete desugarer;
     }
-
-    return node;
 }
 
-SEXP r_rastr_node_desugar(SEXP r_ast, SEXP r_node, SEXP r_strictness) {
+SEXP r_rastr_desugar(SEXP r_ast, SEXP r_node, SEXP r_strictness) {
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
     rastr_node_t node = rastr_node_unwrap(r_node);
     int strictness = (int) num_get(r_strictness, 0);
-    rastr_node_desugar(ast, node, strictness);
-    return r_node;
-}
-
-rastr_ast_t rastr_ast_desugar(rastr_ast_t ast, int strictness) {
-    rastr_node_desugar(ast, rastr_ast_root_get(ast), strictness);
-    return ast;
-}
-
-SEXP r_rastr_ast_desugar(SEXP r_ast, SEXP r_strictness) {
-    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-    int strictness = (int) num_get(r_strictness, 0);
-    rastr_ast_desugar(ast, strictness);
-    return r_ast;
+    rastr_desugar(ast, node, strictness);
+    return R_NilValue;
 }

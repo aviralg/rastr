@@ -3,41 +3,68 @@
 \name{doc_fncall}
 \alias{doc_fncall}
 \alias{fncall_new}
+\alias{fncall_type}
 \alias{fncall_fn_get}
+\alias{fncall_fn_rep}
+\alias{fncall_fn_set}
 \alias{fncall_lbkt_get}
+\alias{fncall_lbkt_rep}
+\alias{fncall_lbkt_set}
 \alias{fncall_args_get}
+\alias{fncall_args_rep}
+\alias{fncall_args_set}
 \alias{fncall_rbkt_get}
+\alias{fncall_rbkt_rep}
+\alias{fncall_rbkt_set}
 \title{Create and query \code{fncall} nodes}
 \usage{
 fncall_new(ast, fn, lbkt, args, rbkt)
 
+fncall_type(ast, node)
+
 fncall_fn_get(ast, node)
+
+fncall_fn_rep(ast, node, fn)
+
+fncall_fn_set(ast, node, fn)
 
 fncall_lbkt_get(ast, node)
 
+fncall_lbkt_rep(ast, node, lbkt)
+
+fncall_lbkt_set(ast, node, lbkt)
+
 fncall_args_get(ast, node)
 
+fncall_args_rep(ast, node, args)
+
+fncall_args_set(ast, node, args)
+
 fncall_rbkt_get(ast, node)
+
+fncall_rbkt_rep(ast, node, rbkt)
+
+fncall_rbkt_set(ast, node, rbkt)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{fncall} node.}
+\item{fn}{\code{fn} node}
+
+\item{lbkt}{\code{lbkt} node}
+
+\item{args}{\code{args} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{node}{\code{fncall} node}
 }
 \description{
 \itemize{
-\item \code{fncall_fn_get()} returns the \code{fn} node of \code{fncall}
-}
-
-\itemize{
-\item \code{fncall_lbkt_get()} returns the \code{lbkt} node of \code{fncall}
-}
-
-\itemize{
-\item \code{fncall_args_get()} returns the \code{args} node of \code{fncall}
-}
-
-\itemize{
-\item \code{fncall_rbkt_get()} returns the \code{rbkt} node of \code{fncall}
+\item \code{fncall_new()} instantiates a new \code{fncall} node.
+\item \code{fncall_type()} checks if the node is a \code{fncall} node.
+\item \verb{fncall_<child>_get()} returns the \verb{<child>} node of \code{fncall}.
+\item \verb{fncall_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{fncall_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

@@ -6,6 +6,8 @@
 \alias{int_syn_get}
 \alias{int_val_get}
 \alias{int_gap_get}
+\alias{int_gap_rep}
+\alias{int_gap_set}
 \alias{int_loc_get}
 \title{Create and query \code{int} nodes}
 \usage{
@@ -17,27 +19,25 @@ int_val_get(ast, node)
 
 int_gap_get(ast, node)
 
+int_gap_rep(ast, node, gap)
+
+int_gap_set(ast, node, gap)
+
 int_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{int} node.}
+\item{node}{\code{int} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{int_syn_get()} returns the \code{syn} node of \code{int}
-}
-
-\itemize{
-\item \code{int_val_get()} returns the \code{val} node of \code{int}
-}
-
-\itemize{
-\item \code{int_gap_get()} returns the \code{gap} node of \code{int}
-}
-
-\itemize{
-\item \code{int_loc_get()} returns the \code{loc} node of \code{int}
+\item \code{int_new()} instantiates a new \code{int} node.
+\item \code{int_type()} checks if the node is a \code{int} node.
+\item \verb{int_<child>_get()} returns the \verb{<child>} node of \code{int}.
+\item \verb{int_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{int_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

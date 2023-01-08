@@ -6,6 +6,8 @@
 \alias{sym_syn_get}
 \alias{sym_val_get}
 \alias{sym_gap_get}
+\alias{sym_gap_rep}
+\alias{sym_gap_set}
 \alias{sym_loc_get}
 \title{Create and query \code{sym} nodes}
 \usage{
@@ -17,27 +19,25 @@ sym_val_get(ast, node)
 
 sym_gap_get(ast, node)
 
+sym_gap_rep(ast, node, gap)
+
+sym_gap_set(ast, node, gap)
+
 sym_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{sym} node.}
+\item{node}{\code{sym} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{sym_syn_get()} returns the \code{syn} node of \code{sym}
-}
-
-\itemize{
-\item \code{sym_val_get()} returns the \code{val} node of \code{sym}
-}
-
-\itemize{
-\item \code{sym_gap_get()} returns the \code{gap} node of \code{sym}
-}
-
-\itemize{
-\item \code{sym_loc_get()} returns the \code{loc} node of \code{sym}
+\item \code{sym_new()} instantiates a new \code{sym} node.
+\item \code{sym_type()} checks if the node is a \code{sym} node.
+\item \verb{sym_<child>_get()} returns the \verb{<child>} node of \code{sym}.
+\item \verb{sym_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{sym_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

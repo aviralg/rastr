@@ -3,34 +3,57 @@
 \name{doc_wlp}
 \alias{doc_wlp}
 \alias{wlp_new}
+\alias{wlp_type}
 \alias{wlp_op_get}
+\alias{wlp_op_rep}
+\alias{wlp_op_set}
 \alias{wlp_cond_get}
+\alias{wlp_cond_rep}
+\alias{wlp_cond_set}
 \alias{wlp_body_get}
+\alias{wlp_body_rep}
+\alias{wlp_body_set}
 \title{Create and query \code{wlp} nodes}
 \usage{
 wlp_new(ast, op, cond, body)
 
+wlp_type(ast, node)
+
 wlp_op_get(ast, node)
+
+wlp_op_rep(ast, node, op)
+
+wlp_op_set(ast, node, op)
 
 wlp_cond_get(ast, node)
 
+wlp_cond_rep(ast, node, cond)
+
+wlp_cond_set(ast, node, cond)
+
 wlp_body_get(ast, node)
+
+wlp_body_rep(ast, node, body)
+
+wlp_body_set(ast, node, body)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{wlp} node.}
+\item{op}{\code{op} node}
+
+\item{cond}{\code{cond} node}
+
+\item{body}{\code{body} node}
+
+\item{node}{\code{wlp} node}
 }
 \description{
 \itemize{
-\item \code{wlp_op_get()} returns the \code{op} node of \code{wlp}
-}
-
-\itemize{
-\item \code{wlp_cond_get()} returns the \code{cond} node of \code{wlp}
-}
-
-\itemize{
-\item \code{wlp_body_get()} returns the \code{body} node of \code{wlp}
+\item \code{wlp_new()} instantiates a new \code{wlp} node.
+\item \code{wlp_type()} checks if the node is a \code{wlp} node.
+\item \verb{wlp_<child>_get()} returns the \verb{<child>} node of \code{wlp}.
+\item \verb{wlp_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{wlp_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

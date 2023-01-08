@@ -3,34 +3,57 @@
 \name{doc_binop}
 \alias{doc_binop}
 \alias{binop_new}
+\alias{binop_type}
 \alias{binop_lexpr_get}
+\alias{binop_lexpr_rep}
+\alias{binop_lexpr_set}
 \alias{binop_op_get}
+\alias{binop_op_rep}
+\alias{binop_op_set}
 \alias{binop_rexpr_get}
+\alias{binop_rexpr_rep}
+\alias{binop_rexpr_set}
 \title{Create and query \code{binop} nodes}
 \usage{
 binop_new(ast, lexpr, op, rexpr)
 
+binop_type(ast, node)
+
 binop_lexpr_get(ast, node)
+
+binop_lexpr_rep(ast, node, lexpr)
+
+binop_lexpr_set(ast, node, lexpr)
 
 binop_op_get(ast, node)
 
+binop_op_rep(ast, node, op)
+
+binop_op_set(ast, node, op)
+
 binop_rexpr_get(ast, node)
+
+binop_rexpr_rep(ast, node, rexpr)
+
+binop_rexpr_set(ast, node, rexpr)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{binop} node.}
+\item{lexpr}{\code{lexpr} node}
+
+\item{op}{\code{op} node}
+
+\item{rexpr}{\code{rexpr} node}
+
+\item{node}{\code{binop} node}
 }
 \description{
 \itemize{
-\item \code{binop_lexpr_get()} returns the \code{lexpr} node of \code{binop}
-}
-
-\itemize{
-\item \code{binop_op_get()} returns the \code{op} node of \code{binop}
-}
-
-\itemize{
-\item \code{binop_rexpr_get()} returns the \code{rexpr} node of \code{binop}
+\item \code{binop_new()} instantiates a new \code{binop} node.
+\item \code{binop_type()} checks if the node is a \code{binop} node.
+\item \verb{binop_<child>_get()} returns the \verb{<child>} node of \code{binop}.
+\item \verb{binop_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{binop_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

@@ -4,6 +4,8 @@
 \alias{doc_dlmtr}
 \alias{dlmtr_type}
 \alias{dlmtr_gap_get}
+\alias{dlmtr_gap_rep}
+\alias{dlmtr_gap_set}
 \alias{dlmtr_loc_get}
 \title{Create and query \code{dlmtr} nodes}
 \usage{
@@ -11,19 +13,25 @@ dlmtr_type(ast, node)
 
 dlmtr_gap_get(ast, node)
 
+dlmtr_gap_rep(ast, node, gap)
+
+dlmtr_gap_set(ast, node, gap)
+
 dlmtr_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{dlmtr} node.}
+\item{node}{\code{dlmtr} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{dlmtr_gap_get()} returns the \code{gap} node of \code{dlmtr}
-}
-
-\itemize{
-\item \code{dlmtr_loc_get()} returns the \code{loc} node of \code{dlmtr}
+\item \code{dlmtr_new()} instantiates a new \code{dlmtr} node.
+\item \code{dlmtr_type()} checks if the node is a \code{dlmtr} node.
+\item \verb{dlmtr_<child>_get()} returns the \verb{<child>} node of \code{dlmtr}.
+\item \verb{dlmtr_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{dlmtr_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

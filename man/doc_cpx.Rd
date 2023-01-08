@@ -6,6 +6,8 @@
 \alias{cpx_syn_get}
 \alias{cpx_val_get}
 \alias{cpx_gap_get}
+\alias{cpx_gap_rep}
+\alias{cpx_gap_set}
 \alias{cpx_loc_get}
 \title{Create and query \code{cpx} nodes}
 \usage{
@@ -17,27 +19,25 @@ cpx_val_get(ast, node)
 
 cpx_gap_get(ast, node)
 
+cpx_gap_rep(ast, node, gap)
+
+cpx_gap_set(ast, node, gap)
+
 cpx_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{cpx} node.}
+\item{node}{\code{cpx} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{cpx_syn_get()} returns the \code{syn} node of \code{cpx}
-}
-
-\itemize{
-\item \code{cpx_val_get()} returns the \code{val} node of \code{cpx}
-}
-
-\itemize{
-\item \code{cpx_gap_get()} returns the \code{gap} node of \code{cpx}
-}
-
-\itemize{
-\item \code{cpx_loc_get()} returns the \code{loc} node of \code{cpx}
+\item \code{cpx_new()} instantiates a new \code{cpx} node.
+\item \code{cpx_type()} checks if the node is a \code{cpx} node.
+\item \verb{cpx_<child>_get()} returns the \verb{<child>} node of \code{cpx}.
+\item \verb{cpx_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{cpx_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

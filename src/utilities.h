@@ -28,4 +28,6 @@ void string_replace(std::string& source,
                     const std::string& pattern,
                     const std::string& replacement);
 
+char* cppstr_to_cstr(const std::string& cppstr);
+
 #endif /* RASTR_UTILITIES_H */

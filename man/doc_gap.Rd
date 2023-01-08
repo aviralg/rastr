@@ -14,16 +14,16 @@ gap_val_get(ast, node)
 gap_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{gap} node.}
+\item{node}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{gap_val_get()} returns the \code{val} node of \code{gap}
-}
-
-\itemize{
-\item \code{gap_loc_get()} returns the \code{loc} node of \code{gap}
+\item \code{gap_new()} instantiates a new \code{gap} node.
+\item \code{gap_type()} checks if the node is a \code{gap} node.
+\item \verb{gap_<child>_get()} returns the \verb{<child>} node of \code{gap}.
+\item \verb{gap_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{gap_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

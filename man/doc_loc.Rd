@@ -32,40 +32,16 @@ loc_rchr_get(ast, node)
 loc_rbyte_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{loc} node.}
+\item{node}{\code{loc} node}
 }
 \description{
 \itemize{
-\item \code{loc_lrow_get()} returns the \code{lrow} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_lcol_get()} returns the \code{lcol} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_lchr_get()} returns the \code{lchr} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_lbyte_get()} returns the \code{lbyte} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_rrow_get()} returns the \code{rrow} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_rcol_get()} returns the \code{rcol} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_rchr_get()} returns the \code{rchr} node of \code{loc}
-}
-
-\itemize{
-\item \code{loc_rbyte_get()} returns the \code{rbyte} node of \code{loc}
+\item \code{loc_new()} instantiates a new \code{loc} node.
+\item \code{loc_type()} checks if the node is a \code{loc} node.
+\item \verb{loc_<child>_get()} returns the \verb{<child>} node of \code{loc}.
+\item \verb{loc_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{loc_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

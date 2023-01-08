@@ -5,6 +5,8 @@
 \alias{lgl_type}
 \alias{lgl_val_get}
 \alias{lgl_gap_get}
+\alias{lgl_gap_rep}
+\alias{lgl_gap_set}
 \alias{lgl_loc_get}
 \title{Create and query \code{lgl} nodes}
 \usage{
@@ -14,23 +16,25 @@ lgl_val_get(ast, node)
 
 lgl_gap_get(ast, node)
 
+lgl_gap_rep(ast, node, gap)
+
+lgl_gap_set(ast, node, gap)
+
 lgl_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{lgl} node.}
+\item{node}{\code{lgl} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{lgl_val_get()} returns the \code{val} node of \code{lgl}
-}
-
-\itemize{
-\item \code{lgl_gap_get()} returns the \code{gap} node of \code{lgl}
-}
-
-\itemize{
-\item \code{lgl_loc_get()} returns the \code{loc} node of \code{lgl}
+\item \code{lgl_new()} instantiates a new \code{lgl} node.
+\item \code{lgl_type()} checks if the node is a \code{lgl} node.
+\item \verb{lgl_<child>_get()} returns the \verb{<child>} node of \code{lgl}.
+\item \verb{lgl_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{lgl_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

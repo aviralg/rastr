@@ -3,48 +3,79 @@
 \name{doc_iecond}
 \alias{doc_iecond}
 \alias{iecond_new}
+\alias{iecond_type}
 \alias{iecond_iop_get}
+\alias{iecond_iop_rep}
+\alias{iecond_iop_set}
 \alias{iecond_cond_get}
+\alias{iecond_cond_rep}
+\alias{iecond_cond_set}
 \alias{iecond_ibody_get}
+\alias{iecond_ibody_rep}
+\alias{iecond_ibody_set}
 \alias{iecond_eop_get}
+\alias{iecond_eop_rep}
+\alias{iecond_eop_set}
 \alias{iecond_ebody_get}
+\alias{iecond_ebody_rep}
+\alias{iecond_ebody_set}
 \title{Create and query \code{iecond} nodes}
 \usage{
 iecond_new(ast, iop, cond, ibody, eop, ebody)
 
+iecond_type(ast, node)
+
 iecond_iop_get(ast, node)
+
+iecond_iop_rep(ast, node, iop)
+
+iecond_iop_set(ast, node, iop)
 
 iecond_cond_get(ast, node)
 
+iecond_cond_rep(ast, node, cond)
+
+iecond_cond_set(ast, node, cond)
+
 iecond_ibody_get(ast, node)
+
+iecond_ibody_rep(ast, node, ibody)
+
+iecond_ibody_set(ast, node, ibody)
 
 iecond_eop_get(ast, node)
 
+iecond_eop_rep(ast, node, eop)
+
+iecond_eop_set(ast, node, eop)
+
 iecond_ebody_get(ast, node)
+
+iecond_ebody_rep(ast, node, ebody)
+
+iecond_ebody_set(ast, node, ebody)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{iecond} node.}
+\item{iop}{\code{iop} node}
+
+\item{cond}{\code{cond} node}
+
+\item{ibody}{\code{ibody} node}
+
+\item{eop}{\code{eop} node}
+
+\item{ebody}{\code{ebody} node}
+
+\item{node}{\code{iecond} node}
 }
 \description{
 \itemize{
-\item \code{iecond_iop_get()} returns the \code{iop} node of \code{iecond}
-}
-
-\itemize{
-\item \code{iecond_cond_get()} returns the \code{cond} node of \code{iecond}
-}
-
-\itemize{
-\item \code{iecond_ibody_get()} returns the \code{ibody} node of \code{iecond}
-}
-
-\itemize{
-\item \code{iecond_eop_get()} returns the \code{eop} node of \code{iecond}
-}
-
-\itemize{
-\item \code{iecond_ebody_get()} returns the \code{ebody} node of \code{iecond}
+\item \code{iecond_new()} instantiates a new \code{iecond} node.
+\item \code{iecond_type()} checks if the node is a \code{iecond} node.
+\item \verb{iecond_<child>_get()} returns the \verb{<child>} node of \code{iecond}.
+\item \verb{iecond_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{iecond_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

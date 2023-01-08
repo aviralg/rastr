@@ -23,7 +23,7 @@ void rastr__NODE__ins(rastr_ast_t ast, rastr_node_t node, int index, int len, ra
     }
 }
 
-SEXP r_rastr__NODE__ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP r_seq) {
+SEXP r_rastr__NODE__ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_seq) {
     ensure_ast_class(r_ast);
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
 
@@ -33,8 +33,7 @@ SEXP r_rastr__NODE__ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_len, SEXP 
     ensure_numeric_sexp(r_index, 1);
     int index = (int) num_get(r_index, 0);
 
-    ensure_numeric_sexp(r_len, 1);
-    int len = (int) num_get(r_len, 0);
+    int len = Rf_length(r_seq);
 
     rastr_node_t* seq = (rastr_node_t*) malloc_or_fail(sizeof(rastr_node_t) * len);
     for (int i = 0; i < len; ++i) {

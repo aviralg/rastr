@@ -3,36 +3,48 @@
 \name{doc_exprs}
 \alias{doc_exprs}
 \alias{exprs_new}
+\alias{exprs_type}
 \alias{exprs_len_get}
 \alias{exprs_seq_get}
 \alias{exprs_get}
+\alias{exprs_rep}
+\alias{exprs_expr_set}
+\alias{exprs_ins}
 \title{Create and query \code{exprs} nodes}
 \usage{
 exprs_new(ast, seq)
+
+exprs_type(ast, node)
 
 exprs_len_get(ast, node)
 
 exprs_seq_get(ast, node)
 
 exprs_get(ast, node, index)
+
+exprs_rep(ast, node, index, expr)
+
+exprs_expr_set(ast, node, index, expr)
+
+exprs_ins(ast, node, index, seq)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{exprs} node.}
+\item{seq}{list of child nodes}
 
-\item{`index`}{is one-based index of the child node}
+\item{node}{\code{exprs} node}
+
+\item{index}{one-based index into the \code{exprs} node}
 }
 \description{
 \itemize{
-\item \code{exprs_len_get()} returns the \code{len} node of \code{exprs}
-}
-
-\itemize{
-\item \code{exprs_seq_get()} returns the child nodes as a list
-}
-
-\itemize{
-\item \code{exprs_get()} returns the child node at position \code{index}
+\item \code{exprs_new()} instantiates a new \code{exprs} node.
+\item \code{exprs_type()} checks if the node is a \code{exprs} node.
+\item \code{exprs_seq_get()} returns all the child nodes as a list.
+\item \code{exprs_get()} returns node at position \code{index}.
+\item \code{exprs_set()} sets node at position \code{index} and deletes the previous node.
+\item \code{exprs_rep()} sets node at position \code{index} and returns the previous node.
+\item \code{exprs_ins()} inserts nodes starting from position \code{index}.
 }
 }

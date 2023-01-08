@@ -3,48 +3,79 @@
 \name{doc_iter}
 \alias{doc_iter}
 \alias{iter_new}
+\alias{iter_type}
 \alias{iter_lbkt_get}
+\alias{iter_lbkt_rep}
+\alias{iter_lbkt_set}
 \alias{iter_var_get}
+\alias{iter_var_rep}
+\alias{iter_var_set}
 \alias{iter_op_get}
+\alias{iter_op_rep}
+\alias{iter_op_set}
 \alias{iter_expr_get}
+\alias{iter_expr_rep}
+\alias{iter_expr_set}
 \alias{iter_rbkt_get}
+\alias{iter_rbkt_rep}
+\alias{iter_rbkt_set}
 \title{Create and query \code{iter} nodes}
 \usage{
 iter_new(ast, lbkt, var, op, expr, rbkt)
 
+iter_type(ast, node)
+
 iter_lbkt_get(ast, node)
+
+iter_lbkt_rep(ast, node, lbkt)
+
+iter_lbkt_set(ast, node, lbkt)
 
 iter_var_get(ast, node)
 
+iter_var_rep(ast, node, var)
+
+iter_var_set(ast, node, var)
+
 iter_op_get(ast, node)
+
+iter_op_rep(ast, node, op)
+
+iter_op_set(ast, node, op)
 
 iter_expr_get(ast, node)
 
+iter_expr_rep(ast, node, expr)
+
+iter_expr_set(ast, node, expr)
+
 iter_rbkt_get(ast, node)
+
+iter_rbkt_rep(ast, node, rbkt)
+
+iter_rbkt_set(ast, node, rbkt)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{iter} node.}
+\item{lbkt}{\code{lbkt} node}
+
+\item{var}{\code{var} node}
+
+\item{op}{\code{op} node}
+
+\item{expr}{\code{expr} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{node}{\code{iter} node}
 }
 \description{
 \itemize{
-\item \code{iter_lbkt_get()} returns the \code{lbkt} node of \code{iter}
-}
-
-\itemize{
-\item \code{iter_var_get()} returns the \code{var} node of \code{iter}
-}
-
-\itemize{
-\item \code{iter_op_get()} returns the \code{op} node of \code{iter}
-}
-
-\itemize{
-\item \code{iter_expr_get()} returns the \code{expr} node of \code{iter}
-}
-
-\itemize{
-\item \code{iter_rbkt_get()} returns the \code{rbkt} node of \code{iter}
+\item \code{iter_new()} instantiates a new \code{iter} node.
+\item \code{iter_type()} checks if the node is a \code{iter} node.
+\item \verb{iter_<child>_get()} returns the \verb{<child>} node of \code{iter}.
+\item \verb{iter_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{iter_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

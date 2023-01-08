@@ -3,20 +3,35 @@
 \name{doc_parg}
 \alias{doc_parg}
 \alias{parg_new}
+\alias{parg_type}
 \alias{parg_expr_get}
+\alias{parg_expr_rep}
+\alias{parg_expr_set}
 \title{Create and query \code{parg} nodes}
 \usage{
 parg_new(ast, expr)
 
+parg_type(ast, node)
+
 parg_expr_get(ast, node)
+
+parg_expr_rep(ast, node, expr)
+
+parg_expr_set(ast, node, expr)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{parg} node.}
+\item{expr}{\code{expr} node}
+
+\item{node}{\code{parg} node}
 }
 \description{
 \itemize{
-\item \code{parg_expr_get()} returns the \code{expr} node of \code{parg}
+\item \code{parg_new()} instantiates a new \code{parg} node.
+\item \code{parg_type()} checks if the node is a \code{parg} node.
+\item \verb{parg_<child>_get()} returns the \verb{<child>} node of \code{parg}.
+\item \verb{parg_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{parg_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

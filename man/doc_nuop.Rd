@@ -3,20 +3,35 @@
 \name{doc_nuop}
 \alias{doc_nuop}
 \alias{nuop_new}
+\alias{nuop_type}
 \alias{nuop_op_get}
+\alias{nuop_op_rep}
+\alias{nuop_op_set}
 \title{Create and query \code{nuop} nodes}
 \usage{
 nuop_new(ast, op)
 
+nuop_type(ast, node)
+
 nuop_op_get(ast, node)
+
+nuop_op_rep(ast, node, op)
+
+nuop_op_set(ast, node, op)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{nuop} node.}
+\item{op}{\code{op} node}
+
+\item{node}{\code{nuop} node}
 }
 \description{
 \itemize{
-\item \code{nuop_op_get()} returns the \code{op} node of \code{nuop}
+\item \code{nuop_new()} instantiates a new \code{nuop} node.
+\item \code{nuop_type()} checks if the node is a \code{nuop} node.
+\item \verb{nuop_<child>_get()} returns the \verb{<child>} node of \code{nuop}.
+\item \verb{nuop_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{nuop_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

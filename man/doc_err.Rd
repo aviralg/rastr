@@ -14,16 +14,16 @@ err_msg_get(ast, node)
 err_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{err} node.}
+\item{node}{\code{err} node}
 }
 \description{
 \itemize{
-\item \code{err_msg_get()} returns the \code{msg} node of \code{err}
-}
-
-\itemize{
-\item \code{err_loc_get()} returns the \code{loc} node of \code{err}
+\item \code{err_new()} instantiates a new \code{err} node.
+\item \code{err_type()} checks if the node is a \code{err} node.
+\item \verb{err_<child>_get()} returns the \verb{<child>} node of \code{err}.
+\item \verb{err_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{err_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

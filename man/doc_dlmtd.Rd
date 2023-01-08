@@ -3,27 +3,46 @@
 \name{doc_dlmtd}
 \alias{doc_dlmtd}
 \alias{dlmtd_new}
+\alias{dlmtd_type}
 \alias{dlmtd_expr_get}
+\alias{dlmtd_expr_rep}
+\alias{dlmtd_expr_set}
 \alias{dlmtd_dlmtr_get}
+\alias{dlmtd_dlmtr_rep}
+\alias{dlmtd_dlmtr_set}
 \title{Create and query \code{dlmtd} nodes}
 \usage{
 dlmtd_new(ast, expr, dlmtr)
 
+dlmtd_type(ast, node)
+
 dlmtd_expr_get(ast, node)
 
+dlmtd_expr_rep(ast, node, expr)
+
+dlmtd_expr_set(ast, node, expr)
+
 dlmtd_dlmtr_get(ast, node)
+
+dlmtd_dlmtr_rep(ast, node, dlmtr)
+
+dlmtd_dlmtr_set(ast, node, dlmtr)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{dlmtd} node.}
+\item{expr}{\code{expr} node}
+
+\item{dlmtr}{\code{dlmtr} node}
+
+\item{node}{\code{dlmtd} node}
 }
 \description{
 \itemize{
-\item \code{dlmtd_expr_get()} returns the \code{expr} node of \code{dlmtd}
-}
-
-\itemize{
-\item \code{dlmtd_dlmtr_get()} returns the \code{dlmtr} node of \code{dlmtd}
+\item \code{dlmtd_new()} instantiates a new \code{dlmtd} node.
+\item \code{dlmtd_type()} checks if the node is a \code{dlmtd} node.
+\item \verb{dlmtd_<child>_get()} returns the \verb{<child>} node of \code{dlmtd}.
+\item \verb{dlmtd_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{dlmtd_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

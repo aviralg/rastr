@@ -6,6 +6,8 @@
 \alias{chr_syn_get}
 \alias{chr_val_get}
 \alias{chr_gap_get}
+\alias{chr_gap_rep}
+\alias{chr_gap_set}
 \alias{chr_loc_get}
 \title{Create and query \code{chr} nodes}
 \usage{
@@ -17,27 +19,25 @@ chr_val_get(ast, node)
 
 chr_gap_get(ast, node)
 
+chr_gap_rep(ast, node, gap)
+
+chr_gap_set(ast, node, gap)
+
 chr_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{chr} node.}
+\item{node}{\code{chr} node}
+
+\item{gap}{\code{gap} node}
 }
 \description{
 \itemize{
-\item \code{chr_syn_get()} returns the \code{syn} node of \code{chr}
-}
-
-\itemize{
-\item \code{chr_val_get()} returns the \code{val} node of \code{chr}
-}
-
-\itemize{
-\item \code{chr_gap_get()} returns the \code{gap} node of \code{chr}
-}
-
-\itemize{
-\item \code{chr_loc_get()} returns the \code{loc} node of \code{chr}
+\item \code{chr_new()} instantiates a new \code{chr} node.
+\item \code{chr_type()} checks if the node is a \code{chr} node.
+\item \verb{chr_<child>_get()} returns the \verb{<child>} node of \code{chr}.
+\item \verb{chr_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{chr_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

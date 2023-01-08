@@ -3,27 +3,46 @@
 \name{doc_aexpr}
 \alias{doc_aexpr}
 \alias{aexpr_new}
+\alias{aexpr_type}
 \alias{aexpr_ann_get}
+\alias{aexpr_ann_rep}
+\alias{aexpr_ann_set}
 \alias{aexpr_expr_get}
+\alias{aexpr_expr_rep}
+\alias{aexpr_expr_set}
 \title{Create and query \code{aexpr} nodes}
 \usage{
 aexpr_new(ast, ann, expr)
 
+aexpr_type(ast, node)
+
 aexpr_ann_get(ast, node)
 
+aexpr_ann_rep(ast, node, ann)
+
+aexpr_ann_set(ast, node, ann)
+
 aexpr_expr_get(ast, node)
+
+aexpr_expr_rep(ast, node, expr)
+
+aexpr_expr_set(ast, node, expr)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{aexpr} node.}
+\item{ann}{\code{ann} node}
+
+\item{expr}{\code{expr} node}
+
+\item{node}{\code{aexpr} node}
 }
 \description{
 \itemize{
-\item \code{aexpr_ann_get()} returns the \code{ann} node of \code{aexpr}
-}
-
-\itemize{
-\item \code{aexpr_expr_get()} returns the \code{expr} node of \code{aexpr}
+\item \code{aexpr_new()} instantiates a new \code{aexpr} node.
+\item \code{aexpr_type()} checks if the node is a \code{aexpr} node.
+\item \verb{aexpr_<child>_get()} returns the \verb{<child>} node of \code{aexpr}.
+\item \verb{aexpr_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{aexpr_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

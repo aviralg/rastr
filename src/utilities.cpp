@@ -131,3 +131,10 @@ void string_replace(std::string& source,
         index += rep_len;
     }
 }
+
+char* cppstr_to_cstr(const std::string& cppstr) {
+    int size = cppstr.size();
+    char *cstr= (char*)malloc(sizeof(char) * (size + 1));   //we need extra char for NUL
+    memcpy(cstr, cppstr.c_str(), size + 1);
+    return cstr;
+}

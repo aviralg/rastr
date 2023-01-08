@@ -1,3 +1,17 @@
+#' Desugar AST
+#'
+#' @description
+#' * `desugar()` Desugars AST in-place to well-formed R syntax
+#'
+#' @param ast AST object
+#' @param node starting node for desugaring; defaults to AST root
+#' @name sugr
+
+#' @rdname sugr
+#' @export
+desugar <- function(ast, node = ast_root_get(ast), strictness = TRUE) {
+    .Call(C_rastr_desugar, ast, node, strictness)
+}
 
 get_active_file <- function() {
     ctxt <- rstudioapi::getSourceEditorContext()
@@ -23,7 +37,7 @@ get_file_mapping <- function(project) {
         src <- file.path(project, "sugaR", filenames)
         dest <- file.path(project, "R", filenames)
 
-        dir.create(file.path(project, "R"), showWarning = FALSE)
+        dir.create(file.path(project, "R"), showWarnings = FALSE)
     }
 
     list(src = src, dest = dest)

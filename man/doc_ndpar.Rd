@@ -3,20 +3,35 @@
 \name{doc_ndpar}
 \alias{doc_ndpar}
 \alias{ndpar_new}
+\alias{ndpar_type}
 \alias{ndpar_name_get}
+\alias{ndpar_name_rep}
+\alias{ndpar_name_set}
 \title{Create and query \code{ndpar} nodes}
 \usage{
 ndpar_new(ast, name)
 
+ndpar_type(ast, node)
+
 ndpar_name_get(ast, node)
+
+ndpar_name_rep(ast, node, name)
+
+ndpar_name_set(ast, node, name)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{ndpar} node.}
+\item{name}{\code{name} node}
+
+\item{node}{\code{ndpar} node}
 }
 \description{
 \itemize{
-\item \code{ndpar_name_get()} returns the \code{name} node of \code{ndpar}
+\item \code{ndpar_new()} instantiates a new \code{ndpar} node.
+\item \code{ndpar_type()} checks if the node is a \code{ndpar} node.
+\item \verb{ndpar_<child>_get()} returns the \verb{<child>} node of \code{ndpar}.
+\item \verb{ndpar_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{ndpar_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

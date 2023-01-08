@@ -3,27 +3,38 @@
 \name{doc_msng}
 \alias{doc_msng}
 \alias{msng_new}
+\alias{msng_type}
 \alias{msng_gap_get}
+\alias{msng_gap_rep}
+\alias{msng_gap_set}
 \alias{msng_loc_get}
 \title{Create and query \code{msng} nodes}
 \usage{
 msng_new(ast, gap, loc)
 
+msng_type(ast, node)
+
 msng_gap_get(ast, node)
+
+msng_gap_rep(ast, node, gap)
+
+msng_gap_set(ast, node, gap)
 
 msng_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{msng} node.}
+\item{gap}{\code{gap} node}
+
+\item{node}{\code{msng} node}
 }
 \description{
 \itemize{
-\item \code{msng_gap_get()} returns the \code{gap} node of \code{msng}
-}
-
-\itemize{
-\item \code{msng_loc_get()} returns the \code{loc} node of \code{msng}
+\item \code{msng_new()} instantiates a new \code{msng} node.
+\item \code{msng_type()} checks if the node is a \code{msng} node.
+\item \verb{msng_<child>_get()} returns the \verb{<child>} node of \code{msng}.
+\item \verb{msng_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{msng_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

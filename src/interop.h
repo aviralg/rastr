@@ -77,7 +77,7 @@ double num_get(SEXP r_vec, int index);
 
 SEXP cpx_vec1(const Rcomplex& val);
 SEXP cpx_vec(int size, const Rcomplex& val);
-const Rcomplex& cpx_get(SEXP r_vec, int index);
+Rcomplex cpx_get(SEXP r_vec, int index);
 void cpx_set(SEXP r_vec, int index, const Rcomplex& val);
 
 SEXP attr_get(SEXP r_obj, SEXP r_attr);

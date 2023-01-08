@@ -383,7 +383,7 @@ SEXP cpx_vec(int size, const Rcomplex& val) {
     return r_cpx;
 }
 
-const Rcomplex& cpx_get(SEXP r_vec, int index) {
+Rcomplex cpx_get(SEXP r_vec, int index) {
     return COMPLEX(r_vec)[index];
 }
 

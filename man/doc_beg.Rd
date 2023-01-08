@@ -14,16 +14,16 @@ beg_bom_get(ast, node)
 beg_loc_get(ast, node)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{beg} node.}
+\item{node}{\code{beg} node}
 }
 \description{
 \itemize{
-\item \code{beg_bom_get()} returns the \code{bom} node of \code{beg}
-}
-
-\itemize{
-\item \code{beg_loc_get()} returns the \code{loc} node of \code{beg}
+\item \code{beg_new()} instantiates a new \code{beg} node.
+\item \code{beg_type()} checks if the node is a \code{beg} node.
+\item \verb{beg_<child>_get()} returns the \verb{<child>} node of \code{beg}.
+\item \verb{beg_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{beg_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

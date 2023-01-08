@@ -1121,11 +1121,7 @@ void rastr_exprs_ins(rastr_ast_t ast,
                      int index,
                      int len,
                      rastr_node_t* seq);
-SEXP r_rastr_exprs_ins(SEXP r_ast,
-                       SEXP r_node,
-                       SEXP r_index,
-                       SEXP r_len,
-                       SEXP r_seq);
+SEXP r_rastr_exprs_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_seq);
 
 /*******************************************************************************
  * pars
@@ -1162,11 +1158,7 @@ void rastr_pars_ins(rastr_ast_t ast,
                     int index,
                     int len,
                     rastr_node_t* seq);
-SEXP r_rastr_pars_ins(SEXP r_ast,
-                      SEXP r_node,
-                      SEXP r_index,
-                      SEXP r_len,
-                      SEXP r_seq);
+SEXP r_rastr_pars_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_seq);
 
 /*******************************************************************************
  * dpar
@@ -1272,11 +1264,7 @@ void rastr_args_ins(rastr_ast_t ast,
                     int index,
                     int len,
                     rastr_node_t* seq);
-SEXP r_rastr_args_ins(SEXP r_ast,
-                      SEXP r_node,
-                      SEXP r_index,
-                      SEXP r_len,
-                      SEXP r_seq);
+SEXP r_rastr_args_ins(SEXP r_ast, SEXP r_node, SEXP r_index, SEXP r_seq);
 
 /*******************************************************************************
  * narg

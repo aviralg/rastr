@@ -205,10 +205,6 @@ gen_ins_seq <- function(gen, type, node, child) {
     gen("ins", "seq", "impl.R", c("_NODE_" = node))
 }
 
-gen_doc <- function(gen, type, node, children) {
-    gen("doc", "all", "impl.R", c("_NODE_" = node))
-}
-
 ## generates constructor for node
 gen_cons <- function(gen, type, node, children) {
 
@@ -296,10 +292,19 @@ gen_pred <- function(gen, type, node, children) {
     gen("pred", "any", "impl.R", c("_NODE_" = node))
 }
 
+gen_doc <- function(gen, type, node, children) {
+    if (any(map_lgl(children, function(child) child$name == "seq"))) {
+        gen("doc", "seq", "impl.R", c("_NODE_" = node))
+    }
+    else {
+        gen("doc", "node", "impl.R", c("_NODE_" = node))
+    }
+}
+
 gen_node <- function(gen, type, node, children) {
     gen_doc(gen, type, node, children)
 
-    if(length(type) == 1) {
+    if (length(type) == 1) {
         if(any(map_lgl(children, function(child) child$name == "seq"))) {
             gen_cons_seq(gen, type, node, children)
         }

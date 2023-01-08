@@ -3,34 +3,57 @@
 \name{doc_icond}
 \alias{doc_icond}
 \alias{icond_new}
+\alias{icond_type}
 \alias{icond_iop_get}
+\alias{icond_iop_rep}
+\alias{icond_iop_set}
 \alias{icond_cond_get}
+\alias{icond_cond_rep}
+\alias{icond_cond_set}
 \alias{icond_ibody_get}
+\alias{icond_ibody_rep}
+\alias{icond_ibody_set}
 \title{Create and query \code{icond} nodes}
 \usage{
 icond_new(ast, iop, cond, ibody)
 
+icond_type(ast, node)
+
 icond_iop_get(ast, node)
+
+icond_iop_rep(ast, node, iop)
+
+icond_iop_set(ast, node, iop)
 
 icond_cond_get(ast, node)
 
+icond_cond_rep(ast, node, cond)
+
+icond_cond_set(ast, node, cond)
+
 icond_ibody_get(ast, node)
+
+icond_ibody_rep(ast, node, ibody)
+
+icond_ibody_set(ast, node, ibody)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{icond} node.}
+\item{iop}{\code{iop} node}
+
+\item{cond}{\code{cond} node}
+
+\item{ibody}{\code{ibody} node}
+
+\item{node}{\code{icond} node}
 }
 \description{
 \itemize{
-\item \code{icond_iop_get()} returns the \code{iop} node of \code{icond}
-}
-
-\itemize{
-\item \code{icond_cond_get()} returns the \code{cond} node of \code{icond}
-}
-
-\itemize{
-\item \code{icond_ibody_get()} returns the \code{ibody} node of \code{icond}
+\item \code{icond_new()} instantiates a new \code{icond} node.
+\item \code{icond_type()} checks if the node is a \code{icond} node.
+\item \verb{icond_<child>_get()} returns the \verb{<child>} node of \code{icond}.
+\item \verb{icond_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{icond_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

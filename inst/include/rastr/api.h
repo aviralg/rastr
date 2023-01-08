@@ -182,6 +182,129 @@ extern "C" {
 #    endif
 
 /********************************************************************************
+Parsing
+********************************************************************************/
+rastr_ast_t rastr_parse_str(const char* str);
+SEXP r_rastr_parse_str(SEXP r_str);
+
+rastr_ast_t rastr_parse_file(const char* file);
+SEXP r_rastr_parse_file(SEXP r_file);
+
+char* rastr_unparse_str(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_unparse_str(SEXP r_ast, SEXP r_node);
+
+void rastr_unparse_file(rastr_ast_t ast, rastr_node_t node, const char* file);
+SEXP r_rastr_unparse_file(SEXP r_ast, SEXP r_node, SEXP r_file);
+
+/********************************************************************************
+Conversions
+********************************************************************************/
+SEXP rastr_to_sexp(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_to_sexp(SEXP r_ast, SEXP r_node);
+SEXP rastr_to_df(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_to_df(SEXP r_ast, SEXP r_node);
+SEXP rastr_to_list(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_to_list(SEXP r_ast, SEXP r_node);
+char* rastr_to_dot(rastr_ast_t ast, rastr_node_t node);
+SEXP r_rastr_to_dot(SEXP r_ast, SEXP r_node);
+
+/********************************************************************************
+Analysis
+********************************************************************************/
+SEXP r_rastr_walk(SEXP r_ast,
+                  SEXP r_node,
+                  SEXP r_env,
+                  SEXP r_state,
+                  SEXP r_pre_op,
+                  SEXP r_post_op,
+                  SEXP r_pre_dlmtr,
+                  SEXP r_post_dlmtr,
+                  SEXP r_pre_bkt,
+                  SEXP r_post_bkt,
+                  SEXP r_pre_null,
+                  SEXP r_post_null,
+                  SEXP r_pre_lgl,
+                  SEXP r_post_lgl,
+                  SEXP r_pre_int,
+                  SEXP r_post_int,
+                  SEXP r_pre_dbl,
+                  SEXP r_post_dbl,
+                  SEXP r_pre_cpx,
+                  SEXP r_post_cpx,
+                  SEXP r_pre_chr,
+                  SEXP r_post_chr,
+                  SEXP r_pre_sym,
+                  SEXP r_post_sym,
+                  SEXP r_pre_blk,
+                  SEXP r_post_blk,
+                  SEXP r_pre_grp,
+                  SEXP r_post_grp,
+                  SEXP r_pre_nuop,
+                  SEXP r_post_nuop,
+                  SEXP r_pre_unop,
+                  SEXP r_post_unop,
+                  SEXP r_pre_binop,
+                  SEXP r_post_binop,
+                  SEXP r_pre_rlp,
+                  SEXP r_post_rlp,
+                  SEXP r_pre_wlp,
+                  SEXP r_post_wlp,
+                  SEXP r_pre_flp,
+                  SEXP r_post_flp,
+                  SEXP r_pre_icond,
+                  SEXP r_post_icond,
+                  SEXP r_pre_iecond,
+                  SEXP r_post_iecond,
+                  SEXP r_pre_fndefn,
+                  SEXP r_post_fndefn,
+                  SEXP r_pre_fncall,
+                  SEXP r_post_fncall,
+                  SEXP r_pre_sub,
+                  SEXP r_post_sub,
+                  SEXP r_pre_idx,
+                  SEXP r_post_idx,
+                  SEXP r_pre_aexpr,
+                  SEXP r_post_aexpr,
+                  SEXP r_pre_exprs,
+                  SEXP r_post_exprs,
+                  SEXP r_pre_pars,
+                  SEXP r_post_pars,
+                  SEXP r_pre_dpar,
+                  SEXP r_post_dpar,
+                  SEXP r_pre_ndpar,
+                  SEXP r_post_ndpar,
+                  SEXP r_pre_args,
+                  SEXP r_post_args,
+                  SEXP r_pre_narg,
+                  SEXP r_post_narg,
+                  SEXP r_pre_parg,
+                  SEXP r_post_parg,
+                  SEXP r_pre_cond,
+                  SEXP r_post_cond,
+                  SEXP r_pre_iter,
+                  SEXP r_post_iter,
+                  SEXP r_pre_pgm,
+                  SEXP r_post_pgm,
+                  SEXP r_pre_dlmtd,
+                  SEXP r_post_dlmtd,
+                  SEXP r_pre_msng,
+                  SEXP r_post_msng,
+                  SEXP r_pre_beg,
+                  SEXP r_post_beg,
+                  SEXP r_pre_end,
+                  SEXP r_post_end,
+                  SEXP r_pre_gap,
+                  SEXP r_post_gap,
+                  SEXP r_pre_loc,
+                  SEXP r_post_loc);
+
+/********************************************************************************
+SUGR
+********************************************************************************/
+void rastr_desugar(rastr_ast_t ast, rastr_node_t node, int strictness);
+SEXP r_rastr_desugar(SEXP r_ast, SEXP r_node, SEXP r_strictness);
+
+/********************************************************************************
  Ast
 ********************************************************************************/
 rastr_ast_t rastr_ast_new(int capacity);
@@ -201,7 +324,6 @@ SEXP r_rastr_ast_root_set(SEXP r_ast, SEXP r_root);
 /********************************************************************************
  Node
 ********************************************************************************/
-
 rastr_node_type_t rastr_node_type(rastr_ast_t ast, rastr_node_t node);
 int rastr_node_id(rastr_ast_t ast, rastr_node_t node);
 rastr_node_t rastr_node_clone(rastr_ast_t ast, rastr_node_t node);
@@ -215,52 +337,20 @@ SEXP r_rastr_node_gap_get(SEXP r_ast, SEXP r_node);
 void rastr_node_gap_set(rastr_ast_t ast, rastr_node_t node, rastr_node_t gap);
 SEXP r_rastr_node_gap_set(SEXP r_ast, SEXP r_node, SEXP r_gap);
 
-rastr_node_t
-rastr_node_desugar(rastr_ast_t ast, rastr_node_t node, int strictness);
-
-rastr_ast_t rastr_ast_desugar(rastr_ast_t ast, int strictness);
-SEXP r_rastr_node_desugar(SEXP r_ast, SEXP r_node, SEXP r_strictness);
-SEXP r_rastr_ast_desugar(SEXP r_ast, SEXP r_strictness);
-
 /********************************************************************************
  Node Type
 ********************************************************************************/
 const char* rastr_node_type_to_string(rastr_node_type_t type);
 
-/********************************************************************************
- Parsing
-********************************************************************************/
-rastr_ast_t rastr_parse_str(const char* str);
-rastr_ast_t rastr_parse_file(const char* filepath);
-
 SEXP rastr_ast_wrap(rastr_ast_t ast);
 rastr_ast_t rastr_ast_unwrap(SEXP r_ast);
-SEXP r_rastr_parse_file(SEXP r_filepath);
-SEXP r_rastr_parse_str(SEXP r_string);
-SEXP r_rastr_ast_print(SEXP r_ast);
 
 SEXP r_rastr_initialize(SEXP r_pack_env);
 SEXP r_rastr_finalize(SEXP r_pack_env);
 
-char* rastr_ast_unparse_str(rastr_ast_t ast);
-char* rastr_node_unparse_str(rastr_ast_t ast, rastr_node_t node);
-
-/********************************************************************************
- Export
-********************************************************************************/
-
-void rastr_export_to_dot(rastr_ast_t ast, const char* filepath, int depth);
-SEXP r_rastr_export_to_dot(SEXP r_ast, SEXP r_filepath, SEXP r_depth);
-
 /********************************************************************************
  SEXP
 ********************************************************************************/
-
-SEXP rastr_as_sexp(rastr_ast_t ast);
-SEXP rastr_node_as_sexp(rastr_ast_t ast, rastr_node_t node);
-
-SEXP rastr_as_df(rastr_ast_t ast);
-SEXP rastr_node_as_df(rastr_ast_t ast, rastr_node_t node);
 
 SEXP rastr_ast_wrap(rastr_ast_t ast);
 SEXP rastr_node_wrap(rastr_node_t node);

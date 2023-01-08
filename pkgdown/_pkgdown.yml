@@ -12,6 +12,23 @@ template:
 #    href: https://github.com/aviralg/rastr/issues
 
 reference:
+- title: Parsing
+  contents:
+  - starts_with("parse_")
+  - starts_with("unparse_")
+
+- title: Conversions
+  contents:
+  - starts_with("to_")
+
+- title: Analysis
+  contents:
+  - walk
+
+- title: sugr
+  contents:
+  - desugar
+
 - title: Ast
   contents:
   - starts_with("ast_")

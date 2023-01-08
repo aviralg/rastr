@@ -675,15 +675,6 @@ struct data_t {
     rastr_node_t node;
 };
 
-SEXP rastr_ast_as_sexp(rastr_ast_t ast) {
-    return rastr_node_as_sexp(ast, rastr_ast_root_get(ast));
-}
-
-SEXP r_rastr_ast_as_sexp(SEXP r_ast) {
-    rastr_ast_t ast = rastr_ast_unwrap(r_ast);
-    return rastr_ast_as_sexp(ast);
-}
-
 static SEXP transform(void* ptr) {
     data_t* data = static_cast<data_t*>(ptr);
     SexpTransformer* transformer = data->transformer;
@@ -696,14 +687,14 @@ static void cleanup(void* ptr) {
     delete transformer;
 }
 
-SEXP rastr_node_as_sexp(rastr_ast_t ast, rastr_node_t node) {
+SEXP rastr_to_sexp(rastr_ast_t ast, rastr_node_t node) {
     SexpTransformer* transformer = new SexpTransformer();
     data_t data{transformer, ast, node};
     return R_ExecWithCleanup(transform, &data, cleanup, &data);
 }
 
-SEXP r_rastr_node_as_sexp(SEXP r_ast, SEXP r_node) {
+SEXP r_rastr_to_sexp(SEXP r_ast, SEXP r_node) {
     rastr_ast_t ast = rastr_ast_unwrap(r_ast);
     rastr_node_t node = rastr_node_unwrap(r_node);
-    return rastr_node_as_sexp(ast, node);
+    return rastr_to_sexp(ast, node);
 }

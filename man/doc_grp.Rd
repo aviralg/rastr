@@ -3,34 +3,57 @@
 \name{doc_grp}
 \alias{doc_grp}
 \alias{grp_new}
+\alias{grp_type}
 \alias{grp_lbkt_get}
+\alias{grp_lbkt_rep}
+\alias{grp_lbkt_set}
 \alias{grp_expr_get}
+\alias{grp_expr_rep}
+\alias{grp_expr_set}
 \alias{grp_rbkt_get}
+\alias{grp_rbkt_rep}
+\alias{grp_rbkt_set}
 \title{Create and query \code{grp} nodes}
 \usage{
 grp_new(ast, lbkt, expr, rbkt)
 
+grp_type(ast, node)
+
 grp_lbkt_get(ast, node)
+
+grp_lbkt_rep(ast, node, lbkt)
+
+grp_lbkt_set(ast, node, lbkt)
 
 grp_expr_get(ast, node)
 
+grp_expr_rep(ast, node, expr)
+
+grp_expr_set(ast, node, expr)
+
 grp_rbkt_get(ast, node)
+
+grp_rbkt_rep(ast, node, rbkt)
+
+grp_rbkt_set(ast, node, rbkt)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{grp} node.}
+\item{lbkt}{\code{lbkt} node}
+
+\item{expr}{\code{expr} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{node}{\code{grp} node}
 }
 \description{
 \itemize{
-\item \code{grp_lbkt_get()} returns the \code{lbkt} node of \code{grp}
-}
-
-\itemize{
-\item \code{grp_expr_get()} returns the \code{expr} node of \code{grp}
-}
-
-\itemize{
-\item \code{grp_rbkt_get()} returns the \code{rbkt} node of \code{grp}
+\item \code{grp_new()} instantiates a new \code{grp} node.
+\item \code{grp_type()} checks if the node is a \code{grp} node.
+\item \verb{grp_<child>_get()} returns the \verb{<child>} node of \code{grp}.
+\item \verb{grp_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{grp_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

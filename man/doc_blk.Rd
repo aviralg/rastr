@@ -3,34 +3,57 @@
 \name{doc_blk}
 \alias{doc_blk}
 \alias{blk_new}
+\alias{blk_type}
 \alias{blk_lbkt_get}
+\alias{blk_lbkt_rep}
+\alias{blk_lbkt_set}
 \alias{blk_exprs_get}
+\alias{blk_exprs_rep}
+\alias{blk_exprs_set}
 \alias{blk_rbkt_get}
+\alias{blk_rbkt_rep}
+\alias{blk_rbkt_set}
 \title{Create and query \code{blk} nodes}
 \usage{
 blk_new(ast, lbkt, exprs, rbkt)
 
+blk_type(ast, node)
+
 blk_lbkt_get(ast, node)
+
+blk_lbkt_rep(ast, node, lbkt)
+
+blk_lbkt_set(ast, node, lbkt)
 
 blk_exprs_get(ast, node)
 
+blk_exprs_rep(ast, node, exprs)
+
+blk_exprs_set(ast, node, exprs)
+
 blk_rbkt_get(ast, node)
+
+blk_rbkt_rep(ast, node, rbkt)
+
+blk_rbkt_set(ast, node, rbkt)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{blk} node.}
+\item{lbkt}{\code{lbkt} node}
+
+\item{exprs}{\code{exprs} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{node}{\code{blk} node}
 }
 \description{
 \itemize{
-\item \code{blk_lbkt_get()} returns the \code{lbkt} node of \code{blk}
-}
-
-\itemize{
-\item \code{blk_exprs_get()} returns the \code{exprs} node of \code{blk}
-}
-
-\itemize{
-\item \code{blk_rbkt_get()} returns the \code{rbkt} node of \code{blk}
+\item \code{blk_new()} instantiates a new \code{blk} node.
+\item \code{blk_type()} checks if the node is a \code{blk} node.
+\item \verb{blk_<child>_get()} returns the \verb{<child>} node of \code{blk}.
+\item \verb{blk_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{blk_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }

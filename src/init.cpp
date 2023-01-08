@@ -18,14 +18,20 @@ const R_CallMethodDef CallEntries[] = {
     /* parsing */
     DECLARE_BINDING(rastr_parse_str, 1),
     DECLARE_BINDING(rastr_parse_file, 1),
+    DECLARE_BINDING(rastr_unparse_str, 2),
+    DECLARE_BINDING(rastr_unparse_file, 3),
+
+    /* conversions */
+    DECLARE_BINDING(rastr_to_sexp, 2),
+    DECLARE_BINDING(rastr_to_df, 2),
+    DECLARE_BINDING(rastr_to_list, 2),
+    DECLARE_BINDING(rastr_to_dot, 2),
+
+    /* analysis */
+    DECLARE_BINDING(rastr_walk, 86),
 
     /* desugar */
-    DECLARE_BINDING(rastr_node_desugar, 3),
-    DECLARE_BINDING(rastr_ast_desugar, 2),
-
-    DECLARE_BINDING(rastr_node_leftmost, 2),
-    DECLARE_BINDING(rastr_node_gap_get, 2),
-    DECLARE_BINDING(rastr_node_gap_set, 3),
+    DECLARE_BINDING(rastr_desugar, 3),
 
     /*******************************************************************************
      * ast
@@ -37,6 +43,13 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_ast_root_get, 1),
     DECLARE_BINDING(rastr_ast_root_rep, 2),
     DECLARE_BINDING(rastr_ast_root_set, 2),
+
+    /*******************************************************************************
+     * node
+     *******************************************************************************/
+    DECLARE_BINDING(rastr_node_leftmost, 2),
+    DECLARE_BINDING(rastr_node_gap_get, 2),
+    DECLARE_BINDING(rastr_node_gap_set, 3),
 
     /*******************************************************************************
      * op
@@ -112,31 +125,11 @@ const R_CallMethodDef CallEntries[] = {
     DECLARE_BINDING(rastr_beg_new, 3),
 #include "autogen_init.h"
 
-    /* export */
-    DECLARE_BINDING(rastr_export_to_dot, 3),
-
-    DECLARE_BINDING(rastr_ast_unparse_str, 1),
-    DECLARE_BINDING(rastr_node_unparse_str, 2),
-
-    /* as_sexp */
-    DECLARE_BINDING(rastr_ast_as_sexp, 1),
-    DECLARE_BINDING(rastr_node_as_sexp, 2),
-
-    /* as_df */
-    DECLARE_BINDING(rastr_ast_as_df, 1),
-    DECLARE_BINDING(rastr_node_as_df, 2),
     {NULL, NULL, 0}};
 
 void R_init_rastr(DllInfo* dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
-
-    R_RegisterCCallable(
-        "rastr", "rastr_parse_str", (DL_FUNC) (rastr_parse_str));
-    R_RegisterCCallable(
-        "rastr", "rastr_parse_file", (DL_FUNC) (rastr_parse_file));
-    R_RegisterCCallable(
-        "rastr", "rastr_export_to_dot", (DL_FUNC) (rastr_export_to_dot));
 }
 
 void R_unload_rastr(DllInfo* info) {

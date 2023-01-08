@@ -3,48 +3,79 @@
 \name{doc_fndefn}
 \alias{doc_fndefn}
 \alias{fndefn_new}
+\alias{fndefn_type}
 \alias{fndefn_op_get}
+\alias{fndefn_op_rep}
+\alias{fndefn_op_set}
 \alias{fndefn_lbkt_get}
+\alias{fndefn_lbkt_rep}
+\alias{fndefn_lbkt_set}
 \alias{fndefn_pars_get}
+\alias{fndefn_pars_rep}
+\alias{fndefn_pars_set}
 \alias{fndefn_rbkt_get}
+\alias{fndefn_rbkt_rep}
+\alias{fndefn_rbkt_set}
 \alias{fndefn_body_get}
+\alias{fndefn_body_rep}
+\alias{fndefn_body_set}
 \title{Create and query \code{fndefn} nodes}
 \usage{
 fndefn_new(ast, op, lbkt, pars, rbkt, body)
 
+fndefn_type(ast, node)
+
 fndefn_op_get(ast, node)
+
+fndefn_op_rep(ast, node, op)
+
+fndefn_op_set(ast, node, op)
 
 fndefn_lbkt_get(ast, node)
 
+fndefn_lbkt_rep(ast, node, lbkt)
+
+fndefn_lbkt_set(ast, node, lbkt)
+
 fndefn_pars_get(ast, node)
+
+fndefn_pars_rep(ast, node, pars)
+
+fndefn_pars_set(ast, node, pars)
 
 fndefn_rbkt_get(ast, node)
 
+fndefn_rbkt_rep(ast, node, rbkt)
+
+fndefn_rbkt_set(ast, node, rbkt)
+
 fndefn_body_get(ast, node)
+
+fndefn_body_rep(ast, node, body)
+
+fndefn_body_set(ast, node, body)
 }
 \arguments{
-\item{ast}{The AST object.}
+\item{ast}{AST object}
 
-\item{node}{The \code{fndefn} node.}
+\item{op}{\code{op} node}
+
+\item{lbkt}{\code{lbkt} node}
+
+\item{pars}{\code{pars} node}
+
+\item{rbkt}{\code{rbkt} node}
+
+\item{body}{\code{body} node}
+
+\item{node}{\code{fndefn} node}
 }
 \description{
 \itemize{
-\item \code{fndefn_op_get()} returns the \code{op} node of \code{fndefn}
-}
-
-\itemize{
-\item \code{fndefn_lbkt_get()} returns the \code{lbkt} node of \code{fndefn}
-}
-
-\itemize{
-\item \code{fndefn_pars_get()} returns the \code{pars} node of \code{fndefn}
-}
-
-\itemize{
-\item \code{fndefn_rbkt_get()} returns the \code{rbkt} node of \code{fndefn}
-}
-
-\itemize{
-\item \code{fndefn_body_get()} returns the \code{body} node of \code{fndefn}
+\item \code{fndefn_new()} instantiates a new \code{fndefn} node.
+\item \code{fndefn_type()} checks if the node is a \code{fndefn} node.
+\item \verb{fndefn_<child>_get()} returns the \verb{<child>} node of \code{fndefn}.
+\item \verb{fndefn_<child>_set()} sets the new \verb{<child>} and deletes the old \verb{<child>}.
+\item \verb{fndefn_<child>_rep()} sets the new \verb{<child>} and returns the old \verb{<child>}.
 }
 }
