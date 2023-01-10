@@ -275,7 +275,7 @@ struct rastr_node_impl_t {
 };
 
 void ensure_class(SEXP r_obj, const char* cls) {
-    if (class_has(r_obj, cls)) {
+    if (!class_has(r_obj, cls)) {
         Rf_error("expected object of class '%s'", cls);
     }
 }
