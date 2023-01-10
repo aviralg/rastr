@@ -13,6 +13,10 @@ desugar <- function(ast, node = ast_root_get(ast), strictness = TRUE) {
     .Call(C_rastr_desugar, ast, node, strictness)
 }
 
+
+################################################################################
+## RStudio addins
+################################################################################
 get_active_file <- function() {
     ctxt <- rstudioapi::getSourceEditorContext()
     if (is.null(ctxt)) NULL
@@ -25,32 +29,17 @@ get_active_proj <- function() {
     else path.expand(proj)
 }
 
-## TODO: should I ignore files mentioned in .Rbuildignore?
-get_file_mapping <- function(project) {
-    path <- file.path(project, "sugaR")
-    src <- character(0)
-    dest <- character(0)
+desugar_file <- function(sugr_file) {
+    sugr_file <- path.expand(sugr_file)
 
-    if (file.exists(path)) {
-        filenames <- list.files(path, pattern = ".*[.][rR]")
+    r_file <- gsub(".sugr$", ".R", sugr_file)
 
-        src <- file.path(project, "sugaR", filenames)
-        dest <- file.path(project, "R", filenames)
+    ast <- parse_file(sugr_file)
 
-        dir.create(file.path(project, "R"), showWarnings = FALSE)
-    }
-
-    list(src = src, dest = dest)
-}
-
-desugar_file <- function(src, dest) {
-    src <- path.expand(src)
-    dest <- path.expand(dest)
-
-    ast <- parse_file(src)
     desugar(ast)
     code <- unparse_str(ast)
-    cat(code, file = dest, append = FALSE)
+
+    cat(code, file = r_file, append = FALSE)
 }
 
 desugarProjectAddin <- function() {
@@ -63,13 +52,12 @@ desugarProjectAddin <- function() {
         return(NULL)
     }
 
-    mapping <- get_file_mapping(project)
-    src <- mapping$src
-    dest <- mapping$dest
+    ## get all files in project with .sugr extension
+    sugr_files <- list.files(project, recursive = TRUE, pattern = ".*[.]sugr$")
 
     tryCatch(
-        for (i in seq(1, length(src))) {
-            desugar_file(src[i], dest[i])
+        for (sugr_file in sugr_files) {
+            desugar_file(sugr_file)
         },
         error = function(e) {
             rstudioapi::showDialog("Error", e$message)
@@ -80,30 +68,19 @@ desugarProjectAddin <- function() {
 desugarFileAddin <- function() {
     rstudioapi::verifyAvailable()
 
-    src <- get_active_file()
-    project <- get_active_proj()
+    sugr_file <- get_active_file()
 
-    if (is.null(src)) {
+    ## if no active file, stop.
+    if (is.null(sugr_file)) {
         rstudioapi::showDialog("Error", "No active file found")
         return(NULL)
     }
 
-    filename <- basename(src)
-    sugar_src <- file.path(project, "sugaR", filename)
+    ## if not a .sugr file, stop.
+    if (!endsWith(sugr_file, ".sugr")) {
+        rstudioapi::showDialog("Error", "File should end with '.sugr' extension")
+        return(NULL)
+    }
 
-    ## file is part of currently active project and inside the sugaR directory
-    dest <- if (!is.null(project) && startsWith(src, project) && (src == sugar_src))
-                file.path(project, "R", filename)
-            else src
-
-    desugar_file(src, dest)
-}
-
-resugarProjectAddin <- function() {
-    rstudioapi::verifyAvailable()
-
-}
-
-resugarFileAddin <- function() {
-    rstudioapi::verifyAvailable()
+    desugar_file(sugr_file)
 }
