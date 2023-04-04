@@ -36,6 +36,8 @@ pars_ins(ast, node, index, seq)
 \item{node}{\code{pars} node}
 
 \item{index}{one-based index into the \code{pars} node}
+
+\item{par}{\code{par} node}
 }
 \description{
 \itemize{
@@ -43,8 +45,8 @@ pars_ins(ast, node, index, seq)
 \item \code{pars_type()} checks if the node is a \code{pars} node.
 \item \code{pars_seq_get()} returns all the child nodes as a list.
 \item \code{pars_get()} returns node at position \code{index}.
-\item \code{pars_set()} sets node at position \code{index} and deletes the previous node.
-\item \code{pars_rep()} sets node at position \code{index} and returns the previous node.
+\item \code{pars_set()} sets the new node at position \code{index} and deletes the old node.
+\item \code{pars_rep()} sets the new node at position \code{index} and returns the old node.
 \item \code{pars_ins()} inserts nodes starting from position \code{index}.
 }
 }

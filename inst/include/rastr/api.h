@@ -303,6 +303,7 @@ SUGR
 ********************************************************************************/
 void rastr_desugar(rastr_ast_t ast, rastr_node_t node, int strictness);
 SEXP r_rastr_desugar(SEXP r_ast, SEXP r_node, SEXP r_strictness);
+SEXP r_rastr_sugar(SEXP r_ast, SEXP r_node, SEXP r_table);
 
 /********************************************************************************
  Ast

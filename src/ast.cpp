@@ -6,6 +6,7 @@
 #include "interop.h"
 #include "r_api.h"
 #include <vector>
+#include <iostream>
 
 int id_counter = 0;
 

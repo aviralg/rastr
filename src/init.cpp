@@ -32,6 +32,8 @@ const R_CallMethodDef CallEntries[] = {
 
     /* desugar */
     DECLARE_BINDING(rastr_desugar, 3),
+    /* sugar */
+    DECLARE_BINDING(rastr_sugar, 3),
 
     /*******************************************************************************
      * ast

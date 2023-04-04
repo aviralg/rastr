@@ -36,6 +36,8 @@ args_ins(ast, node, index, seq)
 \item{node}{\code{args} node}
 
 \item{index}{one-based index into the \code{args} node}
+
+\item{arg}{\code{arg} node}
 }
 \description{
 \itemize{
@@ -43,8 +45,8 @@ args_ins(ast, node, index, seq)
 \item \code{args_type()} checks if the node is a \code{args} node.
 \item \code{args_seq_get()} returns all the child nodes as a list.
 \item \code{args_get()} returns node at position \code{index}.
-\item \code{args_set()} sets node at position \code{index} and deletes the previous node.
-\item \code{args_rep()} sets node at position \code{index} and returns the previous node.
+\item \code{args_set()} sets the new node at position \code{index} and deletes the old node.
+\item \code{args_rep()} sets the new node at position \code{index} and returns the old node.
 \item \code{args_ins()} inserts nodes starting from position \code{index}.
 }
 }

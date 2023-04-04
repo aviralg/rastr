@@ -5259,7 +5259,7 @@ void rastr_exprs_ins(rastr_ast_t ast,
     rastr_node_t* orig_seq = ptr->node.exprs_node.seq;
 
     int tot_len = orig_len + len;
-    rastr_node_t* tot_seq = (rastr_node_t*) std::realloc(orig_seq, tot_len);
+    rastr_node_t* tot_seq = (rastr_node_t*) std::realloc(orig_seq, sizeof(rastr_node_t) * tot_len);
 
     ptr->node.exprs_node.len = tot_len;
     ptr->node.exprs_node.seq = tot_seq;

@@ -10,9 +10,9 @@ SCAN_BUILD := scan-build
 
 .PHONY: all api build check document test favicons
 
-all: clean document build check install
+all: clean build check install document website
 
-build: document
+build: #document
 	$(R) CMD build .
 
 check: build

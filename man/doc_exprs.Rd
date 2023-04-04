@@ -36,6 +36,8 @@ exprs_ins(ast, node, index, seq)
 \item{node}{\code{exprs} node}
 
 \item{index}{one-based index into the \code{exprs} node}
+
+\item{expr}{\code{expr} node}
 }
 \description{
 \itemize{
@@ -43,8 +45,8 @@ exprs_ins(ast, node, index, seq)
 \item \code{exprs_type()} checks if the node is a \code{exprs} node.
 \item \code{exprs_seq_get()} returns all the child nodes as a list.
 \item \code{exprs_get()} returns node at position \code{index}.
-\item \code{exprs_set()} sets node at position \code{index} and deletes the previous node.
-\item \code{exprs_rep()} sets node at position \code{index} and returns the previous node.
+\item \code{exprs_set()} sets the new node at position \code{index} and deletes the old node.
+\item \code{exprs_rep()} sets the new node at position \code{index} and returns the old node.
 \item \code{exprs_ins()} inserts nodes starting from position \code{index}.
 }
 }

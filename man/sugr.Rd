@@ -3,17 +3,36 @@
 \name{sugr}
 \alias{sugr}
 \alias{desugar}
-\title{Desugar AST}
+\alias{sugar}
+\alias{desugar_file}
+\alias{desugar_project}
+\alias{sugar_file}
+\alias{sugar_project}
+\title{Sugar and Desugar AST}
 \usage{
 desugar(ast, node = ast_root_get(ast), strictness = TRUE)
+
+sugar(ast, node = ast_root_get(ast), table)
+
+desugar_file(sugr_file)
+
+desugar_project(project_dir)
+
+sugar_file(r_file, table)
+
+sugar_project(project_dir, table)
 }
 \arguments{
 \item{ast}{AST object}
 
 \item{node}{starting node for desugaring; defaults to AST root}
+
+\item{table}{environment with function name as key and vector of strict
+parameter positions as value}
 }
 \description{
 \itemize{
+\item \code{sugar()} sugars AST in-place by inserting strictness annotations
 \item \code{desugar()} Desugars AST in-place to well-formed R syntax
 }
 }

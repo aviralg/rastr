@@ -9,7 +9,7 @@ void rastr__NODE__ins(rastr_ast_t ast, rastr_node_t node, int index, int len, ra
     rastr_node_t* orig_seq = ptr->node._NODE__node.seq;
 
     int tot_len = orig_len + len;
-    rastr_node_t* tot_seq = (rastr_node_t*) std::realloc(orig_seq, tot_len);
+    rastr_node_t* tot_seq = (rastr_node_t*) std::realloc(orig_seq, sizeof(rastr_node_t) * tot_len);
 
     ptr->node._NODE__node.len = tot_len;
     ptr->node._NODE__node.seq = tot_seq;
